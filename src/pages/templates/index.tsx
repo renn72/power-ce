@@ -5,7 +5,7 @@ import { type NextPage } from "next";
 import Navbar from "~/components/navbar";
 import Footer from "~/components/footer";
 
-const Home: NextPage = () => {
+const Templates: NextPage = () => {
   // const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   return (
@@ -15,7 +15,9 @@ const Home: NextPage = () => {
 
         <header className="bg-white shadow-xl">
           <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+              Templates
+            </h1>
           </div>
         </header>
         <main className="grow">
@@ -30,4 +32,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Templates;
