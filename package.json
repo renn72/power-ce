@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^4.17.3",
+    "@formkit/auto-animate": "^1.0.0-beta.6",
     "@headlessui/react": "^1.7.15",
     "@heroicons/react": "^2.0.18",
     "@prisma/client": "^4.14.0",

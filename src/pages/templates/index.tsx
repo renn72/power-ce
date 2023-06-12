@@ -3,7 +3,7 @@ import React, { Fragment, useState } from "react";
 
 
 import { Listbox, Transition } from '@headlessui/react'
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 
 import Navbar from "~/components/navbar";
 import Footer from "~/components/footer";
@@ -36,8 +36,8 @@ const Templates: NextPage = () => {
           </div>
         </header>
         <main >
-          <div className="flex flex-col border border-black">
-            <div className="mx-auto max-w-7xl border py-6 sm:px-6 lg:px-8">
+          <div className="flex flex-col">
+            <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
               <div className="flex gap-6 justify-center">
                 <div className="bg-gray-200 rounded-lg p-2 flex flex-col">
                   <label className="text-center" htmlFor="squat">Squat</label>
@@ -71,9 +71,9 @@ const Templates: NextPage = () => {
                 </div>
               </div>
             </div>
-            <div className="mx-auto max-w-7xl border py-6 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
 
-              <div className="flex gap-6 justify-center">
+              <div className="flex gap-6 justify-center items-center">
 
                 <div>
                   <button className="bg-gray-200 rounded-lg p-2">New Template</button>
@@ -81,8 +81,8 @@ const Templates: NextPage = () => {
 
                 <div className="w-64 flex flex-col justify-center">
                   <Listbox value={template} onChange={setTemplate}>
-                    <div className="relative mt-1">
-                      <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+                    <div className="relative z-10">
+                      <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300">
                         <span className="block truncate">{template?.name}</span>
                         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                           <ChevronUpDownIcon
@@ -131,7 +131,7 @@ const Templates: NextPage = () => {
                 </div>
 
               </div>
-              <Form />
+              <Form squat={squat} deadlift={deadlift} bench={bench}/>
 
             </div>
           </div>

@@ -3,20 +3,23 @@ import Link from "next/link";
 import { type NextPage } from "next";
 // import { api } from "~/utils/api";
 
+import { useRouter } from 'next/router'
 
 import { Disclosure } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon, FingerPrintIcon } from '@heroicons/react/24/outline'
 
 
 const navigation = [
-  { name: 'Dashboard', href: '/', current: true },
-  { name: 'Templates', href: '/templates', current: false },
+  { name: 'Dashboard', href: '/' },
+  { name: 'Templates', href: '/templates' },
 ]
 
 const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(' ')
 }
 const Navbar = () => {
+  const router = useRouter()
+  console.log(router.pathname)
   return (
     <>
       <Disclosure as="nav" className="bg-gray-800">
@@ -35,7 +38,7 @@ const Navbar = () => {
                           key={item.name}
                           href={item.href}
                           className={classNames(
-                            item.current
+                            item.href === router.pathname
                               ? 'bg-gray-900 text-white'
                               : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                             'rounded-md px-3 py-2 text-sm font-medium'
