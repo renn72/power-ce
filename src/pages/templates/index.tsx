@@ -1,13 +1,14 @@
 import { type NextPage } from "next";
 import React, { Fragment, useState } from "react";
 
+import { useAtom } from "jotai";
 
 import { Listbox, Transition } from '@headlessui/react'
 import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 
-import Navbar from "~/components/navbar";
-import Footer from "~/components/footer";
 import Form from "./form";
+
+import { squatAtom, deadliftAtom, benchAtom, rmModelIsOpenAtom, rpeModelIsOpenAtom } from "./store";
 
 const templates = [
   { id: 1, name: 'Durward Reynolds', unavailable: false },
@@ -18,11 +19,13 @@ const templates = [
 
 
 const Templates: NextPage = () => {
-  const [squat, setSquat] = useState<number>(200);
-  const [deadlift, setDeadlift] = useState<number>(200);
-  const [bench, setBench] = useState<number>(100);
+  const [squat, setSquat] = useAtom(squatAtom);
+  const [deadlift, setDeadlift] = useAtom(deadliftAtom);
+  const [bench, setBench] = useAtom(benchAtom);
 
-  const [name, setName] = useState<string>("");
+  const [rmModelIsOpen, setRmModelIsOpen] = useAtom(rmModelIsOpenAtom);
+  const [rpeModelIsOpen, setRpeModelIsOpen] = useAtom(rpeModelIsOpenAtom);
+
   const [template, setTemplate] = useState(templates[0]);
 
 
