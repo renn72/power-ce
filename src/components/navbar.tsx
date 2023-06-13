@@ -43,7 +43,7 @@ const Navbar = () => {
                               : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                             'rounded-md px-3 py-2 text-sm font-medium'
                           )}
-                          aria-current={item.current ? 'page' : undefined}
+                          aria-current={item.href === router.pathname ? 'page' : undefined}
                         >
                           {item.name}
                         </Link>
