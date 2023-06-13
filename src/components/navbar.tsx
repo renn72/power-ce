@@ -52,7 +52,7 @@ const Navbar = () => {
                   </div>
                 </div>
                 <div className="hidden md:block">
-                  <div className="ml-4 flex items-center md:ml-6">
+                  <div className="ml-4 flex items-center md:ml-6 text-gray-100">
                     <SignedIn>
                       {/* Mount the UserButton component */}
                       <UserButton />
@@ -94,8 +94,8 @@ const Navbar = () => {
                 ))}
               </div>
               <div className="border-t border-gray-700 pb-3 pt-4">
-                <div className="p-4 ml-4 flex justify-end items-center md:ml-6">
-                  <SignedIn>
+                <div className="p-4 ml-4 text-gray-100 flex justify-end items-center md:ml-6">
+                  <SignedIn >
                     {/* Mount the UserButton component */}
                     <UserButton />
                   </SignedIn>
