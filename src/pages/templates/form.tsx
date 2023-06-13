@@ -1,9 +1,12 @@
 import React, { useState, Fragment } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useAutoAnimate } from '@formkit/auto-animate/react'
+import { useAtom } from "jotai";
 
 import { Listbox, Transition } from '@headlessui/react'
 import { ChevronUpDownIcon, CheckIcon, PlusCircleIcon, MinusCircleIcon } from '@heroicons/react/24/outline'
+
+import { squatAtom, deadliftAtom, benchAtom } from "~/store/store";
 
 type Props = {
   squat: number,
@@ -26,7 +29,7 @@ type Day = {
 
 const lifts = ["Squat", "Deadlift", "Bench"];
 
-const Form  = ( { squat , deadlift, bench } : Props ) => {
+const Form  = (  ) => {
   const { register, handleSubmit, watch, reset, getValues, setValue, formState: { errors } } = useForm<Day>({
     defaultValues: {
       name: "",
@@ -36,7 +39,7 @@ const Form  = ( { squat , deadlift, bench } : Props ) => {
           onerm: 76,
           sets: 5,
           reps: 5,
-          weight: 0,
+          weight: 0.0,
         }
       ]
     }
@@ -44,7 +47,10 @@ const Form  = ( { squat , deadlift, bench } : Props ) => {
   });
   const [exerciseID, setExerciseID] = useState<number[]>(Object.keys(getValues().exercise).map((i) => parseInt(i)));
   const [selectedLift, setSelectedLift] = useState(new Map([[0, ""]]));
-  // const {squat, deadlift, bench} = props
+
+  const [squat, setSquat] = useAtom(squatAtom);
+  const [deadlift, setDeadlift] = useAtom(deadliftAtom);
+  const [bench, setBench] = useAtom(benchAtom);
 
   const [parent, enableAnimations] = useAutoAnimate(/* optional config */)
 
@@ -230,7 +236,7 @@ const Form  = ( { squat , deadlift, bench } : Props ) => {
                 <input
                   className="block w-32 rounded-md border-2 border-white py-1.5 pl-12 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   type="number"
-                  {...register(`exercise.${idx}.weight`, { valueAsNumber: true, validate: (value) => value > 0, })}
+                  {...register(`exercise.${idx}.weight`, { valueAsNumber: true,  })}
                 />
               </div>
             </div>

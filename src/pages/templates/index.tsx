@@ -3,12 +3,14 @@ import React, { Fragment, useState } from "react";
 
 import { useAtom } from "jotai";
 
-import { Listbox, Transition } from '@headlessui/react'
+import { Listbox, Transition, Dialog } from '@headlessui/react'
 import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 
 import Form from "./form";
+import RPEModal from "~/components/rpeModal";
+import RmModal from "~/components/rmModal";
 
-import { squatAtom, deadliftAtom, benchAtom, rmModelIsOpenAtom, rpeModelIsOpenAtom } from "./store";
+import { squatAtom, deadliftAtom, benchAtom, rmModalIsOpenAtom, rpeModalIsOpenAtom, deloadModalIsOpenAtom } from "~/store/store";
 
 const templates = [
   { id: 1, name: 'Durward Reynolds', unavailable: false },
@@ -17,14 +19,14 @@ const templates = [
   { id: 5, name: 'Katelyn Rohan', unavailable: false },
 ]
 
-
 const Templates: NextPage = () => {
   const [squat, setSquat] = useAtom(squatAtom);
   const [deadlift, setDeadlift] = useAtom(deadliftAtom);
   const [bench, setBench] = useAtom(benchAtom);
 
-  const [rmModelIsOpen, setRmModelIsOpen] = useAtom(rmModelIsOpenAtom);
-  const [rpeModelIsOpen, setRpeModelIsOpen] = useAtom(rpeModelIsOpenAtom);
+  const [rmModalIsOpen, setRmModalIsOpen] = useAtom(rmModalIsOpenAtom);
+  const [rpeModalIsOpen, setRpeModalIsOpen] = useAtom(rpeModalIsOpenAtom);
+  const [deloadModalIsOpen, setDeloadModalIsOpen] = useAtom(deloadModalIsOpenAtom);
 
   const [template, setTemplate] = useState(templates[0]);
 
@@ -34,11 +36,18 @@ const Templates: NextPage = () => {
       <div className="h-full flex flex-col bg-gray-600">
 
         <header className="bg-white shadow-xl">
-          <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8 flex justify-between">
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">Templates</h1>
+            <div className="flex gap-2 text-lg font-bold">
+              <button onClick={() => setRpeModalIsOpen(true)}>RPE</button>
+              <button onClick={() => setRmModalIsOpen(true)}>RM</button>
+              <button onClick={() => setDeloadModalIsOpen(true)}>D</button>
+            </div>
           </div>
         </header>
         <main >
+          <RPEModal />
+          <RmModal  />
           <div className="flex flex-col">
             <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
               <div className="flex gap-6 justify-center">
@@ -134,7 +143,7 @@ const Templates: NextPage = () => {
                 </div>
 
               </div>
-              <Form squat={squat} deadlift={deadlift} bench={bench}/>
+              <Form />
 
             </div>
           </div>
