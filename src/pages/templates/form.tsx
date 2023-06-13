@@ -106,9 +106,9 @@ const Form  = (  ) => {
             />
           </div>
         </div>
-        <div ref={parent} className="flex flex-col gap-6">
+        <div ref={parent} className="flex flex-col divide-y divide-dashed divide-gray-500">
           {exerciseID.map((idx) => (
-            <div key={idx} className="flex gap-6">
+            <div key={idx} className="grid gap-6 xl:grid-cols-6 md:grid-cols-3 py-5">
               <div className="w-32 flex flex-col justify-center text-sm">
                 <Listbox value={selectedLift.get(idx)} onChange={(key) => onSelectLift(key, idx)}>
                   <div className="relative">
@@ -240,6 +240,7 @@ const Form  = (  ) => {
                 />
               </div>
             </div>
+             
           ))}
         </div>
 
