@@ -19,7 +19,6 @@ const classNames = (...classes: string[]) => {
 }
 const Navbar = () => {
   const router = useRouter()
-  console.log(router.pathname)
   return (
     <>
       <Disclosure as="nav" className="bg-gray-800">

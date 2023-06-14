@@ -11,6 +11,7 @@ import RPEModal from "~/components/rpeModal";
 import RmModal from "~/components/rmModal";
 
 import { squatAtom, deadliftAtom, benchAtom, rmModalIsOpenAtom, rpeModalIsOpenAtom, deloadModalIsOpenAtom } from "~/store/store";
+import DealoadModal from "~/components/deloadModal";
 
 const templates = [
   { id: 1, name: 'Durward Reynolds', unavailable: false },
@@ -37,17 +38,33 @@ const Templates: NextPage = () => {
 
         <header className="bg-white shadow-xl">
           <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8 flex justify-between">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Templates</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900 flex items-center">Templates</h1>
             <div className="flex gap-2 text-lg font-bold">
-              <button onClick={() => setRpeModalIsOpen(true)}>RPE</button>
-              <button onClick={() => setRmModalIsOpen(true)}>RM</button>
-              <button onClick={() => setDeloadModalIsOpen(true)}>D</button>
+              <button 
+                className="bg-transparent hover:bg-gray-800 bg-gray-800 font-semibold hover:text-white w-12 h-12 border border-2 border-gray-800 hover:border-transparent rounded-full"
+                onClick={() => setRpeModalIsOpen(true)}
+              >
+                RPE
+              </button>
+              <button 
+                className="bg-transparent hover:bg-gray-800 bg-gray-800 font-semibold hover:text-white w-12 h-12 border border-2 border-gray-800 hover:border-transparent rounded-full"
+                onClick={() => setRmModalIsOpen(true)}
+              >
+                RM
+              </button>
+              <button 
+                className="bg-transparent hover:bg-gray-800 bg-gray-800 font-semibold hover:text-white w-12 h-12 border border-2 border-gray-800 hover:border-transparent rounded-full"
+                onClick={() => setDeloadModalIsOpen(true)}
+              >
+                Del
+              </button>
             </div>
           </div>
         </header>
-        <main >
+        <main className="text-xs sm:text-base">
           <RPEModal />
           <RmModal  />
+          <DealoadModal />
           <div className="flex flex-col">
             <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
               <div className="flex gap-6 justify-center">
