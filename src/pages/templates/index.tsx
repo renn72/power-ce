@@ -14,10 +14,8 @@ import { squatAtom, deadliftAtom, benchAtom, rmModalIsOpenAtom, rpeModalIsOpenAt
 import DealoadModal from "~/components/deloadModal";
 
 const templates = [
-  { id: 1, name: 'Durward Reynolds', unavailable: false },
-  { id: 2, name: 'Kenton Towne', unavailable: false },
-  { id: 3, name: 'Therese Wunsch', unavailable: false },
-  { id: 5, name: 'Katelyn Rohan', unavailable: false },
+  { id: 1, name: 'block-1', },
+  { id: 2, name: 'block-2', },
 ]
 
 const Templates: NextPage = () => {
@@ -38,22 +36,22 @@ const Templates: NextPage = () => {
 
         <header className="bg-white shadow-xl">
           <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8 flex justify-between">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900 flex items-center">Templates</h1>
-            <div className="flex gap-2 text-lg font-bold">
+            <h1 className="text-xl md:text-3xl font-bold tracking-tight text-gray-900 flex items-center">Templates</h1>
+            <div className="flex gap-2 text-sm md:text-lg font-bold">
               <button 
-                className="bg-transparent hover:bg-gray-800 bg-gray-800 font-semibold hover:text-white w-12 h-12 border border-2 border-gray-800 hover:border-transparent rounded-full"
+                className="bg-transparent hover:bg-gray-800 bg-gray-800 font-semibold hover:text-white w-10 h-10 md:w-12 md:h-12 border border-2 border-gray-800 hover:border-transparent rounded-full"
                 onClick={() => setRpeModalIsOpen(true)}
               >
                 RPE
               </button>
               <button 
-                className="bg-transparent hover:bg-gray-800 bg-gray-800 font-semibold hover:text-white w-12 h-12 border border-2 border-gray-800 hover:border-transparent rounded-full"
+                className="bg-transparent hover:bg-gray-800 bg-gray-800 font-semibold hover:text-white w-10 h-10 md:w-12 md:h-12 border border-2 border-gray-800 hover:border-transparent rounded-full"
                 onClick={() => setRmModalIsOpen(true)}
               >
                 RM
               </button>
               <button 
-                className="bg-transparent hover:bg-gray-800 bg-gray-800 font-semibold hover:text-white w-12 h-12 border border-2 border-gray-800 hover:border-transparent rounded-full"
+                className="bg-transparent hover:bg-gray-800 bg-gray-800 font-semibold hover:text-white w-10 h-10 md:w-12 md:h-12 border border-2 border-gray-800 hover:border-transparent rounded-full"
                 onClick={() => setDeloadModalIsOpen(true)}
               >
                 Del
@@ -67,10 +65,10 @@ const Templates: NextPage = () => {
           <DealoadModal />
           <div className="flex flex-col">
             <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-              <div className="flex gap-6 justify-center">
+              <div className="flex gap-2 md:gap-6 justify-center">
                 <div className="bg-gray-200 rounded-lg p-2 flex flex-col">
                   <label className="text-center" htmlFor="squat">Squat</label>
-                  <input className="bg-gray-200 rounded-lg p-2 w-24 text-center"
+                  <input className="bg-gray-200 rounded-lg w-20 text-center"
                     type="number"
                     id="squat"
                     placeholder="Squat"
@@ -80,7 +78,7 @@ const Templates: NextPage = () => {
                 </div>
                 <div className="bg-gray-200 rounded-lg p-2 flex flex-col">
                   <label className="text-center" htmlFor="deadlift">Deadlift</label>
-                  <input className="bg-gray-200 rounded-lg p-2 w-24 text-center"
+                  <input className="bg-gray-200 rounded-lg w-20 text-center"
                     type="number"
                     id="deadlift"
                     placeholder="Deadlift"
@@ -90,7 +88,7 @@ const Templates: NextPage = () => {
                 </div>
                 <div className="bg-gray-200 rounded-lg p-2 flex flex-col">
                   <label className="text-center" htmlFor="squat">Bench</label>
-                  <input className="bg-gray-200 rounded-lg p-2 w-24 text-center"
+                  <input className="bg-gray-200 rounded-lg w-20 text-center"
                     type="number"
                     id="bench"
                     placeholder="Bench"
@@ -102,13 +100,13 @@ const Templates: NextPage = () => {
             </div>
             <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
 
-              <div className="flex gap-6 justify-center items-center">
+              <div className="flex gap-6 justify-center items-center text-sm sm:text-base">
 
                 <div>
                   <button className="bg-gray-200 rounded-lg p-2">New Template</button>
                 </div>
 
-                <div className="w-64 flex flex-col justify-center">
+                <div className="w-44  sm:w-52 flex flex-col justify-center">
                   <Listbox value={template} onChange={setTemplate}>
                     <div className="relative z-10">
                       <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300">
