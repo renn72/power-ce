@@ -61,7 +61,7 @@ const Templates: NextPage = () => {
             </div>
           </div>
         </header>
-        <main className="text-xs sm:text-base">
+        <main className="text-sm sm:text-base">
           <RPEModal />
           <RmModal  />
           <DealoadModal />

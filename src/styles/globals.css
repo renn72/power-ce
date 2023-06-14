@@ -13,3 +13,8 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+.font-xxs {
+  font-size: 0.625rem;
+  letter-spacing: -0.05em;
+}
