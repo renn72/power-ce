@@ -66,9 +66,9 @@ const Templates: NextPage = () => {
           <div className="flex flex-col">
             <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
               <div className="flex gap-2 md:gap-6 justify-center">
-                <div className="bg-gray-200 rounded-lg p-2 flex flex-col">
+                <div className="bg-white rounded-lg p-2 flex flex-col">
                   <label className="text-center" htmlFor="squat">Squat</label>
-                  <input className="bg-gray-200 rounded-lg w-20 text-center"
+                  <input className="bg-white rounded-lg w-20 text-center"
                     type="number"
                     id="squat"
                     placeholder="Squat"
@@ -76,9 +76,9 @@ const Templates: NextPage = () => {
                     onChange={(e) => setSquat(parseInt(e.target.value))}
                   />
                 </div>
-                <div className="bg-gray-200 rounded-lg p-2 flex flex-col">
+                <div className="bg-white rounded-lg p-2 flex flex-col">
                   <label className="text-center" htmlFor="deadlift">Deadlift</label>
-                  <input className="bg-gray-200 rounded-lg w-20 text-center"
+                  <input className="bg-white rounded-lg w-20 text-center"
                     type="number"
                     id="deadlift"
                     placeholder="Deadlift"
@@ -86,9 +86,9 @@ const Templates: NextPage = () => {
                     onChange={(e) => setDeadlift(parseInt(e.target.value))}
                   />
                 </div>
-                <div className="bg-gray-200 rounded-lg p-2 flex flex-col">
+                <div className="bg-white rounded-lg p-2 flex flex-col">
                   <label className="text-center" htmlFor="squat">Bench</label>
-                  <input className="bg-gray-200 rounded-lg w-20 text-center"
+                  <input className="bg-white rounded-lg w-20 text-center"
                     type="number"
                     id="bench"
                     placeholder="Bench"
@@ -103,7 +103,7 @@ const Templates: NextPage = () => {
               <div className="flex gap-6 justify-center items-center text-sm sm:text-base">
 
                 <div>
-                  <button className="bg-gray-200 rounded-lg p-2">New Template</button>
+                  <button className="bg-white rounded-lg p-2">New Template</button>
                 </div>
 
                 <div className="w-44  sm:w-52 flex flex-col justify-center">

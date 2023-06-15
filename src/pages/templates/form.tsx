@@ -4,7 +4,7 @@ import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useAtom, atom } from "jotai";
 
 import { Listbox, Transition } from '@headlessui/react'
-import { ChevronUpDownIcon, CheckIcon, PlusCircleIcon, MinusCircleIcon } from '@heroicons/react/24/outline'
+import { ChevronUpDownIcon, CheckIcon, PlusCircleIcon, MinusCircleIcon, ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
 
 import { squatAtom, deadliftAtom, benchAtom } from "~/store/store";
 
@@ -21,7 +21,7 @@ type Exercise = {
   onerm: number,
   sets: number,
   reps: number,
-  weight: number,
+  weight: number | null,
 }
 
 type Day = {
@@ -32,37 +32,26 @@ type Week = {
   name: string,
   day: Day[],
 }
+ 
+const dayText = [
+  'Day 1',
+  'Day 2',
+  'Day 3',
+  'Day 4',
+  'Day 5',
+  'Day 6',
+  'Day 7',
+]
 
 const lifts = ["unlinked", "Squat", "Deadlift", "Bench"];
 
 const Form = () => {
   const [formDay, setFormDay] = useAtom(formDayAtom)
 
-  const { register, handleSubmit, watch, reset, getValues, setValue, formState: { errors } } = useForm<Week>({
-    // defaultValues: {
-    //   name: "",
-    //   day: [
-    //     {
-    //       exercise: [
-    //         {
-    //           name: "",
-    //           onerm: '',
-    //           sets: '',
-    //           reps: 5,
-    //           weight: 152.5,
-    //         }
-    //       ],
-    //     },
-    //   ],
-    // }
-    //
-  });
-  const [exerciseID, setExerciseID] = useState<number[]>([0]);
-  console.log("exerciseID", exerciseID)
+  const { register, handleSubmit, watch, reset, getValues, setValue, formState: { errors } } = useForm<Week>({});
+  const [exerciseID, setExerciseID] = useState<number[][]>([[0],[0],[0],[0],[0],[0],[0],]);
 
   const [selectedLift, setSelectedLift] = useState(new Map([[0, "unlinked"]]));
-
-  const [isPercentageSet, setIsPercentageSet] = useState(false);
 
   const [squat, setSquat] = useAtom(squatAtom);
   const [deadlift, setDeadlift] = useAtom(deadliftAtom);
@@ -77,18 +66,29 @@ const Form = () => {
 
   const onAddExercise = () => {
     console.log("add exercise")
-    setExerciseID([...exerciseID, +exerciseID[exerciseID.length - 1] + 1])
-    setSelectedLift(new Map(selectedLift.set(exerciseID.length, '')))
+    const newExerciseID = exerciseID[formDay].concat(+exerciseID[formDay][exerciseID[formDay].length - 1] + 1)
+    console.log(newExerciseID)
+    exerciseID[formDay] = [... newExerciseID]
+    setExerciseID([...exerciseID])
+    setSelectedLift(new Map(selectedLift.set(exerciseID[formDay].length - 1, 'unlinked')))
+    console.log(selectedLift)
+    console.log(getValues())
   }
 
   const onRemoveExercise = () => {
     console.log("remove exercise")
-    if (exerciseID.length > 1) setExerciseID([...exerciseID.slice(0, -1)])
-    if (selectedLift.size > 1) setSelectedLift(new Map([...selectedLift].slice(0, -1)))
+    if (exerciseID[formDay].length <= 1) return
+    const newExerciseID = exerciseID[formDay].slice(0, -1)
+
+    console.log(newExerciseID)
+    console.log(exerciseID)
+    console.log(getValues())
+    // if (selectedLift.size > 1) setSelectedLift(new Map([...selectedLift].slice(0, -1)))
   }
 
   const onSelectLift = (key: string, idx: number) => {
     setSelectedLift(new Map(selectedLift.set(idx, key)))
+    console.log(selectedLift)
     getWeight(idx)
   }
 
@@ -101,33 +101,42 @@ const Form = () => {
 
     const weight = Math.round((rm * percent) / 2.5) * 2.5
 
-    setValue(`day.${formDay}.exercise.${idx}.weight`, weight)
-    setIsPercentageSet(true)
+    if (!!percent && rm !== 0) setValue(`day.${formDay}.exercise.${idx}.weight`, weight)
 
     return //weight.toString()
   }
 
+  const onSetFormDay = (idx: number) => {
+    const newDay = (formDay + idx)
+    if (newDay >= 0 && newDay <= 6) setFormDay(newDay)
+  }
+
   return (
-    <div className="mt-8 text-xs md:text-sm">
+    <div className="mt-8 text-xxs md:text-sm">
       <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit, onError)}>
 
+        {/* Title */}
         <div className="flex justify-center">
           <div className="relative rounded-md shadow-lg">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 pr-4 border rounded-l-md">
-              <span className="text-gray-500 text-base">
-                Title
-              </span>
-            </div>
-            <input className="block w-64 rounded-md border-0 py-1.5 pl-24 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-              defaultValue=""
+            <input className="block text-center h-full w-64 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+              placeholder="Name"
               {...register("name")}
             />
           </div>
         </div>
+
+        {/* day */}
+        <div className="flex justify-center items-center gap-4 text-lg text-gray-200 py-6">
+          <ChevronLeftIcon className="h-8 w-8 cursor-pointer" onClick={() => onSetFormDay(-1)} />
+          {dayText[formDay]}
+          <ChevronRightIcon className="h-8 w-8 cursor-pointer" onClick={() => onSetFormDay(1)} />
+        </div>
+
+        {/* form */}
         <div ref={parent} className="flex flex-col divide-y divide-dashed divide-gray-500">
-          {exerciseID.map((idx) => (
+          {exerciseID[formDay].map((idx) => (
             <div key={idx} className="grid gap-1 md:gap-2 md:grid-cols-8 grid-cols-4 py-5 justify-items-center">
-              <div className="w-36 flex flex-col justify-center col-span-2">
+              <div className="w-24 sm:w-36 flex flex-col justify-center col-span-2">
                 <Listbox value={selectedLift.get(idx)} onChange={(key) => onSelectLift(key, idx)}>
                   <div className="relative">
                     <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-1 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300">
@@ -180,7 +189,7 @@ const Form = () => {
               {/* name */}
               <div className="relative rounded-md shadow-sm col-span-2">
                 <input
-                  className="block h-full w-32 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                  className="block h-full w-24 sm:w-36 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                   placeholder="Name"
                   {...register(`day.${formDay}.exercise.${idx}.name`)}
                 />
@@ -188,9 +197,9 @@ const Form = () => {
               {/* percent of one rep max */}
               <div className="relative rounded-md shadow-sm">
                 <input
-                  className="block  h-full w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                  className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                   type="number"
-                  placeholder="1rm %"
+                  placeholder="1rm%"
                   {
                   ...register(`day.${formDay}.exercise.${idx}.onerm`,
                     {
@@ -199,16 +208,11 @@ const Form = () => {
                     })
                   }
                 />
-                <div className="pointer-events-none flex justify-center absolute inset-y-0 right-0 flex items-center pr-6">
-                  <span className="text-gray-900 ">
-                    { isPercentageSet ? '%' : ''}
-                  </span>
-                </div>
               </div>
               {/* sets */}
               <div className="relative rounded-md shadow-sm">
                 <input
-                  className="block  h-full w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                  className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                   type="number"
                   placeholder="Sets"
                   {...register(`day.${formDay}.exercise.${idx}.sets`, { valueAsNumber: true, validate: (value) => value > 0, })}
@@ -217,7 +221,7 @@ const Form = () => {
               {/* reps */}
               <div className="relative rounded-md shadow-sm">
                 <input
-                  className="block  h-full w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                  className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                   type="number"
                   placeholder="Reps"
                   {...register(`day.${formDay}.exercise.${idx}.reps`, { valueAsNumber: true, validate: (value) => value > 0, })}
@@ -226,7 +230,7 @@ const Form = () => {
               {/* weight */}
               <div className="relative rounded-md shadow-sm">
                 <input
-                  className="block  h-full w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                  className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                   placeholder="Weight"
                   {...register(`day.${formDay}.exercise.${idx}.weight`, { valueAsNumber: true, pattern: {value: /^(0|[1-9]\d*)(\.\d+)?$/ }})}
                 />
