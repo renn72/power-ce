@@ -7,6 +7,7 @@ import { Listbox, Transition, Dialog } from '@headlessui/react'
 import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 
 import Form from "./form";
+import Form2 from "./form2";
 import RPEModal from "~/components/rpeModal";
 import RmModal from "~/components/rmModal";
 
@@ -158,7 +159,7 @@ const Templates: NextPage = () => {
                 </div>
 
               </div>
-              <Form />
+              <Form2 />
 
             </div>
           </div>

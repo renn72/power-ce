@@ -17,6 +17,7 @@ type Props = {
 }
 
 type Exercise = {
+  lift: string,
   name: string,
   onerm: number,
   sets: number,
@@ -51,7 +52,7 @@ const Form = () => {
   const { register, handleSubmit, watch, reset, getValues, setValue, formState: { errors } } = useForm<Week>({});
   const [exerciseID, setExerciseID] = useState<number[][]>([[0],[0],[0],[0],[0],[0],[0],]);
 
-  const [selectedLift, setSelectedLift] = useState(new Map([[0, "unlinked"]]));
+  const [selectedLift, setSelectedLift] = useState(new Map([[0, "unlinked"]] ));
 
   const [squat, setSquat] = useAtom(squatAtom);
   const [deadlift, setDeadlift] = useAtom(deadliftAtom);
@@ -67,12 +68,12 @@ const Form = () => {
   const onAddExercise = () => {
     console.log("add exercise")
     const newExerciseID = exerciseID[formDay].concat(+exerciseID[formDay][exerciseID[formDay].length - 1] + 1)
-    console.log(newExerciseID)
+    console.log(exerciseID)
     exerciseID[formDay] = [... newExerciseID]
     setExerciseID([...exerciseID])
     setSelectedLift(new Map(selectedLift.set(exerciseID[formDay].length - 1, 'unlinked')))
     console.log(selectedLift)
-    console.log(getValues())
+    console.log('form values', getValues())
   }
 
   const onRemoveExercise = () => {
@@ -80,7 +81,6 @@ const Form = () => {
     if (exerciseID[formDay].length <= 1) return
     const newExerciseID = exerciseID[formDay].slice(0, -1)
 
-    console.log(newExerciseID)
     console.log(exerciseID)
     console.log(getValues())
     // if (selectedLift.size > 1) setSelectedLift(new Map([...selectedLift].slice(0, -1)))
@@ -89,7 +89,7 @@ const Form = () => {
   const onSelectLift = (key: string, idx: number) => {
     setSelectedLift(new Map(selectedLift.set(idx, key)))
     console.log(selectedLift)
-    getWeight(idx)
+    // getWeight(idx)
   }
 
   const getWeight = (idx: number) => {
@@ -131,6 +131,8 @@ const Form = () => {
           {dayText[formDay]}
           <ChevronRightIcon className="h-8 w-8 cursor-pointer" onClick={() => onSetFormDay(1)} />
         </div>
+
+
 
         {/* form */}
         <div ref={parent} className="flex flex-col divide-y divide-dashed divide-gray-500">
@@ -191,7 +193,7 @@ const Form = () => {
                 <input
                   className="block h-full w-24 sm:w-36 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                   placeholder="Name"
-                  {...register(`day.${formDay}.exercise.${idx}.name`)}
+                  {...register(`day.${formDay}.exercise.${idx}.name`,) }
                 />
               </div>
               {/* percent of one rep max */}
@@ -232,7 +234,7 @@ const Form = () => {
                 <input
                   className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                   placeholder="Weight"
-                  {...register(`day.${formDay}.exercise.${idx}.weight`, { valueAsNumber: true, pattern: {value: /^(0|[1-9]\d*)(\.\d+)?$/ }})}
+                  {...register(`day.${formDay}.exercise.${idx}.weight`, { valueAsNumber: true,  })} // pattern: {value: /^(0|[1-9]\d*)(\.\d+)?$/}
                 />
               </div>
             </div>
