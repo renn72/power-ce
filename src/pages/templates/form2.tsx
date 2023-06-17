@@ -25,16 +25,20 @@ type Exercise = {
   onerm: number,
   sets: number,
   reps: number,
-  weight: number | null,
 }
 
 type Day = {
+  isRest: boolean,
   exercise: Exercise[],
 };
 
 type Week = {
-  name: string,
   day: Day[],
+}
+
+type Block = {
+  name: string,
+  week: Week[],
 }
 
 const dayText = [
@@ -54,8 +58,15 @@ const Form2 = () => {
   const [formWeek, setFormWeek] = useAtom(formWeekAtom)
   const [formWeekSize, setFormWeekSize] = useAtom(formWeekSizeAtom)
 
-  const { register, handleSubmit, watch, reset, getValues, setValue, formState: { errors } } = useForm<Week[]>({});
-  const [exerciseID, setExerciseID] = useState<number[][][]>([[[0], [0], [0], [0], [0], [0], [0],]]);
+  const { register, unregister, handleSubmit, watch, reset, getValues, setValue, formState: { errors } } = useForm<Block>({});
+  const [formIndex, setFormIndex] = useState<number[][]>(
+    [
+      [1, 1, 1, 1, 1, 1, 1,],
+      [1, 1, 1, 1, 1, 1, 1,],
+      [1, 1, 1, 1, 1, 1, 1,],
+      [1, 1, 1, 1, 1, 1, 1,],
+    ],
+  );
 
   const [squat, setSquat] = useAtom(squatAtom);
   const [deadlift, setDeadlift] = useAtom(deadliftAtom);
@@ -68,10 +79,8 @@ const Form2 = () => {
 
   const onAddExercise = () => {
     console.log("add exercise")
-    const newExerciseID = exerciseID[formWeek][formDay].concat(+exerciseID[formWeek][formDay][exerciseID[formWeek][formDay].length - 1] + 1)
-    console.log(exerciseID)
-    exerciseID[formWeek][formDay] = [...newExerciseID]
-    setExerciseID([...exerciseID])
+    formIndex[formWeek][formDay] += 1
+    setFormIndex([...formIndex])
   }
 
   const onRemoveExercise = () => {
@@ -100,6 +109,16 @@ const Form2 = () => {
     }
   }
 
+  const onAddWeek = () => {
+    setFormWeekSize(formWeekSize + 1)
+    setFormIndex([...formIndex, [1, 1, 1, 1, 1, 1, 1,]])
+  }
+  const onRemoveWeek = () => {
+    setFormWeekSize(formWeekSize - 1)
+    setFormIndex(formIndex.slice(0, -1))
+    unregister(`week.${formIndex.length - 1}`)
+  }
+
   return (
     <div className="mt-8 text-xxs md:text-sm">
       <form onSubmit={handleSubmit(onSubmit, onError)}>
@@ -114,12 +133,18 @@ const Form2 = () => {
               />
             </div>
           </div>
-          
+
           {/* week */}
           <div className="flex justify-center items-center gap-4 text-lg text-gray-200 py-6">
+            <button type="button" onClick={() => onRemoveWeek()}>
+              <MinusCircleIcon className="h-12 w-12 text-gray-800" aria-hidden="true" />
+            </button>
             <ChevronLeftIcon className="h-8 w-8 cursor-pointer" onClick={() => onSetFormWeek(-1)} />
-            Week {formWeek + 1}
+            Week {formWeek + 1}/{formIndex.length}
             <ChevronRightIcon className="h-8 w-8 cursor-pointer" onClick={() => onSetFormWeek(1)} />
+            <button type="button" onClick={() => onAddWeek()}>
+              <PlusCircleIcon className="h-12 w-12 text-gray-800" aria-hidden="true" />
+            </button>
           </div>
 
           {/* day */}
@@ -133,67 +158,78 @@ const Form2 = () => {
 
           {/* form */}
           <div className="flex gap-10">
-            {Array.from({length: formWeekSize}).map((week, weekIdx) => (
-          <div key={weekIdx} className="flex gap-10">
-            {[...Array(7)].map((day, dayIdx) => (
-              <div key={dayIdx} className={`flex flex-col divide-y divide-dashed divide-gray-500 ${dayIdx == formDay ? `` : `hidden`}`}>
-                {exerciseID[weekIdx][dayIdx].map((idx) => (
-                  <div key={idx} className="grid gap-1 md:gap-2 md:grid-cols-8 grid-cols-4 py-5 justify-items-center">
-                    <div className="w-24 sm:w-36 flex flex-col justify-center col-span-2">
-                          <span>week:{weekIdx}, day{dayIdx}, exercise{idx}</span>
-                      <input
-                        className="block h-full w-24 sm:w-36 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                        placeholder="Lift"
-                        {...register(`${weekIdx}.day.${dayIdx}.exercise.${idx}.lift`,)}
-                      />
-                    </div>
-                    {/* name */}
-                    <input
-                      className="block h-full w-24 sm:w-36 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                      placeholder="Name"
-                      {...register(`${weekIdx}.day.${dayIdx}.exercise.${idx}.name`,)}
-                    />
-                    {/* percent of one rep max */}
-                    <input
-                      className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                      type="number"
-                      placeholder="1rm%"
-                      {
-                      ...register(`${weekIdx}.day.${dayIdx}.exercise.${idx}.onerm`,
+            {
+              formIndex.map((week, weekIdx) => (
+                <div key={weekIdx} className={`flex gap-10 ${weekIdx == formWeek ? `` : `hidden`}`}>
+                  {
+                    week.map((day, dayIdx) => (
+                      <div key={dayIdx} className={`flex flex-col divide-y divide-dashed divide-gray-500 ${dayIdx == formDay ? `` : `hidden`}`}>
+                        <div className="flex justify-center gap-4 mb-2">
+                          <label>Is it a rest day?</label>
+                          <input
+                            className=" rounded-md p-2 text-gray-900"
+                            type="checkbox"
+                            {...register(`week.${weekIdx}.day.${dayIdx}.isRest`)}
+                          />
+                        </div>
                         {
-                          valueAsNumber: true, validate: (value) => value > 0 && value <= 100,
-                          onChange: (e) => getWeight(idx)
-                        })
-                      }
-                    />
-                    {/* sets */}
-                    <input
-                      className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                      type="number"
-                      placeholder="Sets"
-                      {...register(`${weekIdx}.day.${dayIdx}.exercise.${idx}.sets`, { valueAsNumber: true, validate: (value) => value > 0, })}
-                    />
-                    {/* reps */}
-                    <input
-                      className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                      type="number"
-                      placeholder="Reps"
-                      {...register(`${weekIdx}.day.${dayIdx}.exercise.${idx}.reps`, { valueAsNumber: true, validate: (value) => value > 0, })}
-                    />
-                    {/* weight */}
-                    <input
-                      className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                      placeholder="Weight"
-                      type="number"
-                      {...register(`${weekIdx}.day.${dayIdx}.exercise.${idx}.weight`, { valueAsNumber: true, })} // pattern: {value: /^(0|[1-9]\d*)(\.\d+)?$/}
-                    />
-                  </div>
+                          Array.from({
+                            length: day
+                          }
+                          ).map((value, idx) => (
+                            <div key={idx} className="grid gap-1 md:gap-4 md:grid-cols-8 grid-cols-4 py-5 justify-items-center">
+                              <div className="w-24 sm:w-36 flex flex-col justify-center col-span-2">
+                                <input
+                                  className="block h-full w-24 sm:w-36 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                                  placeholder="Lift"
+                                  {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.lift`,)}
+                                />
+                              </div>
+                              {/* name */}
+                              <input
+                                className="block h-full col-span-2 w-24 sm:w-36 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                                placeholder="Name"
+                                type="text"
+                                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.name`,)}
+                              />
+                              {/* percent of one rep max */}
+                              <input
+                                className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                                type="number"
+                                placeholder="1rm%"
+                                {
+                                ...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.onerm`,
+                                  {
+                                    valueAsNumber: true,
+                                  })
+                                }
+                              />
+                              {/* sets */}
+                              <input
+                                className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                                type="number"
+                                placeholder="Sets"
+                                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.sets`, { valueAsNumber: true, })}
+                              />
+                              {/* reps */}
+                              <input
+                                className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                                type="number"
+                                placeholder="Reps"
+                                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.reps`, { valueAsNumber: true, })}
+                              />
+                              <div
+                                className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                              >
+                                Weight
+                              </div>
+                            </div>
 
-                ))}
-              </div>
-            ))}
-          </div>
-          ))}
+                          ))}
+                      </div>
+                    ))}
+                </div>
+              ))}
           </div>
 
 

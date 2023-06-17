@@ -13,15 +13,15 @@ import { toast } from "react-hot-toast";
 import { rpeModalIsOpenAtom } from "~/store/store";
 
 const rpe = [
-  [100.00, 95.50, 92.20, 89.20, 86.30, 83.70, 81.10, 78.60, 76.20, 73.90, 70.70, 68.00,],
-  [97.80, 93.90, 90.70, 87.80, 85.00, 82.40, 79.90, 77.40, 75.10, 72.30, 69.40, 66.70,],
-  [95.50, 92.20, 89.20, 86.30, 83.70, 81.10, 78.60, 76.20, 73.90, 70.70, 68.00, 65.30,],
-  [93.90, 90.70, 87.80, 85.00, 82.40, 79.90, 77.40, 75.10, 72.30, 69.40, 66.70, 64.00,],
-  [92.90, 89.20, 86.30, 83.70, 81.10, 78.60, 76.20, 73.90, 70.70, 68.00, 65.30, 62.60,],
-  [90.70, 87.80, 85.00, 82.40, 79.90, 77.40, 75.10, 72.30, 69.40, 66.70, 64.00, 61.30,],
-  [89.20, 86.30, 83.70, 81.10, 78.60, 76.20, 73.90, 70.70, 68.00, 65.30, 62.60, 59.90,],
-  [87.80, 85.00, 82.40, 79.90, 77.40, 75.10, 72.30, 69.40, 66.70, 64.00, 61.30, 58.60,],
-  [86.30, 83.70, 81.10, 78.60, 76.20, 73.90, 70.70, 68.00, 65.30, 62.60, 59.90, 57.40,],
+  [10, 100.00, 95.50, 92.20, 89.20, 86.30, 83.70, 81.10, 78.60, 76.20, 73.90, 70.70, 68.00,],
+  [9.5, 97.80, 93.90, 90.70, 87.80, 85.00, 82.40, 79.90, 77.40, 75.10, 72.30, 69.40, 66.70,],
+  [9, 95.50, 92.20, 89.20, 86.30, 83.70, 81.10, 78.60, 76.20, 73.90, 70.70, 68.00, 65.30,],
+  [8.5, 93.90, 90.70, 87.80, 85.00, 82.40, 79.90, 77.40, 75.10, 72.30, 69.40, 66.70, 64.00,],
+  [8, 92.90, 89.20, 86.30, 83.70, 81.10, 78.60, 76.20, 73.90, 70.70, 68.00, 65.30, 62.60,],
+  [7.5, 90.70, 87.80, 85.00, 82.40, 79.90, 77.40, 75.10, 72.30, 69.40, 66.70, 64.00, 61.30,],
+  [7, 89.20, 86.30, 83.70, 81.10, 78.60, 76.20, 73.90, 70.70, 68.00, 65.30, 62.60, 59.90,],
+  [6.5, 87.80, 85.00, 82.40, 79.90, 77.40, 75.10, 72.30, 69.40, 66.70, 64.00, 61.30, 58.60,],
+  [6, 86.30, 83.70, 81.10, 78.60, 76.20, 73.90, 70.70, 68.00, 65.30, 62.60, 59.90, 57.40,],
 ]
 
 const Table = () => {
@@ -41,63 +41,68 @@ const Table = () => {
   const columns = [
     {
       accessorKey: '0',
-      header: '1',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      header: '',
+      cell: info => info.getValue(),
     },
     {
       accessorKey: '1',
-      header: '2',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      header: '1',
+      cell: info => info.getValue() == 100 ? '100%' : `${info.getValue().toFixed(1)}%`,
     },
     {
       accessorKey: '2',
-      header: '3',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      header: '2',
+      cell: info => `${info.getValue().toFixed(1)}%`,
     },
     {
       accessorKey: '3',
-      header: '4',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      header: '3',
+      cell: info => `${info.getValue().toFixed(1)}%`,
     },
     {
       accessorKey: '4',
-      header: '5',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      header: '4',
+      cell: info => `${info.getValue().toFixed(1)}%`,
     },
     {
       accessorKey: '5',
-      header: '6',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      header: '5',
+      cell: info => `${info.getValue().toFixed(1)}%`,
     },
     {
       accessorKey: '6',
-      header: '7',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      header: '6',
+      cell: info => `${info.getValue().toFixed(1)}%`,
     },
     {
       accessorKey: '7',
-      header: '8',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      header: '7',
+      cell: info => `${info.getValue().toFixed(1)}%`,
     },
     {
       accessorKey: '8',
-      header: '9',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      header: '8',
+      cell: info => `${info.getValue().toFixed(1)}%`,
     },
     {
       accessorKey: '9',
-      header: '10',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      header: '9',
+      cell: info => `${info.getValue().toFixed(1)}%`,
     },
     {
       accessorKey: '10',
-      header: '11',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      header: '10',
+      cell: info => `${info.getValue().toFixed(1)}%`,
     },
     {
       accessorKey: '11',
+      header: '11',
+      cell: info => `${info.getValue().toFixed(1)}%`,
+    },
+    {
+      accessorKey: '12',
       header: '12',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      cell: info => `${info.getValue().toFixed(1)}%`,
     },
   ]
 
@@ -122,7 +127,6 @@ const Table = () => {
         <thead >
           {table.getHeaderGroups().map(headerGroup => (
             <tr 
-              className="left-16 relative"
               key={headerGroup.id}
             >
               {headerGroup.headers.map(header => (
@@ -147,19 +151,16 @@ const Table = () => {
               className="border-b border-gray-200 hover:bg-gray-100"
               key={row.id}
             >
-              <span className="px-1 py-2 text-s text-left block">
-                {10 - (+row.id * 0.5)}
-              </span>
-              {row.getVisibleCells().map(cell => (
+              {row.getVisibleCells().map((cell,idx) => (
                 <td
-                  className="px-1 py-2 text-s font-bold text-center text-gray-900 hover:bg-gray-300 cursor-pointer"
+                  className={`px-1 py-2 text-s ${idx === 0 ? `font-medium text-gray-600` : `font-bold text-gray-900 `} text-center hover:bg-gray-300 cursor-pointer`}
                   key={cell.id}
                   onClick={() => copyText(cell.getValue())}
                 >
                   <span
                     className=""
                   >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}%
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </span>
                 </td>
               ))}
@@ -211,9 +212,10 @@ const RPEModal = () => {
               <Dialog.Panel className="w-full max-w-6xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                 <Dialog.Title
                   as="h3"
-                  className="text-lg font-medium leading-6 text-gray-900"
+                  className="text-lg font-medium leading-6 text-gray-900 flex justify-between"
                 >
                   RPE Chart
+                  <button onClick={() => closeModal()}>X</button>
                 </Dialog.Title>
                 <div className="mt-2 flex justify-center">
                   <Table />
