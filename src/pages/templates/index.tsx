@@ -104,7 +104,7 @@ const Templates: NextPage = () => {
               <div className="flex gap-6 justify-center items-center text-sm sm:text-base">
 
                 <div>
-                  <button className="bg-white rounded-lg p-2">New Template</button>
+                  <button className="bg-white rounded-lg p-2 bg-gray-400 text-gray-600" disabled>New Template</button>
                 </div>
 
                 <div className="w-44  sm:w-52 flex flex-col justify-center">

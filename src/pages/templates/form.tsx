@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment } from "react"
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useAtom, atom } from "jotai";

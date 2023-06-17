@@ -10,6 +10,8 @@ import { ChevronUpDownIcon, CheckIcon, PlusCircleIcon, MinusCircleIcon, ChevronR
 import { squatAtom, deadliftAtom, benchAtom } from "~/store/store";
 
 const formDayAtom = atom(0)
+const formWeekAtom = atom(0)
+const formWeekSizeAtom = atom<number>(4)
 
 type Props = {
   squat: number,
@@ -49,9 +51,11 @@ const lifts = ["unlinked", "Squat", "Deadlift", "Bench"];
 
 const Form2 = () => {
   const [formDay, setFormDay] = useAtom(formDayAtom)
+  const [formWeek, setFormWeek] = useAtom(formWeekAtom)
+  const [formWeekSize, setFormWeekSize] = useAtom(formWeekSizeAtom)
 
-  const { register, handleSubmit, watch, reset, getValues, setValue, formState: { errors } } = useForm<Week>({});
-  const [exerciseID, setExerciseID] = useState<number[][]>([[0], [0], [0], [0], [0], [0], [0],]);
+  const { register, handleSubmit, watch, reset, getValues, setValue, formState: { errors } } = useForm<Week[]>({});
+  const [exerciseID, setExerciseID] = useState<number[][][]>([[[0], [0], [0], [0], [0], [0], [0],]]);
 
   const [squat, setSquat] = useAtom(squatAtom);
   const [deadlift, setDeadlift] = useAtom(deadliftAtom);
@@ -64,9 +68,9 @@ const Form2 = () => {
 
   const onAddExercise = () => {
     console.log("add exercise")
-    const newExerciseID = exerciseID[formDay].concat(+exerciseID[formDay][exerciseID[formDay].length - 1] + 1)
+    const newExerciseID = exerciseID[formWeek][formDay].concat(+exerciseID[formWeek][formDay][exerciseID[formWeek][formDay].length - 1] + 1)
     console.log(exerciseID)
-    exerciseID[formDay] = [...newExerciseID]
+    exerciseID[formWeek][formDay] = [...newExerciseID]
     setExerciseID([...exerciseID])
   }
 
@@ -89,6 +93,13 @@ const Form2 = () => {
     }
   }
 
+  const onSetFormWeek = (idx: number) => {
+    const newWeek = (formWeek + idx)
+    if (newWeek >= 0 && newWeek < formWeekSize) {
+      setFormWeek(newWeek)
+    }
+  }
+
   return (
     <div className="mt-8 text-xxs md:text-sm">
       <form onSubmit={handleSubmit(onSubmit, onError)}>
@@ -103,6 +114,13 @@ const Form2 = () => {
               />
             </div>
           </div>
+          
+          {/* week */}
+          <div className="flex justify-center items-center gap-4 text-lg text-gray-200 py-6">
+            <ChevronLeftIcon className="h-8 w-8 cursor-pointer" onClick={() => onSetFormWeek(-1)} />
+            Week {formWeek + 1}
+            <ChevronRightIcon className="h-8 w-8 cursor-pointer" onClick={() => onSetFormWeek(1)} />
+          </div>
 
           {/* day */}
           <div className="flex justify-center items-center gap-4 text-lg text-gray-200 py-6">
@@ -115,22 +133,25 @@ const Form2 = () => {
 
           {/* form */}
           <div className="flex gap-10">
-            {exerciseID.map((day, dayIdx) => (
+            {Array.from({length: formWeekSize}).map((week, weekIdx) => (
+          <div key={weekIdx} className="flex gap-10">
+            {[...Array(7)].map((day, dayIdx) => (
               <div key={dayIdx} className={`flex flex-col divide-y divide-dashed divide-gray-500 ${dayIdx == formDay ? `` : `hidden`}`}>
-                {exerciseID[formDay].map((idx) => (
+                {exerciseID[weekIdx][dayIdx].map((idx) => (
                   <div key={idx} className="grid gap-1 md:gap-2 md:grid-cols-8 grid-cols-4 py-5 justify-items-center">
                     <div className="w-24 sm:w-36 flex flex-col justify-center col-span-2">
+                          <span>week:{weekIdx}, day{dayIdx}, exercise{idx}</span>
                       <input
                         className="block h-full w-24 sm:w-36 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                         placeholder="Lift"
-                        {...register(`day.${dayIdx}.exercise.${idx}.lift`,)}
+                        {...register(`${weekIdx}.day.${dayIdx}.exercise.${idx}.lift`,)}
                       />
                     </div>
                     {/* name */}
                     <input
                       className="block h-full w-24 sm:w-36 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                       placeholder="Name"
-                      {...register(`day.${dayIdx}.exercise.${idx}.name`,)}
+                      {...register(`${weekIdx}.day.${dayIdx}.exercise.${idx}.name`,)}
                     />
                     {/* percent of one rep max */}
                     <input
@@ -138,7 +159,7 @@ const Form2 = () => {
                       type="number"
                       placeholder="1rm%"
                       {
-                      ...register(`day.${dayIdx}.exercise.${idx}.onerm`,
+                      ...register(`${weekIdx}.day.${dayIdx}.exercise.${idx}.onerm`,
                         {
                           valueAsNumber: true, validate: (value) => value > 0 && value <= 100,
                           onChange: (e) => getWeight(idx)
@@ -150,27 +171,29 @@ const Form2 = () => {
                       className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                       type="number"
                       placeholder="Sets"
-                      {...register(`day.${dayIdx}.exercise.${idx}.sets`, { valueAsNumber: true, validate: (value) => value > 0, })}
+                      {...register(`${weekIdx}.day.${dayIdx}.exercise.${idx}.sets`, { valueAsNumber: true, validate: (value) => value > 0, })}
                     />
                     {/* reps */}
                     <input
                       className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                       type="number"
                       placeholder="Reps"
-                      {...register(`day.${dayIdx}.exercise.${idx}.reps`, { valueAsNumber: true, validate: (value) => value > 0, })}
+                      {...register(`${weekIdx}.day.${dayIdx}.exercise.${idx}.reps`, { valueAsNumber: true, validate: (value) => value > 0, })}
                     />
                     {/* weight */}
                     <input
                       className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                       placeholder="Weight"
                       type="number"
-                      {...register(`day.${dayIdx}.exercise.${idx}.weight`, { valueAsNumber: true, })} // pattern: {value: /^(0|[1-9]\d*)(\.\d+)?$/}
+                      {...register(`${weekIdx}.day.${dayIdx}.exercise.${idx}.weight`, { valueAsNumber: true, })} // pattern: {value: /^(0|[1-9]\d*)(\.\d+)?$/}
                     />
                   </div>
 
                 ))}
               </div>
             ))}
+          </div>
+          ))}
           </div>
 
 
