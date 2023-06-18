@@ -120,15 +120,6 @@ const Form2 = () => {
     unregister(`week.${formIndex.length - 1}`)
   }
 
-  // useEffect(() => {
-  //   setError("name", {
-  //     types: {
-  //       required: "This is required",
-  //       minLength: "This is minLength"
-  //     }
-  //   });
-  // }, [setError])
-
 
   return (
     <div className="mt-8 text-xxs md:text-sm">
@@ -205,6 +196,7 @@ const Form2 = () => {
                               <input
                                 className="block h-full col-span-2 w-24 sm:w-36 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                                 placeholder="Name"
+                                defaultValue={`w${weekIdx + 1}.d${dayIdx + 1}.e${idx + 1}.name`}
                                 type="text"
                                 {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.name`,)}
                               />

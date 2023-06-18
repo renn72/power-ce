@@ -12,13 +12,65 @@ datasource db {
   relationMode = "prisma"
 }
 
-model Post {
+model Exercise {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
   content   String @db.VarChar(255)
   
-  authorId  String
+  dayId     String
 
-  @@index([authorId])
+  day      Day    @relation(fields: [dayId], references: [id])
+
+  @@index([dayId])
+}
+
+model Day {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  content   Exercise[]  
+  
+  weekId    String
+
+  week      Week    @relation(fields: [weekId], references: [id])
+
+  @@index([weekId])
+}
+
+model Week {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  content   Day[]
+  
+  blockId   String
+
+  block     Block   @relation(fields: [blockId], references: [id])
+
+  @@index([blockId])
+}
+
+model Block {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  content   Week[]
+
+  userProgramId String
+
+  userProgram   UserProgram @relation(fields: [userProgramId], references: [id])
+
+  @@index([userProgramId])
+}
+
+model UserProgram {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  content   Block[]
+
+  userId    String
+
+  @@index([userId])
 }
