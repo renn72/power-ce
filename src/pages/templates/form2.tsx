@@ -10,6 +10,8 @@ import { ChevronUpDownIcon, CheckIcon, PlusCircleIcon, MinusCircleIcon, ChevronR
 
 import { squatAtom, deadliftAtom, benchAtom } from "~/store/store";
 
+import { api } from '~/utils/api'
+
 const formDayAtom = atom(0)
 const formWeekAtom = atom(0)
 const formWeekSizeAtom = atom<number>(4)
@@ -75,11 +77,33 @@ const Form2 = () => {
 
   const [parent, enableAnimations] = useAutoAnimate(/* optional config */)
 
-  const onSubmit = (data, e) => console.log(data, e);
+  const { mutate, isLoading: isPosting } = api.blocks.create.useMutation({
+    onSuccess: () => {
+      console.log('success')
+    },
+    onError: (e) => {
+      console.log('error')
+    },
+  });
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const onSubmit = (data, e) => {
+    console.log(data)
+
+    mutate(data)
+
+
+  };
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   const onError = (errors, e) => console.log(errors, e);
 
   const onAddExercise = () => {
     console.log("add exercise")
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     formIndex[formWeek][formDay] += 1
     setFormIndex([...formIndex])
   }
@@ -131,6 +155,7 @@ const Form2 = () => {
             <div className="relative rounded-md shadow-lg">
               <input className="block text-center h-full w-64 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                 placeholder="Name"
+                defaultValue="name"
                 {...register("name", { required: 'This is required.' })}
               />
             </div>

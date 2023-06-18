@@ -2,25 +2,34 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
-    // previewFeatures = ["jsonProtocol"]
+  provider = "prisma-client-js"
+  // previewFeatures = ["jsonProtocol"]
 }
 
 datasource db {
-  provider = "mysql"
-  url = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  title     String
+  content   String
+  published Boolean @default(false)
 }
 
 model Exercise {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  content   String @db.VarChar(255)
-  
-  dayId     String
+  name String @db.VarChar(255)
 
-  day      Day    @relation(fields: [dayId], references: [id])
+  dayId String
+
+  day Day @relation(fields: [dayId], references: [id])
 
   @@index([dayId])
 }
@@ -29,11 +38,11 @@ model Day {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  content   Exercise[]  
-  
-  weekId    String
+  exercise Exercise[]
 
-  week      Week    @relation(fields: [weekId], references: [id])
+  weekId String
+
+  week Week @relation(fields: [weekId], references: [id])
 
   @@index([weekId])
 }
@@ -42,11 +51,11 @@ model Week {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  content   Day[]
-  
-  blockId   String
+  day Day[]
 
-  block     Block   @relation(fields: [blockId], references: [id])
+  blockId String
+
+  block Block @relation(fields: [blockId], references: [id])
 
   @@index([blockId])
 }
@@ -55,22 +64,12 @@ model Block {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  content   Week[]
+  name String @db.VarChar(255)
 
-  userProgramId String
-
-  userProgram   UserProgram @relation(fields: [userProgramId], references: [id])
-
-  @@index([userProgramId])
+  week Week[]
 }
 
 model UserProgram {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
-
-  content   Block[]
-
-  userId    String
-
-  @@index([userId])
 }
