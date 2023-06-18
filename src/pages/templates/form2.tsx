@@ -1,6 +1,7 @@
 
-import React, { useState, Fragment } from "react"
+import React, { useState, useEffect, Fragment } from "react"
 import { useForm, type SubmitHandler } from "react-hook-form";
+import { ErrorMessage } from '@hookform/error-message'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useAtom, atom } from "jotai";
 
@@ -58,7 +59,7 @@ const Form2 = () => {
   const [formWeek, setFormWeek] = useAtom(formWeekAtom)
   const [formWeekSize, setFormWeekSize] = useAtom(formWeekSizeAtom)
 
-  const { register, unregister, handleSubmit, watch, reset, getValues, setValue, formState: { errors } } = useForm<Block>({});
+  const { register, unregister, handleSubmit, getValues, setError, formState: { errors } } = useForm<Block>();
   const [formIndex, setFormIndex] = useState<number[][]>(
     [
       [1, 1, 1, 1, 1, 1, 1,],
@@ -119,19 +120,34 @@ const Form2 = () => {
     unregister(`week.${formIndex.length - 1}`)
   }
 
+  // useEffect(() => {
+  //   setError("name", {
+  //     types: {
+  //       required: "This is required",
+  //       minLength: "This is minLength"
+  //     }
+  //   });
+  // }, [setError])
+
+
   return (
     <div className="mt-8 text-xxs md:text-sm">
       <form onSubmit={handleSubmit(onSubmit, onError)}>
         <div className="flex flex-col gap-6">
 
           {/* Title */}
-          <div className="flex justify-center">
+          <div className="flex flex-col gap-2 items-center justify-center">
             <div className="relative rounded-md shadow-lg">
               <input className="block text-center h-full w-64 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                 placeholder="Name"
-                {...register("name")}
+                {...register("name", { required: 'This is required.' })}
               />
             </div>
+            <ErrorMessage
+              errors={errors}
+              name="name"
+              render={({ message }) => <p className="text-red-400">{message}</p>}
+            />
           </div>
 
           {/* week */}
@@ -243,7 +259,20 @@ const Form2 = () => {
           </div>
 
 
-          <button type="submit" > save </button>
+          <div className="flex gap-4 justify-center">
+            <button
+              type="submit"
+              className="rounded-lg py-2 px-4 bg-white text-gray-600"
+            >
+              save new
+            </button>
+            <button
+              type="submit"
+              className="rounded-lg py-2 px-4 bg-white text-gray-600"
+            >
+              update
+            </button>
+          </div>
         </div>
 
       </form>
