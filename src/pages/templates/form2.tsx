@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react"
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, useFormContext } from "react-hook-form";
 import { ErrorMessage } from '@hookform/error-message'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useAtom, atom } from "jotai";
@@ -15,12 +15,6 @@ import BlockTable, { type BlockTableRefType } from "~/components/blockTable";
 const formDayAtom = atom(0)
 const formWeekAtom = atom(0)
 const formWeekSizeAtom = atom<number>(4)
-
-type Props = {
-  squat: number,
-  deadlift: number,
-  bench: number,
-}
 
 type Exercise = {
   lift: string,
@@ -58,16 +52,20 @@ function getRandomInt(max: number) {
   return Math.ceil(Math.random() * max);
 }
 
-const GetWeight = ({ lift, rm }: { lift: string, rm: number }) => {
+const GetWeight = ({ week, day, exercise }: { week: number, day: number, exercise: number }) => {
+  const formMethods = useFormContext<Block>();
 
-  const getWeight = (lift: string, rm: number) => {
-    console.log(lift, rm)
-    if (rm === 0 || lift === "unlinked" || !rm) return ''
-    return 1
+  const watch = formMethods.watch([`week.${week}.day.${day}.exercise.${exercise}.onerm`, `week.${week}.day.${day}.exercise.${exercise}.lift`])
+
+  const getWeight = (week: number, day: number, exercise: number) => {
+    const onerm = watch[0] //formMethods.getValues(`week.${week}.day.${day}.exercise.${exercise}.onerm`)
+    const lift = watch[1] //formMethods.getValues(`week.${week}.day.${day}.exercise.${exercise}.lift`)
+    if (!onerm || onerm === 0 || lift === "unlinked") return 'nil'
+    return '1'
   }
   return (
     <div>
-      {getWeight(lift, rm)}
+      {getWeight(week, day, exercise)}
     </div>
   )
 }
@@ -121,7 +119,7 @@ const Form2 = () => {
       console.log('clash')
       return
     }
-    blockMutate(data)
+    // blockMutate(data)
   };
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -174,7 +172,6 @@ const Form2 = () => {
   return (
     <div className="mt-8 text-xxs md:text-sm flex flex-col items-center">
       <FormProvider {...formMethods}>
-
         <form onSubmit={handleSubmit(onSubmit, onError)}>
           <div className="flex flex-col gap-6">
 
@@ -310,8 +307,9 @@ const Form2 = () => {
                                   className="block bg-white font-semibold h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-400"
                                 >
                                   <GetWeight
-                                    lift={getValues(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.lift`)}
-                                    rm={getValues(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.onerm`)}
+                                    week={weekIdx}
+                                    day={dayIdx}
+                                    exercise={idx}
                                   />
                                 </div>
                               </div>
@@ -349,7 +347,6 @@ const Form2 = () => {
               </button>
             </div>
           </div>
-
         </form>
       </FormProvider>
 
