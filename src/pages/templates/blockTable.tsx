@@ -1,43 +1,17 @@
+
 /* eslint-disable react/display-name */
 import React, { useState, useImperativeHandle, forwardRef } from 'react'
 import { useFormContext } from "react-hook-form";
 
 import type { Block } from '~/pages/templates/form2'
 
-const useForceRerender = () => {
-  const [, setState] = useState({ value: 10 });
-
-  function rerenderForcefully() {
-    setState((prev) => {
-      return { ...prev };
-    });
-  }
-
-  return rerenderForcefully;
-}
-
-type BlockTableProps = {
-  block : Block
-}
-
-export type BlockTableRefType = {
-  update: () => void
-}
-
-const BlockTable  = forwardRef<BlockTableRefType, BlockTableProps>((props , ref ) => {
-  const { block } = props
+const BlockTable  = () => {
 
   const formMethods = useFormContext();
 
-  const values = formMethods.watch()
+  const block : Block = formMethods.watch()
+  console.log(block)
 
-  const forceTableUpdate = useForceRerender()
-
-  useImperativeHandle(ref, () => ({
-    update() {
-      forceTableUpdate()
-    }
-  }));
 
   if (!block.week) return null
 
@@ -85,6 +59,6 @@ const BlockTable  = forwardRef<BlockTableRefType, BlockTableProps>((props , ref 
       </div>
     </div>
   )
-})
+}
 
 export default BlockTable

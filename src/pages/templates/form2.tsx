@@ -10,7 +10,7 @@ import { ChevronUpDownIcon, CheckIcon, PlusCircleIcon, MinusCircleIcon, ChevronR
 import { squatAtom, deadliftAtom, benchAtom } from "~/store/store";
 
 import { api } from '~/utils/api'
-import BlockTable, { type BlockTableRefType } from "~/components/blockTable";
+import BlockTable from "./blockTable";
 
 const formDayAtom = atom(0)
 const formWeekAtom = atom(0)
@@ -58,7 +58,7 @@ const GetWeight = ({ week, day, exercise }: { week: number, day: number, exercis
 
   const watch = formMethods.watch([`week.${week}.day.${day}.exercise.${exercise}.onerm`, `week.${week}.day.${day}.exercise.${exercise}.lift`])
 
-  const getWeight = (week: number, day: number, exercise: number) => {
+  const getWeight = () => {
     const onerm = watch[0] //formMethods.getValues(`week.${week}.day.${day}.exercise.${exercise}.onerm`)
     const lift = watch[1] //formMethods.getValues(`week.${week}.day.${day}.exercise.${exercise}.lift`)
     if (!onerm || onerm === 0 || lift === "unlinked") return 'nil'
@@ -66,7 +66,7 @@ const GetWeight = ({ week, day, exercise }: { week: number, day: number, exercis
   }
   return (
     <div>
-      {getWeight(week, day, exercise)}
+      {getWeight()}
     </div>
   )
 }
@@ -79,8 +79,6 @@ const Form2 = () => {
   const [formWeek, setFormWeek] = useAtom(formWeekAtom)
   const [formWeekSize, setFormWeekSize] = useAtom(formWeekSizeAtom)
   const [blockIndex, setBlockIndex] = useAtom(blockIndexAtom)
-
-  const tableUpdateRef = useRef<BlockTableRefType>(null)
 
   const formMethods = useForm<Block>();
   const { register, unregister, reset, handleSubmit, getValues, setError, formState: { errors } } = formMethods
@@ -166,6 +164,7 @@ const Form2 = () => {
     unregister(`week.${formIndex.length - 1}`)
   }
   const onNewTemplate = () => {
+    console.log('new')
     setFormWeekSize(2)
     setFormIndex([
       [2, 2, 2, 2, 2, 2, 2,],
@@ -190,7 +189,12 @@ const Form2 = () => {
       <div className="flex gap-6 justify-center items-center text-sm sm:text-base">
 
         <div>
-          <button className="rounded-lg p-2 bg-gray-400 text-gray-600" disabled>New Template</button>
+          <button
+            className="rounded-lg p-2 bg-white text-gray-900"
+            onClick={() => onNewTemplate()}
+          >
+            New Template
+          </button>
         </div>
 
         <div className="w-44  sm:w-52 flex flex-col justify-center">
@@ -304,10 +308,7 @@ const Form2 = () => {
                                 className=" rounded-md p-2 text-gray-900"
                                 type="checkbox"
                                 defaultChecked={false}
-                                {...register(`week.${weekIdx}.day.${dayIdx}.isRest`, {
-                                  onBlur: () => tableUpdateRef?.current?.update(),
-                                  onChange: () => tableUpdateRef?.current?.update()
-                                })}
+                                {...register(`week.${weekIdx}.day.${dayIdx}.isRest`,)}
                               />
                             </div>
                             {
@@ -320,10 +321,7 @@ const Form2 = () => {
                                     <input
                                       className="block h-full w-24 sm:w-36 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                                       placeholder="Lift"
-                                      {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.lift`, {
-                                        onBlur: () => tableUpdateRef?.current?.update(),
-                                        onChange: () => tableUpdateRef?.current?.update()
-                                      })}
+                                      {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.lift`,)}
                                     />
                                   </div>
                                   {/* name */}
@@ -332,10 +330,7 @@ const Form2 = () => {
                                     placeholder="Name"
                                     defaultValue={`w${weekIdx + 1}.d${dayIdx + 1}.e${idx + 1}.name`}
                                     type="text"
-                                    {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.name`, {
-                                      onBlur: () => tableUpdateRef?.current?.update(),
-                                      onChange: () => tableUpdateRef?.current?.update()
-                                    })}
+                                    {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.name`,)}
                                   />
                                   {/* percent of one rep max */}
                                   <input
@@ -343,13 +338,8 @@ const Form2 = () => {
                                     type="number"
                                     // defaultValue={getRandomInt(90)}
                                     placeholder="1rm%"
-                                    {
-                                    ...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.onerm`,
+                                    {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.onerm`,
                                       {
-                                        onBlur: () => tableUpdateRef?.current?.update(),
-                                        onChange: () => {
-                                          tableUpdateRef?.current?.update()
-                                        },
                                         valueAsNumber: true,
                                       })
                                     }
@@ -361,9 +351,8 @@ const Form2 = () => {
                                     placeholder="Sets"
                                     defaultValue={getRandomInt(10)}
                                     {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.sets`, {
-                                      onBlur: () => tableUpdateRef?.current?.update(),
-                                      onChange: () => tableUpdateRef?.current?.update(),
                                       valueAsNumber: true,
+
                                     })}
                                   />
                                   {/* reps */}
@@ -373,8 +362,6 @@ const Form2 = () => {
                                     placeholder="Reps"
                                     defaultValue={getRandomInt(10)}
                                     {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.reps`, {
-                                      onBlur: () => tableUpdateRef?.current?.update(),
-                                      onChange: () => tableUpdateRef?.current?.update(),
                                       valueAsNumber: true,
                                     })}
                                   />
@@ -423,10 +410,10 @@ const Form2 = () => {
               </div>
             </div>
           </form>
+
+          <BlockTable />
+
         </FormProvider>
-
-        <BlockTable block={getValues()} ref={tableUpdateRef} />
-
       </div>
     </>
   );
