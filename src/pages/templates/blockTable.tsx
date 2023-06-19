@@ -26,11 +26,12 @@ const BlockTable  = () => {
 
     if (!lift) return null
     if (!onerm) return null
+    if (lift === "unlinked") return null
      
     let weight = 0
-    if (lift === 'squat') weight = getWeight(squat, onerm)
-    if (lift === 'deadlift') weight = getWeight(deadlift, onerm)
-    if (lift === 'bench') weight = getWeight(bench, onerm)
+    if (lift === 'Squat') weight = getWeight(squat, onerm)
+    if (lift === 'Deadlift') weight = getWeight(deadlift, onerm)
+    if (lift === 'Bench') weight = getWeight(bench, onerm)
 
     return `@ ${weight}kg`
   }
@@ -58,9 +59,10 @@ const BlockTable  = () => {
             {block.week.map((week, weekIdx) => (
               <tr key={weekIdx} className="m-2">
                 {week.day.map((day, dayIdx) => (
-                  <td key={dayIdx} className="border-slate-400 border-2 p-2 divide-y-2">
+                  <td key={dayIdx} className="border-slate-400 border-2 p-2 divide-y-2  text-center">
                     {day.isRest ? 'Rest' : day.exercise.map((exercise, exerciseIdx) => (
                       <div key={exerciseIdx} className="p-2 flex flex-col justify-center items-center ">
+                        <div className='text-xxs text-gray-400'>{exercise.lift}</div>
                         <div className='h-6'>{exercise.name}</div>
                         <div className='h-6'>{exercise.onerm ? exercise.onerm : ''}%</div>
                         <div className="flex gap-1 h-6">
