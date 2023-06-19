@@ -12,6 +12,8 @@ import { squatAtom, deadliftAtom, benchAtom } from "~/store/store";
 import { api } from '~/utils/api'
 import BlockTable from "./blockTable";
 
+import getWeight from '~/utils/getWeight'
+
 const formDayAtom = atom(0)
 const formWeekAtom = atom(0)
 const formWeekSizeAtom = atom<number>(2)
@@ -54,19 +56,42 @@ function getRandomInt(max: number) {
 }
 
 const GetWeight = ({ week, day, exercise }: { week: number, day: number, exercise: number }) => {
+  const [squat,] = useAtom(squatAtom);
+  const [deadlift,] = useAtom(deadliftAtom);
+  const [bench,] = useAtom(benchAtom);
   const formMethods = useFormContext<Block>();
 
   const watch = formMethods.watch([`week.${week}.day.${day}.exercise.${exercise}.onerm`, `week.${week}.day.${day}.exercise.${exercise}.lift`])
 
-  const getWeight = () => {
-    const onerm = watch[0] //formMethods.getValues(`week.${week}.day.${day}.exercise.${exercise}.onerm`)
-    const lift = watch[1] //formMethods.getValues(`week.${week}.day.${day}.exercise.${exercise}.lift`)
-    if (!onerm || onerm === 0 || lift === "unlinked") return 'nil'
-    return '1'
+  const checkWeight = (weekIdx : number, dayIdx : number, exerciseIdx : number) => {
+    const lift = watch[1] //block?.week[weekIdx]?.day[dayIdx]?.exercise[exerciseIdx]?.lift
+    const onerm = watch[0] //block?.week[weekIdx]?.day[dayIdx]?.exercise[exerciseIdx]?.onerm
+
+    if (!lift) return null
+    if (!onerm) return null
+     
+    let weight = 0
+    if (lift === 'squat') weight = getWeight(squat, onerm)
+    if (lift === 'deadlift') weight = getWeight(deadlift, onerm)
+    if (lift === 'bench') weight = getWeight(bench, onerm)
+
+    return `${weight}kg`
   }
+  // const checkWeight = () => {
+  //   const onerm = watch[0] //formMethods.getValues(`week.${week}.day.${day}.exercise.${exercise}.onerm`)
+  //   const lift = watch[1] //formMethods.getValues(`week.${week}.day.${day}.exercise.${exercise}.lift`)
+  //   if (!onerm || onerm === 0 || lift === "unlinked") return 'nil'
+  //
+  //   let weight = 0
+  //   if (lift === 'squat') weight = getWeight(squat, onerm)
+  //   if (lift === 'deadlift') weight = getWeight(deadlift, onerm)
+  //   if (lift === 'bench') weight = getWeight(bench, onerm)
+  //   console.log(weight)
+  //   return weight + 'kg'
+  // }
   return (
     <div>
-      {getWeight()}
+      {checkWeight()}
     </div>
   )
 }
