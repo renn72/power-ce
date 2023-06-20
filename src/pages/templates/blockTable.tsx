@@ -42,8 +42,8 @@ const BlockTable  = () => {
 
 
   return (
-    <div className="my-16 text-xxs md:text-sm">
-      <div className="rounded-lg bg-white p-1 md:p-8">
+    <div className="my-16 text-xxs md:text-sm ">
+      <div className="rounded-lg bg-white p-1 md:p-8 ">
         <table className="">
           <thead>
             <tr>

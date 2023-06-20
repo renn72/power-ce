@@ -6,7 +6,7 @@ import Footer from './footer'
 const Layout = ({ children }) => {
   return (
     <>
-      <div className="h-screen flex flex-col bg-gray-600 font-sans">
+      <div className="h-screen flex flex-col bg-gray-600 font-sans min-w-fit">
 
         <Navbar />
         <div className="grow">{children}</div>
