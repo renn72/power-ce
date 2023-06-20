@@ -17,6 +17,8 @@ const BlockTable  = () => {
 
   const formMethods = useFormContext();
 
+  if (!formMethods) return null
+
   const block : Block = formMethods.watch()
   console.log(block)
 
