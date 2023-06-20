@@ -3,7 +3,7 @@ import React from "react";
 
 import { useAtom } from "jotai";
 
-import Form2 from "./form2";
+import Form from "./form";
 import RPEModal from "~/components/rpeModal";
 import RmModal from "~/components/rmModal";
 
@@ -103,7 +103,7 @@ const Templates: NextPage = () => {
             </div>
             <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
 
-              <Form2 />
+              <Form />
 
             </div>
           </div>
