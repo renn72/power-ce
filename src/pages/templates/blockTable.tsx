@@ -1,12 +1,12 @@
 
 /* eslint-disable react/display-name */
-import React, { useState, useImperativeHandle, forwardRef } from 'react'
+import React  from 'react'
 import { useFormContext } from "react-hook-form";
 import { useAtom } from "jotai";
 
 import getWeight from '~/utils/getWeight'
 
-import type { Block } from '~/pages/templates/form2'
+import type { Block } from '~/pages/templates/form'
 
 import { squatAtom, deadliftAtom, benchAtom } from "~/store/store";
 
@@ -20,7 +20,6 @@ const BlockTable  = () => {
   if (!formMethods) return null
 
   const block : Block = formMethods.watch()
-  console.log(block)
 
   const checkWeight = (weekIdx : number, dayIdx : number, exerciseIdx : number) => {
     const lift = block?.week[weekIdx]?.day[dayIdx]?.exercise[exerciseIdx]?.lift

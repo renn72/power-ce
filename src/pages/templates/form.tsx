@@ -10,7 +10,9 @@ import { ChevronUpDownIcon, CheckIcon, PlusCircleIcon, MinusCircleIcon, ChevronR
 import { squatAtom, deadliftAtom, benchAtom } from "~/store/store";
 
 import { api } from '~/utils/api'
+
 import BlockTable from "./blockTable";
+import LiftPicker from "./liftPicker";
 
 import getWeight from '~/utils/getWeight'
 
@@ -78,18 +80,6 @@ const GetWeight = ({ week, day, exercise }: { week: number, day: number, exercis
 
     return `${weight}kg`
   }
-  // const checkWeight = () => {
-  //   const onerm = watch[0] //formMethods.getValues(`week.${week}.day.${day}.exercise.${exercise}.onerm`)
-  //   const lift = watch[1] //formMethods.getValues(`week.${week}.day.${day}.exercise.${exercise}.lift`)
-  //   if (!onerm || onerm === 0 || lift === "unlinked") return 'nil'
-  //
-  //   let weight = 0
-  //   if (lift === 'squat') weight = getWeight(squat, onerm)
-  //   if (lift === 'deadlift') weight = getWeight(deadlift, onerm)
-  //   if (lift === 'bench') weight = getWeight(bench, onerm)
-  //   console.log(weight)
-  //   return weight + 'kg'
-  // }
   return (
     <div>
       {checkWeight()}
@@ -97,68 +87,6 @@ const GetWeight = ({ week, day, exercise }: { week: number, day: number, exercis
   )
 }
 
-const lifts = ["unlinked", "Squat", "Deadlift", "Bench"];
-
-const LiftPicker = ({ onChange, value }) => {
-  const [selectedLift, setSelectedLift] = useState(lifts[0])
-
-  return (
-    <Listbox
-      value={selectedLift}
-      onChange={(e) => {
-        onChange(e)
-        setSelectedLift(e)
-      }}
-    >
-      <div className="relative">
-        <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-1 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300">
-          <span className="flex items-center h-6">{selectedLift}</span>
-          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-            <ChevronUpDownIcon
-              className="h-5 w-5 text-gray-400"
-              aria-hidden="true"
-            />
-          </span>
-        </Listbox.Button>
-        <Transition
-          as={Fragment}
-          leave="transition ease-in duration-100"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <Listbox.Options className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-            {lifts.map((lift, Idx) => (
-              <Listbox.Option
-                key={Idx}
-                className={({ active }) =>
-                  `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'
-                  }`
-                }
-                value={lift}
-              >
-                {({ selected }) => (
-                  <>
-                    <span
-                      className={`block truncate ${selected ? 'font-medium' : 'font-normal'
-                        }`}
-                    >
-                      {lift}
-                    </span>
-                    {selected ? (
-                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
-                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                      </span>
-                    ) : null}
-                  </>
-                )}
-              </Listbox.Option>
-            ))}
-          </Listbox.Options>
-        </Transition>
-      </div>
-    </Listbox>
-  )
-}
 
 const Form = () => {
   const [formDay, setFormDay] = useAtom(formDayAtom)
@@ -408,7 +336,7 @@ const Form = () => {
                                       control={control}
                                       name={`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.lift`}
                                       defaultValue="unlinked"
-                                      render={({ field: { onChange, value } }) => (<LiftPicker onChange={onChange} value={value} />)}
+                                      render={({ field: { onChange  } }) => (<LiftPicker onChange={onChange}  />)}
                                     />
 
                                     {/*   className="block h-full w-24 sm:w-36 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600" */}
@@ -503,7 +431,6 @@ const Form = () => {
               </div>
             </div>
           </form>
-
           <BlockTable />
 
         </FormProvider>
