@@ -29,7 +29,20 @@ const blockSchema = z.object({
 export const blocksRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
     const blocks = await ctx.prisma.block.findMany({
-      orderBy: [{ createdAt: "desc" }],
+      orderBy: {
+        createdAt: "asc",
+      },
+      include: {
+        week: {
+          include: {
+            day: {
+              include: {
+                exercise: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     return blocks;

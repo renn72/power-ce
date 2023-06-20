@@ -54,6 +54,7 @@ const Form = () => {
   const [formWeek, setFormWeek] = useAtom(formWeekAtom)
   const [formWeekSize, setFormWeekSize] = useAtom(formWeekSizeAtom)
   const [, setBlockIndex] = useAtom(blockIndexAtom)
+  const [selectedTemplate, setSelectedTemplate] = useAtom(selectedTemplateAtom)
 
   const formMethods = useForm<Block>();
   const { register, unregister, reset, handleSubmit, setError, formState: { errors } } = formMethods
@@ -141,6 +142,14 @@ const Form = () => {
     reset()
   }
 
+  const onSelectTemplate = (templateName : string) => {
+    setSelectedTemplate(templateName)
+
+    const block = blocksData?.filter((block) => block.name === templateName)[0]
+
+    console.log('blocks', block)
+  }
+
   if (blocksLoading) {
     return <div>Loading...</div>
   }
@@ -158,7 +167,7 @@ const Form = () => {
           </button>
         </div>
 
-        <TemplateSelect />
+        <TemplateSelect onSelectTemplate={onSelectTemplate}/>
 
       </div>
       <div className="mt-8 text-xxs md:text-sm flex flex-col items-center">

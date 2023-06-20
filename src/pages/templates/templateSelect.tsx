@@ -8,15 +8,15 @@ import { ChevronUpDownIcon, CheckIcon, } from '@heroicons/react/24/outline'
 
 import { selectedTemplateAtom } from './form'
 
-const TemplateSelect = () => {
-  const [selectedTemplate, setSelectedTemplate] = useAtom(selectedTemplateAtom)
+const TemplateSelect = ({onSelectTemplate} : {onSelectTemplate : (arg0 : string) => void}) => {
+  const [selectedTemplate ] = useAtom(selectedTemplateAtom)
 
   const { data: blocksData, } = api.blocks.getAll.useQuery();
   const blocksTitle = blocksData?.map((block) => block.name)
 
   return (
     <div className="w-44 sm:w-52 flex flex-col justify-center">
-      <Listbox value={selectedTemplate} onChange={setSelectedTemplate}>
+      <Listbox value={selectedTemplate} onChange={(e) => onSelectTemplate(e)}>
         <div className="relative z-10">
           <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white max-h-min h-10 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300">
             <span className="block truncate">{selectedTemplate}</span>
