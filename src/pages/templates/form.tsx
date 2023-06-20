@@ -13,13 +13,16 @@ import { api } from '~/utils/api'
 
 import BlockTable from "./blockTable";
 import LiftPicker from "./liftPicker";
+import TemplateSelect from "./templateSelect";
 
 import getWeight from '~/utils/getWeight'
+import { getRandomInt } from '~/utils/utils'
 
-const formDayAtom = atom(0)
-const formWeekAtom = atom(0)
-const formWeekSizeAtom = atom<number>(2)
-const blockIndexAtom = atom('')
+export const formDayAtom = atom(0)
+export const formWeekAtom = atom(0)
+export const formWeekSizeAtom = atom<number>(2)
+export const blockIndexAtom = atom('')
+export const selectedTemplateAtom = atom('')
 
 type Exercise = {
   lift: string,
@@ -52,10 +55,6 @@ const dayText = [
   'Day 6',
   'Day 7',
 ]
-
-function getRandomInt(max: number) {
-  return Math.ceil(Math.random() * max);
-}
 
 const GetWeight = ({ week, day, exercise }: { week: number, day: number, exercise: number }) => {
   const [squat,] = useAtom(squatAtom);
@@ -92,7 +91,7 @@ const Form = () => {
   const [formDay, setFormDay] = useAtom(formDayAtom)
   const [formWeek, setFormWeek] = useAtom(formWeekAtom)
   const [formWeekSize, setFormWeekSize] = useAtom(formWeekSizeAtom)
-  const [blockIndex, setBlockIndex] = useAtom(blockIndexAtom)
+  const [, setBlockIndex] = useAtom(blockIndexAtom)
 
   const formMethods = useForm<Block>();
   const { register, unregister, reset, handleSubmit, getValues, control, setError, formState: { errors } } = formMethods
@@ -102,15 +101,7 @@ const Form = () => {
       [2, 2, 2, 2, 2, 2, 2,],
     ],
   );
-
-  const [squat,] = useAtom(squatAtom);
-  const [deadlift,] = useAtom(deadliftAtom);
-  const [bench,] = useAtom(benchAtom);
-
-  const [template, setTemplate] = useState('');
-
   // const [parent, enableAnimations] = useAutoAnimate(/* optional config */)
-
 
   const { data: blocksData, isLoading: blocksLoading } = api.blocks.getAll.useQuery();
   const blocksTitle = blocksData?.map((block) => block.name)
@@ -153,21 +144,18 @@ const Form = () => {
   const onRemoveExercise = () => {
     console.log("remove exercise")
   }
-
   const onSetFormDay = (idx: number) => {
     const newDay = (formDay + idx)
     if (newDay >= 0 && newDay <= 6) {
       setFormDay(newDay)
     }
   }
-
   const onSetFormWeek = (idx: number) => {
     const newWeek = (formWeek + idx)
     if (newWeek >= 0 && newWeek < formWeekSize) {
       setFormWeek(newWeek)
     }
   }
-
   const onAddWeek = () => {
     setFormWeekSize(formWeekSize + 1)
     setFormIndex([...formIndex, [1, 1, 1, 1, 1, 1, 1,]])
@@ -191,12 +179,9 @@ const Form = () => {
     reset()
   }
 
-
-
   if (blocksLoading) {
     return <div>Loading...</div>
   }
-
 
   return (
     <>
@@ -211,56 +196,7 @@ const Form = () => {
           </button>
         </div>
 
-        <div className="w-44  sm:w-52 flex flex-col justify-center">
-          <Listbox value={template} onChange={setTemplate}>
-            <div className="relative z-10">
-              <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white max-h-min h-10 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300">
-                <span className="block truncate">{template}</span>
-                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                  <ChevronUpDownIcon
-                    className="h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                </span>
-              </Listbox.Button>
-              <Transition
-                as={Fragment}
-                leave="transition ease-in duration-100"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-              >
-                <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                  {blocksTitle?.map((template, Idx) => (
-                    <Listbox.Option
-                      key={Idx}
-                      className={({ active }) =>
-                        `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'
-                        }`
-                      }
-                      value={template}
-                    >
-                      {({ selected }) => (
-                        <>
-                          <span
-                            className={`block truncate ${selected ? 'font-medium' : 'font-normal'
-                              }`}
-                          >
-                            {template}
-                          </span>
-                          {selected ? (
-                            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
-                              <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                            </span>
-                          ) : null}
-                        </>
-                      )}
-                    </Listbox.Option>
-                  ))}
-                </Listbox.Options>
-              </Transition>
-            </div>
-          </Listbox>
-        </div>
+        <TemplateSelect />
 
       </div>
       <div className="mt-8 text-xxs md:text-sm flex flex-col items-center">
@@ -336,7 +272,7 @@ const Form = () => {
                                       control={control}
                                       name={`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.lift`}
                                       defaultValue="unlinked"
-                                      render={({ field: { onChange  } }) => (<LiftPicker onChange={onChange}  />)}
+                                      render={({ field: { onChange } }) => (<LiftPicker onChange={onChange} />)}
                                     />
 
                                     {/*   className="block h-full w-24 sm:w-36 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600" */}
