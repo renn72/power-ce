@@ -1,22 +1,15 @@
-import React, { useState, useRef, Fragment } from "react"
-import { useForm, FormProvider, useFormContext, Controller } from "react-hook-form";
+import React, { useState } from "react"
+import { useForm, FormProvider, useFormContext } from "react-hook-form";
 import { ErrorMessage } from '@hookform/error-message'
-import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useAtom, atom } from "jotai";
 
-import { Listbox, Transition } from '@headlessui/react'
-import { ChevronUpDownIcon, CheckIcon, PlusCircleIcon, MinusCircleIcon, ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
-
-import { squatAtom, deadliftAtom, benchAtom } from "~/store/store";
+import { PlusCircleIcon, MinusCircleIcon, ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
 
 import { api } from '~/utils/api'
 
 import BlockTable from "./blockTable";
-import LiftPicker from "./liftPicker";
 import TemplateSelect from "./templateSelect";
-
-import getWeight from '~/utils/getWeight'
-import { getRandomInt } from '~/utils/utils'
+import FormDay from "./formDay";
 
 export const formDayAtom = atom(0)
 export const formWeekAtom = atom(0)
@@ -56,37 +49,6 @@ const dayText = [
   'Day 7',
 ]
 
-const GetWeight = ({ week, day, exercise }: { week: number, day: number, exercise: number }) => {
-  const [squat,] = useAtom(squatAtom);
-  const [deadlift,] = useAtom(deadliftAtom);
-  const [bench,] = useAtom(benchAtom);
-  const formMethods = useFormContext<Block>();
-
-  const watch = formMethods.watch([`week.${week}.day.${day}.exercise.${exercise}.onerm`, `week.${week}.day.${day}.exercise.${exercise}.lift`])
-
-  const checkWeight = () => {
-    const lift = watch[1] //block?.week[weekIdx]?.day[dayIdx]?.exercise[exerciseIdx]?.lift
-    const onerm = watch[0] //block?.week[weekIdx]?.day[dayIdx]?.exercise[exerciseIdx]?.onerm
-
-    if (!lift) return null
-    if (!onerm) return null
-    if (lift === "unlinked") return null
-
-    let weight = 0
-    if (lift === 'Squat') weight = getWeight(squat, onerm)
-    if (lift === 'Deadlift') weight = getWeight(deadlift, onerm)
-    if (lift === 'Bench') weight = getWeight(bench, onerm)
-
-    return `${weight}kg`
-  }
-  return (
-    <div>
-      {checkWeight()}
-    </div>
-  )
-}
-
-
 const Form = () => {
   const [formDay, setFormDay] = useAtom(formDayAtom)
   const [formWeek, setFormWeek] = useAtom(formWeekAtom)
@@ -94,7 +56,7 @@ const Form = () => {
   const [, setBlockIndex] = useAtom(blockIndexAtom)
 
   const formMethods = useForm<Block>();
-  const { register, unregister, reset, handleSubmit, getValues, control, setError, formState: { errors } } = formMethods
+  const { register, unregister, reset, handleSubmit, setError, formState: { errors } } = formMethods
   const [formIndex, setFormIndex] = useState<number[][]>(
     [
       [2, 2, 2, 2, 2, 2, 2,],
@@ -242,8 +204,6 @@ const Form = () => {
                 <ChevronRightIcon className="h-8 w-8 cursor-pointer" onClick={() => onSetFormDay(1)} />
               </div>
 
-
-
               {/* form */}
               <div className="flex gap-10">
                 {
@@ -251,95 +211,11 @@ const Form = () => {
                     <div key={weekIdx} className={`flex gap-10 ${weekIdx == formWeek ? `` : `hidden`}`}>
                       {
                         week.map((day, dayIdx) => (
-                          <div key={dayIdx} className={`flex flex-col divide-y divide-dashed divide-gray-500 ${dayIdx == formDay ? `` : `hidden`}`}>
-                            <div className="flex justify-center gap-4 mb-2">
-                              <label>Is it a rest day?</label>
-                              <input
-                                className=" rounded-md p-2 text-gray-900"
-                                type="checkbox"
-                                defaultChecked={false}
-                                {...register(`week.${weekIdx}.day.${dayIdx}.isRest`,)}
-                              />
-                            </div>
-                            {
-                              Array.from({
-                                length: day
-                              }
-                              ).map((value, idx) => (
-                                <div key={idx} className="grid gap-1 md:gap-4 md:grid-cols-8 grid-cols-4 py-5 justify-items-center">
-                                  <div className="w-24 sm:w-36 flex flex-col justify-center col-span-2">
-                                    <Controller
-                                      control={control}
-                                      name={`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.lift`}
-                                      defaultValue="unlinked"
-                                      render={({ field: { onChange } }) => (<LiftPicker onChange={onChange} />)}
-                                    />
-
-                                    {/*   className="block h-full w-24 sm:w-36 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600" */}
-                                    {/*   placeholder="Lift" */}
-                                    {/*   {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.lift`,)} */}
-                                    {/* /> */}
-                                  </div>
-
-                                  {/* name */}
-                                  <input
-                                    className="block h-full col-span-2 w-24 sm:w-36 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                                    placeholder="Name"
-                                    defaultValue={`w${weekIdx + 1}.d${dayIdx + 1}.e${idx + 1}.name`}
-                                    type="text"
-                                    {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.name`,)}
-                                  />
-                                  {/* percent of one rep max */}
-                                  <input
-                                    className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                                    type="number"
-                                    // defaultValue={getRandomInt(90)}
-                                    placeholder="1rm%"
-                                    {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.onerm`,
-                                      {
-                                        valueAsNumber: true,
-                                      })
-                                    }
-                                  />
-                                  {/* sets */}
-                                  <input
-                                    className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                                    type="number"
-                                    placeholder="Sets"
-                                    defaultValue={getRandomInt(10)}
-                                    {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.sets`, {
-                                      valueAsNumber: true,
-
-                                    })}
-                                  />
-                                  {/* reps */}
-                                  <input
-                                    className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                                    type="number"
-                                    placeholder="Reps"
-                                    defaultValue={getRandomInt(10)}
-                                    {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.reps`, {
-                                      valueAsNumber: true,
-                                    })}
-                                  />
-                                  <div
-                                    className="block bg-white font-semibold h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-400"
-                                  >
-                                    <GetWeight
-                                      week={weekIdx}
-                                      day={dayIdx}
-                                      exercise={idx}
-                                    />
-                                  </div>
-                                </div>
-
-                              ))}
-                          </div>
+                          <FormDay key={dayIdx} weekIdx={weekIdx} dayIdx={dayIdx} day={day} />
                         ))}
                     </div>
                   ))}
               </div>
-
 
               <div className="flex justify-center gap-4 mt-16">
                 <button type="button" onClick={() => onAddExercise()}>
@@ -349,7 +225,6 @@ const Form = () => {
                   <MinusCircleIcon className="h-12 w-12 text-gray-800" aria-hidden="true" />
                 </button>
               </div>
-
 
               <div className="flex gap-4 justify-center">
                 <button
@@ -368,7 +243,6 @@ const Form = () => {
             </div>
           </form>
           <BlockTable />
-
         </FormProvider>
       </div>
     </>
