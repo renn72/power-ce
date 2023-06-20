@@ -13,20 +13,24 @@ import type { Block, Post, Exercise, Day, Week } from "@prisma/client";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
 const exerciseSchema = z.object({
+  id: z.string().optional(),
   name: z.string().min(0).max(280).optional(),
-  lift: z.string().min(0).max(55).optional(),
+  lift: z.string().min(0).max(55).optional().nullable(),
   sets: z.number().min(0).max(55).optional().nullable(),
   reps: z.number().min(0).max(55).optional().nullable(),
   onerm: z.number().min(0).max(100).optional().nullable(),
 })
 const daySchema = z.object({
+  id: z.string().optional(),
   isRestDay: z.boolean(),
   exercise: z.array(exerciseSchema),
 })
 const weekSchema = z.object({
+  id: z.string().optional(),
   day: z.array(daySchema),
 })
 const blockSchema = z.object({
+  id: z.string().optional(),
   name: z.string().min(1).max(280),
   week: z.array(weekSchema),
 })
@@ -87,5 +91,21 @@ export const blocksRouter = createTRPCRouter({
       })
 
       return block
+    }),
+  update: privateProcedure
+    .input(blockSchema)
+    .mutation(async ({ ctx, input }) => {
+      // const authorId = ctx.userId;
+
+      console.log('ctx', ctx.userId)
+      console.log('input', JSON.stringify(input, null, 2))
+
+      const deleteExercise = await ctx.prisma.exercise.deleteMany({
+        where: {
+          id: input?.week[0]?.day[0]?.exercise[0]?.id,
+        },
+      })
+
+      return deleteExercise 
     }),
 });

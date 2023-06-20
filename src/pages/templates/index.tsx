@@ -1,5 +1,6 @@
 import { type NextPage } from "next";
 import React from "react";
+import { useUser } from "@clerk/nextjs";
 
 import { useAtom } from "jotai";
 
@@ -11,6 +12,7 @@ import { squatAtom, deadliftAtom, benchAtom, rmModalIsOpenAtom, rpeModalIsOpenAt
 import DealoadModal from "~/components/deloadModal";
 
 import { api } from '~/utils/api'
+import { env } from '~/env.mjs'
 
 const Templates: NextPage = () => {
   const [squat, setSquat] = useAtom(squatAtom);
@@ -21,8 +23,13 @@ const Templates: NextPage = () => {
   const [, setRpeModalIsOpen] = useAtom(rpeModalIsOpenAtom);
   const [, setDeloadModalIsOpen] = useAtom(deloadModalIsOpenAtom);
 
+  const {user } = useUser();
 
   const { data : blocksData, isLoading : blocksLoading } = api.blocks.getAll.useQuery();
+
+
+  if(!user) return <div>Login</div>
+  if(user.id !== env.NEXT_PUBLIC_ADMIN_ID_1 && user.id !== env.NEXT_PUBLIC_ADMIN_ID_2) return <div>Not auth</div>
 
   if (blocksLoading)
     return (

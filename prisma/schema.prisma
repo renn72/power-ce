@@ -33,7 +33,7 @@ model Exercise {
 
   dayId String
 
-  day Day @relation(fields: [dayId], references: [id])
+  day Day @relation(fields: [dayId], references: [id], onDelete: Cascade)
 
   @@index([dayId])
 }
@@ -47,7 +47,7 @@ model Day {
 
   weekId String
 
-  week Week @relation(fields: [weekId], references: [id])
+  week Week @relation(fields: [weekId], references: [id], onDelete: Cascade)
 
   @@index([weekId])
 }
@@ -60,7 +60,7 @@ model Week {
 
   blockId String
 
-  block Block @relation(fields: [blockId], references: [id])
+  block Block @relation(fields: [blockId], references: [id], onDelete: Cascade)
 
   @@index([blockId])
 }

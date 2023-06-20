@@ -18,23 +18,27 @@ export const blockIndexAtom = atom('')
 export const selectedTemplateAtom = atom('')
 
 type Exercise = {
-  lift: string,
-  name: string,
+  id: string,
+  lift: string | null,
+  name: string | null,
   onerm: number | null,
-  sets: number,
-  reps: number,
+  sets: number | null,
+  reps: number | null,
 }
 
 type Day = {
+  id: string,
   isRestDay: boolean,
   exercise: Exercise[],
 };
 
 type Week = {
+  id: string,
   day: Day[],
 }
 
 export type Block = {
+  id: string,
   name: string,
   week: Week[],
 }
@@ -53,7 +57,7 @@ const Form = () => {
   const [formDay, setFormDay] = useAtom(formDayAtom)
   const [formWeek, setFormWeek] = useAtom(formWeekAtom)
   // const [formWeekSize, setFormWeekSize] = useAtom(formWeekSizeAtom)
-  const [, setBlockIndex] = useAtom(blockIndexAtom)
+  const [blockIndex, setBlockIndex] = useAtom(blockIndexAtom)
   const [selectedTemplate, setSelectedTemplate] = useAtom(selectedTemplateAtom)
 
   const formMethods = useForm<Block>();
@@ -64,12 +68,23 @@ const Form = () => {
       [2, 2, 2, 2, 2, 2, 2,],
     ],
   );
-  // const [parent, enableAnimations] = useAutoAnimate(/* optional config */)
+  const [isUpdate, setIsUpdate] = useState(false)
 
   const { data: blocksData, isLoading: blocksLoading } = api.blocks.getAll.useQuery();
   const blocksTitle = blocksData?.map((block) => block.name)
 
+  const ctx = api.useContext()
+
   const { mutate: blockCreateMutate, } = api.blocks.create.useMutation({
+    onSuccess: () => {
+      console.log('success')
+      void ctx.blocks.getAll.invalidate()
+    },
+    onError: (e) => {
+      console.log('error', e)
+    },
+  });
+  const { mutate: blockUpdateMutate, } = api.blocks.update.useMutation({
     onSuccess: () => {
       console.log('success')
     },
@@ -79,7 +94,7 @@ const Form = () => {
   });
 
   const onSubmit = (data: Block) => {
-    if (blocksTitle && blocksTitle.includes(data.name)) {
+    if (blocksTitle && blocksTitle.includes(data.name) && !isUpdate) {
       setError("name", {
         type: "manual",
         message: "Need a unique name"
@@ -88,14 +103,18 @@ const Form = () => {
       return
     }
     const block = {
+      id: '',
       name: data.name,
       week: data.week.map(
         (week) => ({
+          id: week.id,
           day: week.day.map(
             (day) => ({
+              id: day.id,
               isRestDay: day.isRestDay,
               exercise: day.exercise.map(
                 (exercise) => ({
+                  id: exercise.id,
                   name: exercise.name,
                   lift: exercise.lift,
                   onerm: exercise.onerm ? exercise.onerm : null,
@@ -107,9 +126,15 @@ const Form = () => {
           )
         }))
     }
-    console.log(block)
+    console.log('isUpdate', isUpdate)
 
-    blockCreasteMutate(block)
+    if (isUpdate && blockIndex !== '') {
+      block.id = blockIndex
+      console.log(block)
+      blockUpdateMutate(block)
+    } else {
+      blockCreateMutate(block)
+    }
   };
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -126,6 +151,14 @@ const Form = () => {
 
   const onRemoveExercise = () => {
     console.log("remove exercise")
+    if (!formIndex[formWeek]) return
+    if (!formIndex[formWeek][formDay]) return
+
+    if (formIndex[formWeek][formDay] && formIndex[formWeek][formDay] > 1) {
+      unregister(`week.${formWeek}.day.${formDay}.exercise.${formIndex[formWeek][formDay] - 1}`)
+      formIndex[formWeek][formDay] -= 1
+      setFormIndex([...formIndex])
+    }
   }
   const onSetFormDay = (idx: number) => {
     const newDay = (formDay + idx)
@@ -174,16 +207,19 @@ const Form = () => {
     setValue('name', block?.name || '')
     const newFormIndex: number[][] = [[]]
     block?.week.forEach((week, weekIdx) => {
+      setValue(`week.${weekIdx}.id`, week?.id) // eslint-disable-line @typescript-eslint/no-unsafe-argument
       newFormIndex[weekIdx] = [0, 0, 0, 0, 0, 0, 0]
       week.day.forEach((day, dayIdx) => {
-        if (typeof day.isRestDay === 'boolean') setValue(`week.${weekIdx}.day.${dayIdx}.isRestDay`, day.isRestDay)
+        setValue(`week.${weekIdx}.day.${dayIdx}.isRestDay`, day?.isRestDay) // eslint-disable-line @typescript-eslint/no-unsafe-argument
+        setValue(`week.${weekIdx}.day.${dayIdx}.id`, day?.id)
         newFormIndex[weekIdx][dayIdx] = day?.exercise?.length || 0
         day.exercise.forEach((exercise, exerciseIdx) => {
-          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.lift`, exercise.lift || null)
+          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.id`, exercise?.id) // eslint-disable-line @typescript-eslint/no-unsafe-argument
+          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.lift`, exercise.lift || null) // eslint-disable-line @typescript-eslint/no-unsafe-argument
           setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`, exercise.name || null)
-          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, exercise.onerm || null)
-          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`, exercise.sets || null)
-          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`, exercise.reps || null)
+          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, exercise.onerm || null) // eslint-disable-line @typescript-eslint/no-unsafe-argument
+          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`, exercise.sets || null) // eslint-disable-line @typescript-eslint/no-unsafe-argument
+          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`, exercise.reps || null) // eslint-disable-line @typescript-eslint/no-unsafe-argument
         })
       })
     })
@@ -193,12 +229,12 @@ const Form = () => {
     setFormWeek(0)
     setFormIndex(newFormIndex)
 
+
   }
 
   if (blocksLoading) {
     return <div>Loading...</div>
   }
-
 
   return (
     <>
@@ -285,12 +321,14 @@ const Form = () => {
                 <button
                   type="submit"
                   className="rounded-lg py-2 px-4 bg-white text-gray-600"
+                  onClick={() => setIsUpdate(false)}
                 >
                   save new
                 </button>
                 <button
                   type="submit"
                   className="rounded-lg py-2 px-4 bg-white text-gray-600"
+                  onClick={() => setIsUpdate(true)}
                 >
                   update
                 </button>
