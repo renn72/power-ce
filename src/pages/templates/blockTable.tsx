@@ -34,7 +34,7 @@ const BlockTable  = () => {
     if (lift === 'Deadlift') weight = getWeight(deadlift, onerm)
     if (lift === 'Bench') weight = getWeight(bench, onerm)
 
-    return `@ ${weight}kg`
+    return `@${weight}kg`
   }
 
   if (!block.week) return null
@@ -42,8 +42,8 @@ const BlockTable  = () => {
 
 
   return (
-    <div className="my-16">
-      <div className="rounded-lg bg-white p-8">
+    <div className="my-16 text-xxs md:text-sm">
+      <div className="rounded-lg bg-white p-1 md:p-8">
         <table className="">
           <thead>
             <tr>
@@ -58,19 +58,19 @@ const BlockTable  = () => {
           </thead>
           <tbody>
             {block.week.map((week, weekIdx) => (
-              <tr key={weekIdx} className="m-2">
+              <tr key={weekIdx} className="m-1 sm:m-2">
                 {week.day.map((day, dayIdx) => (
-                  <td key={dayIdx} className="border-slate-400 border-2 p-2 divide-y-2  text-center">
+                  <td key={dayIdx} className="border-slate-400 border-2 p-0 md:p-2 divide-y-2  text-center">
                     {day.isRest ? 'Rest' : day.exercise.map((exercise, exerciseIdx) => (
-                      <div key={exerciseIdx} className="p-2 flex flex-col justify-center items-center ">
-                        <div className='text-xxs text-gray-400'>{exercise.lift}</div>
-                        <div className='h-6'>{exercise.name}</div>
-                        <div className='h-6'>{exercise.onerm ? exercise.onerm : ''}%</div>
-                        <div className="flex gap-1 h-6">
+                      <div key={exerciseIdx} className="p-[1px] md:p-2 flex flex-col justify-center items-center ">
+                        <div className='text-xxs text-gray-400 w-10 md:w-full overflow-hidden'>{exercise.lift}</div>
+                        <div className='md:h-6 w-12 md:w-full overflow-hidden'>{exercise.name}</div>
+                        <div className='leading-tight md:h-6'>{exercise.onerm ? exercise.onerm : ''}%</div>
+                        <div className="grid grid-cols-3 md:flex md:flex-row gap-1 md:h-6 leading-3 md:leading-normal">
                           <div>{exercise.sets ? exercise.sets : ''}</div>
                           <div>X</div>
                           <div>{exercise.reps ? exercise.reps : ''}</div>
-                          <div>{checkWeight(weekIdx, dayIdx, exerciseIdx)}</div>
+                          <div className="text-center col-span-3">{checkWeight(weekIdx, dayIdx, exerciseIdx)}</div>
                         </div>
 
                       </div>

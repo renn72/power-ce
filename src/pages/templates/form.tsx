@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { useForm, FormProvider, useFormContext } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { ErrorMessage } from '@hookform/error-message'
 import { useAtom, atom } from "jotai";
 
@@ -205,7 +205,7 @@ const Form = () => {
               </div>
 
               {/* form */}
-              <div className="flex gap-10">
+              <div className="flex gap-10 items-center justify-center">
                 {
                   formIndex.map((week, weekIdx) => (
                     <div key={weekIdx} className={`flex gap-10 ${weekIdx == formWeek ? `` : `hidden`}`}>
