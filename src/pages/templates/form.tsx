@@ -20,13 +20,13 @@ export const selectedTemplateAtom = atom('')
 type Exercise = {
   lift: string,
   name: string,
-  onerm: number,
+  onerm: number | null,
   sets: number,
   reps: number,
 }
 
 type Day = {
-  isRest: boolean,
+  isRestDay: boolean,
   exercise: Exercise[],
 };
 
@@ -52,12 +52,12 @@ const dayText = [
 const Form = () => {
   const [formDay, setFormDay] = useAtom(formDayAtom)
   const [formWeek, setFormWeek] = useAtom(formWeekAtom)
-  const [formWeekSize, setFormWeekSize] = useAtom(formWeekSizeAtom)
+  // const [formWeekSize, setFormWeekSize] = useAtom(formWeekSizeAtom)
   const [, setBlockIndex] = useAtom(blockIndexAtom)
   const [selectedTemplate, setSelectedTemplate] = useAtom(selectedTemplateAtom)
 
   const formMethods = useForm<Block>();
-  const { register, unregister, reset, handleSubmit, setError, formState: { errors } } = formMethods
+  const { register, unregister, reset, setValue, getValues, handleSubmit, setError, formState: { errors } } = formMethods
   const [formIndex, setFormIndex] = useState<number[][]>(
     [
       [2, 2, 2, 2, 2, 2, 2,],
@@ -69,7 +69,7 @@ const Form = () => {
   const { data: blocksData, isLoading: blocksLoading } = api.blocks.getAll.useQuery();
   const blocksTitle = blocksData?.map((block) => block.name)
 
-  const { mutate: blockMutate, } = api.blocks.create.useMutation({
+  const { mutate: blockCreateMutate, } = api.blocks.create.useMutation({
     onSuccess: () => {
       console.log('success')
     },
@@ -79,8 +79,6 @@ const Form = () => {
   });
 
   const onSubmit = (data: Block) => {
-    console.log(data.name)
-
     if (blocksTitle && blocksTitle.includes(data.name)) {
       setError("name", {
         type: "manual",
@@ -89,7 +87,29 @@ const Form = () => {
       console.log('clash')
       return
     }
-    // blockMutate(data)
+    const block = {
+      name: data.name,
+      week: data.week.map(
+        (week) => ({
+          day: week.day.map(
+            (day) => ({
+              isRestDay: day.isRestDay,
+              exercise: day.exercise.map(
+                (exercise) => ({
+                  name: exercise.name,
+                  lift: exercise.lift,
+                  onerm: exercise.onerm ? exercise.onerm : null,
+                  sets: exercise.sets ? exercise.sets : null,
+                  reps: exercise.reps ? exercise.reps : null,
+                })
+              )
+            })
+          )
+        }))
+    }
+    console.log(block)
+
+    blockCreasteMutate(block)
   };
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -115,22 +135,24 @@ const Form = () => {
   }
   const onSetFormWeek = (idx: number) => {
     const newWeek = (formWeek + idx)
-    if (newWeek >= 0 && newWeek < formWeekSize) {
+    if (newWeek >= 0 && newWeek < formIndex.length) {
       setFormWeek(newWeek)
     }
   }
   const onAddWeek = () => {
-    setFormWeekSize(formWeekSize + 1)
+    // setFormWeekSize(formWeekSize + 1)
     setFormIndex([...formIndex, [1, 1, 1, 1, 1, 1, 1,]])
   }
   const onRemoveWeek = () => {
-    setFormWeekSize(formWeekSize - 1)
+    // setFormWeekSize(formWeekSize - 1)
+    if (formIndex.length - 1 <= 0) return
     setFormIndex(formIndex.slice(0, -1))
+    if (formIndex.length - 1 <= formWeek) setFormWeek(formWeek - 1)
     unregister(`week.${formIndex.length - 1}`)
   }
   const onNewTemplate = () => {
     console.log('new')
-    setFormWeekSize(2)
+    // setFormWeekSize(2)
     setFormIndex([
       [2, 2, 2, 2, 2, 2, 2,],
       [2, 2, 2, 2, 2, 2, 2,],
@@ -138,21 +160,45 @@ const Form = () => {
     setBlockIndex('')
     setFormDay(0)
     setFormWeek(0)
-    setFormWeekSize(2)
+    // setFormWeekSize(2)
     reset()
   }
 
-  const onSelectTemplate = (templateName : string) => {
+  const onSelectTemplate = (templateName: string) => {
     setSelectedTemplate(templateName)
 
     const block = blocksData?.filter((block) => block.name === templateName)[0]
 
     console.log('blocks', block)
+    unregister()
+    setValue('name', block?.name || '')
+    const newFormIndex: number[][] = [[]]
+    block?.week.forEach((week, weekIdx) => {
+      newFormIndex[weekIdx] = [0, 0, 0, 0, 0, 0, 0]
+      week.day.forEach((day, dayIdx) => {
+        if (typeof day.isRestDay === 'boolean') setValue(`week.${weekIdx}.day.${dayIdx}.isRestDay`, day.isRestDay)
+        newFormIndex[weekIdx][dayIdx] = day?.exercise?.length || 0
+        day.exercise.forEach((exercise, exerciseIdx) => {
+          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.lift`, exercise.lift || null)
+          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`, exercise.name || null)
+          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, exercise.onerm || null)
+          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`, exercise.sets || null)
+          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`, exercise.reps || null)
+        })
+      })
+    })
+
+    setBlockIndex(block?.id || '')
+    setFormDay(0)
+    setFormWeek(0)
+    setFormIndex(newFormIndex)
+
   }
 
   if (blocksLoading) {
     return <div>Loading...</div>
   }
+
 
   return (
     <>
@@ -167,7 +213,7 @@ const Form = () => {
           </button>
         </div>
 
-        <TemplateSelect onSelectTemplate={onSelectTemplate}/>
+        <TemplateSelect onSelectTemplate={onSelectTemplate} />
 
       </div>
       <div className="mt-8 text-xxs md:text-sm flex flex-col items-center">

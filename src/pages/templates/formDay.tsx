@@ -9,7 +9,7 @@ import { formDayAtom } from './form'
 const FormDay = ({ weekIdx, dayIdx, day }: { weekIdx: number, dayIdx: number, day: number }) => {
   const [formDay] = useAtom(formDayAtom)
 
-  const [parent ] = useAutoAnimate(/* optional config */)
+  const [parent] = useAutoAnimate(/* optional config */)
 
   const formMethods = useFormContext();
   if (!formMethods) return null
@@ -24,7 +24,9 @@ const FormDay = ({ weekIdx, dayIdx, day }: { weekIdx: number, dayIdx: number, da
           className=" rounded-md p-2 text-gray-900"
           type="checkbox"
           defaultChecked={false}
-          {...register(`week.${weekIdx}.day.${dayIdx}.isRest`,)}
+          {...register(`week.${weekIdx}.day.${dayIdx}.isRestDay`, {
+            shouldUnregister: true,
+          })}
         />
       </div>
       {

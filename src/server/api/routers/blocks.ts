@@ -13,9 +13,14 @@ import type { Block, Post, Exercise, Day, Week } from "@prisma/client";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
 const exerciseSchema = z.object({
-  name: z.string().min(1).max(280),
+  name: z.string().min(0).max(280).optional(),
+  lift: z.string().min(0).max(55).optional(),
+  sets: z.number().min(0).max(55).optional().nullable(),
+  reps: z.number().min(0).max(55).optional().nullable(),
+  onerm: z.number().min(0).max(100).optional().nullable(),
 })
 const daySchema = z.object({
+  isRestDay: z.boolean(),
   exercise: z.array(exerciseSchema),
 })
 const weekSchema = z.object({
@@ -64,9 +69,14 @@ export const blocksRouter = createTRPCRouter({
             create: input.week.map((week) => ({
               day: {
                 create: week.day.map((day) => ({
+                  isRestDay: day.isRestDay,
                   exercise: {
                     create: day.exercise.map((exercise) => ({
                       name: exercise.name,
+                      lift: exercise.lift,
+                      sets: exercise.sets,
+                      reps: exercise.reps,
+                      onerm: exercise.onerm,
                     })),
                   },
                 })),

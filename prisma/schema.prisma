@@ -25,7 +25,11 @@ model Exercise {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  name String @db.VarChar(255)
+  name  String? @db.VarChar(255)
+  lift  String? @db.VarChar(55)
+  onerm Int?
+  sets  Int?
+  reps  Int?
 
   dayId String
 
@@ -38,7 +42,8 @@ model Day {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  exercise Exercise[]
+  exercise  Exercise[]
+  isRestDay Boolean
 
   weekId String
 

@@ -8,7 +8,7 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <div className="h-full flex flex-col bg-gray-600 min-w-full">
+      <div className="h-full flex flex-col bg-gray-600 ">
 
         <header className="bg-white shadow-xl">
           <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">

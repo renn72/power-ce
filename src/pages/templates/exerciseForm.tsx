@@ -1,7 +1,7 @@
 import { useFormContext, Controller } from 'react-hook-form'
 import { useAtom } from 'jotai'
 
-import  LiftPicker  from './liftPicker'
+import LiftPicker from './liftPicker'
 
 import { getRandomInt } from '~/utils/utils'
 import getWeight from '~/utils/getWeight'
@@ -39,7 +39,7 @@ const GetWeight = ({ week, day, exercise }: { week: number, day: number, exercis
   )
 }
 
-const ExerciseForm = ({ weekIdx, dayIdx, idx } : { weekIdx: number, dayIdx: number, idx: number }) => {
+const ExerciseForm = ({ weekIdx, dayIdx, idx }: { weekIdx: number, dayIdx: number, idx: number }) => {
   const formMethods = useFormContext();
   if (!formMethods) return null
 
@@ -54,6 +54,7 @@ const ExerciseForm = ({ weekIdx, dayIdx, idx } : { weekIdx: number, dayIdx: numb
           control={control}
           name={`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.lift`}
           defaultValue="unlinked"
+          shouldUnregister={true}
           render={({ field: { onChange } }) => (<LiftPicker onChange={onChange} />)}
         />
       </div>
@@ -64,17 +65,21 @@ const ExerciseForm = ({ weekIdx, dayIdx, idx } : { weekIdx: number, dayIdx: numb
         placeholder="Name"
         defaultValue={`w${weekIdx + 1}.d${dayIdx + 1}.e${idx + 1}.name`}
         type="text"
-        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.name`,)}
+        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.name`, {
+          shouldUnregister: true,
+        })}
       />
       {/* percent of one rep max */}
       <input
         className="block  h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
         type="number"
         // defaultValue={getRandomInt(90)}
+        defaultValue={null}
         placeholder="1rm%"
         {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.onerm`,
           {
             valueAsNumber: true,
+            shouldUnregister: true,
           })
         }
       />
@@ -86,6 +91,7 @@ const ExerciseForm = ({ weekIdx, dayIdx, idx } : { weekIdx: number, dayIdx: numb
         defaultValue={getRandomInt(10)}
         {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.sets`, {
           valueAsNumber: true,
+          shouldUnregister: true,
 
         })}
       />
@@ -97,6 +103,7 @@ const ExerciseForm = ({ weekIdx, dayIdx, idx } : { weekIdx: number, dayIdx: numb
         defaultValue={getRandomInt(10)}
         {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.reps`, {
           valueAsNumber: true,
+          shouldUnregister: true,
         })}
       />
       <div

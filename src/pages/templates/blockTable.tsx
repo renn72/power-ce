@@ -61,7 +61,7 @@ const BlockTable  = () => {
               <tr key={weekIdx} className="m-1 sm:m-2">
                 {week.day.map((day, dayIdx) => (
                   <td key={dayIdx} className="border-slate-400 border-2 p-0 md:p-2 divide-y-2  text-center">
-                    {day.isRest ? 'Rest' : day.exercise.map((exercise, exerciseIdx) => (
+                    {day.isRestDay ? 'Rest' : day.exercise.map((exercise, exerciseIdx) => (
                       <div key={exerciseIdx} className="p-[1px] md:p-2 flex flex-col justify-center items-center ">
                         <div className='text-xxs text-gray-400 w-10 md:w-full overflow-hidden'>{exercise.lift}</div>
                         <div className='md:h-6 w-12 md:w-full overflow-hidden'>{exercise.name}</div>
