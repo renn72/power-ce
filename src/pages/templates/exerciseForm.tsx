@@ -46,7 +46,7 @@ const ExerciseForm = ({ weekIdx, dayIdx, idx }: { weekIdx: number, dayIdx: numbe
   const { register, control } = formMethods
 
   return (
-    <div key={idx} className="grid gap-1 md:gap-4 md:grid-cols-8 grid-cols-4 py-5 justify-items-center">
+    <div key={idx} className="grid gap-1 md:gap-4 md:grid-cols-8 grid-cols-4 py-2 md:py-5 justify-items-center">
 
       {/* lift */}
       <div className="w-24 sm:w-36 flex flex-col justify-center col-span-2">

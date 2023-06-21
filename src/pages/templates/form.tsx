@@ -252,10 +252,10 @@ const Form = () => {
         <TemplateSelect onSelectTemplate={onSelectTemplate} />
 
       </div>
-      <div className="mt-8 text-xxs md:text-sm flex flex-col items-center">
+      <div className="mt-2 md:mt-8 text-xxs md:text-sm flex flex-col items-center">
         <FormProvider {...formMethods}>
           <form onSubmit={handleSubmit(onSubmit, onError)}>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1 sm:gap-4">
 
               {/* Title */}
               <div className="flex flex-col gap-2 items-center justify-center">
@@ -276,7 +276,7 @@ const Form = () => {
               </div>
 
               {/* week */}
-              <div className="flex justify-center items-center gap-4 text-lg text-gray-200 py-2">
+              <div className="flex justify-center items-center gap-4 text-lg text-gray-200 md:py-2">
                 <button type="button" onClick={() => onRemoveWeek()}>
                   <MinusCircleIcon className="h-12 w-12 text-gray-800" aria-hidden="true" />
                 </button>
@@ -289,7 +289,7 @@ const Form = () => {
               </div>
 
               {/* day */}
-              <div className="flex justify-center items-center gap-4 text-lg text-gray-200 pb-2">
+              <div className="flex justify-center items-center gap-4 text-lg text-gray-200 sm:pb-2">
                 <ChevronLeftIcon className="h-8 w-8 cursor-pointer" onClick={() => onSetFormDay(-1)} />
                 {dayText[formDay]}
                 <ChevronRightIcon className="h-8 w-8 cursor-pointer" onClick={() => onSetFormDay(1)} />
