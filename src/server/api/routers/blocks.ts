@@ -39,7 +39,7 @@ export const blocksRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
     const blocks = await ctx.prisma.block.findMany({
       orderBy: {
-        createdAt: "asc",
+        createdAt: "desc",
       },
       include: {
         week: {
@@ -100,22 +100,77 @@ export const blocksRouter = createTRPCRouter({
       console.log('ctx', ctx.userId)
       console.log('input', JSON.stringify(input, null, 2))
 
-      const exercise_array = input.week.map((week) => week.day.map((day) => day.exercise.map((exercise) =>  exercise.id ))).flat(2)
+      const oldBlock = await ctx.prisma.block.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          week: {
+            include: {
+              day: {
+                include: {
+                  exercise: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      const exercise_array = oldBlock?.week.map((week) => week.day.map((day) => day.exercise.map((exercise) => exercise.id))).flat(2)
+      console.log('exercise_array', exercise_array)
       const deleteExercise = await ctx.prisma.exercise.deleteMany({
         where: {
           id: { in: exercise_array },
         }
       })
 
-    const day_array = input.week.map((week) => week.day.map((day) => day.id)).flat(1)
-    const deleteDay = await ctx.prisma.day.deleteMany({
-      where: {
-        id: { in: day_array },
-      }
-    })
+      const day_array = oldBlock?.week.map((week) => week.day.map((day) => day.id)).flat(1)
+      const deleteDay = await ctx.prisma.day.deleteMany({
+        where: {
 
-      return deleteExercise
+          id: { in: day_array },
+        }
+      })
 
-      // return exercise_array
+      const week_array = oldBlock?.week.map((week) => week.id)
+      const deleteWeek = await ctx.prisma.week.deleteMany({
+        where: {
+          id: { in: week_array },
+        }
+      })
+
+      const deleteBlock = await ctx.prisma.block.delete({
+        where: {
+          id: oldBlock?.id,
+        }
+      })
+
+      const block = await ctx.prisma.block.create({
+        data: {
+          name: input.name,
+          week: {
+            create: input.week.map((week) => ({
+              day: {
+                create: week.day.map((day) => ({
+                  isRestDay: day.isRestDay,
+                  exercise: {
+                    create: day.exercise.map((exercise) => ({
+                      name: exercise.name,
+                      lift: exercise.lift,
+                      sets: exercise.sets,
+                      reps: exercise.reps,
+                      onerm: exercise.onerm,
+                    })),
+                  },
+                })),
+              },
+            })),
+          },
+        },
+      })
+
+      return block
+
     }),
 });

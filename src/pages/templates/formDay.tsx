@@ -6,6 +6,8 @@ import ExerciseForm from './exerciseForm'
 
 import { formDayAtom } from './form'
 
+import { getRandomInt } from '~/utils/utils'
+
 const FormDay = ({ weekIdx, dayIdx, day }: { weekIdx: number, dayIdx: number, day: number }) => {
   const [formDay] = useAtom(formDayAtom)
 
@@ -25,6 +27,14 @@ const FormDay = ({ weekIdx, dayIdx, day }: { weekIdx: number, dayIdx: number, da
           type="checkbox"
           defaultChecked={false}
           {...register(`week.${weekIdx}.day.${dayIdx}.isRestDay`, {
+            shouldUnregister: true,
+          })}
+        />
+        <input
+          className="hidden"
+          defaultValue={getRandomInt(100000000)}
+          type="text"
+          {...register(`week.${weekIdx}.day.${dayIdx}.id`, {
             shouldUnregister: true,
           })}
         />

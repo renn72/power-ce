@@ -19,7 +19,11 @@ const BlockTable  = () => {
 
   if (!formMethods) return null
 
-  const block : Block = formMethods.watch()
+  const blockWatch  = formMethods.watch()
+  console.log('watch', blockWatch)
+  const block  = formMethods.getValues()
+  console.log('block', block)
+
 
   const checkWeight = (weekIdx : number, dayIdx : number, exerciseIdx : number) => {
     const lift = block?.week[weekIdx]?.day[dayIdx]?.exercise[exerciseIdx]?.lift

@@ -59,6 +59,16 @@ const ExerciseForm = ({ weekIdx, dayIdx, idx }: { weekIdx: number, dayIdx: numbe
         />
       </div>
 
+      {/* id */}
+      <input
+        className="hidden"
+        defaultValue={getRandomInt(100000000)}
+        type="text"
+        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${idx}.id`, {
+          shouldUnregister: true,
+        })}
+      />
+
       {/* name */}
       <input
         className="block h-full col-span-2 w-24 sm:w-36 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
@@ -106,6 +116,7 @@ const ExerciseForm = ({ weekIdx, dayIdx, idx }: { weekIdx: number, dayIdx: numbe
           shouldUnregister: true,
         })}
       />
+
       <div
         className="block bg-white font-semibold h-full w-12 sm:w-20 rounded-md border-2 border-white py-1.5 px-2 text-gray-400"
       >

@@ -6,10 +6,12 @@ import { useAtom, atom } from "jotai";
 import { PlusCircleIcon, MinusCircleIcon, ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
 
 import { api } from '~/utils/api'
+import { getRandomInt } from '~/utils/utils'
 
 import BlockTable from "./blockTable";
 import TemplateSelect from "./templateSelect";
 import FormDay from "./formDay";
+
 
 export const formDayAtom = atom(0)
 export const formWeekAtom = atom(0)
@@ -87,6 +89,7 @@ const Form = () => {
   const { mutate: blockUpdateMutate, } = api.blocks.update.useMutation({
     onSuccess: () => {
       console.log('success')
+      void ctx.blocks.getAll.invalidate()
     },
     onError: (e) => {
       console.log('error', e)
@@ -202,7 +205,7 @@ const Form = () => {
 
     const block = blocksData?.filter((block) => block.name === templateName)[0]
 
-    console.log('blocks', block)
+    console.log('block', block)
     unregister()
     setValue('name', block?.name || '')
     const newFormIndex: number[][] = [[]]
@@ -228,9 +231,11 @@ const Form = () => {
     setFormDay(0)
     setFormWeek(0)
     setFormIndex(newFormIndex)
+    console.log('newFormIndex', newFormIndex)
 
 
   }
+  console.log('formIndex', formIndex)
 
   if (blocksLoading) {
     return <div>Loading...</div>
@@ -263,8 +268,6 @@ const Form = () => {
                   <input className="block text-center h-full w-64 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                     placeholder="Name"
                     defaultValue="block-"
-
-
                     {...register("name", { required: 'This is required.' })}
                   />
                 </div>
@@ -300,10 +303,17 @@ const Form = () => {
                 {
                   formIndex.map((week, weekIdx) => (
                     <div key={weekIdx} className={`flex gap-10 ${weekIdx == formWeek ? `` : `hidden`}`}>
-                      {
-                        week.map((day, dayIdx) => (
-                          <FormDay key={dayIdx} weekIdx={weekIdx} dayIdx={dayIdx} day={day} />
-                        ))}
+                      <input
+                        className="hidden"
+                        defaultValue={getRandomInt(100000000)}
+                        type="text"
+                        {...register(`week.${weekIdx}.id`, {
+                          shouldUnregister: true,
+                        })}
+                      />
+                      {week.map((day, dayIdx) => (
+                        <FormDay key={dayIdx} weekIdx={weekIdx} dayIdx={dayIdx} day={day} />
+                      ))}
                     </div>
                   ))}
               </div>
