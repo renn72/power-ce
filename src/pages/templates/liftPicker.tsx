@@ -6,7 +6,7 @@ import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 const lifts = ["unlinked", "Squat", "Deadlift", "Bench"];
 
 const LiftPicker = ({ onChange }: { onChange: (arg0: string) => void }) => {
-  const [selectedLift, setSelectedLift] = useState(lifts[0])
+  const [selectedLift, setSelectedLift] = useState(lifts[1])
 
   return (
     <Listbox
