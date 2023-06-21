@@ -100,12 +100,22 @@ export const blocksRouter = createTRPCRouter({
       console.log('ctx', ctx.userId)
       console.log('input', JSON.stringify(input, null, 2))
 
+      const exercise_array = input.week.map((week) => week.day.map((day) => day.exercise.map((exercise) =>  exercise.id ))).flat(2)
       const deleteExercise = await ctx.prisma.exercise.deleteMany({
         where: {
-          id: input?.week[0]?.day[0]?.exercise[0]?.id,
-        },
+          id: { in: exercise_array },
+        }
       })
 
-      return deleteExercise 
+    const day_array = input.week.map((week) => week.day.map((day) => day.id)).flat(1)
+    const deleteDay = await ctx.prisma.day.deleteMany({
+      where: {
+        id: { in: day_array },
+      }
+    })
+
+      return deleteExercise
+
+      // return exercise_array
     }),
 });
