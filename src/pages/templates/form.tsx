@@ -205,7 +205,6 @@ const Form = () => {
 
     const block = blocksData?.filter((block) => block.name === templateName)[0]
 
-    console.log('block', block)
     unregister()
     setValue('name', block?.name || '')
     const newFormIndex: number[][] = [[]]
@@ -231,11 +230,9 @@ const Form = () => {
     setFormDay(0)
     setFormWeek(0)
     setFormIndex(newFormIndex)
-    console.log('newFormIndex', newFormIndex)
 
 
   }
-  console.log('formIndex', formIndex)
 
   if (blocksLoading) {
     return <div>Loading...</div>

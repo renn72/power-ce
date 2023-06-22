@@ -29,7 +29,8 @@ const Templates: NextPage = () => {
 
 
   if(!user) return <div>Login</div>
-  if(user.id !== env.NEXT_PUBLIC_ADMIN_ID_1 && user.id !== env.NEXT_PUBLIC_ADMIN_ID_2) return <div>Not auth</div>
+  console.log(user.organizationMemberships[0]?.role)
+  if(user.organizationMemberships[0]?.role !== 'admin') return <div>Not auth</div>
 
   if (blocksLoading)
     return (
