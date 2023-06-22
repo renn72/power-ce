@@ -71,10 +71,15 @@ model Block {
 
   name String @db.VarChar(255)
 
+  isProgram Boolean
+
   week Week[]
 }
 
 model UserProgram {
   id        String   @id @default(cuid())
+  userId    String
+  templateId String
+  programId String?
   createdAt DateTime @default(now())
 }

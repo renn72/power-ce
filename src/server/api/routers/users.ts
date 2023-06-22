@@ -28,4 +28,9 @@ export const usersRouter = createTRPCRouter({
 
     return users
   }),
+  getUserTemplate: privateProcedure.query(async ({ ctx }) => {
+    const res = await ctx.prisma.userProgram.findMany()
+
+    return res
+  }),
 })

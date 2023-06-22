@@ -32,6 +32,7 @@ const weekSchema = z.object({
 const blockSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1).max(280),
+  isProgram: z.boolean().optional(),
   week: z.array(weekSchema),
 })
 
@@ -69,6 +70,7 @@ export const blocksRouter = createTRPCRouter({
       const block = await ctx.prisma.block.create({
         data: {
           name: input.name,
+          isProgram: false,
           week: {
             create: input.week.map((week) => ({
               day: {
