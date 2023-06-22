@@ -11,6 +11,7 @@ import { Bars3Icon, XMarkIcon, FingerPrintIcon } from '@heroicons/react/24/outli
 
 const navigation = [
   { name: 'Dashboard', href: '/' },
+  { name: 'Users', href: '/users' },
   { name: 'Templates', href: '/templates' },
 ]
 

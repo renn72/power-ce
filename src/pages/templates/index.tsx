@@ -12,7 +12,6 @@ import { squatAtom, deadliftAtom, benchAtom, rmModalIsOpenAtom, rpeModalIsOpenAt
 import DealoadModal from "~/components/deloadModal";
 
 import { api } from '~/utils/api'
-import { env } from '~/env.mjs'
 
 const Templates: NextPage = () => {
   const [squat, setSquat] = useAtom(squatAtom);
@@ -23,13 +22,13 @@ const Templates: NextPage = () => {
   const [, setRpeModalIsOpen] = useAtom(rpeModalIsOpenAtom);
   const [, setDeloadModalIsOpen] = useAtom(deloadModalIsOpenAtom);
 
-  const {user } = useUser();
 
   const { data : blocksData, isLoading : blocksLoading } = api.blocks.getAll.useQuery();
 
 
+  // Check for admin role
+  const {user } = useUser();
   if(!user) return <div>Login</div>
-  console.log(user.organizationMemberships[0]?.role)
   if(user.organizationMemberships[0]?.role !== 'admin') return <div>Not auth</div>
 
   if (blocksLoading)
