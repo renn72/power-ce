@@ -1,5 +1,10 @@
 import { type AppType } from "next/app";
-import { ClerkProvider } from "@clerk/nextjs";
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  RedirectToSignIn,
+} from "@clerk/nextjs";
 import { Provider } from "jotai";
 import Head from "next/head";
 import Layout from "~/components/layout";
@@ -20,9 +25,14 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <SignedOut>
+          <RedirectToSignIn />
+        </SignedOut>
+        <SignedIn>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </SignedIn>
 
         <Toaster position="bottom-center" />
       </ClerkProvider>

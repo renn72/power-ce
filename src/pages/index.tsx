@@ -1,10 +1,14 @@
 import { type NextPage } from "next";
+import { useUser } from "@clerk/nextjs";
+import { SignIn } from "@clerk/clerk-react";
 // import { api } from "~/utils/api";
 
 
 
 const Home: NextPage = () => {
-  // const { isLoaded: userLoaded, isSignedIn } = useUser();
+  const { isLoaded: userLoaded, isSignedIn } = useUser();
+
+  if (!userLoaded) return <div>Loading...</div>;
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton, SignInButton, SignIn } from "@clerk/nextjs";
 import Link from "next/link";
 import { type NextPage } from "next";
 // import { api } from "~/utils/api";
@@ -25,10 +25,12 @@ const Navbar = () => {
         {({ open }) => (
           <>
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div className="flex h-16 items-center justify-between">
+              <div className="flex p-1 md:p-4 items-center justify-between">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <FingerPrintIcon className="h-8 w-8 text-indigo-300" aria-hidden="true" />
+                    <Link href="/">
+                      <FingerPrintIcon className="h-6 w-6 md:h-8 md:w-8 text-indigo-300" aria-hidden="true" />
+                    </Link>
                   </div>
                   <div className="hidden md:block">
                     <div className="ml-10 flex items-baseline space-x-4">
@@ -52,24 +54,20 @@ const Navbar = () => {
                 </div>
                 <div className="hidden md:block">
                   <div className="ml-4 flex items-center md:ml-6 text-gray-100">
-                    <SignedIn>
-                      {/* Mount the UserButton component */}
-                      <UserButton />
-                    </SignedIn>
-                    <SignedOut>
-                      {/* Signed out users get sign in button */}
-                      <SignInButton />
-                    </SignedOut>
+                    <UserButton />
                   </div>
                 </div>
-                <div className="-mr-2 flex md:hidden">
+                <div className="flex md:hidden">
                   {/* Mobile menu button */}
-                  <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                  <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-gray-800 p-0 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <span className="sr-only">Open main menu</span>
                     {open ? (
                       <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
                     ) : (
-                      <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
+                      <>
+                        <Bars3Icon className="block h-6 w-6 mr-4" aria-hidden="true" />
+                        <UserButton />
+                      </>
                     )}
                   </Disclosure.Button>
                 </div>
@@ -94,14 +92,6 @@ const Navbar = () => {
               </div>
               <div className="border-t border-gray-700 pb-3 pt-4">
                 <div className="p-4 ml-4 text-gray-100 flex justify-end items-center md:ml-6">
-                  <SignedIn >
-                    {/* Mount the UserButton component */}
-                    <UserButton />
-                  </SignedIn>
-                  <SignedOut>
-                    {/* Signed out users get sign in button */}
-                    <SignInButton />
-                  </SignedOut>
                 </div>
               </div>
             </Disclosure.Panel>

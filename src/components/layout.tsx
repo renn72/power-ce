@@ -1,15 +1,13 @@
+import type { PropsWithChildren } from "react";
 import Navbar from './navbar'
 import Footer from './footer'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const Layout = ({ children }) => {
+const Layout = ( props : PropsWithChildren) => {
   return (
     <>
       <div className="h-screen flex flex-col bg-gray-600 font-sans min-w-fit">
-
         <Navbar />
-        <div className="grow">{children}</div>
+        <div className="grow">{props.children}</div>
         <Footer />
       </div>
     </>
