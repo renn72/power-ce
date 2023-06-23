@@ -4,6 +4,7 @@ import { ErrorMessage } from '@hookform/error-message'
 import { useAtom, atom } from "jotai";
 
 import { PlusCircleIcon, MinusCircleIcon, ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
+import { toast } from "react-hot-toast";
 
 import { api } from '~/utils/api'
 import { getRandomInt } from '~/utils/utils'
@@ -80,10 +81,12 @@ const Form = () => {
   const { mutate: blockCreateMutate, } = api.blocks.create.useMutation({
     onSuccess: () => {
       console.log('success')
+      toast.success('Saved')
       void ctx.blocks.getAll.invalidate()
     },
     onError: (e) => {
       console.log('error', e)
+      toast.error('Error')
     },
   });
   const { mutate: blockUpdateMutate, } = api.blocks.update.useMutation({
@@ -264,7 +267,7 @@ const Form = () => {
                 <div className="relative rounded-md shadow-lg">
                   <input className="block text-center h-full w-64 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                     placeholder="Name"
-                    defaultValue="block-"
+                    defaultValue={`block-${getRandomInt(1000)}`}
                     {...register("name", { required: 'This is required.' })}
                   />
                 </div>

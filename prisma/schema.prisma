@@ -21,6 +21,27 @@ model Post {
   published Boolean @default(false)
 }
 
+model Rep {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  rep    Int
+  rpe    Int
+  weight Int
+
+  exerciseId String?
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+  flield4 String?
+  flield5 String?
+
+  exercise Exercise? @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@index([exerciseId])
+}
+
 model Exercise {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -31,9 +52,19 @@ model Exercise {
   sets  Int?
   reps  Int?
 
+  rep    Rep[]
+  rpe    Int?
+  weight Int?
+
   dayId String
 
   day Day @relation(fields: [dayId], references: [id], onDelete: Cascade)
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+  flield4 String?
+  flield5 String?
 
   @@index([dayId])
 }
@@ -49,6 +80,12 @@ model Day {
 
   week Week @relation(fields: [weekId], references: [id], onDelete: Cascade)
 
+  flield1 String?
+  flield2 String?
+  flield3 String?
+  flield4 String?
+  flield5 String?
+
   @@index([weekId])
 }
 
@@ -62,6 +99,12 @@ model Week {
 
   block Block @relation(fields: [blockId], references: [id], onDelete: Cascade)
 
+  flield1 String?
+  flield2 String?
+  flield3 String?
+  flield4 String?
+  flield5 String?
+
   @@index([blockId])
 }
 
@@ -73,13 +116,19 @@ model Block {
 
   isProgram Boolean
 
+  flield1 String?
+  flield2 String?
+  flield3 String?
+  flield4 String?
+  flield5 String?
+
   week Week[]
 }
 
 model UserProgram {
-  id        String   @id @default(cuid())
-  userId    String
+  id         String   @id @default(cuid())
+  userId     String
   templateId String
-  programId String?
-  createdAt DateTime @default(now())
+  programId  String?
+  createdAt  DateTime @default(now())
 }

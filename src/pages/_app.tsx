@@ -34,7 +34,15 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           </Layout>
         </SignedIn>
 
-        <Toaster position="bottom-center" />
+        <Toaster 
+          position="bottom-center" 
+          toastOptions={{
+            style: {
+              background: '#333',
+              color: '#fff',
+            },
+          }}
+        />
       </ClerkProvider>
     </Provider>
   )

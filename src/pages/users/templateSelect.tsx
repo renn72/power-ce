@@ -5,6 +5,8 @@ import { api } from '~/utils/api'
 import { Listbox, Transition } from '@headlessui/react'
 import { ChevronUpDownIcon, CheckIcon, } from '@heroicons/react/24/outline'
 
+import { capitaliseString } from '~/utils/utils'
+
 
 const TemplateSelect = (
   { 
@@ -34,11 +36,13 @@ const TemplateSelect = (
     onSelectTemplate(template, userId)
   }
 
+  if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
+
   return (
     <div className=" p-2 grid grid-cols-6 gap-4 justify-between items-center">
       <div 
         className="text-sm font-bold w-full bg-white rounded-lg p-2 col-span-2">
-        {userFirstName} {userLastName}
+        {capitaliseString(userFirstName)} {capitaliseString(userLastName)}
       </div>
       <div className="w-34 sm:w-44 flex flex-col justify-center col-span-2">
         <Listbox value={template} onChange={(e) => onSetLocalTemplate(e)}>

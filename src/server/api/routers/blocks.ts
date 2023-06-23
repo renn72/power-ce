@@ -42,6 +42,9 @@ export const blocksRouter = createTRPCRouter({
       orderBy: {
         createdAt: "desc",
       },
+      where : {
+        isProgram: false,
+      },
       include: {
         week: {
           include: {
