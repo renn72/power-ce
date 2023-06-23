@@ -28,7 +28,10 @@ const TemplateSelect = (
 
   const [template, setTemplate] = useState('')
 
-  const { data: blocksData, } = api.blocks.getAll.useQuery();
+  const { data: userPrograms, isLoading : userProgramsLoading} = api.userPrograms.getAll.useQuery();
+  const { data: blocksData, isLoading : blocksLoading} = api.blocks.getAll.useQuery();
+  if (userProgramsLoading || blocksLoading) return <div>loading</div>;
+
   const blocksTitle = blocksData?.map((block) => block.name)
 
   const onSetLocalTemplate = (template: string) => {

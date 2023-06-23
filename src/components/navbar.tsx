@@ -13,6 +13,7 @@ const navigation = [
   { name: 'Dashboard', href: '/' },
   { name: 'Users', href: '/users' },
   { name: 'Templates', href: '/templates' },
+  { name: 'Program', href: '/program' },
 ]
 
 const classNames = (...classes: string[]) => {

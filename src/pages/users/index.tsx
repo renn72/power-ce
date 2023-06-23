@@ -12,9 +12,9 @@ const Users: NextPage = () => {
   if (!user) return <div>Login</div>
   if (user.organizationMemberships[0]?.role !== 'admin') return <div>Not auth</div>
 
+  const { data: userPrograms, isLoading : userProgramsLoading} = api.userPrograms.getAll.useQuery();
   const { data: allUsers, isLoading: usersLoading } = api.users.getAll.useQuery();
-  console.log('users', allUsers)
-  if (usersLoading) return <div>loading</div>;
+  if (usersLoading || userProgramsLoading) return <div>loading</div>;
 
   const onSelectTemplate = (template: string, userId: string) => {
     console.log('template', template)
