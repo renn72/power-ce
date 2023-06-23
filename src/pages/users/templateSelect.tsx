@@ -1,21 +1,21 @@
-import { useState, Fragment } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 
 import { api } from '~/utils/api'
 
 import { Listbox, Transition } from '@headlessui/react'
-import { ChevronUpDownIcon, CheckIcon, } from '@heroicons/react/24/outline'
+import { ChevronUpDownIcon, CheckIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 
 import { capitaliseString } from '~/utils/utils'
 
 
 const TemplateSelect = (
-  { 
-    onSelectTemplate, 
-    onSetTemplate, 
-    onClearTemplate, 
-    userId, 
-    userFirstName, 
-    userLastName 
+  {
+    onSelectTemplate,
+    onSetTemplate,
+    onClearTemplate,
+    userId,
+    userFirstName,
+    userLastName
   }:
     {
       onSelectTemplate: (arg0: string, arg1: string) => void,
@@ -27,30 +27,48 @@ const TemplateSelect = (
     }) => {
 
   const [template, setTemplate] = useState('')
+  const [isSet, setIsSet] = useState(false)
 
-  const { data: userPrograms, isLoading : userProgramsLoading} = api.userPrograms.getAll.useQuery();
-  const { data: blocksData, isLoading : blocksLoading} = api.blocks.getAll.useQuery();
-  if (userProgramsLoading || blocksLoading) return <div>loading</div>;
-
-  const blocksTitle = blocksData?.map((block) => block.name)
+  const { data: userPrograms, isLoading: userProgramsLoading } = api.userPrograms.getAll.useQuery();
+  const { data: blocksData, isLoading: blocksLoading } = api.blocks.getAll.useQuery();
 
   const onSetLocalTemplate = (template: string) => {
     setTemplate(template)
     onSelectTemplate(template, userId)
   }
 
+  useEffect(() => {
+    const userProgram = userPrograms?.find((userProgram) => userProgram.userId === userId)
+    if (!userProgram) {
+      setIsSet(false)
+      setTemplate('')
+      return
+    }
+    const templateName = blocksData?.find((block) => block.id === userProgram.templateId)?.name
+    if (!templateName) return
+    setIsSet(true)
+    setTemplate(templateName)
+  }, [userPrograms, blocksData, userId])
+
+  if (userProgramsLoading || blocksLoading) return <div>loading</div>;
+  const blocksTitle = blocksData?.map((block) => block.name)
+
   if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
 
   return (
-    <div className=" p-2 grid grid-cols-6 gap-4 justify-between items-center">
-      <div 
+    <div className=" p-2 grid grid-cols-7 gap-2 justify-between items-center">
+      <div
         className="text-sm font-bold w-full bg-white rounded-lg p-2 col-span-2">
         {capitaliseString(userFirstName)} {capitaliseString(userLastName)}
       </div>
-      <div className="w-34 sm:w-44 flex flex-col justify-center col-span-2">
+      <div className="flex justify-center">
+        {isSet && (<CheckCircleIcon className="h-8 w-8 text-green-500" />)}
+      </div>
+
+      <div className=" flex flex-col justify-center col-span-2">
         <Listbox value={template} onChange={(e) => onSetLocalTemplate(e)}>
           <div className="relative z-1">
-            <Listbox.Button 
+            <Listbox.Button
               className="relative w-full cursor-default rounded-lg bg-white max-h-min h-10 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300"
             >
               <span className="block truncate">{template}</span>
@@ -99,8 +117,18 @@ const TemplateSelect = (
           </div>
         </Listbox>
       </div>
-                    <button className="bg-gray-400 text-white rounded-lg p-2">Set</button>
-                    <button className="bg-gray-400 text-white rounded-lg p-2">Clear</button>
+      <button
+        className="bg-gray-400 text-white rounded-lg p-2"
+        onClick={() => onSetTemplate(template, userId)}
+      >
+        Set
+      </button>
+      <button
+        className="bg-gray-400 text-white rounded-lg p-2"
+        onClick={() => onClearTemplate(userId)}
+      >
+        Clear
+      </button>
     </div>
   )
 }

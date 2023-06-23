@@ -22,15 +22,41 @@ export const userProgramsRouter = createTRPCRouter({
   create: privateProcedure
     .input(programSchema)
     .mutation(async ({ ctx, input }) => {
-      // const authorId = ctx.userId;
-
-      console.log('input', JSON.stringify(input, null, 2))
-
-      const res = await ctx.prisma.userProgram.create({
-        data: {
+      const userPrograms = await ctx.prisma.userProgram.findUnique({
+        where: {
           userId: input.userId,
-          templateId: input.templateId,
-          programId: input.programId,
+        }
+      })
+
+      if (userPrograms) {
+        const res = await ctx.prisma.userProgram.update({
+          where: {
+            userId: input.userId,
+          },
+          data: {
+            templateId: input.templateId,
+            programId: input.programId,
+          },
+        })
+        return res
+      } else {
+
+        const res = await ctx.prisma.userProgram.create({
+          data: {
+            userId: input.userId,
+            templateId: input.templateId,
+            programId: input.programId,
+          },
+        })
+        return res
+      }
+    }),
+  delete: privateProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.userProgram.delete({
+        where: {
+          userId: input.userId,
         },
       })
 

@@ -127,7 +127,7 @@ model Block {
 
 model UserProgram {
   id         String   @id @default(cuid())
-  userId     String
+  userId     String   @unique
   templateId String
   programId  String?
   createdAt  DateTime @default(now())
