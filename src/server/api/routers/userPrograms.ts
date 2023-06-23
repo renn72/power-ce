@@ -11,7 +11,7 @@ const programSchema = z.object({
   id: z.string().optional(),
   userId: z.string(),
   templateId: z.string(),
-  programId: z.string(),
+  programId: z.string().optional(),
 })
 
 export const userProgramsRouter = createTRPCRouter({
