@@ -28,6 +28,66 @@ export const userProgramsRouter = createTRPCRouter({
         }
       })
 
+      const block = await ctx.prisma.block.findUnique({
+        where: {
+          id: input.templateId,
+        },
+        include: {
+          week: {
+            include: {
+              day: {
+                include: {
+                  exercise: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+       
+      if (!block) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Block not found",
+        });
+      }
+      
+      const program = await ctx.prisma.block.create({
+        data: {
+          name: block.name + '-p',
+          isProgram: true,
+          userIdOfProgram: input.userId,
+          week: {
+            create: block.week.map((week) => ({
+              day: {
+                create: week.day.map((day) => ({
+                  isRestDay: day.isRestDay,
+                  exercise: {
+                    create: day.exercise.map((exercise) => ({
+                      name: exercise.name,
+                      lift: exercise.lift,
+                      sets: exercise.sets,
+                      reps: exercise.reps,
+                      onerm: exercise.onerm,
+                    })),
+                  },
+                })),
+              },
+            })),
+          },
+        },
+      })
+
+      console.log('program', JSON.stringify(program, null, 2))
+
+      if (!program) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Program not found",
+        });
+      }
+
       if (userPrograms) {
         const res = await ctx.prisma.userProgram.update({
           where: {
@@ -35,7 +95,7 @@ export const userProgramsRouter = createTRPCRouter({
           },
           data: {
             templateId: input.templateId,
-            programId: input.programId,
+            programId: program.id,
           },
         })
         return res
@@ -45,7 +105,7 @@ export const userProgramsRouter = createTRPCRouter({
           data: {
             userId: input.userId,
             templateId: input.templateId,
-            programId: input.programId,
+            programId: program.id,
           },
         })
         return res

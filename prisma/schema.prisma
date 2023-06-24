@@ -116,6 +116,8 @@ model Block {
 
   isProgram Boolean
 
+  userIdOfProgram String?
+
   flield1 String?
   flield2 String?
   flield3 String?

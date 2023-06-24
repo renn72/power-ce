@@ -31,6 +31,7 @@ const TemplateSelect = (
 
   const { data: userPrograms, isLoading: userProgramsLoading } = api.userPrograms.getAll.useQuery();
   const { data: blocksData, isLoading: blocksLoading } = api.blocks.getAll.useQuery();
+  const { data: programsData, isLoading: programssLoading } = api.blocks.getAllPrograms.useQuery();
 
   const onSetLocalTemplate = (template: string) => {
     setTemplate(template)
@@ -44,7 +45,7 @@ const TemplateSelect = (
       setTemplate('')
       return
     }
-    const templateName = blocksData?.find((block) => block.id === userProgram.templateId)?.name
+    const templateName = programsData?.find((program) => program.id === userProgram.programId)?.name
     if (!templateName) return
     setIsSet(true)
     setTemplate(templateName)

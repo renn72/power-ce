@@ -13,26 +13,23 @@ import type { Block, Post, Exercise, Day, Week } from "@prisma/client";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
 const exerciseSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().min(0).max(280).optional(),
+  name: z.string().min(0).max(280).optional().nullable(),
   lift: z.string().min(0).max(55).optional().nullable(),
   sets: z.number().min(0).max(55).optional().nullable(),
   reps: z.number().min(0).max(55).optional().nullable(),
   onerm: z.number().min(0).max(100).optional().nullable(),
 })
 const daySchema = z.object({
-  id: z.string().optional(),
   isRestDay: z.boolean(),
   exercise: z.array(exerciseSchema),
 })
 const weekSchema = z.object({
-  id: z.string().optional(),
   day: z.array(daySchema),
 })
 const blockSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1).max(280),
-  isProgram: z.boolean().optional(),
+  isProgram: z.boolean(),
   week: z.array(weekSchema),
 })
 
@@ -42,7 +39,7 @@ export const blocksRouter = createTRPCRouter({
       orderBy: {
         createdAt: "desc",
       },
-      where : {
+      where: {
         isProgram: false,
       },
       include: {
@@ -57,9 +54,51 @@ export const blocksRouter = createTRPCRouter({
         },
       },
     });
-
     return blocks;
   }),
+  getAllPrograms: publicProcedure.query(async ({ ctx }) => {
+    const blocks = await ctx.prisma.block.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      where: {
+        isProgram: true,
+      },
+      include: {
+        week: {
+          include: {
+            day: {
+              include: {
+                exercise: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return blocks;
+  }),
+  getOne: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const block = await ctx.prisma.block.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          week: {
+            include: {
+              day: {
+                include: {
+                  exercise: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      return block;
+    }),
 
 
   create: privateProcedure
@@ -73,7 +112,7 @@ export const blocksRouter = createTRPCRouter({
       const block = await ctx.prisma.block.create({
         data: {
           name: input.name,
-          isProgram: false,
+          isProgram: input.isProgram,
           week: {
             create: input.week.map((week) => ({
               day: {
@@ -154,6 +193,7 @@ export const blocksRouter = createTRPCRouter({
       const block = await ctx.prisma.block.create({
         data: {
           name: input.name,
+          isProgram: false,
           week: {
             create: input.week.map((week) => ({
               day: {

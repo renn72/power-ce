@@ -21,7 +21,6 @@ const Users: NextPage = () => {
   const { data: blocksData, isLoading: blocksLoading } = api.blocks.getAll.useQuery();
   const { mutate: userProgramCreateMutate, } = api.userPrograms.create.useMutation({
     onSuccess: () => {
-      console.log('success')
       toast.success('Saved')
       void ctx.blocks.getAll.invalidate()
       void ctx.userPrograms.getAll.invalidate()
@@ -36,6 +35,7 @@ const Users: NextPage = () => {
       console.log('success')
       toast.success('Removed')
       void ctx.blocks.getAll.invalidate()
+      void ctx.blocks.getAllPrograms.invalidate()
       void ctx.userPrograms.getAll.invalidate()
     },
     onError: (e) => {

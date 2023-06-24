@@ -3,7 +3,12 @@ import { useForm, FormProvider } from "react-hook-form";
 import { ErrorMessage } from '@hookform/error-message'
 import { useAtom, atom } from "jotai";
 
-import { PlusCircleIcon, MinusCircleIcon, ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
+import { 
+  PlusCircleIcon, 
+  MinusCircleIcon, 
+  ChevronRightIcon, 
+  ChevronLeftIcon 
+} from '@heroicons/react/24/outline'
 import { toast } from "react-hot-toast";
 
 import { api } from '~/utils/api'
@@ -21,7 +26,6 @@ export const blockIndexAtom = atom('')
 export const selectedTemplateAtom = atom('')
 
 type Exercise = {
-  id: string,
   lift: string | null,
   name: string | null,
   onerm: number | null,
@@ -30,19 +34,18 @@ type Exercise = {
 }
 
 type Day = {
-  id: string,
   isRestDay: boolean,
   exercise: Exercise[],
 };
 
 type Week = {
-  id: string,
   day: Day[],
 }
 
 export type Block = {
   id: string,
   name: string,
+  isProgram: boolean,
   week: Week[],
 }
 
@@ -76,6 +79,7 @@ const Form = () => {
   const { data: blocksData, isLoading: blocksLoading } = api.blocks.getAll.useQuery();
   const blocksTitle = blocksData?.map((block) => block.name)
 
+
   const ctx = api.useContext()
 
   const { mutate: blockCreateMutate, } = api.blocks.create.useMutation({
@@ -108,19 +112,17 @@ const Form = () => {
       console.log('clash')
       return
     }
-    const block = {
-      id: '',
+    const block : Block = {
       name: data.name,
+      id: '',
+      isProgram: false,
       week: data.week.map(
         (week) => ({
-          id: week.id,
           day: week.day.map(
             (day) => ({
-              id: day.id,
               isRestDay: day.isRestDay,
               exercise: day.exercise.map(
                 (exercise) => ({
-                  id: exercise.id,
                   name: exercise.name,
                   lift: exercise.lift,
                   onerm: exercise.onerm ? exercise.onerm : null,
@@ -212,14 +214,11 @@ const Form = () => {
     setValue('name', block?.name || '')
     const newFormIndex: number[][] = [[]]
     block?.week.forEach((week, weekIdx) => {
-      setValue(`week.${weekIdx}.id`, week?.id) // eslint-disable-line @typescript-eslint/no-unsafe-argument
       newFormIndex[weekIdx] = [0, 0, 0, 0, 0, 0, 0]
       week.day.forEach((day, dayIdx) => {
         setValue(`week.${weekIdx}.day.${dayIdx}.isRestDay`, day?.isRestDay) // eslint-disable-line @typescript-eslint/no-unsafe-argument
-        setValue(`week.${weekIdx}.day.${dayIdx}.id`, day?.id)
         newFormIndex[weekIdx][dayIdx] = day?.exercise?.length || 0
         day.exercise.forEach((exercise, exerciseIdx) => {
-          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.id`, exercise?.id) // eslint-disable-line @typescript-eslint/no-unsafe-argument
           setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.lift`, exercise.lift || null) // eslint-disable-line @typescript-eslint/no-unsafe-argument
           setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`, exercise.name || null)
           setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, exercise.onerm || null) // eslint-disable-line @typescript-eslint/no-unsafe-argument
@@ -303,14 +302,13 @@ const Form = () => {
                 {
                   formIndex.map((week, weekIdx) => (
                     <div key={weekIdx} className={`flex gap-10 ${weekIdx == formWeek ? `` : `hidden`}`}>
-                      <input
-                        className="hidden"
-                        defaultValue={getRandomInt(100000000)}
-                        type="text"
-                        {...register(`week.${weekIdx}.id`, {
-                          shouldUnregister: true,
-                        })}
-                      />
+                      {/* <input */}
+                      {/*   className="hidden" */}
+                      {/*   type="text" */}
+                      {/*   {...register(`week.${weekIdx}.id`, { */}
+                      {/*     shouldUnregister: true, */}
+                      {/*   })} */}
+                      {/* /> */}
                       {week.map((day, dayIdx) => (
                         <FormDay key={dayIdx} weekIdx={weekIdx} dayIdx={dayIdx} day={day} />
                       ))}

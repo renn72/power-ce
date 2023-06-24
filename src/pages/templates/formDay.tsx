@@ -30,6 +30,7 @@ const FormDay = ({ weekIdx, dayIdx, day }: { weekIdx: number, dayIdx: number, da
           defaultValue={false}
           shouldUnregister={true}
           render={({ field: { onChange, value } }) => (
+
             <Switch
               checked={value}
               onChange={onChange}
@@ -45,14 +46,13 @@ const FormDay = ({ weekIdx, dayIdx, day }: { weekIdx: number, dayIdx: number, da
             </Switch>
           )}
         />
-        <input
-          className="hidden"
-          defaultValue={getRandomInt(100000000)}
-          type="text"
-          {...register(`week.${weekIdx}.day.${dayIdx}.id`, {
-            shouldUnregister: true,
-          })}
-        />
+        {/* <input */}
+        {/*   className="hidden" */}
+        {/*   type="text" */}
+        {/*   {...register(`week.${weekIdx}.day.${dayIdx}.id`, { */}
+        {/*     shouldUnregister: true, */}
+        {/*   })} */}
+        {/* /> */}
       </div>
       {
         Array.from({
