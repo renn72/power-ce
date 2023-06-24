@@ -3,12 +3,9 @@ import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
 
-
 import TemplateSelect from "./templateSelect";
 
-
 const Users: NextPage = () => {
-
   // Check for admin role
   const { user } = useUser();
   if (!user) return <div>Login</div>
@@ -16,13 +13,14 @@ const Users: NextPage = () => {
 
   const ctx = api.useContext();
 
-  const { data: userPrograms, isLoading: userProgramsLoading } = api.userPrograms.getAll.useQuery();
+  const {  isLoading: userProgramsLoading } = api.userPrograms.getAll.useQuery();
   const { data: allUsers, isLoading: usersLoading } = api.users.getAll.useQuery();
-  const { data: blocksData, isLoading: blocksLoading } = api.blocks.getAll.useQuery();
+  const { data: blocksData, isLoading: blocksLoading } = api.blocks.getAllPrograms.useQuery();
   const { mutate: userProgramCreateMutate, } = api.userPrograms.create.useMutation({
     onSuccess: () => {
       toast.success('Saved')
       void ctx.blocks.getAll.invalidate()
+      void ctx.blocks.getAllPrograms.invalidate()
       void ctx.userPrograms.getAll.invalidate()
     },
     onError: (e) => {
@@ -30,7 +28,7 @@ const Users: NextPage = () => {
       toast.error('Error')
     },
   });
-  const { mutate: userProgramDeleteMutate, } = api.userPrograms.delete.useMutation({
+  const { mutate: userProgramRemoveMutate, } = api.userPrograms.remove.useMutation({
     onSuccess: () => {
       console.log('success')
       toast.success('Removed')
@@ -44,8 +42,6 @@ const Users: NextPage = () => {
     },
   });
 
-
-
   const onSelectTemplate = (template: string, userId: string) => {
     console.log('template', template)
     console.log('userId', userId)
@@ -53,7 +49,7 @@ const Users: NextPage = () => {
 
   const onClearTemplate = (userId: string) => {
     console.log('userId', userId)
-    userProgramDeleteMutate({
+    userProgramRemoveMutate({
       userId: userId
     })
   }
@@ -69,7 +65,8 @@ const Users: NextPage = () => {
     userProgramCreateMutate({
       userId : userId,
       templateId: templateId,
-      programId: 'test'
+      programId: '',
+      isProgramActive: true,
     })
   }
 

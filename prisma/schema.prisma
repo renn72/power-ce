@@ -117,6 +117,7 @@ model Block {
   isProgram Boolean
 
   userIdOfProgram String?
+  isProgramActive Boolean?
 
   flield1 String?
   flield2 String?
@@ -128,9 +129,10 @@ model Block {
 }
 
 model UserProgram {
-  id         String   @id @default(cuid())
-  userId     String   @unique
-  templateId String
-  programId  String?
-  createdAt  DateTime @default(now())
+  id              String   @id @default(cuid())
+  userId          String   @db.VarChar(255)
+  templateId      String
+  programId       String?
+  isProgramActive Boolean
+  createdAt       DateTime @default(now())
 }

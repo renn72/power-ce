@@ -39,7 +39,7 @@ const TemplateSelect = (
   }
 
   useEffect(() => {
-    const userProgram = userPrograms?.find((userProgram) => userProgram.userId === userId)
+    const userProgram = userPrograms?.find((userProgram) => userProgram.userId === userId && userProgram.isProgramActive)
     if (!userProgram) {
       setIsSet(false)
       setTemplate('')
@@ -54,7 +54,7 @@ const TemplateSelect = (
   if (userProgramsLoading || blocksLoading) return <div>loading</div>;
   const blocksTitle = blocksData?.map((block) => block.name)
 
-  if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
+  // if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
 
   return (
     <div className=" p-2 grid grid-cols-7 gap-2 justify-between items-center">

@@ -1,4 +1,3 @@
-import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -7,24 +6,37 @@ import {
   privateProcedure,
 } from "~/server/api/trpc";
 
+import { getRandomInt } from "~/utils/utils"
+
 const programSchema = z.object({
   id: z.string().optional(),
   userId: z.string(),
   templateId: z.string(),
   programId: z.string().optional(),
+  isProgramActive: z.boolean(),
 })
 
 export const userProgramsRouter = createTRPCRouter({
   getAll: privateProcedure.query(async ({ ctx }) => {
-    const res = await ctx.prisma.userProgram.findMany()
+    const res = await ctx.prisma.userProgram.findMany({})
+    return res
+  }),
+  getAllActive: privateProcedure.query(async ({ ctx }) => {
+    const res = await ctx.prisma.userProgram.findMany({
+      where: {
+        isProgramActive: true,
+      },
+    })
     return res
   }),
   create: privateProcedure
     .input(programSchema)
     .mutation(async ({ ctx, input }) => {
-      const userPrograms = await ctx.prisma.userProgram.findUnique({
+
+      const userPrograms = await ctx.prisma.userProgram.findFirst({
         where: {
           userId: input.userId,
+          isProgramActive: true,
         }
       })
 
@@ -45,19 +57,20 @@ export const userProgramsRouter = createTRPCRouter({
         },
       });
 
-       
+
       if (!block) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Block not found",
         });
       }
-      
+
       const program = await ctx.prisma.block.create({
         data: {
-          name: block.name + '-p',
+          name: block.name + '-' + getRandomInt(99).toString(),
           isProgram: true,
           userIdOfProgram: input.userId,
+          isProgramActive: true,
           week: {
             create: block.week.map((week) => ({
               day: {
@@ -88,35 +101,41 @@ export const userProgramsRouter = createTRPCRouter({
         });
       }
 
-      if (userPrograms) {
-        const res = await ctx.prisma.userProgram.update({
-          where: {
-            userId: input.userId,
-          },
-          data: {
-            templateId: input.templateId,
-            programId: program.id,
-          },
-        })
-        return res
-      } else {
 
-        const res = await ctx.prisma.userProgram.create({
+      const res = await ctx.prisma.userProgram.create({
+        data: {
+          userId: input.userId,
+          templateId: input.templateId,
+          programId: program.id,
+          isProgramActive: true,
+        },
+      })
+    
+      if (userPrograms) {
+        const res_update = await ctx.prisma.userProgram.update({
+          where: {
+            id: userPrograms.id,
+          },
           data: {
-            userId: input.userId,
-            templateId: input.templateId,
-            programId: program.id,
+            isProgramActive: false,
           },
         })
         return res
       }
+
+      return res
+
     }),
-  delete: privateProcedure
+  remove: privateProcedure
     .input(z.object({ userId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const res = await ctx.prisma.userProgram.delete({
+      const res = await ctx.prisma.userProgram.updateMany({
         where: {
           userId: input.userId,
+          isProgramActive: true,
+        },
+        data: {
+          isProgramActive: false,
         },
       })
 
