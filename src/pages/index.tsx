@@ -3,6 +3,7 @@ import { type NextPage } from "next";
 import { useUser } from "@clerk/nextjs";
 
 import { api } from "~/utils/api";
+import OneRMCard from "~/components/oneRMCard";
 
 
 
@@ -15,8 +16,6 @@ const Home: NextPage = () => {
   if (!user) return <div>Login</div>
 
   const programs = userPrograms?.filter((program) => program.userId === user.id)
-  console.log('programs', programs)
-  console.log('programsData', programsData)
   if (programs?.length === 0) {
     console.log('no programs')
   }
@@ -34,7 +33,9 @@ const Home: NextPage = () => {
           </div>
         </header>
         <main >
-          <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8 border-2">
+            <OneRMCard />
+
             <div className="flex flex-col gap-2">
               <div className="text-gray-900">
                 <h2 className="text-xl font-bold text-gray-200">Active Programs</h2>
