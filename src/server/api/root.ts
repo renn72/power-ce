@@ -1,8 +1,9 @@
-import { createTRPCRouter } from "~/server/api/trpc";
-import { blocksRouter } from "~/server/api/routers/blocks";
-import { usersRouter } from "~/server/api/routers/users";
-import { programsRouter } from "./routers/programs";
-import { userProgramsRouter } from "./routers/userPrograms";
+import { createTRPCRouter, } from '~/server/api/trpc'
+import { blocksRouter, } from '~/server/api/routers/blocks'
+import { usersRouter, } from '~/server/api/routers/users'
+import { programsRouter, } from './routers/programs'
+import { userProgramsRouter, } from './routers/userPrograms'
+import { oneRepMaxRouter, } from './routers/oneRepMax'
 
 /**
  * This is the primary router for your server.
@@ -14,7 +15,8 @@ export const appRouter = createTRPCRouter({
   users: usersRouter,
   programs: programsRouter,
   userPrograms: userProgramsRouter,
-});
+  oneRepMax: oneRepMaxRouter,
+})
 
 // export type definition of API
 export type AppRouter = typeof appRouter;

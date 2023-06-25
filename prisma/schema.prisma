@@ -136,3 +136,17 @@ model UserProgram {
   isProgramActive Boolean
   createdAt       DateTime @default(now())
 }
+
+model OneRepMax {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId String
+  lift   String
+  weight  Decimal
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+}
+
