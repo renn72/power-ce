@@ -3,11 +3,11 @@ import { useForm, FormProvider } from "react-hook-form";
 import { ErrorMessage } from '@hookform/error-message'
 import { useAtom, atom } from "jotai";
 
-import { 
-  PlusCircleIcon, 
-  MinusCircleIcon, 
-  ChevronRightIcon, 
-  ChevronLeftIcon 
+import {
+  PlusCircleIcon,
+  MinusCircleIcon,
+  ChevronRightIcon,
+  ChevronLeftIcon
 } from '@heroicons/react/24/outline'
 import { toast } from "react-hot-toast";
 
@@ -112,7 +112,7 @@ const Form = () => {
       console.log('clash')
       return
     }
-    const block : Block = {
+    const block: Block = {
       name: data.name,
       id: '',
       isProgram: false,

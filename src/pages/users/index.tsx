@@ -1,21 +1,25 @@
-import { type NextPage } from "next";
-import { useUser } from "@clerk/nextjs";
-import { toast } from "react-hot-toast";
-import { api } from "~/utils/api";
+import { type NextPage, } from 'next'
+import { useUser, } from '@clerk/nextjs'
+import { toast, } from 'react-hot-toast'
+import { api, } from '~/utils/api'
 
-import TemplateSelect from "./templateSelect";
+import TemplateSelect from './templateSelect'
 
 const Users: NextPage = () => {
   // Check for admin role
-  const { user } = useUser();
+  const { user, } = useUser()
   if (!user) return <div>Login</div>
   if (user.organizationMemberships[0]?.role !== 'admin') return <div>Not auth</div>
 
-  const ctx = api.useContext();
+  const ctx = api.useContext()
 
-  const {  isLoading: userProgramsLoading } = api.userPrograms.getAll.useQuery();
-  const { data: allUsers, isLoading: usersLoading } = api.users.getAll.useQuery();
-  const { data: blocksData, isLoading: blocksLoading } = api.blocks.getAllPrograms.useQuery();
+  const { isLoading: userProgramsLoading, } = api.userPrograms.getAll.useQuery()
+  const {
+    data: allUsers, isLoading: usersLoading,
+  } = api.users.getAll.useQuery()
+  const {
+    data: blocksData, isLoading: blocksLoading,
+  } = api.blocks.getAllPrograms.useQuery()
   const { mutate: userProgramCreateMutate, } = api.userPrograms.create.useMutation({
     onSuccess: () => {
       toast.success('Saved')
@@ -27,7 +31,7 @@ const Users: NextPage = () => {
       console.log('error', e)
       toast.error('Error')
     },
-  });
+  })
   const { mutate: userProgramRemoveMutate, } = api.userPrograms.remove.useMutation({
     onSuccess: () => {
       console.log('success')
@@ -40,7 +44,7 @@ const Users: NextPage = () => {
       console.log('error', e)
       toast.error('Error')
     },
-  });
+  })
 
   const onSelectTemplate = (template: string, userId: string) => {
     console.log('template', template)
@@ -49,9 +53,7 @@ const Users: NextPage = () => {
 
   const onClearTemplate = (userId: string) => {
     console.log('userId', userId)
-    userProgramRemoveMutate({
-      userId: userId
-    })
+    userProgramRemoveMutate({ userId: userId, })
   }
 
   const onSetTemplate = (template: string, userId: string) => {
@@ -61,30 +63,29 @@ const Users: NextPage = () => {
     console.log('templateId', templateId)
     if (!templateId) return
 
-    
     userProgramCreateMutate({
-      userId : userId,
+      userId: userId,
       templateId: templateId,
       programId: '',
       isProgramActive: true,
     })
   }
 
-  if (usersLoading || userProgramsLoading || blocksLoading) return <div>loading</div>;
+  if (usersLoading || userProgramsLoading || blocksLoading) return <div>loading</div>
 
   return (
     <>
-      <div className="h-full flex flex-col bg-gray-600 ">
-        <header className="bg-white shadow-xl">
-          <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Users</h1>
+      <div className='h-full flex flex-col bg-gray-600 '>
+        <header className='bg-white shadow-xl'>
+          <div className='mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8'>
+            <h1 className='text-3xl font-bold tracking-tight text-gray-900'>Users</h1>
           </div>
         </header>
         <main >
-          <div className="mx-auto max-w-3xl py-6 sm:px-6 lg:px-8">
-            <div className="flex flex-col gap-2">
-              <div className="text-xl font-bold text-gray-200">Admins</div>
-              <div className="flex flex-col gap-2">
+          <div className='mx-auto max-w-3xl py-6 sm:px-6 lg:px-8'>
+            <div className='flex flex-col gap-2'>
+              <div className='text-xl font-bold text-gray-200'>Admins</div>
+              <div className='flex flex-col gap-2'>
                 {allUsers?.admins?.map((user) => (
                   <TemplateSelect
                     key={user.id}
@@ -98,9 +99,9 @@ const Users: NextPage = () => {
                 ))}
               </div>
             </div>
-            <div className="flex flex-col gap-2">
-              <div className="text-xl font-bold text-gray-200">Users</div>
-              <div className="flex flex-col gap-2">
+            <div className='flex flex-col gap-2'>
+              <div className='text-xl font-bold text-gray-200'>Users</div>
+              <div className='flex flex-col gap-2'>
                 {allUsers?.users?.map((user) => (
                   <TemplateSelect
                     key={user.id}
@@ -118,7 +119,7 @@ const Users: NextPage = () => {
         </main>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Users;
+export default Users
