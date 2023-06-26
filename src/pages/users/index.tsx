@@ -19,6 +19,9 @@ const Users: NextPage = () => {
   } = api.users.getAll.useQuery()
   const {
     data: blocksData, isLoading: blocksLoading,
+  } = api.blocks.getAll.useQuery()
+  const {
+    data: programsData,
   } = api.blocks.getAllPrograms.useQuery()
   const { mutate: userProgramCreateMutate, } = api.userPrograms.create.useMutation({
     onSuccess: () => {
@@ -59,6 +62,7 @@ const Users: NextPage = () => {
   const onSetTemplate = (template: string, userId: string) => {
     console.log('template', template)
     console.log('userId', userId)
+    console.log('blocksData', blocksData)
     const templateId = blocksData?.find((block) => block.name === template)?.id
     console.log('templateId', templateId)
     if (!templateId) return
@@ -75,12 +79,7 @@ const Users: NextPage = () => {
 
   return (
     <>
-      <div className='h-full flex flex-col bg-gray-600 '>
-        <header className='bg-white shadow-xl'>
-          <div className='mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8'>
-            <h1 className='text-3xl font-bold tracking-tight text-gray-900'>Users</h1>
-          </div>
-        </header>
+      <div className='h-full flex flex-col'>
         <main >
           <div className='mx-auto max-w-3xl py-6 sm:px-6 lg:px-8'>
             <div className='flex flex-col gap-2'>

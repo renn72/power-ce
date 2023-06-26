@@ -80,7 +80,7 @@ const TemplateSelect = (
   // if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
 
   return (
-    <div className=' p-2 grid grid-cols-7 gap-2 justify-between items-center'>
+    <div className=' p-2 grid grid-cols-7 gap-2 justify-between items-center text-slate-900'>
       <div
         className='text-sm font-bold w-full bg-white rounded-lg p-2 col-span-2'>
         {capitaliseString(userFirstName)} {capitaliseString(userLastName)}

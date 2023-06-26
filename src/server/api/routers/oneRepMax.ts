@@ -1,3 +1,4 @@
+import { TRPCError, } from '@trpc/server'
 import { z, } from 'zod'
 
 import {
@@ -12,11 +13,38 @@ export const oneRepMaxRouter = createTRPCRouter({
     return onerm
   }),
   getUser: publicProcedure
-    .input(z.object({ id: z.string(), }))
-    .query(async ({
-      ctx, input,
-    }) => {
-      const onerm = await ctx.prisma.oneRepMax.findFirst({ where: { userId: input.id, }, })
+    .query(async ({ ctx, }) => {
+      const { userId, } = ctx
+      if (!userId) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'You must be logged in to view this page',
+        })
+      }
+      const onerm = await ctx.prisma.oneRepMax.findFirst({ where: { userId: userId, }, })
+      return onerm
+    }),
+  getUserCoreLifts: privateProcedure
+    .query(async ({ ctx, }) => {
+      const { userId, } = ctx
+      if (!userId) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'You must be logged in to view this page',
+        })
+      }
+      const onerm = await ctx.prisma.oneRepMax.findMany({
+        where: {
+          userId: userId,
+          lift: {
+            in: [
+              'squat',
+              'bench',
+              'deadlift',
+            ],
+          },
+        },
+      })
       return onerm
     }),
   create: privateProcedure

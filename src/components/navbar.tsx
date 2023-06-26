@@ -31,7 +31,7 @@ const Navbar = () => {
   const router = useRouter()
   return (
     <>
-      <Disclosure as='nav' className='bg-gray-900'>
+      <Disclosure as='nav' className='bg-gray-900 font-semibold tracking-wider text-gray-400'>
         {({ open, }) => (
           <>
             <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
@@ -51,8 +51,8 @@ const Navbar = () => {
                           className={classNames(
                             item.href === router.pathname
                               ? 'bg-gray-900 text-white'
-                              : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                            'rounded-md px-3 py-2 text-sm font-medium'
+                              : 'text-gray-400 hover:bg-gray-700 hover:text-white',
+                            'rounded-md px-3 py-2 text-md'
                           )}
                           aria-current={item.href === router.pathname ? 'page' : undefined}
                         >
@@ -67,9 +67,12 @@ const Navbar = () => {
                     <UserButton />
                   </div>
                 </div>
+                <div className='flex md:hidden text-white'>
+                  {navigation.filter((item) => item.href === router.pathname)[0]?.name}
+                </div>
                 <div className='flex md:hidden'>
                   {/* Mobile menu button */}
-                  <Disclosure.Button className='inline-flex items-center justify-center rounded-md bg-gray-800 p-0 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800'>
+                  <Disclosure.Button className='inline-flex items-center mr-2 justify-center rounded-md bg-gray-800 p-0 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800'>
                     <span className='sr-only'>Open main menu</span>
                     {open
                       ? (
@@ -77,11 +80,11 @@ const Navbar = () => {
                       )
                       : (
                         <>
-                          <Bars3Icon className='block h-6 w-6 mr-4' aria-hidden='true' />
-                          <UserButton />
+                          <Bars3Icon className='block h-6 w-6 mx-1' aria-hidden='true' />
                         </>
                       )}
                   </Disclosure.Button>
+                  <UserButton />
                 </div>
               </div>
             </div>
@@ -94,8 +97,8 @@ const Navbar = () => {
                     as='a'
                     href={item.href}
                     className={classNames(
-                      item.href === router.pathname ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                      'block rounded-md px-3 py-2 text-base font-medium'
+                      item.href === router.pathname ? 'bg-gray-900 text-white' : 'text-gray-400 hover:bg-gray-700 hover:text-white',
+                      'block rounded-md px-3 py-2 text-base'
                     )}
                   >
                     {item.name}

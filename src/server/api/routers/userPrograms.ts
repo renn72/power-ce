@@ -1,12 +1,12 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { TRPCError, } from '@trpc/server'
+import { z, } from 'zod'
 
 import {
   createTRPCRouter,
   privateProcedure,
-} from "~/server/api/trpc";
+} from '~/server/api/trpc'
 
-import { getRandomInt } from "~/utils/utils"
+import { getRandomInt, } from '~/utils/utils'
 
 const programSchema = z.object({
   id: z.string().optional(),
@@ -17,52 +17,36 @@ const programSchema = z.object({
 })
 
 export const userProgramsRouter = createTRPCRouter({
-  getAll: privateProcedure.query(async ({ ctx }) => {
+  getAll: privateProcedure.query(async ({ ctx, }) => {
     const res = await ctx.prisma.userProgram.findMany({})
     return res
   }),
-  getAllActive: privateProcedure.query(async ({ ctx }) => {
-    const res = await ctx.prisma.userProgram.findMany({
-      where: {
-        isProgramActive: true,
-      },
-    })
+  getAllActive: privateProcedure.query(async ({ ctx, }) => {
+    const res = await ctx.prisma.userProgram.findMany({ where: { isProgramActive: true, }, })
     return res
   }),
   create: privateProcedure
     .input(programSchema)
-    .mutation(async ({ ctx, input }) => {
-
+    .mutation(async ({
+      ctx, input,
+    }) => {
       const userPrograms = await ctx.prisma.userProgram.findFirst({
         where: {
           userId: input.userId,
           isProgramActive: true,
-        }
+        },
       })
 
       const block = await ctx.prisma.block.findUnique({
-        where: {
-          id: input.templateId,
-        },
-        include: {
-          week: {
-            include: {
-              day: {
-                include: {
-                  exercise: true,
-                },
-              },
-            },
-          },
-        },
-      });
-
+        where: { id: input.templateId, },
+        include: { week: { include: { day: { include: { exercise: true, }, }, }, }, },
+      })
 
       if (!block) {
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Block not found",
-        });
+          code: 'NOT_FOUND',
+          message: 'Block not found',
+        })
       }
 
       const program = await ctx.prisma.block.create({
@@ -96,13 +80,12 @@ export const userProgramsRouter = createTRPCRouter({
 
       if (!program) {
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Program not found",
-        });
+          code: 'NOT_FOUND',
+          message: 'Program not found',
+        })
       }
 
-
-      const res = await ctx.prisma.userProgram.create({
+      const userProgram = await ctx.prisma.userProgram.create({
         data: {
           userId: input.userId,
           templateId: input.templateId,
@@ -110,33 +93,34 @@ export const userProgramsRouter = createTRPCRouter({
           isProgramActive: true,
         },
       })
-    
+
       if (userPrograms) {
-        const res_update = await ctx.prisma.userProgram.update({
-          where: {
-            id: userPrograms.id,
-          },
-          data: {
-            isProgramActive: false,
-          },
+        const resUpdate = await ctx.prisma.userProgram.update({
+          where: { id: userPrograms.id, },
+          data: { isProgramActive: false, },
         })
-        return res
+        return {
+          userPrograms: userPrograms, block: block, program: program, userProgram: userProgram, resUpdate: resUpdate,
+        }
+
       }
 
-      return res
+      return {
+        userPrograms: userPrograms, block: block, program: program, userProgram: userProgram,
+      }
 
     }),
   remove: privateProcedure
-    .input(z.object({ userId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
+    .input(z.object({ userId: z.string(), }))
+    .mutation(async ({
+      ctx, input,
+    }) => {
       const res = await ctx.prisma.userProgram.updateMany({
         where: {
           userId: input.userId,
           isProgramActive: true,
         },
-        data: {
-          isProgramActive: false,
-        },
+        data: { isProgramActive: false, },
       })
 
       return res
