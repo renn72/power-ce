@@ -34,6 +34,7 @@ export const oneRepMaxRouter = createTRPCRouter({
         })
       }
       const onerm = await ctx.prisma.oneRepMax.findMany({
+        orderBy: { createdAt: 'desc', },
         where: {
           userId: userId,
           lift: {
@@ -49,12 +50,17 @@ export const oneRepMaxRouter = createTRPCRouter({
     }),
   create: privateProcedure
     .input(z.object({
-      weight: z.number(), userId: z.string(), lift: z.string(),
+      weight: z.number(), lift: z.string(),
     }))
     .mutation(async ({
       ctx, input,
     }) => {
-      const onerm = await ctx.prisma.oneRepMax.create({ data: input, })
+      const { userId, } = ctx
+      const onerm = await ctx.prisma.oneRepMax.create({
+        data: {
+          userId: userId, weight: input.weight, lift: input.lift,
+        },
+      })
       return onerm
     }),
 })

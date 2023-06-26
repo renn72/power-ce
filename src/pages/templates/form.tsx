@@ -1,23 +1,26 @@
-import React, { useState } from "react"
-import { useForm, FormProvider } from "react-hook-form";
-import { ErrorMessage } from '@hookform/error-message'
-import { useAtom, atom } from "jotai";
+import React, { useState, } from 'react'
+import {
+  useForm, FormProvider,
+} from 'react-hook-form'
+import { ErrorMessage, } from '@hookform/error-message'
+import {
+  useAtom, atom,
+} from 'jotai'
 
 import {
   PlusCircleIcon,
   MinusCircleIcon,
   ChevronRightIcon,
-  ChevronLeftIcon
+  ChevronLeftIcon,
 } from '@heroicons/react/24/outline'
-import { toast } from "react-hot-toast";
+import { toast, } from 'react-hot-toast'
 
-import { api } from '~/utils/api'
-import { getRandomInt } from '~/utils/utils'
+import { api, } from '~/utils/api'
+import { getRandomInt, } from '~/utils/utils'
 
-import BlockTable from "./blockTable";
-import TemplateSelect from "./templateSelect";
-import FormDay from "./formDay";
-
+import BlockTable from './blockTable'
+import TemplateSelect from './templateSelect'
+import FormDay from './formDay'
 
 export const formDayAtom = atom(0)
 export const formWeekAtom = atom(0)
@@ -60,25 +63,62 @@ const dayText = [
 ]
 
 const Form = () => {
-  const [formDay, setFormDay] = useAtom(formDayAtom)
-  const [formWeek, setFormWeek] = useAtom(formWeekAtom)
+  const [
+    formDay,
+    setFormDay,
+  ] = useAtom(formDayAtom)
+  const [
+    formWeek,
+    setFormWeek,
+  ] = useAtom(formWeekAtom)
   // const [formWeekSize, setFormWeekSize] = useAtom(formWeekSizeAtom)
-  const [blockIndex, setBlockIndex] = useAtom(blockIndexAtom)
-  const [selectedTemplate, setSelectedTemplate] = useAtom(selectedTemplateAtom)
+  const [
+    blockIndex,
+    setBlockIndex,
+  ] = useAtom(blockIndexAtom)
+  const [
+    selectedTemplate,
+    setSelectedTemplate,
+  ] = useAtom(selectedTemplateAtom)
 
-  const formMethods = useForm<Block>();
-  const { register, unregister, reset, setValue, getValues, handleSubmit, setError, formState: { errors } } = formMethods
-  const [formIndex, setFormIndex] = useState<number[][]>(
+  const formMethods = useForm<Block>()
+  const {
+    register, unregister, reset, setValue, getValues, handleSubmit, setError, formState: { errors, },
+  } = formMethods
+  const [
+    formIndex,
+    setFormIndex,
+  ] = useState<number[][]>(
     [
-      [2, 2, 2, 2, 2, 2, 2,],
-      [2, 2, 2, 2, 2, 2, 2,],
+      [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+      ],
+      [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+      ],
     ],
-  );
-  const [isUpdate, setIsUpdate] = useState(false)
+  )
+  const [
+    isUpdate,
+    setIsUpdate,
+  ] = useState(false)
 
-  const { data: blocksData, isLoading: blocksLoading } = api.blocks.getAll.useQuery();
+  const {
+    data: blocksData, isLoading: blocksLoading,
+  } = api.blocks.getAll.useQuery()
   const blocksTitle = blocksData?.map((block) => block.name)
-
 
   const ctx = api.useContext()
 
@@ -92,7 +132,7 @@ const Form = () => {
       console.log('error', e)
       toast.error('Error')
     },
-  });
+  })
   const { mutate: blockUpdateMutate, } = api.blocks.update.useMutation({
     onSuccess: () => {
       console.log('success')
@@ -101,13 +141,13 @@ const Form = () => {
     onError: (e) => {
       console.log('error', e)
     },
-  });
+  })
 
   const onSubmit = (data: Block) => {
     if (blocksTitle && blocksTitle.includes(data.name) && !isUpdate) {
-      setError("name", {
-        type: "manual",
-        message: "Need a unique name"
+      setError('name', {
+        type: 'manual',
+        message: 'Need a unique name',
       })
       console.log('clash')
       return
@@ -129,10 +169,11 @@ const Form = () => {
                   sets: exercise.sets ? exercise.sets : null,
                   reps: exercise.reps ? exercise.reps : null,
                 })
-              )
+              ),
             })
-          )
-        }))
+          ),
+        })
+      ),
     }
     console.log('isUpdate', isUpdate)
 
@@ -143,29 +184,29 @@ const Form = () => {
     } else {
       blockCreateMutate(block)
     }
-  };
+  }
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const onError = (errors, e) => console.log(errors, e);
+  const onError = (errors, e) => console.log(errors, e)
 
   const onAddExercise = () => {
-    console.log("add exercise")
+    console.log('add exercise')
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     formIndex[formWeek][formDay] += 1
-    setFormIndex([...formIndex])
+    setFormIndex([...formIndex,])
   }
 
   const onRemoveExercise = () => {
-    console.log("remove exercise")
+    console.log('remove exercise')
     if (!formIndex[formWeek]) return
     if (!formIndex[formWeek][formDay]) return
 
     if (formIndex[formWeek][formDay] && formIndex[formWeek][formDay] > 1) {
       unregister(`week.${formWeek}.day.${formDay}.exercise.${formIndex[formWeek][formDay] - 1}`)
       formIndex[formWeek][formDay] -= 1
-      setFormIndex([...formIndex])
+      setFormIndex([...formIndex,])
     }
   }
   const onSetFormDay = (idx: number) => {
@@ -182,7 +223,18 @@ const Form = () => {
   }
   const onAddWeek = () => {
     // setFormWeekSize(formWeekSize + 1)
-    setFormIndex([...formIndex, [1, 1, 1, 1, 1, 1, 1,]])
+    setFormIndex([
+      ...formIndex,
+      [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+      ],
+    ])
   }
   const onRemoveWeek = () => {
     // setFormWeekSize(formWeekSize - 1)
@@ -195,8 +247,24 @@ const Form = () => {
     console.log('new')
     // setFormWeekSize(2)
     setFormIndex([
-      [2, 2, 2, 2, 2, 2, 2,],
-      [2, 2, 2, 2, 2, 2, 2,],
+      [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+      ],
+      [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+      ],
     ])
     setBlockIndex('')
     setFormDay(0)
@@ -212,9 +280,17 @@ const Form = () => {
 
     unregister()
     setValue('name', block?.name || '')
-    const newFormIndex: number[][] = [[]]
+    const newFormIndex: number[][] = [[],]
     block?.week.forEach((week, weekIdx) => {
-      newFormIndex[weekIdx] = [0, 0, 0, 0, 0, 0, 0]
+      newFormIndex[weekIdx] = [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+      ]
       week.day.forEach((day, dayIdx) => {
         setValue(`week.${weekIdx}.day.${dayIdx}.isRestDay`, day?.isRestDay) // eslint-disable-line @typescript-eslint/no-unsafe-argument
         newFormIndex[weekIdx][dayIdx] = day?.exercise?.length || 0
@@ -233,7 +309,6 @@ const Form = () => {
     setFormWeek(0)
     setFormIndex(newFormIndex)
 
-
   }
 
   if (blocksLoading) {
@@ -242,11 +317,11 @@ const Form = () => {
 
   return (
     <>
-      <div className="flex gap-6 justify-center items-center text-sm sm:text-base">
+      <div className='flex gap-6 justify-center items-center text-sm sm:text-base'>
 
         <div>
           <button
-            className="rounded-lg p-2 bg-white text-gray-900"
+            className='rounded-lg p-2 bg-white text-gray-900'
             onClick={() => onNewTemplate()}
           >
             New Template
@@ -256,49 +331,49 @@ const Form = () => {
         <TemplateSelect onSelectTemplate={onSelectTemplate} />
 
       </div>
-      <div className="mt-2 md:mt-8 text-xxs md:text-sm flex flex-col items-center">
+      <div className='mt-2 md:mt-8 text-xxs md:text-sm flex flex-col items-center'>
         <FormProvider {...formMethods}>
           <form onSubmit={handleSubmit(onSubmit, onError)}>
-            <div className="flex flex-col gap-1 sm:gap-4">
+            <div className='flex flex-col gap-1 sm:gap-4'>
 
               {/* Title */}
-              <div className="flex flex-col gap-2 items-center justify-center">
-                <div className="relative rounded-md shadow-lg">
-                  <input className="block text-center h-full w-64 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                    placeholder="Name"
+              <div className='flex flex-col gap-2 items-center justify-center'>
+                <div className='relative rounded-md shadow-lg'>
+                  <input className='block text-center h-full w-64 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600'
+                    placeholder='Name'
                     defaultValue={`block-${getRandomInt(1000)}`}
-                    {...register("name", { required: 'This is required.' })}
+                    {...register('name', { required: 'This is required.', })}
                   />
                 </div>
                 <ErrorMessage
                   errors={errors}
-                  name="name"
-                  render={({ message }) => <p className="text-red-400">{message}</p>}
+                  name='name'
+                  render={({ message, }) => <p className='text-red-400'>{message}</p>}
                 />
               </div>
 
               {/* week */}
-              <div className="flex justify-center items-center gap-4 text-lg text-gray-200 md:py-2">
-                <button type="button" onClick={() => onRemoveWeek()}>
-                  <MinusCircleIcon className="h-12 w-12 text-gray-800" aria-hidden="true" />
+              <div className='flex justify-center items-center gap-4 text-lg text-gray-200 md:py-2'>
+                <button type='button' onClick={() => onRemoveWeek()}>
+                  <MinusCircleIcon className='h-12 w-12 text-gray-800' aria-hidden='true' />
                 </button>
-                <ChevronLeftIcon className="h-8 w-8 cursor-pointer" onClick={() => onSetFormWeek(-1)} />
+                <ChevronLeftIcon className='h-8 w-8 cursor-pointer' onClick={() => onSetFormWeek(-1)} />
                 Week {formWeek + 1}/{formIndex.length}
-                <ChevronRightIcon className="h-8 w-8 cursor-pointer" onClick={() => onSetFormWeek(1)} />
-                <button type="button" onClick={() => onAddWeek()}>
-                  <PlusCircleIcon className="h-12 w-12 text-gray-800" aria-hidden="true" />
+                <ChevronRightIcon className='h-8 w-8 cursor-pointer' onClick={() => onSetFormWeek(1)} />
+                <button type='button' onClick={() => onAddWeek()}>
+                  <PlusCircleIcon className='h-12 w-12 text-gray-800' aria-hidden='true' />
                 </button>
               </div>
 
               {/* day */}
-              <div className="flex justify-center items-center gap-4 text-lg text-gray-200 sm:pb-2">
-                <ChevronLeftIcon className="h-8 w-8 cursor-pointer" onClick={() => onSetFormDay(-1)} />
+              <div className='flex justify-center items-center gap-4 text-lg text-gray-200 sm:pb-2'>
+                <ChevronLeftIcon className='h-8 w-8 cursor-pointer' onClick={() => onSetFormDay(-1)} />
                 {dayText[formDay]}
-                <ChevronRightIcon className="h-8 w-8 cursor-pointer" onClick={() => onSetFormDay(1)} />
+                <ChevronRightIcon className='h-8 w-8 cursor-pointer' onClick={() => onSetFormDay(1)} />
               </div>
 
               {/* form */}
-              <div className="flex gap-10 items-center justify-center">
+              <div className='flex gap-10 items-center justify-center'>
                 {
                   formIndex.map((week, weekIdx) => (
                     <div key={weekIdx} className={`flex gap-10 ${weekIdx == formWeek ? `` : `hidden`}`}>
@@ -316,26 +391,26 @@ const Form = () => {
                   ))}
               </div>
 
-              <div className="flex justify-center gap-4 mt-4">
-                <button type="button" onClick={() => onAddExercise()}>
-                  <PlusCircleIcon className="h-12 w-12 text-gray-800" aria-hidden="true" />
+              <div className='flex justify-center gap-4 mt-4'>
+                <button type='button' onClick={() => onAddExercise()}>
+                  <PlusCircleIcon className='h-12 w-12 text-gray-800' aria-hidden='true' />
                 </button>
-                <button type="button" onClick={() => onRemoveExercise()}>
-                  <MinusCircleIcon className="h-12 w-12 text-gray-800" aria-hidden="true" />
+                <button type='button' onClick={() => onRemoveExercise()}>
+                  <MinusCircleIcon className='h-12 w-12 text-gray-800' aria-hidden='true' />
                 </button>
               </div>
 
-              <div className="flex gap-4 justify-center">
+              <div className='flex gap-4 justify-center'>
                 <button
-                  type="submit"
-                  className="rounded-lg py-2 px-4 bg-white text-gray-600"
+                  type='submit'
+                  className='rounded-lg py-2 px-4 bg-white text-gray-600'
                   onClick={() => setIsUpdate(false)}
                 >
                   save new
                 </button>
                 <button
-                  type="submit"
-                  className="rounded-lg py-2 px-4 bg-white text-gray-600"
+                  type='submit'
+                  className='rounded-lg py-2 px-4 bg-white text-gray-600'
                   onClick={() => setIsUpdate(true)}
                 >
                   update
@@ -347,7 +422,7 @@ const Form = () => {
         </FormProvider>
       </div>
     </>
-  );
+  )
 }
 
-export default Form;
+export default Form
