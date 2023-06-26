@@ -11,7 +11,7 @@ export const oneRepMaxRouter = createTRPCRouter({
     const onerm = await ctx.prisma.oneRepMax.findMany({})
     return onerm
   }),
-  getOne: publicProcedure
+  getUser: publicProcedure
     .input(z.object({ id: z.string(), }))
     .query(async ({
       ctx, input,
