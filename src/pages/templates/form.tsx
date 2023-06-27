@@ -21,6 +21,14 @@ import { getRandomInt, } from '~/utils/utils'
 import BlockTable from './blockTable'
 import TemplateSelect from './templateSelect'
 import FormDay from './formDay'
+import { Button, } from '@/components/ui/button'
+import { Input, } from '@/components/ui/input'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 
 export const formDayAtom = atom(0)
 export const formWeekAtom = atom(0)
@@ -317,15 +325,15 @@ const Form = () => {
 
   return (
     <>
-      <div className='flex gap-6 justify-center items-center text-sm sm:text-base'>
+      <div className='flex gap-2 sm:gap-6 justify-center items-center text-sm sm:text-base font-semibold'>
 
         <div>
-          <button
-            className='rounded-lg p-2 bg-white text-gray-900'
+          <Button
+            className=''
             onClick={() => onNewTemplate()}
           >
             New Template
-          </button>
+          </Button>
         </div>
 
         <TemplateSelect onSelectTemplate={onSelectTemplate} />
@@ -334,13 +342,13 @@ const Form = () => {
       <div className='mt-2 md:mt-8 text-xxs md:text-sm flex flex-col items-center'>
         <FormProvider {...formMethods}>
           <form onSubmit={handleSubmit(onSubmit, onError)}>
-            <div className='flex flex-col gap-1 sm:gap-4'>
+            <div className='flex flex-col gap-1 sm:gap-4 border border-gray-600 rounded-xl p-2 sm:p-6'>
 
               {/* Title */}
               <div className='flex flex-col gap-2 items-center justify-center'>
                 <div className='relative rounded-md shadow-lg'>
-                  <input className='block text-center h-full w-64 rounded-md border-2 border-white py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600'
-                    placeholder='Name'
+                  <Input className=''
+                    placeholder='Title'
                     defaultValue={`block-${getRandomInt(1000)}`}
                     {...register('name', { required: 'This is required.', })}
                   />
@@ -377,13 +385,6 @@ const Form = () => {
                 {
                   formIndex.map((week, weekIdx) => (
                     <div key={weekIdx} className={`flex gap-10 ${weekIdx == formWeek ? `` : `hidden`}`}>
-                      {/* <input */}
-                      {/*   className="hidden" */}
-                      {/*   type="text" */}
-                      {/*   {...register(`week.${weekIdx}.id`, { */}
-                      {/*     shouldUnregister: true, */}
-                      {/*   })} */}
-                      {/* /> */}
                       {week.map((day, dayIdx) => (
                         <FormDay key={dayIdx} weekIdx={weekIdx} dayIdx={dayIdx} day={day} />
                       ))}
