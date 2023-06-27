@@ -1,6 +1,8 @@
-import React, { useState, } from 'react'
+import React, {
+  useState, useEffect,
+} from 'react'
 import {
-  useForm, FormProvider,
+  useForm, FormProvider, useFieldArray,
 } from 'react-hook-form'
 import { ErrorMessage, } from '@hookform/error-message'
 import {
@@ -94,7 +96,7 @@ const Form = () => {
 
   const formMethods = useForm<Block>()
   const {
-    register, unregister, reset, setValue, getValues, handleSubmit, setError, formState: { errors, },
+    register, unregister, reset, setValue, control, getValues, handleSubmit, setError, formState: { errors, },
   } = formMethods
   const [
     formIndex,
@@ -321,7 +323,12 @@ const Form = () => {
     setFormIndex(newFormIndex)
   }
 
+  const weekField = useFieldArray({
+    control,
+    name: 'week',
+  })
 
+  console.log(getValues())
 
   if (blocksLoading) {
     return <div>Loading...</div>
@@ -388,24 +395,24 @@ const Form = () => {
               {
                 formIndex.map((week, weekIdx) => (
                   <Disclosure key={weekIdx} as='div' >
-                      {({ open, }) => (
-                        <div className='border border-gray-400 p-2 rounded-xl'>
-                          <Disclosure.Button className='flex w-full justify-between rounded-lg px-4 py-2 text-left text-lg hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
-                            <span>{`Week ${weekIdx + 1}`}</span>
-                            <ChevronUpIcon
-                              className={`${open ? 'rotate-180 transform' : ''
-                                } h-5 w-5 text-purple-500`}
-                            />
-                          </Disclosure.Button>
-                          <Disclosure.Panel>
-                            <div className={`flex gap-10`}>
-                              {week.map((day, dayIdx) => (
-                                <FormDay key={dayIdx} weekIdx={weekIdx} dayIdx={dayIdx} day={day} />
-                              ))}
-                            </div>
-                          </Disclosure.Panel>
-                        </div>
-                      )}
+                    {({ open, }) => (
+                      <div className='border border-gray-400 p-2 rounded-xl'>
+                        <Disclosure.Button className='flex w-full justify-between rounded-lg px-4 py-2 text-left text-lg hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
+                          <span>{`Week ${weekIdx + 1}`}</span>
+                          <ChevronUpIcon
+                            className={`${open ? 'rotate-180 transform' : ''
+                              } h-5 w-5 text-purple-500`}
+                          />
+                        </Disclosure.Button>
+                        <Disclosure.Panel>
+                          <div className={`flex gap-10`}>
+                            {week.map((day, dayIdx) => (
+                              <FormDay key={dayIdx} weekIdx={weekIdx} dayIdx={dayIdx} day={day} />
+                            ))}
+                          </div>
+                        </Disclosure.Panel>
+                      </div>
+                    )}
                   </Disclosure>
                 ))}
 
