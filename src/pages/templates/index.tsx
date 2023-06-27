@@ -5,16 +5,13 @@ import { useUser, } from '@clerk/nextjs'
 import { useAtom, } from 'jotai'
 
 import Form from './form'
-import RPEModal from '~/components/rpeModal'
-import RmModal from '~/components/rmModal'
 
 import {
-  squatAtom, deadliftAtom, benchAtom, rmModalIsOpenAtom, rpeModalIsOpenAtom, deloadModalIsOpenAtom,
-} from '~/store/store'
-import DealoadModal from '~/components/deloadModal'
+  squatAtom, deadliftAtom, benchAtom, } from '~/store/store'
 
 import { api, } from '~/utils/api'
 import { LoadingPage } from '~/components/loading'
+import { Input } from '@/components/ui/input'
 
 const Templates: NextPage = () => {
   const [
@@ -29,10 +26,6 @@ const Templates: NextPage = () => {
     bench,
     setBench,
   ] = useAtom(benchAtom)
-
-  const [, setRmModalIsOpen,] = useAtom(rmModalIsOpenAtom)
-  const [, setRpeModalIsOpen,] = useAtom(rpeModalIsOpenAtom)
-  const [, setDeloadModalIsOpen,] = useAtom(deloadModalIsOpenAtom)
 
   const {
     data: blocksData, isLoading: blocksLoading,
@@ -55,43 +48,17 @@ const Templates: NextPage = () => {
 
   return (
     <>
-      <div className='h-full flex flex-col bg-gray-600'>
-
-        <header className='bg-white shadow-xl'>
-          <div className='mx-auto max-w-7xl py-2 sm:px-6 lg:px-8 flex justify-between'>
-            <h1 className='text-xl md:text-3xl font-bold tracking-tight text-gray-900 flex items-center'>Templates</h1>
-            <div className='flex gap-2 text-sm md:text-lg font-bold'>
-              <button
-                className='bg-transparent hover:bg-gray-800 bg-gray-800 font-semibold hover:text-white w-10 h-10 md:w-12 md:h-12 border-2 border-gray-800 hover:border-transparent rounded-full'
-                onClick={() => setRpeModalIsOpen(true)}
-              >
-                RPE
-              </button>
-              <button
-                className='bg-transparent hover:bg-gray-800 bg-gray-800 font-semibold hover:text-white w-10 h-10 md:w-12 md:h-12 border-2 border-gray-800 hover:border-transparent rounded-full'
-                onClick={() => setRmModalIsOpen(true)}
-              >
-                RM
-              </button>
-              <button
-                className='bg-transparent hover:bg-gray-800 bg-gray-800 font-semibold hover:text-white w-10 h-10 md:w-12 md:h-12 border-2 border-gray-800 hover:border-transparent rounded-full'
-                onClick={() => setDeloadModalIsOpen(true)}
-              >
-                Del
-              </button>
-            </div>
-          </div>
-        </header>
-        <main className='text-sm sm:text-base'>
-          <RPEModal />
-          <RmModal />
-          <DealoadModal />
+      <div className='h-full flex flex-col'>
+        <main className='text-sm sm:text-base font-semibold'>
           <div className='flex flex-col'>
-            <div className='mx-auto max-w-7xl mt-4 sm:px-6 lg:px-8'>
-              <div className='flex gap-2 md:gap-6 justify-center'>
-                <div className='bg-white rounded-lg p-2 flex flex-col'>
+            <div className='mx-auto max-w-7xl mt-2 '>
+              <Form />
+            </div>
+            <div className='mx-auto max-w-7xl my-4 sm:px-6 lg:px-8'>
+              <div className='flex md:gap-6 md:p-4 justify-center border border-gray-600 rounded-xl'>
+                <div className='rounded-lg p-2 flex flex-col'>
                   <label className='text-center' htmlFor='squat'>Squat</label>
-                  <input className='bg-white rounded-lg w-20 text-center'
+                  <Input className='bg-gray-900 border border-gray-600 rounded-xl w-20 sm:w-28'
                     type='number'
                     id='squat'
                     placeholder='Squat'
@@ -99,9 +66,9 @@ const Templates: NextPage = () => {
                     onChange={(e) => setSquat(parseInt(e.target.value))}
                   />
                 </div>
-                <div className='bg-white rounded-lg p-2 flex flex-col'>
+                <div className='rounded-lg p-2 flex flex-col'>
                   <label className='text-center' htmlFor='deadlift'>Deadlift</label>
-                  <input className='bg-white rounded-lg w-20 text-center'
+                  <Input className='bg-gray-900 border border-gray-600 rounded-xl w-20 sm:w-28'
                     type='number'
                     id='deadlift'
                     placeholder='Deadlift'
@@ -109,9 +76,9 @@ const Templates: NextPage = () => {
                     onChange={(e) => setDeadlift(parseInt(e.target.value))}
                   />
                 </div>
-                <div className='bg-white rounded-lg p-2 flex flex-col'>
+                <div className='rounded-lg p-2 flex flex-col'>
                   <label className='text-center' htmlFor='squat'>Bench</label>
-                  <input className='bg-white rounded-lg w-20 text-center'
+                  <Input className='bg-gray-900 border border-gray-600 rounded-xl w-20 sm:w-28'
                     type='number'
                     id='bench'
                     placeholder='Bench'
@@ -120,11 +87,6 @@ const Templates: NextPage = () => {
                   />
                 </div>
               </div>
-            </div>
-            <div className='mx-auto max-w-7xl mt-2 '>
-
-              <Form />
-
             </div>
           </div>
         </main>
