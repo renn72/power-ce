@@ -50,6 +50,15 @@ export const blocksRouter = createTRPCRouter({
     })
     return blocks
   }),
+  getAllUserPrograms: publicProcedure.query(async ({ ctx, }) => {
+    const userId = ctx.userId
+    const blocks = await ctx.prisma.block.findMany({
+      orderBy: { createdAt: 'desc', },
+      where: { userIdOfProgram: userId, },
+      include: { week: { include: { day: { include: { exercise: true, }, }, }, }, },
+    })
+    return blocks
+  }),
   getOne: publicProcedure
     .input(z.object({ id: z.string(), }))
     .query(async ({

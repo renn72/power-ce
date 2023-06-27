@@ -14,6 +14,8 @@ import {
   ArrowUpIcon,
   ArrowDownIcon,
   PencilSquareIcon,
+  PlusCircleIcon,
+  MinusCircleIcon,
 } from '@heroicons/react/24/outline'
 
 import { api, } from '~/utils/api'
@@ -33,7 +35,7 @@ const LiftCard = (
     oneRM: string,
     date: string,
     onUpdateOneRM: (arg0: string, arg1: number) => void,
-    percentage: number,
+    percentage: string,
   }
 ) => {
   const [
@@ -46,14 +48,25 @@ const LiftCard = (
     setNewOneRM,
   ] = useState(parseFloat(oneRM))
 
-  const closeModal = () => {
+  const onSave = () => {
     onUpdateOneRM(lift, newOneRM)
+    closeModal()
+  }
+  const closeModal = () => {
     setIsOpen(false)
   }
 
   const openModal = () => {
     setIsOpen(true)
   }
+
+  const increment = () => {
+    setNewOneRM(Math.floor(newOneRM / 2.5) * 2.5 + 2.5)
+  }
+  const decrement = () => {
+    setNewOneRM(Math.ceil(newOneRM / 2.5) * 2.5 - 2.5)
+  }
+
   return (
     <div className={
       `flex flex-col items-start justify-center
@@ -63,9 +76,9 @@ const LiftCard = (
         <div>
           {lift}
         </div>
-        <div className={`text-xxs md:text-sm ${+percentage > 0? 'text-green-500' : 'text-red-400'}`}>
-          <ArrowUpIcon className={`inline-block h-4 w-4 ${oneRM && +percentage > 0? '' : 'hidden'}`} />
-          <ArrowDownIcon className={`inline-block h-4 w-4 ${oneRM && +percentage < 0? '' : 'hidden'}`} />
+        <div className={`text-xxs md:text-sm ${+percentage > 0 ? 'text-green-500' : 'text-red-400'}`}>
+          <ArrowUpIcon className={`inline-block h-4 w-4 ${oneRM && +percentage > 0 ? '' : 'hidden'}`} />
+          <ArrowDownIcon className={`inline-block h-4 w-4 ${oneRM && +percentage < 0 ? '' : 'hidden'}`} />
           {percentage ? `${percentage}%` : ''}
         </div>
       </div>
@@ -111,27 +124,29 @@ const LiftCard = (
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-2xl bg-gray-100 p-6 text-center align-middle shadow-xl transition-all'>
                   <Dialog.Title
                     as='h3'
-                    className='text-lg font-semibold leading-6 text-gray-900'
+                    className='text-xl font-semibold leading-6 text-gray-900'
                   >
                     {lift} One Rep Max
                   </Dialog.Title>
-                  <div className='mt-2'>
+                  <div className='mt-2 grid grid-cols-4 place-items-center justify-between items-center'>
+                    <PlusCircleIcon className='inline-block h-10 w-10 hover:scale-110 text-gray-600 hover:text-gray-900 cursor-pointer' onClick={increment} />
                     <Input
                       type='number'
                       value={newOneRM}
                       onChange={(e) => setNewOneRM(parseFloat(e.target.value))}
-                      className='text-3xl text-gray-900 font-semibold py-6'
+                      className='text-3xl text-gray-900 bg-gray-100 col-span-2 font-semibold py-6 text-center focus:ring-gray-500 focus:border-gray-500 border-gray-300 rounded-md'
                     />
+                    <MinusCircleIcon className='inline-block h-10 w-10 text-gray-800 hover:scale-110 hover:text-gray-900 cursor-pointer' onClick={decrement} />
                   </div>
 
                   <div className='mt-4'>
                     <button
                       type='button'
                       className='inline-flex justify-center rounded-md border border-transparent bg-gray-900 px-4 py-2 text-sm font-semibold text-gray-300 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
-                      onClick={closeModal}
+                      onClick={onSave}
                     >
                       Save
                     </button>
@@ -151,7 +166,6 @@ const OneRMCard = () => {
   const {
     data: userCoreOneRM, isLoading: userCoreOneRMLoading,
   } = api.oneRepMax.getUserCoreLifts.useQuery()
-  console.log(userCoreOneRM)
   const { mutate: updateUserCoreOneRM, } = api.oneRepMax.create.useMutation({
     onSuccess: () => {
       console.log('success')
@@ -168,24 +182,18 @@ const OneRMCard = () => {
     ?.filter((oneRM) => oneRM.lift === 'squat')
   const squat = squats?.[0]
   const squatPercentage = squats?.length > 1 ? (((parseFloat(squats[0]?.weight) / parseFloat(squats[1]?.weight)) - 1) * 100).toFixed(1) : ''
-  console.log('squat', squats)
-  console.log('squatPercentage', squatPercentage)
 
   const benchs = userCoreOneRM
     ?.filter((oneRM) => oneRM.lift === 'bench')
     .sort((a, b) => b.weight - a.weight)
   const bench = benchs?.[0]
   const benchPercentage = benchs?.length > 1 ? (((parseFloat(benchs[0]?.weight) / parseFloat(benchs[1]?.weight)) - 1) * 100).toFixed(1) : ''
-  console.log('bench', bench)
-  console.log('benchPercentage', benchPercentage)
 
   const deadlifts = userCoreOneRM
     ?.filter((oneRM) => oneRM.lift === 'deadlift')
     .sort((a, b) => b.weight - a.weight)
   const deadlift = deadlifts?.[0]
   const deadliftPercentage = deadlifts?.length > 1 ? (((parseFloat(deadlifts[0]?.weight) / parseFloat(deadlifts[1]?.weight)) - 1) * 100).toFixed(1) : ''
-  console.log('deadlift', deadlift)
-  console.log('deadliftPercentage', deadliftPercentage)
 
   const onUpdateOneRM = (lift: string, weight: number) => {
     updateUserCoreOneRM({
@@ -217,7 +225,7 @@ const OneRMCard = () => {
           percentage={benchPercentage}
         />
         <LiftCard
-          lift='Deadlift'
+          lift='Dead'
           oneRM={deadlift?.weight.toString() || ''}
           date={dayjs(deadlift?.createdAt).fromNow()}
           onUpdateOneRM={onUpdateOneRM}

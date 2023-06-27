@@ -17,8 +17,9 @@ const programSchema = z.object({
 })
 
 export const userProgramsRouter = createTRPCRouter({
-  getAll: privateProcedure.query(async ({ ctx, }) => {
-    const res = await ctx.prisma.userProgram.findMany({})
+  getAllUser: privateProcedure.query(async ({ ctx, }) => {
+    const userId = ctx.userId
+    const res = await ctx.prisma.userProgram.findMany({ where: { userId: userId, }, })
     return res
   }),
   getAllActive: privateProcedure.query(async ({ ctx, }) => {
