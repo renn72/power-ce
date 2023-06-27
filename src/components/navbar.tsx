@@ -22,6 +22,9 @@ const navigation = [
   {
     name: 'Program', href: '/program',
   },
+  {
+    name: "PB's", href: '/pbs',
+  },
 ]
 
 const classNames = (...classes: string[]) => {

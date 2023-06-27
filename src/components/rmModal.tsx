@@ -1,28 +1,102 @@
-import { Fragment, useState } from "react";
-import { useAtom } from "jotai";
+import {
+  Fragment, useState,
+} from 'react'
+import { useAtom, } from 'jotai'
 
-import { Dialog, Transition } from '@headlessui/react'
+import {
+  Dialog, Transition,
+} from '@headlessui/react'
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { toast } from "react-hot-toast";
+import { toast, } from 'react-hot-toast'
 
-import { rmModalIsOpenAtom } from "~/store/store";
+import { rmModalIsOpenAtom, } from '~/store/store'
 
 const rpe = [
-[100.00,	95.00,	92.00,	88.00,	85.00,],
-[95.00,	92.00,	88.00,	85.00,	83.00,],
-[92.00,	88.00,	85.00,	83.00,	80.00,],
-[88.00,	85.00,	83.00,	80.00,	78.00,],
-[85.00,	83.00,	80.00,	78.00,	76.00,],
-[83.00,	80.00,	78.00,	76.00,	74.00,],
-[80.00,	78.00,	76.00,	74.00,	72.00,],
-[78.00,	76.00,	74.00,	72.00,	70.00,],
-[76.00,	74.00,	72.00,	70.00,	68.00,],
-[74.00,	72.00,	70.00,	68.00,	65.00,],
+  [
+    1,
+    100.00,
+    95.00,
+    92.00,
+    88.00,
+    85.00,
+  ],
+  [
+    2,
+    95.00,
+    92.00,
+    88.00,
+    85.00,
+    83.00,
+  ],
+  [
+    3,
+    92.00,
+    88.00,
+    85.00,
+    83.00,
+    80.00,
+  ],
+  [
+    4,
+    88.00,
+    85.00,
+    83.00,
+    80.00,
+    78.00,
+  ],
+  [
+    5,
+    85.00,
+    83.00,
+    80.00,
+    78.00,
+    76.00,
+  ],
+  [
+    6,
+    83.00,
+    80.00,
+    78.00,
+    76.00,
+    74.00,
+  ],
+  [
+    7,
+    80.00,
+    78.00,
+    76.00,
+    74.00,
+    72.00,
+  ],
+  [
+    8,
+    78.00,
+    76.00,
+    74.00,
+    72.00,
+    70.00,
+  ],
+  [
+    9,
+    76.00,
+    74.00,
+    72.00,
+    70.00,
+    68.00,
+  ],
+  [
+    10,
+    74.00,
+    72.00,
+    70.00,
+    68.00,
+    65.00,
+  ],
 ]
 
 const Table = () => {
@@ -42,32 +116,40 @@ const Table = () => {
   const columns = [
     {
       accessorKey: '0',
-      header: '1',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      header: '',
+      cell: (info) => info.getValue(),
     },
     {
       accessorKey: '1',
-      header: '2',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      header: '1',
+      cell: (info) => info.getValue() == 100 ? '100%' : info.getValue().toFixed(1),
     },
     {
       accessorKey: '2',
-      header: '3',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      header: '2',
+      cell: (info) => info.getValue() == 100 ? 100 : info.getValue().toFixed(1) + '%',
     },
     {
       accessorKey: '3',
-      header: '4',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      header: '3',
+      cell: (info) => info.getValue() == 100 ? 100 : info.getValue().toFixed(1) + '%',
     },
     {
       accessorKey: '4',
+      header: '4',
+      cell: (info) => info.getValue() == 100 ? 100 : info.getValue().toFixed(1) + '%',
+    },
+    {
+      accessorKey: '5',
       header: '5',
-      cell: info => info.getValue() == 100 ? 100 : info.getValue().toFixed(1),
+      cell: (info) => info.getValue() == 100 ? 100 : info.getValue().toFixed(1) + '%',
     },
   ]
 
-  const [data, setData] = useState(() => [...rpe])
+  const [
+    data,
+    setData,
+  ] = useState(() => [...rpe,])
 
   const table = useReactTable({
     data,
@@ -76,24 +158,24 @@ const Table = () => {
   })
 
   const copyText = (str) => {
-    if (typeof str === 'number' ) {
+    if (typeof str === 'number') {
       void navigator.clipboard.writeText(str.toString())
       toast.success('Copied to clipboard')
     }
   }
 
   return (
-    <div className="p-2">
+    <div className='p-2'>
       <table>
         <thead >
-          {table.getHeaderGroups().map(headerGroup => (
-            <tr 
-              className="left-16 relative"
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr
+              className=''
               key={headerGroup.id}
             >
-              {headerGroup.headers.map(header => (
+              {headerGroup.headers.map((header) => (
                 <th
-                  className="px-7 py-2 text-s font-bold text-center text-gray-500 uppercase "
+                  className='px-7 py-2 text-s font-bold text-center text-gray-500 uppercase '
                   key={header.id}
                 >
                   {header.isPlaceholder
@@ -108,24 +190,21 @@ const Table = () => {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map(row => (
+          {table.getRowModel().rows.map((row) => (
             <tr
-              className="border-b border-gray-200 hover:bg-gray-100"
+              className='border-b border-gray-200 hover:bg-gray-100'
               key={row.id}
             >
-              <span className="px-1 py-2 text-s text-left block">
-                {+row.id + 1}
-              </span>
-              {row.getVisibleCells().map(cell => (
+              {row.getVisibleCells().map((cell) => (
                 <td
-                  className="px-1 py-2 text-s font-bold text-center text-gray-900 hover:bg-gray-300 cursor-pointer"
+                  className='px-1 py-2 text-s font-bold text-center text-gray-900 hover:bg-gray-300 cursor-pointer'
                   key={cell.id}
                   onClick={() => copyText(cell.getValue())}
                 >
                   <span
-                    className=""
+                    className=''
                   >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}%
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </span>
                 </td>
               ))}
@@ -133,12 +212,15 @@ const Table = () => {
           ))}
         </tbody>
       </table>
-      <div className="h-4" />
+      <div className='h-4' />
     </div>)
 }
 
 const RmModal = () => {
-  const [isOpen, setIsOpen] = useAtom(rmModalIsOpenAtom);
+  const [
+    isOpen,
+    setIsOpen,
+  ] = useAtom(rmModalIsOpenAtom)
 
   const closeModal = () => {
     setIsOpen(false)
@@ -150,38 +232,39 @@ const RmModal = () => {
   return (
     // Use the `Transition` component at the root level
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={closeModal}>
+      <Dialog as='div' className='relative z-10' onClose={closeModal}>
         <Transition.Child
           as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
+          enter='ease-out duration-300'
+          enterFrom='opacity-0'
+          enterTo='opacity-100'
+          leave='ease-in duration-200'
+          leaveFrom='opacity-100'
+          leaveTo='opacity-0'
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
+          <div className='fixed inset-0 bg-black bg-opacity-25' />
         </Transition.Child>
 
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
+        <div className='fixed inset-0 overflow-y-auto'>
+          <div className='flex min-h-full items-center justify-center p-4 text-center'>
             <Transition.Child
               as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
+              enter='ease-out duration-300'
+              enterFrom='opacity-0 scale-95'
+              enterTo='opacity-100 scale-100'
+              leave='ease-in duration-200'
+              leaveFrom='opacity-100 scale-100'
+              leaveTo='opacity-0 scale-95'
             >
-              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel className='w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
                 <Dialog.Title
-                  as="h3"
-                  className="text-lg font-medium leading-6 text-gray-900"
+                  as='h3'
+                  className='text-lg font-medium leading-6 text-gray-900 flex justify-between'
                 >
                   Percentage guide, Sets/Reps
+                  <button onClick={() => closeModal()}>X</button>
                 </Dialog.Title>
-                <div className="mt-2 flex justify-center">
+                <div className='mt-2 flex justify-center'>
                   <Table />
                 </div>
 
