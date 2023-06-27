@@ -20,9 +20,7 @@ const Users: NextPage = () => {
   const {
     data: blocksData, isLoading: blocksLoading,
   } = api.blocks.getAll.useQuery()
-  const {
-    data: programsData,
-  } = api.blocks.getAllPrograms.useQuery()
+  const { data: programsData, } = api.blocks.getAllPrograms.useQuery()
   const { mutate: userProgramCreateMutate, } = api.userPrograms.create.useMutation({
     onSuccess: () => {
       toast.success('Saved')
@@ -81,10 +79,10 @@ const Users: NextPage = () => {
     <>
       <div className='h-full flex flex-col'>
         <main >
-          <div className='mx-auto max-w-3xl py-6 sm:px-6 lg:px-8'>
-            <div className='flex flex-col gap-2'>
+          <div className='mx-auto max-w-4xl py-6 sm:px-6 lg:px-8'>
+            <div className='flex flex-col gap-4 border border-gray-400 rounded-lg m-2 p-4'>
               <div className='text-xl font-bold text-gray-200'>Admins</div>
-              <div className='flex flex-col gap-2'>
+              <div className='flex flex-col gap-4'>
                 {allUsers?.admins?.map((user) => (
                   <TemplateSelect
                     key={user.id}
@@ -98,9 +96,9 @@ const Users: NextPage = () => {
                 ))}
               </div>
             </div>
-            <div className='flex flex-col gap-2'>
+            <div className='flex flex-col gap-4 border border-gray-400 rounded-lg m-2 mt-8 p-4'>
               <div className='text-xl font-bold text-gray-200'>Users</div>
-              <div className='flex flex-col gap-2'>
+              <div className='flex flex-col gap-4'>
                 {allUsers?.users?.map((user) => (
                   <TemplateSelect
                     key={user.id}

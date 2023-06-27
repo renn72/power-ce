@@ -22,6 +22,10 @@ export const userProgramsRouter = createTRPCRouter({
     const res = await ctx.prisma.userProgram.findMany({ where: { userId: userId, }, })
     return res
   }),
+  getAll: privateProcedure.query(async ({ ctx, }) => {
+    const res = await ctx.prisma.userProgram.findMany({})
+    return res
+  }),
   getAllActive: privateProcedure.query(async ({ ctx, }) => {
     const res = await ctx.prisma.userProgram.findMany({ where: { isProgramActive: true, }, })
     return res

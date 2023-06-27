@@ -49,7 +49,8 @@ const LiftCard = (
   ] = useState(parseFloat(oneRM))
 
   const onSave = () => {
-    onUpdateOneRM(lift, newOneRM)
+    const liftname = lift === 'Dead' ? 'deadlift' : lift.toLowerCase()
+    onUpdateOneRM(liftname, newOneRM)
     closeModal()
   }
   const closeModal = () => {
@@ -132,14 +133,14 @@ const LiftCard = (
                     {lift} One Rep Max
                   </Dialog.Title>
                   <div className='mt-2 grid grid-cols-4 place-items-center justify-between items-center'>
-                    <PlusCircleIcon className='inline-block h-10 w-10 hover:scale-110 text-gray-600 hover:text-gray-900 cursor-pointer' onClick={increment} />
+                    <PlusCircleIcon className='inline-block h-10 w-10 hover:scale-110 text-gray-500 hover:text-gray-900 cursor-pointer' onClick={increment} />
                     <Input
                       type='number'
                       value={newOneRM}
                       onChange={(e) => setNewOneRM(parseFloat(e.target.value))}
                       className='text-3xl text-gray-900 bg-gray-100 col-span-2 font-semibold py-6 text-center focus:ring-gray-500 focus:border-gray-500 border-gray-300 rounded-md'
                     />
-                    <MinusCircleIcon className='inline-block h-10 w-10 text-gray-800 hover:scale-110 hover:text-gray-900 cursor-pointer' onClick={decrement} />
+                    <MinusCircleIcon className='inline-block h-10 w-10 text-gray-500 hover:scale-110 hover:text-gray-900 cursor-pointer' onClick={decrement} />
                   </div>
 
                   <div className='mt-4'>

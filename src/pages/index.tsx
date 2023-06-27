@@ -28,7 +28,7 @@ const Home: NextPage = () => {
                   .filter((userProgram) => userProgram.isProgramActive === true)
                   .map((userProgram) => (
                     <div key={userProgram.id}>
-                      <ProgramCard program={userProgram} />
+                      <ProgramCard userProgram={userProgram} />
                     </div>
                   ))
               }
@@ -41,7 +41,7 @@ const Home: NextPage = () => {
                   .filter((userProgram) => !userProgram.isProgramActive)
                   .map((userProgram) => (
                     <div key={userProgram.id}>
-                      <ProgramCard program={userProgram} />
+                      <ProgramCard userProgram={userProgram} />
                     </div>
                   ))
               }

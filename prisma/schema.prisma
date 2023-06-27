@@ -52,6 +52,9 @@ model Exercise {
   sets  Int?
   reps  Int?
 
+  actualSets  Int?
+  actualReps  Int?
+
   rep    Rep[]
   rpe    Int?
   weight Int?
@@ -59,6 +62,8 @@ model Exercise {
   dayId String
 
   day Day @relation(fields: [dayId], references: [id], onDelete: Cascade)
+
+  notes String? @db.Text
 
   flield1 String?
   flield2 String?

@@ -8,7 +8,11 @@ import {
   Listbox, Transition,
 } from '@headlessui/react'
 import {
-  ChevronUpDownIcon, CheckIcon, CheckCircleIcon,
+  ChevronUpDownIcon,
+  CheckIcon,
+  CheckCircleIcon,
+  PencilSquareIcon,
+  XCircleIcon,
 } from '@heroicons/react/24/outline'
 
 import { capitaliseString, } from '~/utils/utils'
@@ -25,7 +29,7 @@ const TemplateSelect = (
     {
       onSelectTemplate: (arg0: string, arg1: string) => void,
       onSetTemplate: (arg0: string, arg1: string) => void,
-      onClearTemplate: (arg0: string, arg1: string) => void,
+      onClearTemplate: (arg0: string, ) => void,
       userId: string,
       userFirstName: string | null,
       userLastName: string | null
@@ -47,9 +51,7 @@ const TemplateSelect = (
   const {
     data: blocksData, isLoading: blocksLoading,
   } = api.blocks.getAll.useQuery()
-  const {
-    data: programsData, isLoading: programssLoading,
-  } = api.blocks.getAllPrograms.useQuery()
+  const { data: programsData, } = api.blocks.getAllPrograms.useQuery()
 
   const onSetLocalTemplate = (template: string) => {
     setTemplate(template)
@@ -80,20 +82,20 @@ const TemplateSelect = (
   // if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
 
   return (
-    <div className=' p-2 grid grid-cols-7 gap-2 justify-between items-center text-slate-900'>
+    <div className='p-2 grid grid-cols-4 sm:grid-cols-7 sm:gap-2 justify-between place-items-center sm:place-items-center text-gray-200 border-gray-500 border rounded-lg'>
       <div
-        className='text-sm font-bold w-full bg-white rounded-lg p-2 col-span-2'>
+        className='text-sm md:text-lg font-bold w-full rounded-lg p-2 col-span-2'>
         {capitaliseString(userFirstName)} {capitaliseString(userLastName)}
       </div>
-      <div className='flex justify-center'>
+      <div className='flex justify-center col-span-2 sm:col-span-1'>
         {isSet && (<CheckCircleIcon className='h-8 w-8 text-green-500' />)}
       </div>
 
-      <div className=' flex flex-col justify-center col-span-2'>
+      <div className='md:text-sm font-bold flex flex-col justify-center col-span-2 border-gray-400 border rounded-lg'>
         <Listbox value={template} onChange={(e) => onSetLocalTemplate(e)}>
           <div className='relative z-1'>
             <Listbox.Button
-              className='relative w-full cursor-default rounded-lg bg-white max-h-min h-10 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300'
+              className='relative w-full w-36 sm:w-48 cursor-default rounded-lg  max-h-min h-10 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300'
             >
               <span className='block truncate'>{template}</span>
               <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
@@ -109,11 +111,11 @@ const TemplateSelect = (
               leaveFrom='opacity-100'
               leaveTo='opacity-0'
             >
-              <Listbox.Options className='absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
+              <Listbox.Options className='absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-gray-900 border-gray-400 border rounded-md py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none '>
                 {blocksTitle?.map((templateName, Idx) => (
                   <Listbox.Option
                     key={Idx}
-                    className={({ active, }) => `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'
+                    className={({ active, }) => `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-gray-200 text-gray-900' : 'text-gray-200'
                       }`
                     }
                     value={templateName}
@@ -121,14 +123,13 @@ const TemplateSelect = (
                     {({ selected, }) => (
                       <>
                         <span
-                          className={`block truncate ${selected ? 'font-medium' : 'font-normal'
-                            }`}
+                          className={`block truncate`}
                         >
                           {templateName}
                         </span>
                         {selected
                           ? (
-                            <span className='absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600'>
+                            <span className='absolute inset-y-0 left-0 flex items-center pl-3 text-gray-200'>
                               <CheckIcon className='h-5 w-5' aria-hidden='true' />
                             </span>
                           )
@@ -142,18 +143,14 @@ const TemplateSelect = (
           </div>
         </Listbox>
       </div>
-      <button
-        className='bg-gray-400 text-white rounded-lg p-2'
+      <PencilSquareIcon
+        className='text-gray-400 hover:text-gray-100 h-12 w-12 p-2 place-self-end'
         onClick={() => onSetTemplate(template, userId)}
-      >
-        Set
-      </button>
-      <button
-        className='bg-gray-400 text-white rounded-lg p-2'
+      />
+      <XCircleIcon
+        className='text-gray-400 hover:text-gray-100 h-12 w-12 p-2'
         onClick={() => onClearTemplate(userId)}
-      >
-        Clear
-      </button>
+      />
     </div>
   )
 }
