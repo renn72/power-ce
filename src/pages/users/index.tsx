@@ -4,6 +4,7 @@ import { toast, } from 'react-hot-toast'
 import { api, } from '~/utils/api'
 
 import TemplateSelect from './templateSelect'
+import { LoadingPage } from '~/components/loading'
 
 const Users: NextPage = () => {
   // Check for admin role
@@ -73,7 +74,7 @@ const Users: NextPage = () => {
     })
   }
 
-  if (usersLoading || userProgramsLoading || blocksLoading) return <div>loading</div>
+  if (usersLoading || userProgramsLoading || blocksLoading) return <div><LoadingPage /></div>
 
   return (
     <>

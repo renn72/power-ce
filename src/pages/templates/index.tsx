@@ -14,6 +14,7 @@ import {
 import DealoadModal from '~/components/deloadModal'
 
 import { api, } from '~/utils/api'
+import { LoadingPage } from '~/components/loading'
 
 const Templates: NextPage = () => {
   const [
@@ -45,7 +46,7 @@ const Templates: NextPage = () => {
   if (blocksLoading) {
     return (
       <div className='flex grow'>
-        loading
+        <LoadingPage />
       </div>
     )
   }

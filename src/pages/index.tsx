@@ -4,6 +4,7 @@ import React from 'react'
 import { api, } from '~/utils/api'
 import OneRMCard from '~/components/oneRMCard'
 import ProgramCard from '~/components/ProgramCard'
+import { LoadingPage } from '~/components/loading'
 
 const Home: NextPage = () => {
   const {
@@ -11,7 +12,7 @@ const Home: NextPage = () => {
   } = api.userPrograms.getAllUser.useQuery()
   const { isLoading: programsLoading, } = api.blocks.getAllUserPrograms.useQuery()
 
-  if (userProgramsLoading && programsLoading) return <div>loading</div>
+  if (userProgramsLoading && programsLoading) return <div><LoadingPage/></div>
 
   return (
     <>
