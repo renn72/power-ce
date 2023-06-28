@@ -31,8 +31,10 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 
+import { useAutoAnimate, } from '@formkit/auto-animate/react'
+
 import {
-  Disclosure, Transition,
+  Disclosure, Transition, Tab,
 } from '@headlessui/react'
 import { ChevronUpIcon, } from '@heroicons/react/20/solid'
 
@@ -85,8 +87,8 @@ const defaultValues = {
           name: '1',
           exercise: [
             {
-              lift: 'Bench Press',
-              name: 'Bench Press',
+              lift: '',
+              name: '',
               onerm: '',
               sets: '',
               reps: '',
@@ -97,8 +99,8 @@ const defaultValues = {
           name: '2',
           exercise: [
             {
-              lift: 'Bench Press',
-              name: 'Bench Press',
+              lift: '',
+              name: '',
               onerm: '',
               sets: '',
               reps: '',
@@ -109,8 +111,8 @@ const defaultValues = {
           name: '3',
           exercise: [
             {
-              lift: 'Bench Press',
-              name: 'Bench Press',
+              lift: '',
+              name: '',
               onerm: '',
               sets: '',
               reps: '',
@@ -121,8 +123,8 @@ const defaultValues = {
           name: '4',
           exercise: [
             {
-              lift: 'Bench Press',
-              name: 'Bench Press',
+              lift: '',
+              name: '',
               onerm: '',
               sets: '',
               reps: '',
@@ -133,8 +135,8 @@ const defaultValues = {
           name: '5',
           exercise: [
             {
-              lift: 'Bench Press',
-              name: 'Bench Press',
+              lift: '',
+              name: '',
               onerm: '',
               sets: '',
               reps: '',
@@ -145,8 +147,8 @@ const defaultValues = {
           name: '6',
           exercise: [
             {
-              lift: 'Bench Press',
-              name: 'Bench Press',
+              lift: '',
+              name: '',
               onerm: '',
               sets: '',
               reps: '',
@@ -157,8 +159,8 @@ const defaultValues = {
           name: '7',
           exercise: [
             {
-              lift: 'Bench Press',
-              name: 'Bench Press',
+              lift: '',
+              name: '',
               onerm: '',
               sets: '',
               reps: '',
@@ -168,6 +170,10 @@ const defaultValues = {
       ],
     },
   ],
+}
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
 }
 
 const FormDay = ({
@@ -183,18 +189,39 @@ const FormDay = ({
     name: `week.${weekIdx}.day.${dayIdx}.exercise`,
   })
 
+  const [parent,] = useAutoAnimate(/* optional config */)
+
   return (
     <>
-      <ul>
+      <ul ref={parent} className='flex flex-col gap-2 mb-2'>
         {exerciseField.fields.map((item, index) => {
           return (
             <li key={item.id} className='flex gap-2'>
-              <Input {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${index}.lift`)} />
-              <Input {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${index}.name`)} />
-              <Input {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${index}.onerm`)} />
-              <Input {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${index}.sets`)} />
-              <Input {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${index}.reps`)} />
-
+              <Input
+                className='hover:bg-gray-800'
+                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${index}.lift`)}
+                placeholder='lift'
+              />
+              <Input
+                className='hover:bg-gray-800'
+                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${index}.name`)}
+                placeholder='name'
+              />
+              <Input
+                className='hover:bg-gray-800'
+                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${index}.onerm`)}
+                placeholder='1rm percent'
+              />
+              <Input
+                className='hover:bg-gray-800'
+                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${index}.sets`)}
+                placeholder='sets'
+              />
+              <Input
+                className='hover:bg-gray-800'
+                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${index}.reps`)}
+                placeholder='reps'
+              />
             </li>
           )
         })}
@@ -222,16 +249,43 @@ const FormWeek = ({ weekIdx, }: { weekIdx: number }) => {
 
   return (
     <>
-      <ul>
-        {dayField.fields.map((item, index) => {
-          return (
-            <li key={item.id}>
-              {`day ${index + 1}`}
-              <FormDay weekIdx={weekIdx} dayIdx={index} />
-            </li>
-          )
-        })}
-      </ul>
+      <Tab.Group >
+        <Tab.List className='flex space-x-1 rounded-xl p-1'>
+          {dayField.fields.map((item, index) => {
+            return (
+              <Tab
+                key={item.id}
+                className={({ selected, }) => classNames(
+                  'w-full text-gray-400 rounded-lg py-2.5 leading-5 mx-1',
+                  'ring-white ring-opacity-60 ring-offset-2 ring-offset-gray-400 focus:outline-none focus:ring-2',
+                  selected
+                    ? 'bg-gray-300 shadow text-gray-900 text-bold'
+                    : 'text-blue-100 hover:bg-white/[0.07] hover:text-white'
+                )
+                }
+              >
+                {`day ${index + 1}`}
+              </Tab>
+            )
+          })}
+        </Tab.List>
+        <Tab.Panels className='mt-2'>
+          {dayField.fields.map((item, index) => {
+            return (
+              <Tab.Panel
+                key={item.id}
+                className={classNames(
+                  'rounded-xl p-3',
+                  'ring-gray-200 ring-opacity-20 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
+                )}
+              >
+                <FormDay weekIdx={weekIdx} dayIdx={index} />
+              </Tab.Panel>
+            )
+          })}
+
+        </Tab.Panels>
+      </Tab.Group>
     </>
   )
 }
@@ -294,14 +348,16 @@ const Form = () => {
     name: 'week',
   })
 
+  const [parent,] = useAutoAnimate(/* optional config */)
+
   console.log(getValues())
 
   return (
     <>
-      <div className='mt-2 md:mt-8 text-xxs md:text-sm w-full flex flex-col justify-center items-center px-2 '>
+      <div className='mt-2 md:mt-8 text-xxs md:text-base w-full flex flex-col justify-center items-center px-2 '>
         <FormProvider {...formMethods}>
           <form onSubmit={handleSubmit(onSubmit, onError)} className='w-full flex flex-col justify-center items-center'>
-            <div className='flex flex-col w-full max-w-7xl gap-1 sm:gap-4 border border-gray-600 rounded-xl p-2 sm:p-6'>
+            <div ref={parent} className='flex flex-col w-full max-w-7xl gap-1 sm:gap-4 border border-gray-600 rounded-xl p-2 sm:p-6'>
 
               {/* template select */}
               <div className='flex gap-2 items-center justify-center'>
@@ -346,18 +402,16 @@ const Form = () => {
                               } h-5 w-5 text-gray-400`}
                           />
                         </Disclosure.Button>
+
                         <Transition
-                          enter='transition duration-100 ease-out'
-                          enterFrom='transform scale-95 opacity-0'
+                          className='transition-all duration-300 ease-out'
+                          enterFrom='transform scale-70 opacity-0'
                           enterTo='transform scale-100 opacity-100'
-                          leave='transition duration-75 ease-out'
                           leaveFrom='transform scale-100 opacity-100'
-                          leaveTo='transform scale-95 opacity-0'
+                          leaveTo='transform scale-70 opacity-0'
                         >
                           <Disclosure.Panel>
-                            <div className={`flex gap-10`}>
-                              <FormWeek weekIdx={weekIdx} />
-                            </div>
+                            <FormWeek weekIdx={weekIdx} />
                           </Disclosure.Panel>
                         </Transition>
                       </div>
