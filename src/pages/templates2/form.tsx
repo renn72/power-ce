@@ -2,7 +2,7 @@ import React, {
   useState, useEffect,
 } from 'react'
 import {
-  useForm, FormProvider, useFieldArray, useFormContext,
+  useForm, FormProvider, useFieldArray, useFormContext, Controller,
 } from 'react-hook-form'
 import { ErrorMessage, } from '@hookform/error-message'
 import {
@@ -20,8 +20,8 @@ import { toast, } from 'react-hot-toast'
 import { api, } from '~/utils/api'
 import { getRandomInt, } from '~/utils/utils'
 
-import BlockTable from './blockTable'
 import TemplateSelect from './templateSelect'
+import LiftPicker from './liftPicker'
 import { Button, } from '@/components/ui/button'
 import { Input, } from '@/components/ui/input'
 import {
@@ -34,9 +34,15 @@ import {
 import { useAutoAnimate, } from '@formkit/auto-animate/react'
 
 import {
+  squatAtom, deadliftAtom, benchAtom,
+} from '~/store/store'
+
+import {
   Disclosure, Transition, Tab,
 } from '@headlessui/react'
 import { ChevronUpIcon, } from '@heroicons/react/20/solid'
+
+import getWeight from '~/utils/getWeight'
 
 export const formDayAtom = atom(0)
 export const formWeekAtom = atom(0)
@@ -87,7 +93,7 @@ const defaultValues = {
           name: '1',
           exercise: [
             {
-              lift: '',
+              lift: 'unlinked',
               name: '',
               onerm: '',
               sets: '',
@@ -176,9 +182,100 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
+const GetWeight = ({
+  week, day, exercise,
+}: { week: number, day: number, exercise: number }) => {
+  const [squat,] = useAtom(squatAtom)
+  const [deadlift,] = useAtom(deadliftAtom)
+  const [bench,] = useAtom(benchAtom)
+  const formMethods = useFormContext<Block>()
+
+  const watch = formMethods.watch([
+    `week.${week}.day.${day}.exercise.${exercise}.onerm`,
+    `week.${week}.day.${day}.exercise.${exercise}.lift`,
+  ])
+
+  const checkWeight = () => {
+    const lift = watch[1] //block?.week[weekIdx]?.day[dayIdx]?.exercise[exerciseIdx]?.lift
+    const onerm = watch[0] //block?.week[weekIdx]?.day[dayIdx]?.exercise[exerciseIdx]?.onerm
+
+    if (!lift) return null
+    if (!onerm) return null
+    if (lift === 'unlinked') return null
+
+    if (lift === 'Squat') {
+      return `${getWeight(squat, +onerm)} - ${getWeight(squat, +onerm*1.05)}kg`
+    }
+    if (lift === 'Deadlift') {
+      return `${getWeight(deadlift, +onerm)} - ${getWeight(deadlift, +onerm*1.05)}kg`
+    }
+    if (lift === 'Bench') {
+      return `${getWeight(bench, +onerm)} - ${getWeight(bench, +onerm*1.05)}kg`
+    }
+    return null
+  }
+  return (
+    <div>
+      {checkWeight()}
+    </div>
+  )
+}
+
+const FormExercise = ({
+  weekIdx, dayIdx, exerciseIdx,
+}:
+  { weekIdx: number, dayIdx: number, exerciseIdx: number }) => {
+  const formMethods = useFormContext()
+  const {
+    register, control,
+  } = formMethods
+
+  return (
+
+    <li className='grid grid-cols-3 md:grid-cols-6 gap-2'>
+      <div className='flex flex-col justify-center'>
+        <Controller
+          control={control}
+          name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.lift`}
+          defaultValue='unlinked'
+          render={({ field: { onChange, }, }) => (<LiftPicker onChange={onChange} />)}
+        />
+      </div>
+      <Input
+        className='hover:bg-gray-800'
+        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`,)}
+        placeholder='name'
+      />
+      <Input
+        className='hover:bg-gray-800'
+        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`,)}
+        placeholder='1rm percent'
+      />
+      <Input
+        className='hover:bg-gray-800'
+        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`,)}
+        placeholder='sets'
+      />
+      <Input
+        className='hover:bg-gray-800'
+        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`,)}
+        placeholder='reps'
+      />
+      <div className='text-sm flex flex-col items-center justify-center'>
+        <GetWeight
+          week={weekIdx}
+          day={dayIdx}
+          exercise={exerciseIdx}
+        />
+      </div>
+    </li>
+  )
+}
+
 const FormDay = ({
   weekIdx, dayIdx,
-}: { weekIdx: number, dayIdx: number }) => {
+}:
+  { weekIdx: number, dayIdx: number }) => {
   const formMethods = useFormContext()
   const {
     register, unregister, reset, setValue, control, getValues, handleSubmit, setError, formState: { errors, },
@@ -191,47 +288,41 @@ const FormDay = ({
 
   const [parent,] = useAutoAnimate(/* optional config */)
 
+  console.log('render')
+
   return (
     <>
-      <ul ref={parent} className='flex flex-col gap-2 mb-2'>
-        {exerciseField.fields.map((item, index) => {
-          return (
-            <li key={item.id} className='flex gap-2'>
-              <Input
-                className='hover:bg-gray-800'
-                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${index}.lift`)}
-                placeholder='lift'
+      <div className='flex flex-col justify-center items-stretch gap-2'>
+        <ul ref={parent} className='flex flex-col gap-4 mb-2'>
+          {exerciseField.fields.map((item, index) => {
+            return (
+              <FormExercise
+                key={item.id}
+                weekIdx={weekIdx}
+                dayIdx={dayIdx}
+                exerciseIdx={index}
               />
-              <Input
-                className='hover:bg-gray-800'
-                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${index}.name`)}
-                placeholder='name'
-              />
-              <Input
-                className='hover:bg-gray-800'
-                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${index}.onerm`)}
-                placeholder='1rm percent'
-              />
-              <Input
-                className='hover:bg-gray-800'
-                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${index}.sets`)}
-                placeholder='sets'
-              />
-              <Input
-                className='hover:bg-gray-800'
-                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${index}.reps`)}
-                placeholder='reps'
-              />
-            </li>
-          )
-        })}
-      </ul>
-      <Button
-        onClick={() => exerciseField.append({})}
-      >
-        add exercise
-      </Button>
+            )
+          })}
+        </ul>
+        <div className='flex gap-2 mx-auto'>
+          <Button
+            type='button'
+            className='border-0'
+            onClick={() => exerciseField.append({})}
+          >
+            <PlusCircleIcon className='w-8 h-8 hover:scale-110' />
+          </Button>
+          <Button
+            type='button'
+            className='border-0'
+            onClick={() => exerciseField.remove(exerciseField.fields.length - 1)}
+          >
+            <MinusCircleIcon className='w-8 h-8 hover:scale-90' />
+          </Button>
+        </div>
 
+      </div>
     </>
   )
 }
@@ -250,7 +341,7 @@ const FormWeek = ({ weekIdx, }: { weekIdx: number }) => {
   return (
     <>
       <Tab.Group >
-        <Tab.List className='flex space-x-1 rounded-xl p-1'>
+        <Tab.List className='flex rounded-xl p-1 border border-gray-600'>
           {dayField.fields.map((item, index) => {
             return (
               <Tab
@@ -269,13 +360,13 @@ const FormWeek = ({ weekIdx, }: { weekIdx: number }) => {
             )
           })}
         </Tab.List>
-        <Tab.Panels className='mt-2'>
+        <Tab.Panels className='mt-4'>
           {dayField.fields.map((item, index) => {
             return (
               <Tab.Panel
                 key={item.id}
                 className={classNames(
-                  'rounded-xl p-3',
+                  'rounded-xl',
                   'ring-gray-200 ring-opacity-20 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
                 )}
               >
@@ -350,8 +441,6 @@ const Form = () => {
 
   const [parent,] = useAutoAnimate(/* optional config */)
 
-  console.log(getValues())
-
   return (
     <>
       <div className='mt-2 md:mt-8 text-xxs md:text-base w-full flex flex-col justify-center items-center px-2 '>
@@ -395,11 +484,11 @@ const Form = () => {
                   <Disclosure key={week.id} >
                     {({ open, }) => (
                       <div className='border border-gray-400 min-w-full p-2 rounded-xl'>
-                        <Disclosure.Button className='flex justify-between rounded-lg px-8 py-2 text-left text-lg hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
+                        <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-lg hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
                           <span>{`Week ${weekIdx + 1}`}</span>
                           <ChevronUpIcon
                             className={`${open ? 'rotate-180 transform' : ''
-                              } h-5 w-5 text-gray-400`}
+                              } h-8 w-8 text-gray-400`}
                           />
                         </Disclosure.Button>
 

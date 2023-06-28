@@ -17,7 +17,7 @@ const navigation = [
     name: 'Users', href: '/users',
   },
   {
-    name: 'Templates', href: '/templates',
+    name: 'Templates', href: '/templates2',
   },
   {
     name: 'Program', href: '/program',
