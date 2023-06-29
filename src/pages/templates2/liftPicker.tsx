@@ -16,11 +16,11 @@ const lifts = [
   'Bench',
 ]
 
-const LiftPicker = ({ onChange, }: { onChange: (arg0: string) => void }) => {
+const LiftPicker = ({ onChange,  value}: { onChange: (arg0: string) => void, value : string }) => {
   const [
     selectedLift,
     setSelectedLift,
-  ] = useState(lifts[0])
+  ] = useState(value)
 
   return (
     <Listbox

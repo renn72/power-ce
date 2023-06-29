@@ -12,7 +12,7 @@ import {
 
 import getWeight from '~/utils/getWeight'
 
-import { type Block, } from './form'
+import { type Block, } from './types'
 
 const GetWeight = ({
   week, day, exercise,
@@ -70,7 +70,7 @@ const FormExercise = ({
           control={control}
           name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.lift`}
           defaultValue='unlinked'
-          render={({ field: { onChange, }, }) => (<LiftPicker onChange={onChange} />)}
+          render={({ field: { onChange, value}, }) => (<LiftPicker onChange={onChange} value={value} />)}
         />
       </div>
       <Input
@@ -80,17 +80,20 @@ const FormExercise = ({
       />
       <Input
         className='hover:bg-gray-800'
-        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`,)}
+        type='number'
+        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, { valueAsNumber: true, })}
         placeholder='1rm percent'
       />
       <Input
         className='hover:bg-gray-800'
-        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`,)}
+        type='number'
+        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`, { valueAsNumber: true, })}
         placeholder='sets'
       />
       <Input
         className='hover:bg-gray-800'
-        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`,)}
+        type='number'
+        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`, { valueAsNumber: true, })}
         placeholder='reps'
       />
       <div className='text-sm flex flex-col items-center justify-center'>

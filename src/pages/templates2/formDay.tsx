@@ -35,17 +35,10 @@ const FormDay = ({
   useEffect(() => {
     if (isRest) {
       exerciseField.remove()
-    } else {
-      if (exerciseField.fields.length === 0) exerciseField.append({})
     }
-  }, [
-    isRest,
-    exerciseField,
-  ])
+  }, [isRest,])
 
   const [parent,] = useAutoAnimate(/* optional config */)
-
-  console.log('render')
 
   return (
     <>

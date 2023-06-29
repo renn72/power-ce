@@ -1,4 +1,7 @@
 import React, { useState, } from 'react'
+import {
+  useAtom, atom,
+} from 'jotai'
 
 import { ErrorMessage, } from '@hookform/error-message'
 
@@ -21,14 +24,20 @@ import {
 import { ChevronUpIcon, } from '@heroicons/react/20/solid'
 
 import FormWeek from './formWeek'
+import TemplateSelect from './templateSelect'
 
 import { defaultValues, } from './defaultValues'
 import { type Block, } from './types'
+import { type BlockData, } from './types'
+
+import { getRandomInt, } from '~/utils/utils'
+
+export const selectedTemplateAtom = atom('')
 
 const Form = () => {
   const formMethods = useForm({ defaultValues, })
   const {
-    register, reset, control, handleSubmit, setError, formState: { errors, },
+    register, unregister, getValues, watch, reset, setValue, control, handleSubmit, setError, formState: { errors, },
   } = formMethods
 
   const [
@@ -41,11 +50,91 @@ const Form = () => {
     setBlockId,
   ] = useState('')
 
-  const onSubmit = (data: Block) => {
+  const [
+    selectedTemplate,
+    setSelectedTemplate,
+  ] = useAtom(selectedTemplateAtom)
 
-    console.log('submit', data)
+  const {
+    data: blocksData, isLoading: blocksLoading,
+  } = api.blocks.getAll.useQuery()
+  const blocksTitle = blocksData?.map((block) => block.name)
+
+  const ctx = api.useContext()
+
+  const { mutate: blockCreateMutate, } = api.blocks.create.useMutation({
+    onSuccess: () => {
+      console.log('success')
+      toast.success('Saved')
+      void ctx.blocks.getAll.invalidate()
+    },
+    onError: (e) => {
+      console.log('error', e)
+      toast.error('Error')
+    },
+  })
+  const { mutate: blockUpdateMutate, } = api.blocks.update.useMutation({
+    onSuccess: () => {
+      console.log('success')
+      void ctx.blocks.getAll.invalidate()
+    },
+    onError: (e) => {
+      console.log('error', e)
+    },
+  })
+
+  const onSubmit = (data: Block) => {
+    console.log('submit')
+    if (isUpdate) {
+      updateBlock(data)
+    } else {
+      saveNewBlock(data)
+    }
   }
-  const onError = (errors: any, e: any) => {
+
+  const saveNewBlock = (data: Block) => {
+    console.log('saveNewBlock', data)
+    if (blocksTitle && blocksTitle.includes(data.name) && !isUpdate) {
+      setError('name', {
+        type: 'manual',
+        message: 'Need a unique name',
+      })
+      console.log('clash')
+      return
+    }
+    const block: BlockData = {
+      name: data.name,
+      id: '',
+      isProgram: false,
+      week: data.week.map(
+        (week) => ({
+          name: week.name || '',
+          day: week.day.map(
+            (day) => ({
+              isRestDay: day.isRestDay,
+              exercise: day.exercise.map(
+                (exercise) => ({
+                  name: exercise.name,
+                  lift: exercise.lift,
+                  onerm: exercise.onerm ? +exercise.onerm : null,
+                  sets: exercise.sets ? +exercise.sets : null,
+                  reps: exercise.reps ? +exercise.reps : null,
+                })
+              ),
+            })
+          ),
+        })
+      ),
+    }
+
+    blockCreateMutate(block)
+  }
+
+  const updateBlock = (data: Block) => {
+    console.log('updateBlock', data)
+  }
+
+  const onError = (errors, e) => {
     console.log('error', errors, e)
   }
 
@@ -78,10 +167,48 @@ const Form = () => {
     })
   }
 
+  const onNewTemplate = () => {
+    reset(defaultValues)
+    setIsUpdate(false)
+    setBlockId('')
+    setValue('name', `block-${getRandomInt(1000)}`)
+  }
+
+  const onSelectTemplate = (template: string) => {
+    console.log('onSelectTemplate', template)
+    setSelectedTemplate(template)
+  }
+
+  const onLoadTemplate = () => {
+
+    const block = blocksData?.filter((block) => block.name === selectedTemplate)[0]
+    console.log('onLoadTemplate', block)
+    unregister()
+
+    setValue('name', block?.name || '')
+    block?.week.forEach((week, weekIdx) => {
+      week.day.forEach((day, dayIdx) => {
+        setValue(`week.${weekIdx}.day.${dayIdx}.isRestDay`, day?.isRestDay)
+        day.exercise.forEach((exercise, exerciseIdx) => {
+          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.lift`, exercise.lift || '')
+          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`, exercise.name || '')
+          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, exercise.onerm?.toString() || '')
+          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`, exercise.sets?.toString() || '')
+          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`, exercise.reps?.toString() || '')
+        })
+      })
+    })
+
+  }
+
   const weekField = useFieldArray({
     control,
     name: 'week',
   })
+
+  watch('week')
+  console.log('load', getValues())
+  console.log('load', weekField.fields)
 
   const [parent,] = useAutoAnimate(/* optional config */)
 
@@ -94,14 +221,21 @@ const Form = () => {
 
               {/* template select */}
               <div className='flex gap-2 items-center justify-center'>
-                <div>
-                  <Button
-                    type='button'
-                    className=''
-                  >
-                    New Template
-                  </Button>
-                </div>
+                <Button
+                  type='button'
+                  className=''
+                  onClick={() => onNewTemplate()}
+                >
+                  New Template
+                </Button>
+                <TemplateSelect onSelectTemplate={onSelectTemplate} />
+                <Button
+                  type='button'
+                  className=''
+                  onClick={() => onLoadTemplate()}
+                >
+                  Load
+                </Button>
               </div>
 
               {/* Title */}
@@ -120,12 +254,9 @@ const Form = () => {
                 />
               </div>
 
-              {/* week */}
-
-              {/* form */}
               {
                 weekField.fields.map((week, weekIdx) => (
-                  <Disclosure key={week.id} >
+                  <Disclosure key={week.id} defaultOpen={true} >
                     {({ open, }) => (
                       <div className='border border-gray-400 min-w-full p-2 rounded-xl'>
                         <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-lg hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
