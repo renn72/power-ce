@@ -6,3 +6,8 @@ export function capitaliseString(str: string | null) {
   if (!str) return "";
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+
+export  function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}

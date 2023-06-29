@@ -78,6 +78,8 @@ model Day {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
+  name String? @db.VarChar(255)
+
   exercise  Exercise[]
   isRestDay Boolean
 
@@ -98,11 +100,13 @@ model Week {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
+  name String? @db.VarChar(255)
+
   day Day[]
 
-  blockId String
+  blockId String?
 
-  block Block @relation(fields: [blockId], references: [id], onDelete: Cascade)
+  block Block? @relation(fields: [blockId], references: [id], onDelete: Cascade)
 
   flield1 String?
   flield2 String?
