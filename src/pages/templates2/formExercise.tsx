@@ -12,7 +12,7 @@ import {
 
 import getWeight from '~/utils/getWeight'
 
-import { type Block, } from './types'
+import { type Block, } from '~/store/types'
 
 const GetWeight = ({
   week, day, exercise,

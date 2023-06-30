@@ -26,9 +26,9 @@ import { ChevronUpIcon, } from '@heroicons/react/20/solid'
 import FormWeek from './formWeek'
 import TemplateSelect from './templateSelect'
 
-import { defaultValues, } from './defaultValues'
-import { type Block, } from './types'
-import { type BlockData, } from './types'
+import { defaultValues, } from '~/store/defaultValues'
+import { type Block, } from '~/store/types'
+import { type BlockData, } from '~/store/types'
 
 import { getRandomInt, } from '~/utils/utils'
 
@@ -272,13 +272,24 @@ const Form = () => {
                   <Disclosure key={week.id} defaultOpen={true} >
                     {({ open, }) => (
                       <div className='border border-gray-400 min-w-full p-2 rounded-xl'>
-                        <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-lg hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
-                          <span>{`Week ${weekIdx + 1}`}</span>
-                          <ChevronUpIcon
-                            className={`${open ? 'rotate-180 transform' : ''
-                              } h-8 w-8 text-gray-400`}
-                          />
-                        </Disclosure.Button>
+                        <div className='flex justify-between items-center gap-2'>
+                          <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-lg hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
+                            <span>{`Week ${weekIdx + 1}`}</span>
+                            <ChevronUpIcon
+                              className={`${open ? 'rotate-180 transform' : ''
+                                } h-8 w-8 text-gray-400`}
+                            />
+                          </Disclosure.Button>
+                          <div className='flex gap-2'>
+                            <Input 
+                              className=''
+                              placeholder='Week Name'
+                              defaultValue={``}
+                              {...register(`week.${weekIdx}.name`, )}
+                            />
+                            hello
+                          </div>
+                        </div>
 
                         <Transition
                           className='transition-all duration-300 ease-out'
