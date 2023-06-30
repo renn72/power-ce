@@ -183,21 +183,34 @@ const Form = () => {
 
     const block = blocksData?.filter((block) => block.name === selectedTemplate)[0]
     console.log('onLoadTemplate', block)
-    unregister()
+    setBlockId(block?.id || '')
 
-    setValue('name', block?.name || '')
-    block?.week.forEach((week, weekIdx) => {
-      week.day.forEach((day, dayIdx) => {
-        setValue(`week.${weekIdx}.day.${dayIdx}.isRestDay`, day?.isRestDay)
-        day.exercise.forEach((exercise, exerciseIdx) => {
-          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.lift`, exercise.lift || '')
-          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`, exercise.name || '')
-          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, exercise.onerm?.toString() || '')
-          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`, exercise.sets?.toString() || '')
-          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`, exercise.reps?.toString() || '')
+    const template = {
+      name: block?.name || '',
+      week: block?.week.map(
+        (week) => ({
+          name: week.name || '',
+          day: week.day.map(
+            (day) => ({
+              isRestDay: day.isRestDay,
+              exercise: day.exercise.map(
+                (exercise) => ({
+                  name: exercise.name || '',
+                  lift: exercise.lift || '',
+                  onerm: exercise.onerm ? exercise.onerm.toString() : undefined,
+                  sets: exercise.sets ? exercise.sets.toString() : undefined,
+                  reps: exercise.reps ? exercise.reps.toString() : undefined,
+                })
+              ),
+            })
+          ),
         })
-      })
-    })
+      ),
+    }
+    console.log(template)
+    reset(template)
+
+    toast.success('Loaded')
 
   }
 

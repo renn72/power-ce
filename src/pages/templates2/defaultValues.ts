@@ -22,7 +22,7 @@ export const defaultValues = {
           isRestDay: false,
           exercise: [
             {
-              lift: '',
+              lift: 'unlinked',
               name: '',
               onerm: '',
               sets: '',
@@ -34,7 +34,7 @@ export const defaultValues = {
           isRestDay: false,
           exercise: [
             {
-              lift: '',
+              lift: 'unlinked',
               name: '',
               onerm: '',
               sets: '',
@@ -46,7 +46,7 @@ export const defaultValues = {
           isRestDay: false,
           exercise: [
             {
-              lift: '',
+              lift: 'unlinked',
               name: '',
               onerm: '',
               sets: '',
@@ -58,7 +58,7 @@ export const defaultValues = {
           isRestDay: false,
           exercise: [
             {
-              lift: '',
+              lift: 'unlinked',
               name: '',
               onerm: '',
               sets: '',
@@ -70,7 +70,7 @@ export const defaultValues = {
           isRestDay: false,
           exercise: [
             {
-              lift: '',
+              lift: 'unlinked',
               name: '',
               onerm: '',
               sets: '',
@@ -82,7 +82,7 @@ export const defaultValues = {
           isRestDay: false,
           exercise: [
             {
-              lift: '',
+              lift: 'unlinked',
               name: '',
               onerm: '',
               sets: '',
