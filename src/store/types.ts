@@ -13,6 +13,7 @@ export type Day = {
 
 export type Week = {
   name: string,
+  isTemplate: boolean,
   day: Day[],
 }
 
@@ -36,6 +37,7 @@ export type DayData = {
 
 export type WeekData = {
   name: string,
+  isTemplate: boolean,
   day: DayData[],
 }
 

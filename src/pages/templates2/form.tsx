@@ -28,16 +28,20 @@ import TemplateSelect from './templateSelect'
 
 import { defaultValues, } from '~/store/defaultValues'
 import { type Block, } from '~/store/types'
-import { type BlockData, } from '~/store/types'
+import {
+  type BlockData, type WeekData,
+} from '~/store/types'
 
 import { getRandomInt, } from '~/utils/utils'
+import WeekTemplateSelect from './weekTemplateSelect'
 
 export const selectedTemplateAtom = atom('')
+export const selectedWeekTemplateAtom  = atom(new Map())
 
 const Form = () => {
   const formMethods = useForm({ defaultValues, })
   const {
-    register, unregister, getValues, watch, reset, setValue, control, handleSubmit, setError, formState: { errors, },
+    register, unregister, getValues, watch, reset, setValue, control, handleSubmit, clearErrors, setError, formState: { errors, },
   } = formMethods
 
   const [
@@ -54,15 +58,35 @@ const Form = () => {
     selectedTemplate,
     setSelectedTemplate,
   ] = useAtom(selectedTemplateAtom)
+  const [
+    selectedWeekTemplate,
+    setSelectedWeekTemplate,
+  ] = useAtom(selectedWeekTemplateAtom)
 
   const {
     data: blocksData, isLoading: blocksLoading,
   } = api.blocks.getAll.useQuery()
   const blocksTitle = blocksData?.map((block) => block.name)
 
+  const {
+    data: weeksData, isLoading: weeksLoading,
+  } = api.blocks.getAllWeekTemplates.useQuery()
+  const weeksTitle = weeksData?.map((week) => week.name)
+
   const ctx = api.useContext()
 
   const { mutate: blockCreateMutate, } = api.blocks.create.useMutation({
+    onSuccess: () => {
+      console.log('success')
+      toast.success('Saved')
+      void ctx.blocks.getAll.invalidate()
+    },
+    onError: (e) => {
+      console.log('error', e)
+      toast.error('Error')
+    },
+  })
+  const { mutate: weekCreateMutate, } = api.blocks.createWeek.useMutation({
     onSuccess: () => {
       console.log('success')
       toast.success('Saved')
@@ -109,6 +133,7 @@ const Form = () => {
       week: data.week.map(
         (week) => ({
           name: week.name || '',
+          isTemplate: false,
           day: week.day.map(
             (day) => ({
               isRestDay: day.isRestDay,
@@ -141,6 +166,7 @@ const Form = () => {
   const onAddWeek = () => {
     weekField.append({
       name: '',
+      isTemplate: false,
       day: [
         {
           exercise: [], isRestDay: false,
@@ -190,6 +216,7 @@ const Form = () => {
       week: block?.week.map(
         (week) => ({
           name: week.name || '',
+          isTemplate: false,
           day: week.day.map(
             (day) => ({
               isRestDay: day.isRestDay,
@@ -211,7 +238,58 @@ const Form = () => {
     reset(template)
 
     toast.success('Loaded')
+  }
 
+  const onSaveWeekAsTemplate = (weekIdx: number) => {
+    console.log('onSaveWeekAsTemplate', weekIdx)
+    const name = getValues(`week.${weekIdx}.name`)
+    console.log('name', name)
+
+    // handle error
+    if (name === '') {
+      setError(`week.${weekIdx}.name`, {
+        type: 'manual',
+        message: 'Need a unique name',
+      })
+      setTimeout(() => {
+        clearErrors(`week.${weekIdx}.name`)
+      }, 3000)
+      toast.error('Need a unique name')
+      console.log('clash')
+      return
+    }
+
+    const week = getValues(`week.${weekIdx}`)
+    console.log('week', week)
+
+    const weekData: WeekData = {
+      name: week.name,
+      isTemplate: true,
+      day: week.day.map(
+        (day) => ({
+          isRestDay: day.isRestDay,
+          exercise: day.exercise.map(
+            (exercise) => ({
+              name: exercise.name,
+              lift: exercise.lift,
+              onerm: exercise.onerm ? +exercise.onerm : null,
+              sets: exercise.sets ? +exercise.sets : null,
+              reps: exercise.reps ? +exercise.reps : null,
+            })
+          ),
+        })
+      ),
+    }
+
+    weekCreateMutate(weekData)
+  }
+
+  const onSelectWeekTemplate = (weekIdx: number) => {
+    console.log('onSelectWeekTemplate', weekIdx)
+  }
+
+  const onLoadWeekTemplate = (weekIdx: number) => {
+    console.log('onLoadWeekTemplate', weekIdx)
   }
 
   const weekField = useFieldArray({
@@ -219,9 +297,7 @@ const Form = () => {
     name: 'week',
   })
 
-  watch('week')
-  console.log('load', getValues())
-  console.log('load', weekField.fields)
+  console.log('week', weeksData)
 
   const [parent,] = useAutoAnimate(/* optional config */)
 
@@ -271,8 +347,8 @@ const Form = () => {
                 weekField.fields.map((week, weekIdx) => (
                   <Disclosure key={week.id} defaultOpen={true} >
                     {({ open, }) => (
-                      <div className='border border-gray-400 min-w-full p-2 rounded-xl'>
-                        <div className='flex justify-between items-center gap-2'>
+                      <div className='flex flex-col gap-8 border border-gray-400 min-w-full p-2 rounded-xl'>
+                        <div className='flex justify-between items-center gap-6'>
                           <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-lg hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
                             <span>{`Week ${weekIdx + 1}`}</span>
                             <ChevronUpIcon
@@ -281,13 +357,39 @@ const Form = () => {
                             />
                           </Disclosure.Button>
                           <div className='flex gap-2'>
-                            <Input 
+                            <div className='relative flex flex-col gap-2'>
+                              <Input
+                                className=''
+                                placeholder='Week Name'
+                                defaultValue={``}
+                                {...register(`week.${weekIdx}.name`,)}
+                                onChange={() => clearErrors(`week.${weekIdx}.name`)}
+                              />
+                              <div className='absolute top-12'>
+                                <ErrorMessage
+                                  errors={errors}
+                                  name={`week.${weekIdx}.name`}
+                                  render={({ message, }) => <p className='text-red-400'>{message}</p>}
+                                />
+                              </div>
+                            </div>
+                            <Button
+                              type='button'
                               className=''
-                              placeholder='Week Name'
-                              defaultValue={``}
-                              {...register(`week.${weekIdx}.name`, )}
-                            />
-                            hello
+                              onClick={() => onSaveWeekAsTemplate(weekIdx)}
+                            >
+                              Save
+                            </Button>
+                            <WeekTemplateSelect 
+                              onSelectTemplate={(template) => onSelectWeekTemplate(template, weekIdx)} />
+                            <Button
+                              type='button'
+                              className=''
+                              onClick={() => onLoadWeekTemplate(weekIdx)}
+                            >
+                              Load
+                            </Button>
+
                           </div>
                         </div>
 

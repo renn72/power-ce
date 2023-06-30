@@ -25,7 +25,11 @@ const daySchema = z.object({
   isRestDay: z.boolean(),
   exercise: z.array(exerciseSchema),
 })
-const weekSchema = z.object({ day: z.array(daySchema), })
+const weekSchema = z.object({
+  name: z.string().min(0).max(280),
+  isTemplate: z.boolean(),
+  day: z.array(daySchema),
+})
 const blockSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1).max(280),
@@ -87,6 +91,8 @@ export const blocksRouter = createTRPCRouter({
           isProgram: input.isProgram,
           week: {
             create: input.week.map((week) => ({
+              name: week.name,
+              isTemplate: week.isTemplate,
               day: {
                 create: week.day.map((day) => ({
                   isRestDay: day.isRestDay,
@@ -108,6 +114,45 @@ export const blocksRouter = createTRPCRouter({
 
       return block
     }),
+
+  getAllWeekTemplates: publicProcedure.query(async ({ ctx, }) => {
+    const weeks = await ctx.prisma.week.findMany({
+      orderBy: { createdAt: 'desc', },
+      where: { isTemplate: true, },
+      include: { day: { include: { exercise: true, }, }, },
+    })
+    return weeks
+  }),
+
+  createWeek: privateProcedure
+    .input(weekSchema)
+    .mutation(async ({
+      ctx, input,
+    }) => {
+      const week = await ctx.prisma.week.create({
+        data: {
+          name: input.name,
+          isTemplate: input.isTemplate,
+          day: {
+            create: input.day.map((day) => ({
+              isRestDay: day.isRestDay,
+              exercise: {
+                create: day.exercise.map((exercise) => ({
+                  name: exercise.name,
+                  lift: exercise.lift,
+                  sets: exercise.sets,
+                  reps: exercise.reps,
+                  onerm: exercise.onerm,
+                })),
+              },
+            })),
+          },
+        },
+      })
+
+      return week
+    }),
+
   update: privateProcedure
     .input(blockSchema)
     .mutation(async ({

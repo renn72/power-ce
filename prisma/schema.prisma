@@ -102,6 +102,8 @@ model Week {
 
   name String? @db.VarChar(255)
 
+  isTemplate Boolean?
+
   day Day[]
 
   blockId String?

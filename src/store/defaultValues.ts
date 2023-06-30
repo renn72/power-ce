@@ -5,6 +5,7 @@ export const defaultValues = {
   week: [
     {
       name: '',
+      isTemplate: false,
       day: [
         {
           isRestDay: false,
