@@ -1,7 +1,4 @@
-import {
-  Fragment, useState,
-} from 'react'
-import { useAtom, } from 'jotai'
+import { Fragment, } from 'react'
 
 import { api, } from '~/utils/api'
 
@@ -12,31 +9,24 @@ import {
   ChevronUpDownIcon, CheckIcon,
 } from '@heroicons/react/24/outline'
 
-import { selectedWeekTemplateAtom, } from './form'
-
 const WeekTemplateSelect = ({
-  onSelectWeekTemplate, weekIdx,
-}: { onSelectWeekTemplate: (arg0: string) => void, weekIdx: string }) => {
-  const [selectedWeekTemplate,] = useAtom(selectedWeekTemplateAtom)
-  const [
-    selected,
-    setSelected,
-  ] = useState('')
+  onSelectWeekTemplate, selectedWeekTemplate,
+}: { onSelectWeekTemplate: (week: string) => void, selectedWeekTemplate: string }) => {
 
   const { data: weeksData, } = api.blocks.getAllWeekTemplates.useQuery()
   const weeksTitle = weeksData?.map((week) => week.name)
 
   const onSelect = (e: string) => {
-    setSelected(e)
-    console.log('e', e)
+    const template = weeksData?.filter((week) => week.name === e)[0]
+    if (template?.name) onSelectWeekTemplate(template.name)
   }
 
   return (
     <div className='w-40 sm:w-52 flex flex-col text-gray-400 justify-center'>
-      <Listbox value={selected} onChange={(e) => onSelect(e)}>
+      <Listbox value={selectedWeekTemplate} onChange={(e) => onSelect(e)}>
         <div className='relative z-10'>
           <Listbox.Button className='relative w-full border border-gray-600 cursor-default rounded-lg max-h-min h-10 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300'>
-            <span className='block truncate'>{selected}</span>
+            <span className='block truncate'>{selectedWeekTemplate}</span>
             <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
               <ChevronUpDownIcon
                 className='h-5 w-5 text-gray-400'

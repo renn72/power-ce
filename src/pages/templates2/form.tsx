@@ -23,7 +23,7 @@ import {
 } from '@headlessui/react'
 import { ChevronUpIcon, } from '@heroicons/react/20/solid'
 
-import FormWeek from './formWeek'
+import FormWeekData from './formWeekData'
 import TemplateSelect from './templateSelect'
 
 import { defaultValues, } from '~/store/defaultValues'
@@ -36,7 +36,6 @@ import { getRandomInt, } from '~/utils/utils'
 import WeekTemplateSelect from './weekTemplateSelect'
 
 export const selectedTemplateAtom = atom('')
-export const selectedWeekTemplateAtom  = atom(new Map())
 
 const Form = () => {
   const formMethods = useForm({ defaultValues, })
@@ -58,10 +57,6 @@ const Form = () => {
     selectedTemplate,
     setSelectedTemplate,
   ] = useAtom(selectedTemplateAtom)
-  const [
-    selectedWeekTemplate,
-    setSelectedWeekTemplate,
-  ] = useAtom(selectedWeekTemplateAtom)
 
   const {
     data: blocksData, isLoading: blocksLoading,
@@ -76,17 +71,6 @@ const Form = () => {
   const ctx = api.useContext()
 
   const { mutate: blockCreateMutate, } = api.blocks.create.useMutation({
-    onSuccess: () => {
-      console.log('success')
-      toast.success('Saved')
-      void ctx.blocks.getAll.invalidate()
-    },
-    onError: (e) => {
-      console.log('error', e)
-      toast.error('Error')
-    },
-  })
-  const { mutate: weekCreateMutate, } = api.blocks.createWeek.useMutation({
     onSuccess: () => {
       console.log('success')
       toast.success('Saved')
@@ -345,68 +329,7 @@ const Form = () => {
 
               {
                 weekField.fields.map((week, weekIdx) => (
-                  <Disclosure key={week.id} defaultOpen={true} >
-                    {({ open, }) => (
-                      <div className='flex flex-col gap-8 border border-gray-400 min-w-full p-2 rounded-xl'>
-                        <div className='flex justify-between items-center gap-6'>
-                          <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-lg hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
-                            <span>{`Week ${weekIdx + 1}`}</span>
-                            <ChevronUpIcon
-                              className={`${open ? 'rotate-180 transform' : ''
-                                } h-8 w-8 text-gray-400`}
-                            />
-                          </Disclosure.Button>
-                          <div className='flex gap-2'>
-                            <div className='relative flex flex-col gap-2'>
-                              <Input
-                                className=''
-                                placeholder='Week Name'
-                                defaultValue={``}
-                                {...register(`week.${weekIdx}.name`,)}
-                                onChange={() => clearErrors(`week.${weekIdx}.name`)}
-                              />
-                              <div className='absolute top-12'>
-                                <ErrorMessage
-                                  errors={errors}
-                                  name={`week.${weekIdx}.name`}
-                                  render={({ message, }) => <p className='text-red-400'>{message}</p>}
-                                />
-                              </div>
-                            </div>
-                            <Button
-                              type='button'
-                              className=''
-                              onClick={() => onSaveWeekAsTemplate(weekIdx)}
-                            >
-                              Save
-                            </Button>
-                            <WeekTemplateSelect 
-                              onSelectTemplate={(template) => onSelectWeekTemplate(template, weekIdx)} />
-                            <Button
-                              type='button'
-                              className=''
-                              onClick={() => onLoadWeekTemplate(weekIdx)}
-                            >
-                              Load
-                            </Button>
-
-                          </div>
-                        </div>
-
-                        <Transition
-                          className='transition-all duration-300 ease-out'
-                          enterFrom='transform scale-70 opacity-0'
-                          enterTo='transform scale-100 opacity-100'
-                          leaveFrom='transform scale-100 opacity-100'
-                          leaveTo='transform scale-70 opacity-0'
-                        >
-                          <Disclosure.Panel>
-                            <FormWeek weekIdx={weekIdx} />
-                          </Disclosure.Panel>
-                        </Transition>
-                      </div>
-                    )}
-                  </Disclosure>
+                  <FormWeekData key={week.id} weekIdx={weekIdx} />
                 ))}
 
               <Button type='button' onClick={() => onAddWeek()}>Add Week</Button>
