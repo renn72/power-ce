@@ -13,16 +13,13 @@ import { Input, } from '@/components/ui/input'
 import FormWeek from './formWeek'
 import WeekTemplateSelect from './weekTemplateSelect'
 
-import {
-  type BlockData, type WeekData,
-} from '~/store/types'
-import { type Week, } from '@prisma/client'
+import { type WeekData, } from '~/store/types'
 import { type Block, } from '~/store/types'
 
 const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
   const formMethods = useFormContext<Block>()
   const {
-    register, clearErrors, getValues, setError, formState: { errors, },
+    register, reset, clearErrors, getValues, setError, formState: { errors, },
   } = formMethods
 
   const [
@@ -31,6 +28,7 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
   ] = useState('')
 
   const ctx = api.useContext()
+  const { data: weeksData, } = api.blocks.getAllWeekTemplates.useQuery()
   const { mutate: weekCreateMutate, } = api.blocks.createWeek.useMutation({
     onSuccess: () => {
       console.log('success')
@@ -92,8 +90,44 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
   }
 
   const onLoadWeekTemplate = (weekIdx: number) => {
-    console.log('onLoadWeekTemplate', weekIdx)
+    const weekTemplate = weeksData?.filter((week) => week.name === selectedWeekTemplate)[0]
+    console.log('onLoadWeekTemplate', weekTemplate)
+
+    const currentTemplate = getValues()
+    console.log('currentTemplate', currentTemplate)
+
+    const update = {
+      ...currentTemplate,
+      week: currentTemplate.week.map((week, idx) => {
+        if (idx === weekIdx) {
+          return weekTemplate
+        }
+        return week
+      }),
+
+    }
+    console.log('update', update)
+
+    reset(update)
+
+    // if (template) {
+    //   setValue(`week.${weekIdx}.name`, template.name || '')
+    //   template.day.forEach((day, dayIdx) => {
+    //     setValue(`week.${weekIdx}.day.${dayIdx}.isRestDay`, day.isRestDay)
+    //     day.exercise.forEach((exercise, exerciseIdx) => {
+    //       setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`, exercise.name || '')
+    //       setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.lift`, exercise.lift || '')
+    //       setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, exercise.onerm)
+    //       setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`, exercise.sets)
+    //       setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`, exercise.reps)
+    //     })
+    //   })
+    //
+    // }
+    setSelectedWeekTemplate('')
+    toast.success('Loaded')
   }
+
   return (
     <>
       <Disclosure defaultOpen={true} >
@@ -132,7 +166,7 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
                   Save
                 </Button>
                 <WeekTemplateSelect
-                  onSelectWeekTemplate={onSelectWeekTemplate} 
+                  onSelectWeekTemplate={onSelectWeekTemplate}
                   selectedWeekTemplate={selectedWeekTemplate}
 
                 />
