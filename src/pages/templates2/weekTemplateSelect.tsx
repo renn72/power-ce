@@ -40,7 +40,7 @@ const WeekTemplateSelect = ({
             leaveFrom='opacity-100'
             leaveTo='opacity-0'
           >
-            <Listbox.Options className='absolute mt-1 max-h-60 w-full  border border-gray-600 overflow-auto rounded-md bg-gray-900 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
+            <Listbox.Options className='absolute mt-1 max-h-60 w-full min-w-fit  border border-gray-600 overflow-auto rounded-md bg-gray-900 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
               {weeksTitle?.map((template, Idx) => (
                 <Listbox.Option
                   key={Idx}

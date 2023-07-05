@@ -3,7 +3,7 @@ import React from 'react'
 
 import { api, } from '~/utils/api'
 import OneRMCard from '~/components/oneRMCard'
-import ProgramCard from '~/components/ProgramCard'
+import ProgramCard from '~/components/programCard'
 import { LoadingPage } from '~/components/loading'
 
 const Home: NextPage = () => {

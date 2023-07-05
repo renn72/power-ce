@@ -94,7 +94,6 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
     console.log('onLoadWeekTemplate', weekTemplate)
 
     const currentTemplate = getValues()
-    console.log('currentTemplate', currentTemplate)
 
     const update = {
       ...currentTemplate,
@@ -106,24 +105,9 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
       }),
 
     }
-    console.log('update', update)
 
     reset(update)
 
-    // if (template) {
-    //   setValue(`week.${weekIdx}.name`, template.name || '')
-    //   template.day.forEach((day, dayIdx) => {
-    //     setValue(`week.${weekIdx}.day.${dayIdx}.isRestDay`, day.isRestDay)
-    //     day.exercise.forEach((exercise, exerciseIdx) => {
-    //       setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`, exercise.name || '')
-    //       setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.lift`, exercise.lift || '')
-    //       setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, exercise.onerm)
-    //       setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`, exercise.sets)
-    //       setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`, exercise.reps)
-    //     })
-    //   })
-    //
-    // }
     setSelectedWeekTemplate('')
     toast.success('Loaded')
   }
@@ -133,8 +117,8 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
       <Disclosure defaultOpen={true} >
         {({ open, }) => (
           <div className='flex flex-col gap-8 border border-gray-400 min-w-full p-2 rounded-xl'>
-            <div className='flex justify-between items-center gap-6'>
-              <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-lg hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
+            <div className='flex flex-col sm:flex-row justify-between items-center gap-6'>
+              <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-base sm:text-lg hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
                 <span>{`Week ${weekIdx + 1}`}</span>
                 <ChevronUpIcon
                   className={`${open ? 'rotate-180 transform' : ''
@@ -144,7 +128,7 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
               <div className='flex gap-2'>
                 <div className='relative flex flex-col gap-2'>
                   <Input
-                    className=''
+                    className='text-xs sm:text-sm'
                     placeholder='Week Name'
                     defaultValue={``}
                     {...register(`week.${weekIdx}.name`,)}
@@ -160,7 +144,7 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
                 </div>
                 <Button
                   type='button'
-                  className=''
+                  className='text-xs sm:text-sm'
                   onClick={() => onSaveWeekAsTemplate(weekIdx)}
                 >
                   Save
@@ -172,7 +156,7 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
                 />
                 <Button
                   type='button'
-                  className=''
+                  className='text-xs sm:text-sm'
                   onClick={() => onLoadWeekTemplate(weekIdx)}
                 >
                   Load

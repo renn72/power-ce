@@ -224,64 +224,12 @@ const Form = () => {
     toast.success('Loaded')
   }
 
-  const onSaveWeekAsTemplate = (weekIdx: number) => {
-    console.log('onSaveWeekAsTemplate', weekIdx)
-    const name = getValues(`week.${weekIdx}.name`)
-    console.log('name', name)
-
-    // handle error
-    if (name === '') {
-      setError(`week.${weekIdx}.name`, {
-        type: 'manual',
-        message: 'Need a unique name',
-      })
-      setTimeout(() => {
-        clearErrors(`week.${weekIdx}.name`)
-      }, 3000)
-      toast.error('Need a unique name')
-      console.log('clash')
-      return
-    }
-
-    const week = getValues(`week.${weekIdx}`)
-    console.log('week', week)
-
-    const weekData: WeekData = {
-      name: week.name,
-      isTemplate: true,
-      day: week.day.map(
-        (day) => ({
-          isRestDay: day.isRestDay,
-          exercise: day.exercise.map(
-            (exercise) => ({
-              name: exercise.name,
-              lift: exercise.lift,
-              onerm: exercise.onerm ? +exercise.onerm : null,
-              sets: exercise.sets ? +exercise.sets : null,
-              reps: exercise.reps ? +exercise.reps : null,
-            })
-          ),
-        })
-      ),
-    }
-
-    weekCreateMutate(weekData)
-  }
-
-  const onSelectWeekTemplate = (weekIdx: number) => {
-    console.log('onSelectWeekTemplate', weekIdx)
-  }
-
-  const onLoadWeekTemplate = (weekIdx: number) => {
-    console.log('onLoadWeekTemplate', weekIdx)
-  }
 
   const weekField = useFieldArray({
     control,
     name: 'week',
   })
 
-  console.log('week', weeksData)
 
   const [parent,] = useAutoAnimate(/* optional config */)
 
@@ -296,7 +244,7 @@ const Form = () => {
               <div className='flex gap-2 items-center justify-center'>
                 <Button
                   type='button'
-                  className=''
+                  className='text-xs tracking-tighter sm:tracking-normal sm:text-base'
                   onClick={() => onNewTemplate()}
                 >
                   New Template
