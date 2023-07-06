@@ -22,7 +22,7 @@ const Home: NextPage = () => {
 
           <div className='grid mt-6'>
             <div className='text-gray-300'>
-              <h2 className='text-xl font-bold text-gray-200'>Active Programs</h2>
+              <h2 className='text-xl font-bold text-gray-200'>Active Program</h2>
               {
                 userPrograms
                 && userPrograms
@@ -34,8 +34,8 @@ const Home: NextPage = () => {
                   ))
               }
             </div>
-            <div className='text-gray-300'>
-              <h2 className='text-xl font-bold text-gray-200'>Inactive Programs</h2>
+            <div className='text-gray-300 mt-10'>
+              <h2 className='text-xl font-bold text-gray-200'>Old Programs</h2>
               {
                 userPrograms
                 && userPrograms

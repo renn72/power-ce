@@ -38,19 +38,7 @@ const ProgramCard = ({ userProgram, }: { userProgram: UserProgram }) => {
                         : day.exercise.map((exercise) => (
                           <div key={exercise.id}>
                             <div>
-                              Exercise: {exercise.name}
-                            </div>
-                            <div>
-                              Lift: {exercise.lift}
-                            </div>
-                            <div>
-                              1RM: {exercise.onerm}
-                            </div>
-                            <div>
-                              Sets: {exercise.sets}
-                            </div>
-                            <div>
-                              Reps: {exercise.reps}
+                              {exercise.name}
                             </div>
                           </div>
                         ))}

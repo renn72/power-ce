@@ -4,7 +4,7 @@ import { toast, } from 'react-hot-toast'
 import { api, } from '~/utils/api'
 
 import TemplateSelect from './templateSelect'
-import { LoadingPage } from '~/components/loading'
+import { LoadingPage, } from '~/components/loading'
 
 const Users: NextPage = () => {
   // Check for admin role
@@ -59,11 +59,7 @@ const Users: NextPage = () => {
   }
 
   const onSetTemplate = (template: string, userId: string) => {
-    console.log('template', template)
-    console.log('userId', userId)
-    console.log('blocksData', blocksData)
     const templateId = blocksData?.find((block) => block.name === template)?.id
-    console.log('templateId', templateId)
     if (!templateId) return
 
     userProgramCreateMutate({

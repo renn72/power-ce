@@ -29,7 +29,7 @@ const TemplateSelect = (
     {
       onSelectTemplate: (arg0: string, arg1: string) => void,
       onSetTemplate: (arg0: string, arg1: string) => void,
-      onClearTemplate: (arg0: string, ) => void,
+      onClearTemplate: (arg0: string,) => void,
       userId: string,
       userFirstName: string | null,
       userLastName: string | null
@@ -75,6 +75,11 @@ const TemplateSelect = (
     userId,
     programsData,
   ])
+
+  const onSetTemplateWrapper = (template, userId) => {
+    onSetTemplate(template, userId)
+    setIsSet(false)
+  }
 
   if (userProgramsLoading || blocksLoading) return <div>loading</div>
   const blocksTitle = blocksData?.map((block) => block.name)
@@ -145,7 +150,7 @@ const TemplateSelect = (
       </div>
       <PencilSquareIcon
         className='text-gray-400 hover:text-gray-100 h-12 w-12 p-2 place-self-end'
-        onClick={() => onSetTemplate(template, userId)}
+        onClick={() => onSetTemplateWrapper(template, userId)}
       />
       <XCircleIcon
         className='text-gray-400 hover:text-gray-100 h-12 w-12 p-2'
