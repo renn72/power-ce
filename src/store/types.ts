@@ -1,4 +1,5 @@
 export type Exercise = {
+  id: string,
   lift: string,
   name: string,
   onerm: string | number | null,
@@ -7,6 +8,10 @@ export type Exercise = {
 }
 
 export type Day = {
+  id: string;
+  name: string | null;
+  weekId: string;
+  energyRating: string | null;
   isRestDay: boolean,
   exercise: Exercise[],
 };
