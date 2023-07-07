@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
   darkMode: ['class',],
   content: [
@@ -14,12 +15,6 @@ module.exports = {
       screens: { '2xl': '1400px', },
     },
     extend: {
-      fontFamily: {
-        sans: [
-          'Inter',
-          'sans-serif',
-        ],
-      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

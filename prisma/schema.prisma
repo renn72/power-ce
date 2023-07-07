@@ -54,6 +54,7 @@ model Exercise {
 
   actualSets  Int?
   actualReps  Int?
+  isComplete  Boolean?
 
   rep    Rep[]
   rpe    Int?

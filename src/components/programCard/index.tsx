@@ -4,37 +4,140 @@ import {
 import {
   type Exercise, type UserProgram,
 } from '@prisma/client'
-import { type Day, } from '~/store/types'
+import {
+  type Day, type Exercise as StoreExercise,
+} from '~/store/types'
 import { api, } from '~/utils/api'
 
 import {
   Dialog, Transition,
 } from '@headlessui/react'
+import getWeight from '~/utils/getWeight'
+
+import { RadioGroup, } from '@headlessui/react'
+
+const checkWeight = (exercise: StoreExercise, range: boolean) => {
+  const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery()
+  const lift = exercise.lift
+  const onerm = exercise.onerm
+
+  const squat = userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'squat')[0]?.weight || 0
+  const deadlift = userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'deadlift')[0]?.weight || 0
+  const bench = userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'bench')[0]?.weight || 0
+
+  if (!lift) return null
+  if (!onerm) return null
+  if (lift === 'unlinked') return null
+
+  if (lift === 'Squat') {
+    if (squat === 0) return null
+    if (range) return `@${getWeight(+squat, +onerm)}kg-@${getWeight(+squat, +onerm * 1.05)}kg`
+    return `@${getWeight(+squat, +onerm)}kg`
+  }
+  if (lift === 'Deadlift') {
+    if (deadlift === 0) return null
+    if (range) return `@${getWeight(+deadlift, +onerm)}kg-@${getWeight(+deadlift, +onerm * 1.05)}kg`
+    return `@${getWeight(+deadlift, +onerm)}kg`
+  }
+  if (lift === 'Bench') {
+    if (bench === 0) return null
+    if (range) return `@${getWeight(+bench, +onerm)}kg-@${getWeight(+bench, +onerm * 1.05)}kg`
+    return `@${getWeight(+bench, +onerm)}kg`
+  }
+  return null
+}
 
 const DayModal = ({ day, }: { day: Day }) => {
+  const [
+    selectedEngery,
+    setSelectedEngery,
+  ] = useState(day.energyRating)
+
+  const onSetEnergy = (e : string) => {
+    console.log(e)
+    setSelectedEngery(e)
+  }
+
+  console.log(day)
 
   return (
     <>
-      {day.isRestDay ? (
-        <div>
-          Rest Day
-        </div>
-      ) : (
-        <div className='flex flex-col'>
+      {day.isRestDay
+        ? (
+          <div>
+            Rest Day
+          </div>
+        )
+        : (
           <div className='flex flex-col'>
+            <RadioGroup value={selectedEngery} onChange={onSetEnergy}>
+              <div className='flex gap-2'>
+                <RadioGroup.Label className='text-lg'>Energy Level</RadioGroup.Label>
+                {[
+                  'A',
+                  'B',
+                  'C',
+                  'D',
+                ].map((energy) => (
+                  <RadioGroup.Option
+                    key={energy}
+                    value={energy}
+                    className={({
+                      active, checked,
+                    }) => `${active
+                      ? ''
+                      : ''
+                    }
+                  ${checked ? 'bg-gray-400 bg-opacity-75 text-white font-extrabold' : 'bg-gray-700 text-gray-200'
+                      }
+                    relative flex cursor-pointer rounded-lg px-2 py-1 shadow-md focus:outline-none`
+                    }
+                  >
+                    {({
+                      active, checked,
+                    }) => (
+                      <>
+                        <div className='flex w-full items-center justify-between'>
+                          <div className='flex items-center'>
+                            <div className='text-sm'>
+                              <RadioGroup.Label
+                                as='p'
+                                className={`font-medium  ${checked ? 'text-gray-100' : 'text-gray-300'
+                                  }`}
+                              >
+                                {energy}
+                              </RadioGroup.Label>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </RadioGroup.Option>
+                ))}
+              </div>
+            </RadioGroup>
             {day.exercise.map((exercise) => (
-              <div key={exercise.id} className='flex flex-row justify-between'>
+              <div key={exercise.id} className='flex flex-row justify-start gap-2'>
                 <div>
                   {exercise.name}
                 </div>
-                <div>
-                  {exercise.sets} x {exercise.reps}
-                </div>
+                {exercise.sets && exercise.reps && (
+                  <div className='flex gap-1'>
+                    <div>
+                      {exercise.sets} x {exercise.reps}
+                    </div>
+                    {exercise.lift && exercise.onerm && (
+                      <div>
+                        {checkWeight(exercise, true)}
+                      </div>
+                    )
+                    }
+                  </div>
+                )}
               </div>
             ))}
-          </div>
-        </div>
-      )}
+          </div >
+        )}
     </>
   )
 }
@@ -47,6 +150,8 @@ const ProgramDay = ({
     setIsOpen,
   ] = useState(false)
 
+  api.oneRepMax.getUserCoreLifts.useQuery()
+
   const closeModal = () => {
     setIsOpen(false)
   }
@@ -58,10 +163,10 @@ const ProgramDay = ({
   return (
     <>
       <div
-        className='border border-gray-600 rounded-lg p-2 hover:bg-gray-600 hover:scale-105 transform transition-all'
+        className='border border-gray-600 rounded-lg p-1 hover:bg-gray-600 hover:scale-105 transform transition-all'
         onClick={() => openModal()}
       >
-        <div>
+        <div className='font-bold'>
           Day {dayIdx + 1}
         </div>
         {day.isRestDay
@@ -71,11 +176,26 @@ const ProgramDay = ({
             </div>
           )
           : day.exercise.map((exercise) => (
-            <div key={exercise.id}>
-
-              <div>
+            <div
+              key={exercise.id}
+              className='flex flex-row justify-start gap-2'
+            >
+              <div className='md:w-14 break-words'>
                 {exercise.name}
               </div>
+              {exercise.sets && exercise.reps && (
+                <div className='flex gap-1'>
+                  <div>
+                    {exercise.sets} x {exercise.reps}
+                  </div>
+                  {exercise.lift && exercise.onerm && (
+                    <div>
+                      {checkWeight(exercise, false)}
+                    </div>
+                  )
+                  }
+                </div>
+              )}
             </div>
           ))}
       </div>
@@ -95,7 +215,7 @@ const ProgramDay = ({
           </Transition.Child>
 
           <div className='fixed inset-0 overflow-y-auto'>
-            <div className='flex min-h-full items-center justify-center p-4 text-center'>
+            <div className='flex min-h-full items-center justify-center p-2 text-center'>
               <Transition.Child
                 as={Fragment}
                 enter='ease-out duration-300'
@@ -105,12 +225,12 @@ const ProgramDay = ({
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className='w-full text-gray-200 bg-gray-800 max-w-3xl transform overflow-hidden rounded-2xl p-5 text-left align-middle shadow-sm shadow-gray-800 transition-all'>
+                <Dialog.Panel className='w-full text-gray-200 bg-gray-800 max-w-3xl transform overflow-hidden rounded-2xl p-2 text-left align-middle shadow-sm shadow-gray-800 transition-all'>
                   <Dialog.Title
                     as='h3'
                     className='text-lg font-medium leading-6 flex justify-between items-center'
                   >
-                    <h3>
+                    <h3 className='font-bold'>
                       Day {dayIdx + 1}
                     </h3>
                     <button className='px-2 py-1' onClick={() => closeModal()}>X</button>
@@ -132,28 +252,29 @@ const ProgramDay = ({
 const ProgramCard = ({ userProgram, }: { userProgram: UserProgram }) => {
   const { data: programs, } = api.blocks.getAllUserPrograms.useQuery()
   const program = programs?.find((program) => program.id === userProgram.programId)
-  console.log(program)
   return (
     <>
       {userProgram.isProgramActive
         ? (
           <div
-            className='border border-gray-600 rounded-lg shadow-md shadow-gray-400/20 p-4'
+            className='border font-normal border-gray-600 rounded-lg shadow-md shadow-gray-400/20 p-2'
           >
+            <div className='font-bold'>
             Name: {program?.name}
+            </div>
             <div
               className='flex flex-col gap-4'
             >
               {program?.week.map((week, weekIdx) => (
                 <div
                   key={week.id}
-                  className='border border-gray-600 rounded-lg p-2 '
+                  className='border border-gray-600 rounded-lg p-1 '
                 >
-                  <div>
-                    Week: {weekIdx + 1}
+                  <div className='text-lg font-bold text-center md:text-left'>
+                    Week {weekIdx + 1}
                   </div>
                   <div
-                    className='grid grid-cols-7 gap-2'
+                    className='grid md:grid-cols-7 gap-2 mt-4 '
                   >
                     {week.day.map((day, dayIdx) => (
                       <ProgramDay
