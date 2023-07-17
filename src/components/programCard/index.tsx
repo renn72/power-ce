@@ -55,36 +55,6 @@ const checkWeight = (exercise: StoreExercise, range: boolean, energyRating: stri
 }
 
 const DayModal = ({ day, }: { day: Day }) => {
-  const [
-    selectedEngery,
-    setSelectedEngery,
-  ] = useState(day.energyRating)
-
-  const [
-    state,
-    setState,
-  ] = useState(false)
-
-  const ctx = api.useContext()
-
-  const { mutate: updateDayEnergy, } = api.programs.updateDayEnergy.useMutation({
-    onSuccess: () => {
-      console.log('success')
-      void ctx.blocks.getAllUserPrograms.invalidate()
-    },
-    onError: (e) => {
-      console.log('error', e)
-    },
-  })
-
-  const onSetEnergy = (e: string) => {
-    console.log(e)
-    setSelectedEngery(e)
-    updateDayEnergy({
-      id: day.id,
-      energyRating: e,
-    })
-  }
 
   console.log(day)
 
@@ -98,57 +68,14 @@ const DayModal = ({ day, }: { day: Day }) => {
         )
         : (
           <div className={`flex flex-col gap-2 `}>
-            <RadioGroup value={selectedEngery} onChange={onSetEnergy}>
-              <div className={`flex gap-2 p-2 ${state ? '' : 'border-gray-400 border rounded-md'}`}>
-                <RadioGroup.Label className='text-lg'>Energy Level</RadioGroup.Label>
-                {[
-                  'A',
-                  'B',
-                  'C',
-                  'D',
-                ].map((energy) => (
-                  <RadioGroup.Option
-                    key={energy}
-                    value={energy}
-                    className={({
-                      active, checked,
-                    }) => `${active
-                      ? ''
-                      : ''
-                    }
-                  ${checked ? 'bg-gray-400 bg-opacity-75 text-white font-extrabold' : 'bg-gray-700 text-gray-200'
-                      }
-                    relative flex cursor-pointer rounded-lg px-2 py-1 shadow-md focus:outline-none`
-                    }
-                  >
-                    {({
-                      active, checked,
-                    }) => (
-                      <>
-                        <div className='flex w-full items-center justify-between'>
-                          <div className='flex items-center'>
-                            <div className='text-sm'>
-                              <RadioGroup.Label
-                                as='p'
-                                className={`font-medium  ${checked ? 'text-gray-100' : 'text-gray-300'
-                                  }`}
-                              >
-                                {energy}
-                              </RadioGroup.Label>
-                            </div>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </RadioGroup.Option>
-                ))}
-              </div>
-            </RadioGroup>
             {day.exercise.map((exercise) => (
               <div key={exercise.id} className='flex flex-col justify-start gap-2'>
                 <div className='flex flex-row gap-1'>
                   <div>
                     {exercise.name}
+                  </div>
+                  <div>
+                    {exercise?.notes}
                   </div>
                   {exercise.sets && exercise.reps && (
                     <div>
@@ -177,6 +104,15 @@ const ProgramDay = ({
     isOpen,
     setIsOpen,
   ] = useState(false)
+  const [
+    selectedEngery,
+    setSelectedEngery,
+  ] = useState(day.energyRating)
+
+  const [
+    state,
+    setState,
+  ] = useState(() => (day.energyRating ? true : false) )
 
   api.oneRepMax.getUserCoreLifts.useQuery()
 
@@ -188,10 +124,31 @@ const ProgramDay = ({
     setIsOpen(true)
   }
 
+  const ctx = api.useContext()
+
+  const { mutate: updateDayEnergy, } = api.programs.updateDayEnergy.useMutation({
+    onSuccess: () => {
+      console.log('success')
+      void ctx.blocks.getAllUserPrograms.invalidate()
+    },
+    onError: (e) => {
+      console.log('error', e)
+    },
+  })
+
+  const onSetEnergy = (e: string) => {
+    console.log(e)
+    setSelectedEngery(e)
+    updateDayEnergy({
+      id: day.id,
+      energyRating: e,
+    })
+  }
+
   return (
     <>
       <div
-        className='border border-gray-600 rounded-lg p-1 hover:bg-gray-600 hover:scale-105 transform transition-all'
+        className='border border-gray-600 rounded-lg p-1 hover:bg-gray-600 hover:scale-105 transform transition-all cursor-pointer'
         onClick={() => openModal()}
       >
         <div className='font-bold'>
@@ -218,7 +175,7 @@ const ProgramDay = ({
                   </div>
                   {exercise.lift && exercise.onerm && (
                     <div>
-                      {checkWeight(exercise, false)}
+                      {checkWeight(exercise, false, null)}
                     </div>
                   )
                   }
@@ -258,8 +215,55 @@ const ProgramDay = ({
                     as='h3'
                     className='text-lg font-medium leading-6 flex justify-between items-center'
                   >
-                    <div className='font-bold'>
-                      Day {dayIdx + 1}
+                    <div className='flex justify-between items-center gap-8'>
+                      <div className='font-bold'>
+                        Day {dayIdx + 1}
+                      </div>
+                      <RadioGroup value={selectedEngery} onChange={onSetEnergy}>
+                        <div className={`flex gap-2 p-2 ${state ? '' : 'border-gray-400 border rounded-md'}`}>
+                          <RadioGroup.Label className='text-lg'>Energy Level</RadioGroup.Label>
+                          {[
+                            'A',
+                            'B',
+                            'C',
+                            'D',
+                          ].map((energy) => (
+                            <RadioGroup.Option
+                              key={energy}
+                              value={energy}
+                              className={({
+                                active, checked,
+                              }) => `${active
+                                ? ''
+                                : ''
+                              }
+                              ${checked ? 'bg-gray-400 bg-opacity-75 text-white font-extrabold' : 'bg-gray-700 text-gray-200'}
+                                  relative flex cursor-pointer rounded-lg px-2 py-1 shadow-md focus:outline-none`
+                              }
+                            >
+                              {({
+                                active, checked,
+                              }) => (
+                                <>
+                                  <div className='flex w-full items-center justify-between'>
+                                    <div className='flex items-center'>
+                                      <div className='text-sm'>
+                                        <RadioGroup.Label
+                                          as='p'
+                                          className={`font-medium  ${checked ? 'text-gray-100' : 'text-gray-300'
+                                            }`}
+                                        >
+                                          {energy}
+                                        </RadioGroup.Label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </>
+                              )}
+                            </RadioGroup.Option>
+                          ))}
+                        </div>
+                      </RadioGroup>
                     </div>
                     <button className='px-2 py-1' onClick={() => closeModal()}>X</button>
                   </Dialog.Title>

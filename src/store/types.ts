@@ -5,6 +5,7 @@ export type Exercise = {
   onerm: string | number | null,
   sets: string | number | null,
   reps: string | number | null,
+  notes: string | null,
 }
 
 export type Day = {

@@ -20,6 +20,7 @@ const exerciseSchema = z.object({
   sets: z.number().min(0).max(55).optional().nullable(),
   reps: z.number().min(0).max(55).optional().nullable(),
   onerm: z.number().min(0).max(100).optional().nullable(),
+  notes: z.string().min(0).max(280).optional().nullable(),
 })
 const daySchema = z.object({
   isRestDay: z.boolean(),
@@ -59,7 +60,7 @@ export const blocksRouter = createTRPCRouter({
     const blocks = await ctx.prisma.block.findMany({
       orderBy: { createdAt: 'desc', },
       where: { userIdOfProgram: userId, },
-      include: { week: { include: { day: { include: { exercise: true, }, }, }, }, },
+      include: { week: { include: { day: { include: { exercise: { include: { set: true, }, }, }, }, }, }, },
     })
     return blocks
   }),
@@ -103,6 +104,7 @@ export const blocksRouter = createTRPCRouter({
                       sets: exercise.sets,
                       reps: exercise.reps,
                       onerm: exercise.onerm,
+                      notes: exercise?.notes,
                     })),
                   },
                 })),

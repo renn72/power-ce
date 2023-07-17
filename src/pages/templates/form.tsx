@@ -1,135 +1,72 @@
 import React, { useState, } from 'react'
 import {
-  useForm, FormProvider,
-} from 'react-hook-form'
-import { ErrorMessage, } from '@hookform/error-message'
-import {
   useAtom, atom,
 } from 'jotai'
 
+import { ErrorMessage, } from '@hookform/error-message'
+
 import {
-  PlusCircleIcon,
-  MinusCircleIcon,
-  ChevronRightIcon,
-  ChevronLeftIcon,
-} from '@heroicons/react/24/outline'
+  useForm, FormProvider, useFieldArray,
+} from 'react-hook-form'
+
 import { toast, } from 'react-hot-toast'
 
 import { api, } from '~/utils/api'
-import { getRandomInt, } from '~/utils/utils'
 
-import BlockTable from './blockTable'
-import TemplateSelect from './templateSelect'
-import FormDay from './formDay'
 import { Button, } from '@/components/ui/button'
 import { Input, } from '@/components/ui/input'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
 
-import { Disclosure, } from '@headlessui/react'
+import { useAutoAnimate, } from '@formkit/auto-animate/react'
+
+import {
+  Disclosure, Transition,
+} from '@headlessui/react'
 import { ChevronUpIcon, } from '@heroicons/react/20/solid'
 
-export const formDayAtom = atom(0)
-export const formWeekAtom = atom(0)
-export const formWeekSizeAtom = atom<number>(2)
-export const blockIndexAtom = atom('')
+import FormWeekData from './formWeekData'
+import TemplateSelect from './templateSelect'
+
+import { defaultValues, } from '~/store/defaultValues'
+import { type Block, } from '~/store/types'
+import {
+  type BlockData, type WeekData,
+} from '~/store/types'
+
+import { getRandomInt, } from '~/utils/utils'
+import WeekTemplateSelect from './weekTemplateSelect'
+
 export const selectedTemplateAtom = atom('')
 
-type Exercise = {
-  lift: string | null,
-  name: string | null,
-  onerm: number | null,
-  sets: number | null,
-  reps: number | null,
-}
-
-type Day = {
-  isRestDay: boolean,
-  exercise: Exercise[],
-};
-
-type Week = {
-  day: Day[],
-}
-
-export type Block = {
-  id: string,
-  name: string,
-  isProgram: boolean,
-  week: Week[],
-}
-
-const dayText = [
-  'Day 1',
-  'Day 2',
-  'Day 3',
-  'Day 4',
-  'Day 5',
-  'Day 6',
-  'Day 7',
-]
-
 const Form = () => {
-  const [
-    formDay,
-    setFormDay,
-  ] = useAtom(formDayAtom)
-  const [
-    formWeek,
-    setFormWeek,
-  ] = useAtom(formWeekAtom)
-  // const [formWeekSize, setFormWeekSize] = useAtom(formWeekSizeAtom)
-  const [
-    blockIndex,
-    setBlockIndex,
-  ] = useAtom(blockIndexAtom)
-  const [
-    selectedTemplate,
-    setSelectedTemplate,
-  ] = useAtom(selectedTemplateAtom)
-
-  const formMethods = useForm<Block>()
+  const formMethods = useForm({ defaultValues, })
   const {
-    register, unregister, reset, setValue, getValues, handleSubmit, setError, formState: { errors, },
+    register, unregister, getValues, watch, reset, setValue, control, handleSubmit, clearErrors, setError, formState: { errors, },
   } = formMethods
-  const [
-    formIndex,
-    setFormIndex,
-  ] = useState<number[][]>(
-    [
-      [
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-      ],
-      [
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-      ],
-    ],
-  )
+
   const [
     isUpdate,
     setIsUpdate,
   ] = useState(false)
 
+  const [
+    blockId,
+    setBlockId,
+  ] = useState('')
+
+  const [
+    selectedTemplate,
+    setSelectedTemplate,
+  ] = useAtom(selectedTemplateAtom)
+
   const {
     data: blocksData, isLoading: blocksLoading,
   } = api.blocks.getAll.useQuery()
   const blocksTitle = blocksData?.map((block) => block.name)
+
+  const {
+    data: weeksData, isLoading: weeksLoading,
+  } = api.blocks.getAllWeekTemplates.useQuery()
+  const weeksTitle = weeksData?.map((week) => week.name)
 
   const ctx = api.useContext()
 
@@ -155,6 +92,16 @@ const Form = () => {
   })
 
   const onSubmit = (data: Block) => {
+    console.log('submit')
+    if (isUpdate) {
+      updateBlock(data)
+    } else {
+      saveNewBlock(data)
+    }
+  }
+
+  const saveNewBlock = (data: Block) => {
+    console.log('saveNewBlock', data)
     if (blocksTitle && blocksTitle.includes(data.name) && !isUpdate) {
       setError('name', {
         type: 'manual',
@@ -163,12 +110,14 @@ const Form = () => {
       console.log('clash')
       return
     }
-    const block: Block = {
+    const block: BlockData = {
       name: data.name,
       id: '',
       isProgram: false,
       week: data.week.map(
         (week) => ({
+          name: week.name || '',
+          isTemplate: false,
           day: week.day.map(
             (day) => ({
               isRestDay: day.isRestDay,
@@ -176,9 +125,10 @@ const Form = () => {
                 (exercise) => ({
                   name: exercise.name,
                   lift: exercise.lift,
-                  onerm: exercise.onerm ? exercise.onerm : null,
-                  sets: exercise.sets ? exercise.sets : null,
-                  reps: exercise.reps ? exercise.reps : null,
+                  onerm: exercise.onerm ? +exercise.onerm : null,
+                  sets: exercise.sets ? +exercise.sets : null,
+                  reps: exercise.reps ? +exercise.reps : null,
+                  notes: exercise.notes,
                 })
               ),
             })
@@ -186,174 +136,136 @@ const Form = () => {
         })
       ),
     }
-    console.log('isUpdate', isUpdate)
 
-    if (isUpdate && blockIndex !== '') {
-      block.id = blockIndex
-      console.log(block)
-      blockUpdateMutate(block)
-    } else {
-      blockCreateMutate(block)
-    }
+    blockCreateMutate(block)
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const onError = (errors, e) => console.log(errors, e)
-
-  const onAddExercise = () => {
-    console.log('add exercise')
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    formIndex[formWeek][formDay] += 1
-    setFormIndex([...formIndex,])
+  const updateBlock = (data: Block) => {
+    console.log('updateBlock', data)
   }
 
-  const onRemoveExercise = () => {
-    console.log('remove exercise')
-    if (!formIndex[formWeek]) return
-    if (!formIndex[formWeek][formDay]) return
+  const onError = (errors, e) => {
+    console.log('error', errors, e)
+  }
 
-    if (formIndex[formWeek][formDay] && formIndex[formWeek][formDay] > 1) {
-      unregister(`week.${formWeek}.day.${formDay}.exercise.${formIndex[formWeek][formDay] - 1}`)
-      formIndex[formWeek][formDay] -= 1
-      setFormIndex([...formIndex,])
-    }
-  }
-  const onSetFormDay = (idx: number) => {
-    const newDay = (formDay + idx)
-    if (newDay >= 0 && newDay <= 6) {
-      setFormDay(newDay)
-    }
-  }
-  const onSetFormWeek = (idx: number) => {
-    const newWeek = (formWeek + idx)
-    if (newWeek >= 0 && newWeek < formIndex.length) {
-      setFormWeek(newWeek)
-    }
-  }
   const onAddWeek = () => {
-    // setFormWeekSize(formWeekSize + 1)
-    setFormIndex([
-      ...formIndex,
-      [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+    weekField.append({
+      name: '',
+      isTemplate: false,
+      day: [
+        {
+          exercise: [], isRestDay: false,
+        },
+        {
+          exercise: [], isRestDay: false,
+        },
+        {
+          exercise: [], isRestDay: false,
+        },
+        {
+          exercise: [], isRestDay: false,
+        },
+        {
+          exercise: [], isRestDay: false,
+        },
+        {
+          exercise: [], isRestDay: false,
+        },
+        {
+          exercise: [], isRestDay: false,
+        },
       ],
-    ])
-  }
-  const onRemoveWeek = () => {
-    // setFormWeekSize(formWeekSize - 1)
-    if (formIndex.length - 1 <= 0) return
-    setFormIndex(formIndex.slice(0, -1))
-    if (formIndex.length - 1 <= formWeek) setFormWeek(formWeek - 1)
-    unregister(`week.${formIndex.length - 1}`)
-  }
-  const onNewTemplate = () => {
-    console.log('new')
-    // setFormWeekSize(2)
-    setFormIndex([
-      [
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-      ],
-      [
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-      ],
-    ])
-    setBlockIndex('')
-    setFormDay(0)
-    setFormWeek(0)
-    // setFormWeekSize(2)
-    reset()
-  }
-
-  const onSelectTemplate = (templateName: string) => {
-    setSelectedTemplate(templateName)
-
-    const block = blocksData?.filter((block) => block.name === templateName)[0]
-
-    unregister()
-    setValue('name', block?.name || '')
-    const newFormIndex: number[][] = [[],]
-    block?.week.forEach((week, weekIdx) => {
-      newFormIndex[weekIdx] = [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-      ]
-      week.day.forEach((day, dayIdx) => {
-        setValue(`week.${weekIdx}.day.${dayIdx}.isRestDay`, day?.isRestDay) // eslint-disable-line @typescript-eslint/no-unsafe-argument
-        newFormIndex[weekIdx][dayIdx] = day?.exercise?.length || 0
-        day.exercise.forEach((exercise, exerciseIdx) => {
-          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.lift`, exercise.lift || null) // eslint-disable-line @typescript-eslint/no-unsafe-argument
-          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`, exercise.name || null)
-          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, exercise.onerm || null) // eslint-disable-line @typescript-eslint/no-unsafe-argument
-          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`, exercise.sets || null) // eslint-disable-line @typescript-eslint/no-unsafe-argument
-          setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`, exercise.reps || null) // eslint-disable-line @typescript-eslint/no-unsafe-argument
-        })
-      })
     })
+  }
 
-    setBlockIndex(block?.id || '')
-    setFormDay(0)
-    setFormWeek(0)
-    setFormIndex(newFormIndex)
+  const onNewTemplate = () => {
+    reset(defaultValues)
+    setIsUpdate(false)
+    setBlockId('')
+    setValue('name', `block-${getRandomInt(1000)}`)
+  }
+
+  const onSelectTemplate = (template: string) => {
+    console.log('onSelectTemplate', template)
+    setSelectedTemplate(template)
+  }
+
+  const onLoadTemplate = () => {
+
+    const block = blocksData?.filter((block) => block.name === selectedTemplate)[0]
+    console.log('onLoadTemplate', block)
+    setBlockId(block?.id || '')
+
+    const template = {
+      name: block?.name || '',
+      week: block?.week.map(
+        (week) => ({
+          name: week.name || '',
+          isTemplate: false,
+          day: week.day.map(
+            (day) => ({
+              isRestDay: day.isRestDay,
+              exercise: day.exercise.map(
+                (exercise) => ({
+                  name: exercise.name || '',
+                  lift: exercise.lift || '',
+                  onerm: exercise.onerm ? exercise.onerm.toString() : undefined,
+                  sets: exercise.sets ? exercise.sets.toString() : undefined,
+                  reps: exercise.reps ? exercise.reps.toString() : undefined,
+                })
+              ),
+            })
+          ),
+        })
+      ),
+    }
+    console.log(template)
+    reset(template)
+
+    toast.success('Loaded')
   }
 
 
+  const weekField = useFieldArray({
+    control,
+    name: 'week',
+  })
 
-  if (blocksLoading) {
-    return <div>Loading...</div>
-  }
+
+  const [parent,] = useAutoAnimate(/* optional config */)
 
   return (
     <>
-      <div className='flex gap-2 sm:gap-6 justify-center items-center text-sm sm:text-base font-semibold'>
-
-        <div>
-          <Button
-            className=''
-            onClick={() => onNewTemplate()}
-          >
-            New Template
-          </Button>
-        </div>
-
-        <TemplateSelect onSelectTemplate={onSelectTemplate} />
-
-      </div>
-      <div className='mt-2 md:mt-8 text-xxs md:text-sm flex flex-col items-center'>
+      <div className='mt-2 md:mt-8 text-xxs md:text-base w-full flex flex-col justify-center items-center px-2 '>
         <FormProvider {...formMethods}>
-          <form onSubmit={handleSubmit(onSubmit, onError)}>
-            <div className='flex flex-col gap-1 sm:gap-4 border border-gray-600 rounded-xl p-2 sm:p-6'>
+          <form onSubmit={handleSubmit(onSubmit, onError)} className='w-full flex flex-col justify-center items-center'>
+            <div ref={parent} className='flex flex-col w-full max-w-7xl gap-1 sm:gap-4 border border-gray-600 rounded-xl p-2 sm:p-6'>
+
+              {/* template select */}
+              <div className='flex gap-2 items-center justify-center'>
+                <Button
+                  type='button'
+                  className='text-xs tracking-tighter sm:tracking-normal sm:text-base'
+                  onClick={() => onNewTemplate()}
+                >
+                  New Template
+                </Button>
+                <TemplateSelect onSelectTemplate={onSelectTemplate} />
+                <Button
+                  type='button'
+                  className=''
+                  onClick={() => onLoadTemplate()}
+                >
+                  Load
+                </Button>
+              </div>
 
               {/* Title */}
               <div className='flex flex-col gap-2 items-center justify-center'>
                 <div className='relative rounded-md shadow-lg'>
                   <Input className=''
                     placeholder='Title'
-                    defaultValue={`block-${getRandomInt(1000)}`}
+                    defaultValue={``}
                     {...register('name', { required: 'This is required.', })}
                   />
                 </div>
@@ -364,60 +276,12 @@ const Form = () => {
                 />
               </div>
 
-              {/* week */}
-              <div className='flex justify-center items-center gap-4 text-lg text-gray-200 md:py-2'>
-                <button type='button' onClick={() => onRemoveWeek()}>
-                  <MinusCircleIcon className='h-12 w-12 text-gray-800' aria-hidden='true' />
-                </button>
-                <ChevronLeftIcon className='h-8 w-8 cursor-pointer' onClick={() => onSetFormWeek(-1)} />
-                Week {formWeek + 1}/{formIndex.length}
-                <ChevronRightIcon className='h-8 w-8 cursor-pointer' onClick={() => onSetFormWeek(1)} />
-                <button type='button' onClick={() => onAddWeek()}>
-                  <PlusCircleIcon className='h-12 w-12 text-gray-800' aria-hidden='true' />
-                </button>
-              </div>
-
-              {/* day */}
-              <div className='flex justify-center items-center gap-4 text-lg text-gray-200 sm:pb-2'>
-                <ChevronLeftIcon className='h-8 w-8 cursor-pointer' onClick={() => onSetFormDay(-1)} />
-                {dayText[formDay]}
-                <ChevronRightIcon className='h-8 w-8 cursor-pointer' onClick={() => onSetFormDay(1)} />
-              </div>
-
-              {/* form */}
               {
-                formIndex.map((week, weekIdx) => (
-                  <Disclosure key={weekIdx} as='div' >
-                      {({ open, }) => (
-                        <div className='border border-gray-400 p-2 rounded-xl'>
-                          <Disclosure.Button className='flex w-full justify-between rounded-lg px-4 py-2 text-left text-lg hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
-                            <span>{`Week ${weekIdx + 1}`}</span>
-                            <ChevronUpIcon
-                              className={`${open ? 'rotate-180 transform' : ''
-                                } h-5 w-5 text-purple-500`}
-                            />
-                          </Disclosure.Button>
-                          <Disclosure.Panel>
-                            <div className={`flex gap-10`}>
-                              {week.map((day, dayIdx) => (
-                                <FormDay key={dayIdx} weekIdx={weekIdx} dayIdx={dayIdx} day={day} />
-                              ))}
-                            </div>
-                          </Disclosure.Panel>
-                        </div>
-                      )}
-                  </Disclosure>
+                weekField.fields.map((week, weekIdx) => (
+                  <FormWeekData key={week.id} weekIdx={weekIdx} />
                 ))}
 
-              <div className='flex justify-center gap-4 mt-4'>
-                <button type='button' onClick={() => onAddExercise()}>
-                  <PlusCircleIcon className='h-12 w-12 text-gray-800' aria-hidden='true' />
-                </button>
-                <button type='button' onClick={() => onRemoveExercise()}>
-                  <MinusCircleIcon className='h-12 w-12 text-gray-800' aria-hidden='true' />
-                </button>
-              </div>
-
+              <Button type='button' onClick={() => onAddWeek()}>Add Week</Button>
               <div className='flex gap-4 justify-center'>
                 <button
                   type='submit'
@@ -436,7 +300,6 @@ const Form = () => {
               </div>
             </div>
           </form>
-          <BlockTable />
         </FormProvider>
       </div>
     </>

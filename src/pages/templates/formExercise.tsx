@@ -64,7 +64,9 @@ const FormExercise = ({
 
   return (
 
-    <li className='grid grid-cols-3 md:grid-cols-6 gap-2'>
+
+    <li className='flex flex-col gap-2'>
+      <div className='grid grid-cols-3 md:grid-cols-6 gap-2'>
       <div className='flex flex-col justify-center'>
         <Controller
           control={control}
@@ -103,6 +105,13 @@ const FormExercise = ({
           exercise={exerciseIdx}
         />
       </div>
+      </div>
+      <Input
+        className='hover:bg-gray-800'
+        type='text'
+        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.notes`)}
+        placeholder='notes'
+      />
     </li>
   )
 }

@@ -21,13 +21,14 @@ model Post {
   published Boolean @default(false)
 }
 
-model Rep {
+model Set {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
   rep    Int
-  rpe    Int
-  weight Int
+  rpe    Int?
+  weight Int?
+  isComplete Boolean
 
   exerciseId String?
 
@@ -56,7 +57,7 @@ model Exercise {
   actualReps  Int?
   isComplete  Boolean?
 
-  rep    Rep[]
+  set    Set[]
   rpe    Int?
   weight Int?
 
