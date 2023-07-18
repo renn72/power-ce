@@ -1,3 +1,9 @@
+export type Set = {
+  id: string,
+  rep: string | number | null,
+  isComplete: boolean,
+}
+
 export type Exercise = {
   id: string,
   lift: string,
@@ -6,6 +12,7 @@ export type Exercise = {
   sets: string | number | null,
   reps: string | number | null,
   notes: string | null,
+  set: Set[],
 }
 
 export type Day = {

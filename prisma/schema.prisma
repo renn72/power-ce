@@ -132,6 +132,8 @@ model Block {
 
   isProgram Boolean
 
+  isDeleted Boolean @default(false)
+
   userIdOfProgram String?
   isProgramActive Boolean?
 
@@ -150,6 +152,7 @@ model UserProgram {
   templateId      String
   programId       String?
   isProgramActive Boolean
+  isDeleted       Boolean @default(false)
   createdAt       DateTime @default(now())
 }
 

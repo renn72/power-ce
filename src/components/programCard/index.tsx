@@ -2,7 +2,7 @@ import {
   useState, Fragment,
 } from 'react'
 import {
-  type Exercise, type UserProgram,
+  type Exercise, type UserProgram, type Set,
 } from '@prisma/client'
 import {
   type Day, type Exercise as StoreExercise,
@@ -10,11 +10,9 @@ import {
 import { api, } from '~/utils/api'
 
 import {
-  Dialog, Transition,
+  Dialog, Transition, RadioGroup, Disclosure,
 } from '@headlessui/react'
 import getWeight from '~/utils/getWeight'
-
-import { RadioGroup, } from '@headlessui/react'
 
 const checkWeight = (exercise: StoreExercise, range: boolean, energyRating: string | null) => {
   const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery()
@@ -55,6 +53,70 @@ const checkWeight = (exercise: StoreExercise, range: boolean, energyRating: stri
 }
 
 const DayModal = ({ day, }: { day: Day }) => {
+  const { data: programs, } = api.blocks.getAllUserPrograms.useQuery()
+
+  const utils = api.useContext()
+
+  const { mutate: updateSet, } = api.programs.updateSet.useMutation({
+    onMutate: async (newSet) => {
+      console.log('id', newSet)
+      await utils.blocks.getAllUserPrograms.cancel()
+      const previousPrograms = utils.blocks.getAllUserPrograms.getData()
+      utils.blocks.getAllUserPrograms.setData(undefined, (prev) => {
+        console.log('prev', prev)
+        return prev
+      })
+
+      utils.blocks.getAllUserPrograms.setData(undefined, (prev) => prev?.map((program) => {
+        return {
+          ...program,
+          week: program.week.map((week) => {
+            return {
+              ...week,
+              day: week.day.map((day) => {
+                return {
+                  ...day,
+                  exercise: day.exercise.map((exercise) => {
+                    return {
+                      ...exercise,
+                      set: exercise.set.map((set) => {
+                        if (set.id === newSet.id) {
+                          return {
+                            ...set,
+                            isComplete: newSet.isComplete,
+                          }
+                        }
+                        return set
+                      }),
+                    }
+                  }),
+                }
+              }),
+            }
+          }),
+        }
+
+      }))
+
+      return { previousPrograms, }
+
+    },
+    onError: (err, newSet, context) => {
+      console.log(err)
+      utils.blocks.getAllUserPrograms.setData(undefined, context?.previousPrograms)
+    },
+    onSettled: () => {
+      void utils.blocks.getAllUserPrograms.invalidate()
+    },
+  })
+
+  const onSetDone = (set: Set) => {
+    console.log('set', set)
+    updateSet({
+      id: set.id,
+      isComplete: !set.isComplete,
+    })
+  }
 
   console.log(day)
 
@@ -67,33 +129,73 @@ const DayModal = ({ day, }: { day: Day }) => {
           </div>
         )
         : (
-          <div className={`flex flex-col gap-2 `}>
+          <div className='w-full flex flex-col gap-6 p-2 '>
             {day.exercise.map((exercise) => (
-              <div key={exercise.id} className='flex flex-col justify-start gap-2'>
-                <div className='flex flex-col gap-1'>
-                  <div className='flex items-baseline gap-8'>
-                    <div className='first-letter:uppercase first-letter:text-xl first-letter:font-bold'>
-                      {exercise.name}
-                    </div>
-                    {exercise.lift && exercise.onerm && (
-                      <div>
-                        {checkWeight(exercise, true, day.energyRating)}
+              <div key={exercise.id} >
+                <Disclosure >
+                  {({ open, }) => (
+                    <div className='flex flex-col justify-start gap-2 border-0'>
+                      <div className='flex flex-col gap-0'>
+                        <Disclosure.Button className={`w-full`}>
+                          <div className='flex flex-col gap-2'>
+                            <div className='flex items-baseline gap-8'>
+                              <div className='first-letter:uppercase first-letter:text-xl first-letter:font-bold'>
+                                {exercise.name}
+                              </div>
+                              {exercise.lift && exercise.onerm && (
+                                <div>
+                                  {checkWeight(exercise, true, day.energyRating)}
+                                </div>
+                              )
+                              }
+                            </div>
+                            <div className='transition ease-in-out delay-150'>
+                              <div className={open ? `absolute font-extralight text-sm opacity-40 transition-all ease-out delay-[10ms]` : `absolute font-extralight text-sm flex flex-row gap-1 justify-start opacity-100 transition-all ease-out delay-[45ms]`}>
+                                {exercise?.notes?.slice(0, 50).trim()}
+                                {exercise?.notes?.length && exercise?.notes?.length > 50 && (<span className={open ? `opacity-0` : ``}>...</span>)}
+                              </div>
+                            </div>
+                          </div>
+                        </Disclosure.Button>
+                        <Transition
+                          enter='transition duration-100 ease-in'
+                          enterFrom='transform opacity-0'
+                          enterTo='transform opacity-100'
+                          leave='transition duration-75 ease-out'
+                          leaveFrom='transform opacity-100'
+                          leaveTo='transform opacity-0'
+                        >
+                          <Disclosure.Panel>
+                            <div className='flex flex-col gap-4'>
+                              <div className='font-extralight text-sm'>
+                                {exercise?.notes}
+                              </div>
+                              {exercise.sets && exercise.reps && (
+                                <div className='flex gap-6'>
+                                  {
+                                    exercise?.set?.map((set,) => (
+                                      <div
+                                        key={set.id}
+                                        onClick={() => onSetDone(set)}
+                                        className={set.isComplete ? `bg-gray-600 text-xl border border-gray-600 rounded-full p-2 h-12 w-12 flex items-center justify-center cursor-pointer hover:scale-105` : `text-xl border border-gray-600 rounded-full p-2 h-12 w-12 flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}
+                                      >
+                                        {set.rep}
+                                      </div>
+                                    ))
+                                  }
+                                </div>
+                              )}
+                            </div>
+                          </Disclosure.Panel>
+
+                        </Transition>
                       </div>
-                    )
-                    }
-                  </div>
-                  <div className='font-extralight'>
-                    {exercise?.notes}
-                  </div>
-                  {exercise.sets && exercise.reps && (
-                    <div>
-                      {exercise.sets} x {exercise.reps}
                     </div>
                   )}
-                </div>
+                </Disclosure >
               </div>
             ))}
-          </div >
+          </div>
         )}
     </>
   )
@@ -212,7 +314,7 @@ const ProgramDay = ({
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className='w-full text-gray-200 bg-gray-800 max-w-3xl transform overflow-hidden rounded-2xl p-2 text-left align-middle shadow-sm shadow-gray-800 transition-all'>
+                <Dialog.Panel className='w-full min-h-[600px] text-gray-200 bg-gray-800 max-w-3xl transform overflow-hidden rounded-2xl p-2 text-left align-middle shadow-sm shadow-gray-800 transition-all'>
                   <Dialog.Title
                     as='h3'
                     className='text-lg font-medium leading-6 flex justify-between items-center'
