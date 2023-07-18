@@ -70,11 +70,19 @@ const DayModal = ({ day, }: { day: Day }) => {
           <div className={`flex flex-col gap-2 `}>
             {day.exercise.map((exercise) => (
               <div key={exercise.id} className='flex flex-col justify-start gap-2'>
-                <div className='flex flex-row gap-1'>
-                  <div>
-                    {exercise.name}
+                <div className='flex flex-col gap-1'>
+                  <div className='flex items-baseline gap-8'>
+                    <div className='first-letter:uppercase first-letter:text-xl first-letter:font-bold'>
+                      {exercise.name}
+                    </div>
+                    {exercise.lift && exercise.onerm && (
+                      <div>
+                        {checkWeight(exercise, true, day.energyRating)}
+                      </div>
+                    )
+                    }
                   </div>
-                  <div>
+                  <div className='font-extralight'>
                     {exercise?.notes}
                   </div>
                   {exercise.sets && exercise.reps && (
@@ -83,12 +91,6 @@ const DayModal = ({ day, }: { day: Day }) => {
                     </div>
                   )}
                 </div>
-                {exercise.lift && exercise.onerm && (
-                  <div>
-                    {checkWeight(exercise, true, day.energyRating)}
-                  </div>
-                )
-                }
               </div>
             ))}
           </div >
@@ -112,7 +114,7 @@ const ProgramDay = ({
   const [
     state,
     setState,
-  ] = useState(() => (day.energyRating ? true : false) )
+  ] = useState(() => (day.energyRating ? true : false))
 
   api.oneRepMax.getUserCoreLifts.useQuery()
 
