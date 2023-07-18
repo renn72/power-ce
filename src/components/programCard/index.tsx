@@ -1,5 +1,6 @@
 import {
   useState, Fragment,
+
 } from 'react'
 import {
   type Exercise, type UserProgram, type Set,
@@ -14,8 +15,7 @@ import {
 } from '@headlessui/react'
 import getWeight from '~/utils/getWeight'
 
-const checkWeight = (exercise: StoreExercise, range: boolean, energyRating: string | null) => {
-  const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery()
+const checkWeight = (exercise: StoreExercise, range: boolean, energyRating: string | null, coreLifts : number[]) => {
   const lift = exercise.lift
   let energyAdjust = 1
   if (energyRating === 'B') energyAdjust = 0.98
@@ -24,9 +24,9 @@ const checkWeight = (exercise: StoreExercise, range: boolean, energyRating: stri
 
   let onerm = exercise.onerm
 
-  const squat = userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'squat')[0]?.weight || 0
-  const deadlift = userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'deadlift')[0]?.weight || 0
-  const bench = userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'bench')[0]?.weight || 0
+  const squat = coreLifts[0]
+  const deadlift = coreLifts[1]
+  const bench = coreLifts[2]
 
   if (!lift) return null
   if (!onerm) return null
@@ -35,17 +35,17 @@ const checkWeight = (exercise: StoreExercise, range: boolean, energyRating: stri
   onerm = +onerm * energyAdjust
 
   if (lift === 'Squat') {
-    if (squat === 0) return null
+    if (!squat || squat === 0) return null
     if (range) return `${getWeight(+squat, +onerm)}kg-${getWeight(+squat, +onerm * 1.05)}kg`
     return `${getWeight(+squat, +onerm)}kg`
   }
   if (lift === 'Deadlift') {
-    if (deadlift === 0) return null
+    if (!deadlift || deadlift === 0) return null
     if (range) return `${getWeight(+deadlift, +onerm)}kg-${getWeight(+deadlift, +onerm * 1.05)}kg`
     return `${getWeight(+deadlift, +onerm)}kg`
   }
   if (lift === 'Bench') {
-    if (bench === 0) return null
+    if (!bench || bench === 0) return null
     if (range) return `${getWeight(+bench, +onerm)}kg-${getWeight(+bench, +onerm * 1.05)}kg`
     return `${getWeight(+bench, +onerm)}kg`
   }
@@ -53,7 +53,18 @@ const checkWeight = (exercise: StoreExercise, range: boolean, energyRating: stri
 }
 
 const DayModal = ({ day, }: { day: Day }) => {
-  const { data: programs, } = api.blocks.getAllUserPrograms.useQuery()
+  const [weights, setWeights] = useState<(null | string)[]>(
+    () => day.exercise.map((exercise) => '') // checkWeight(exercise, false, day?.energyRating))
+  )
+
+  const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery()
+  const squat = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'squat')[0]?.weight || 0
+  const deadlift = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'deadlift')[0]?.weight || 0
+  const bench = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'bench')[0]?.weight || 0
+  const coreLifts = [squat, deadlift, bench,]
+  // const { data: programs, } = api.blocks.getAllUserPrograms.useQuery()
+
+  console.log('weights', weights)
 
   const utils = api.useContext()
 
@@ -117,6 +128,23 @@ const DayModal = ({ day, }: { day: Day }) => {
       isComplete: !set.isComplete,
     })
   }
+  const setWeight = (exercise: StoreExercise, range: boolean, energyRating: string | null, exerciseIdx: number) => {
+
+    console.log('set weight')
+    console.log(exerciseIdx)
+    console.log(weights)
+    if (weights[exerciseIdx]) return `${weights[exerciseIdx]} kg`
+    const weight = checkWeight(exercise, range, energyRating, coreLifts)
+    if (weight) {
+      setWeights((prev) => {
+        const newWeights = [...prev,]
+        newWeights[exerciseIdx] = weight
+        return newWeights
+      })
+      return weight + 'kg'
+    }
+    return null
+  }
 
   console.log(day)
 
@@ -130,7 +158,7 @@ const DayModal = ({ day, }: { day: Day }) => {
         )
         : (
           <div className='w-full flex flex-col gap-6 p-2 '>
-            {day.exercise.map((exercise) => (
+            {day.exercise.map((exercise, exerciseIdx) => (
               <div key={exercise.id} >
                 <Disclosure >
                   {({ open, }) => (
@@ -144,7 +172,7 @@ const DayModal = ({ day, }: { day: Day }) => {
                               </div>
                               {exercise.lift && exercise.onerm && (
                                 <div>
-                                  {checkWeight(exercise, true, day.energyRating)}
+                                  {checkWeight(exercise, true, day.energyRating, coreLifts)}
                                 </div>
                               )
                               }
@@ -171,7 +199,11 @@ const DayModal = ({ day, }: { day: Day }) => {
                                 {exercise?.notes}
                               </div>
                               {exercise.sets && exercise.reps && (
-                                <div className='flex gap-6'>
+                                <div className='flex gap-6 items-center'>
+                                  <div>
+                                    {setWeight(exercise, false, day.energyRating, exerciseIdx)}
+                                    {}
+                                  </div>
                                   {
                                     exercise?.set?.map((set,) => (
                                       <div
@@ -218,7 +250,11 @@ const ProgramDay = ({
     setState,
   ] = useState(() => (day.energyRating ? true : false))
 
-  api.oneRepMax.getUserCoreLifts.useQuery()
+  const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery()
+  const squat = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'squat')[0]?.weight || 0
+  const deadlift = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'deadlift')[0]?.weight || 0
+  const bench = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'bench')[0]?.weight || 0
+  const coreLifts = [squat, deadlift, bench,]
 
   const closeModal = () => {
     setIsOpen(false)
@@ -279,7 +315,7 @@ const ProgramDay = ({
                   </div>
                   {exercise.lift && exercise.onerm && (
                     <div>
-                      {checkWeight(exercise, false, null)}
+                      {checkWeight(exercise, false, null, coreLifts)}
                     </div>
                   )
                   }
