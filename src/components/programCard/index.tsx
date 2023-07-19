@@ -160,22 +160,27 @@ const DayModal = ({ day, }: { day: Day }) => {
           </div>
         )
         : (
-          <div className='w-full flex flex-col gap-10 p-2 '>
+          <div className='w-full flex flex-col gap-10 md:p-2 '>
             {day.exercise.map((exercise, exerciseIdx) => (
               <div key={exercise.id} >
                 <Disclosure >
                   {({ open, }) => (
                     <div className='flex flex-col justify-start gap-2 border-0'>
                       <div className='flex flex-col gap-0'>
-                        <Disclosure.Button className={`w-full`}>
+                        <Disclosure.Button className={`w-full text-lg md:text-xl`}>
                           <div className='flex flex-col gap-2'>
                             <div className='flex items-end gap-4 md:gap-8'>
                               <ChevronUpIcon
                                 className={`${open ? 'rotate-180 transform' : ''} h-6 w-8 text-gray-300 `}
                               />
-                              <div className='first-letter:uppercase first-letter:text-xl first-letter:font-bold'>
+                              <div className='first-letter:uppercase first-letter:text-2xl first-letter:font-bold'>
                                 {exercise.name}
                               </div>
+                              {exercise.sets && exercise.reps && (
+                                <div>
+                                  {exercise.sets} x {exercise.reps}
+                                </div>
+                              )}
                               {exercise.lift && exercise.onerm && (
                                 <div className=''>
                                   {checkWeight(exercise, true, day.energyRating, coreLifts)}
@@ -205,18 +210,27 @@ const DayModal = ({ day, }: { day: Day }) => {
                                 {exercise?.notes}
                               </div>
                               {exercise.sets && exercise.reps && (
-                                <div className='flex flex-1 gap-4 md:gap-6 items-center overflow-hidden'>
-                                  <div>
-                                    {setWeight(exercise, false, day.energyRating, exerciseIdx)}
+                                <div className='flex flex-col gap-4 md:gap-6'>
+                                  <div className='flex gap-4 md:gap-6 w-full justify-center text-2xl font-bold'>
+                                    <div>
+                                      {setWeight(exercise, false, day.energyRating, exerciseIdx)}
+                                    </div>
                                   </div>
 
-                                  <div className={`flex gap-6 items-center overflow-x-scroll h-20 `}>
+                                  <div className='flex gap-4 md:gap-6 w-full justify-center text-xl font-medium'>
+                                    {
+                                      exercise.set.reduce((acc, curr) => {
+                                        return acc + (curr.isComplete ? 1 : 0)
+                                      }, 0)
+                                    } / {exercise.reps}
+                                  </div>
+                                  <div className={`flex gap-4 px-1 items-center overflow-x-scroll md:overflow-x-auto h-20 `}>
                                     {
                                       exercise?.set?.map((set,) => (
                                         <div
                                           key={set.id}
                                           onClick={() => onSetDone(set)}
-                                          className={set.isComplete ? `bg-gray-600 text-xl border border-gray-600 rounded-full p-2 h-12 w-12 flex items-center justify-center cursor-pointer hover:scale-105` : `text-xl border border-gray-600 rounded-full p-2 h-12 w-12 flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}
+                                          className={set.isComplete ? `bg-gray-600 text-xl border border-gray-600 rounded-full  h-12 min-w-[3rem] flex items-center justify-center cursor-pointer hover:scale-105` : `text-xl border border-gray-600 rounded-full h-12 min-w-[3rem] flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}
                                         >
                                           {set.rep}
                                         </div>
