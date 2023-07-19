@@ -17,7 +17,7 @@ const Home: NextPage = () => {
   return (
     <>
       <main className='h-full flex flex-col text-gray-300 font-semibold px-2'>
-        <div className='mx-auto  flex flex-col h-fit py-6 sm:px-6 lg:px-8'>
+        <div className='w-full md:mx-auto max-w-7xl  flex flex-col h-fit py-6 sm:px-6 lg:px-8'>
           <OneRMCard />
 
           <div className='grid mt-6'>

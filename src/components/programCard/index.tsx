@@ -13,9 +13,13 @@ import { api, } from '~/utils/api'
 import {
   Dialog, Transition, RadioGroup, Disclosure,
 } from '@headlessui/react'
+import { ChevronUpIcon, } from '@heroicons/react/20/solid'
+import {
+  ScrollArea, ScrollBar,
+} from '@/components/ui/scroll-area'
 import getWeight from '~/utils/getWeight'
 
-const checkWeight = (exercise: StoreExercise, range: boolean, energyRating: string | null, coreLifts : number[]) => {
+const checkWeight = (exercise: StoreExercise, range: boolean, energyRating: string | null, coreLifts: number[]) => {
   const lift = exercise.lift
   let energyAdjust = 1
   if (energyRating === 'B') energyAdjust = 0.98
@@ -37,23 +41,26 @@ const checkWeight = (exercise: StoreExercise, range: boolean, energyRating: stri
   if (lift === 'Squat') {
     if (!squat || squat === 0) return null
     if (range) return `${getWeight(+squat, +onerm)}kg-${getWeight(+squat, +onerm * 1.05)}kg`
-    return `${getWeight(+squat, +onerm)}kg`
+    return getWeight(+squat, +onerm)
   }
   if (lift === 'Deadlift') {
     if (!deadlift || deadlift === 0) return null
     if (range) return `${getWeight(+deadlift, +onerm)}kg-${getWeight(+deadlift, +onerm * 1.05)}kg`
-    return `${getWeight(+deadlift, +onerm)}kg`
+    return getWeight(+deadlift, +onerm)
   }
   if (lift === 'Bench') {
     if (!bench || bench === 0) return null
     if (range) return `${getWeight(+bench, +onerm)}kg-${getWeight(+bench, +onerm * 1.05)}kg`
-    return `${getWeight(+bench, +onerm)}kg`
+    return getWeight(+bench, +onerm)
   }
   return null
 }
 
 const DayModal = ({ day, }: { day: Day }) => {
-  const [weights, setWeights] = useState<(null | string)[]>(
+  const [
+    weights,
+    setWeights,
+  ] = useState<(null | string)[]>(
     () => day.exercise.map((exercise) => '') // checkWeight(exercise, false, day?.energyRating))
   )
 
@@ -61,7 +68,11 @@ const DayModal = ({ day, }: { day: Day }) => {
   const squat = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'squat')[0]?.weight || 0
   const deadlift = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'deadlift')[0]?.weight || 0
   const bench = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'bench')[0]?.weight || 0
-  const coreLifts = [squat, deadlift, bench,]
+  const coreLifts = [
+    squat,
+    deadlift,
+    bench,
+  ]
   // const { data: programs, } = api.blocks.getAllUserPrograms.useQuery()
 
   console.log('weights', weights)
@@ -130,18 +141,10 @@ const DayModal = ({ day, }: { day: Day }) => {
   }
   const setWeight = (exercise: StoreExercise, range: boolean, energyRating: string | null, exerciseIdx: number) => {
 
-    console.log('set weight')
-    console.log(exerciseIdx)
-    console.log(weights)
-    if (weights[exerciseIdx]) return `${weights[exerciseIdx]} kg`
     const weight = checkWeight(exercise, range, energyRating, coreLifts)
+
     if (weight) {
-      setWeights((prev) => {
-        const newWeights = [...prev,]
-        newWeights[exerciseIdx] = weight
-        return newWeights
-      })
-      return weight + 'kg'
+      return weight.toString() + 'kg'
     }
     return null
   }
@@ -157,7 +160,7 @@ const DayModal = ({ day, }: { day: Day }) => {
           </div>
         )
         : (
-          <div className='w-full flex flex-col gap-6 p-2 '>
+          <div className='w-full flex flex-col gap-10 p-2 '>
             {day.exercise.map((exercise, exerciseIdx) => (
               <div key={exercise.id} >
                 <Disclosure >
@@ -166,21 +169,24 @@ const DayModal = ({ day, }: { day: Day }) => {
                       <div className='flex flex-col gap-0'>
                         <Disclosure.Button className={`w-full`}>
                           <div className='flex flex-col gap-2'>
-                            <div className='flex items-baseline gap-8'>
+                            <div className='flex items-end gap-4 md:gap-8'>
+                              <ChevronUpIcon
+                                className={`${open ? 'rotate-180 transform' : ''} h-6 w-8 text-gray-300 `}
+                              />
                               <div className='first-letter:uppercase first-letter:text-xl first-letter:font-bold'>
                                 {exercise.name}
                               </div>
                               {exercise.lift && exercise.onerm && (
-                                <div>
+                                <div className=''>
                                   {checkWeight(exercise, true, day.energyRating, coreLifts)}
                                 </div>
                               )
                               }
                             </div>
                             <div className='transition ease-in-out delay-150'>
-                              <div className={open ? `absolute font-extralight text-sm opacity-40 transition-all ease-out delay-[10ms]` : `absolute font-extralight text-sm flex flex-row gap-1 justify-start opacity-100 transition-all ease-out delay-[45ms]`}>
-                                {exercise?.notes?.slice(0, 50).trim()}
-                                {exercise?.notes?.length && exercise?.notes?.length > 50 && (<span className={open ? `opacity-0` : ``}>...</span>)}
+                              <div className={open ? `absolute font-extralight text-sm opacity-40 transition-all ease-out delay-[10ms]` : `absolute w-full font-extralight text-sm flex flex-row gap-1 justify-start opacity-100 transition-all ease-out delay-[45ms]`}>
+                                {exercise?.notes?.slice(0, 35).trim()}
+                                {exercise?.notes?.length && exercise?.notes?.length > 35 && (<span className={open ? `opacity-0` : ``}>...</span>)}
                               </div>
                             </div>
                           </div>
@@ -199,22 +205,24 @@ const DayModal = ({ day, }: { day: Day }) => {
                                 {exercise?.notes}
                               </div>
                               {exercise.sets && exercise.reps && (
-                                <div className='flex gap-6 items-center'>
+                                <div className='flex flex-1 gap-4 md:gap-6 items-center overflow-hidden'>
                                   <div>
                                     {setWeight(exercise, false, day.energyRating, exerciseIdx)}
-                                    {}
                                   </div>
-                                  {
-                                    exercise?.set?.map((set,) => (
-                                      <div
-                                        key={set.id}
-                                        onClick={() => onSetDone(set)}
-                                        className={set.isComplete ? `bg-gray-600 text-xl border border-gray-600 rounded-full p-2 h-12 w-12 flex items-center justify-center cursor-pointer hover:scale-105` : `text-xl border border-gray-600 rounded-full p-2 h-12 w-12 flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}
-                                      >
-                                        {set.rep}
-                                      </div>
-                                    ))
-                                  }
+
+                                  <div className={`flex gap-6 items-center overflow-x-scroll h-20 `}>
+                                    {
+                                      exercise?.set?.map((set,) => (
+                                        <div
+                                          key={set.id}
+                                          onClick={() => onSetDone(set)}
+                                          className={set.isComplete ? `bg-gray-600 text-xl border border-gray-600 rounded-full p-2 h-12 w-12 flex items-center justify-center cursor-pointer hover:scale-105` : `text-xl border border-gray-600 rounded-full p-2 h-12 w-12 flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}
+                                        >
+                                          {set.rep}
+                                        </div>
+                                      ))
+                                    }
+                                  </div>
                                 </div>
                               )}
                             </div>
@@ -245,16 +253,15 @@ const ProgramDay = ({
     setSelectedEngery,
   ] = useState(day.energyRating)
 
-  const [
-    state,
-    setState,
-  ] = useState(() => (day.energyRating ? true : false))
-
   const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery()
   const squat = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'squat')[0]?.weight || 0
   const deadlift = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'deadlift')[0]?.weight || 0
   const bench = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'bench')[0]?.weight || 0
-  const coreLifts = [squat, deadlift, bench,]
+  const coreLifts = [
+    squat,
+    deadlift,
+    bench,
+  ]
 
   const closeModal = () => {
     setIsOpen(false)
@@ -353,15 +360,15 @@ const ProgramDay = ({
                 <Dialog.Panel className='w-full min-h-[600px] text-gray-200 bg-gray-800 max-w-3xl transform overflow-hidden rounded-2xl p-2 text-left align-middle shadow-sm shadow-gray-800 transition-all'>
                   <Dialog.Title
                     as='h3'
-                    className='text-lg font-medium leading-6 flex justify-between items-center'
+                    className='text-base md:text-lg font-medium leading-6 flex justify-between items-center'
                   >
-                    <div className='flex justify-between items-center gap-8'>
+                    <div className='flex justify-between items-center gap-2 md:gap-8'>
                       <div className='font-bold'>
                         Day {dayIdx + 1}
                       </div>
                       <RadioGroup value={selectedEngery} onChange={onSetEnergy}>
-                        <div className={`flex gap-2 p-2 ${state ? '' : 'border-gray-400 border rounded-md'}`}>
-                          <RadioGroup.Label className='text-lg'>Energy Level</RadioGroup.Label>
+                        <div className={`flex gap-2 p-2  items-center`}>
+                          <RadioGroup.Label className=''>Energy Level</RadioGroup.Label>
                           {[
                             'A',
                             'B',
