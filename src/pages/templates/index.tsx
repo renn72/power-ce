@@ -54,7 +54,7 @@ const Templates: NextPage = () => {
             <Form />
           </div>
           <div className='my-4 sm:px-6 lg:px-8'>
-            <div className='flex md:gap-6 md:p-4 justify-center border border-gray-600 rounded-xl max-w-7xl'>
+            <div className='flex md:gap-6 md:p-4 justify-center border border-gray-600 rounded-xl max-w-screen-2xl'>
               <div className='rounded-lg p-2 flex flex-col'>
                 <label className='text-center' htmlFor='squat'>Squat</label>
                 <Input className='bg-gray-900 border border-gray-600 rounded-xl w-20 sm:w-28'

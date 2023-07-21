@@ -20,7 +20,7 @@ const navigation = [
     name: 'Templates', href: '/templates',
   },
   {
-    name: 'Program', href: '/program',
+    name: 'Lift', href: '/lift',
   },
   {
     name: "PB's", href: '/pbs',
@@ -37,7 +37,7 @@ const Navbar = () => {
       <Disclosure as='nav' className='bg-gray-900 font-semibold tracking-wider text-gray-400'>
         {({ open, }) => (
           <>
-            <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
+            <div className='mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8'>
               <div className='flex p-1 md:p-4 items-center justify-between'>
                 <div className='flex items-center'>
                   <div className='flex-shrink-0'>

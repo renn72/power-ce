@@ -239,7 +239,7 @@ const Form = () => {
       <div className='mt-2 md:mt-8 text-xxs md:text-base w-full flex flex-col justify-center items-center px-2 '>
         <FormProvider {...formMethods}>
           <form onSubmit={handleSubmit(onSubmit, onError)} className='w-full flex flex-col justify-center items-center'>
-            <div ref={parent} className='flex flex-col w-full max-w-7xl gap-1 sm:gap-4 border border-gray-600 rounded-xl p-2 sm:p-6'>
+            <div ref={parent} className='flex flex-col w-full max-w-screen-2xl gap-1 sm:gap-4 border border-gray-600 rounded-xl p-2 sm:p-6'>
 
               {/* template select */}
               <div className='flex gap-2 items-center justify-center'>
