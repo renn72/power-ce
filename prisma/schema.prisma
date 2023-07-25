@@ -192,9 +192,10 @@ model Lift {
 
   liftId String
 
-  lift   Lifts   @relation(fields: [liftId], references: [id], onDelete: Cascade)
-  weight Decimal
-  reps   Int
+  lift     Lifts   @relation(fields: [liftId], references: [id], onDelete: Cascade)
+  weight   Decimal
+  reps     Int
+  liftName String
 
   flield1 String?
   flield2 String?

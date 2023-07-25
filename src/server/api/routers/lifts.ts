@@ -15,6 +15,33 @@ export const liftsRouter = createTRPCRouter({
       where: { userId: userId, },
       include: { lift: true, },
     })
+    const lifts = res.map((lift) => lift.name)
+    if (!lifts.includes('Squat')) {
+      await ctx.prisma.lifts.create({
+        data: {
+          name: 'Squat',
+          userId: userId,
+        },
+      })
+    }
+    if (!lifts.includes('Bench')) {
+      await ctx.prisma.lifts.create({
+        data: {
+          name: 'Bench',
+          userId: userId,
+        },
+      })
+    }
+    if (!lifts.includes('Deadlift')) {
+      await ctx.prisma.lifts.create({
+        data: {
+          name: 'Deadlift',
+          userId: userId,
+        },
+      })
+    }
+
+    console.log('lifts', res)
     return res
   }),
 
@@ -38,6 +65,15 @@ export const liftsRouter = createTRPCRouter({
       })
       return liftName
 
+    }),
+
+  delete: privateProcedure
+    .input(z.object({ id: z.string(), }))
+    .mutation(async ({
+      ctx, input,
+    }) => {
+      const lift = await ctx.prisma.lifts.delete({ where: { id: input.id, }, })
+      return lift
     }),
 
 })

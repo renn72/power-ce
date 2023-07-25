@@ -1,5 +1,5 @@
 import {
-  Fragment, useState,
+  Fragment, useEffect, useState,
 } from 'react'
 import { Button, } from '@/components/ui/button'
 import { type NextPage, } from 'next'
@@ -8,11 +8,14 @@ import { api, } from '~/utils/api'
 
 import { Slider, } from '@/components/ui/slider'
 import {
-  Listbox, Transition,
+  Listbox, Transition, Dialog,
 } from '@headlessui/react'
 import {
   ChevronUpDownIcon, CheckIcon,
 } from '@heroicons/react/24/outline'
+import { Input, } from '@/components/ui/input'
+
+import { toast, } from 'react-hot-toast'
 
 const LiftPicker = ({
   onChange, value, lifts,
@@ -21,6 +24,17 @@ const LiftPicker = ({
     selectedLift,
     setSelectedLift,
   ] = useState(value)
+
+  const sortedLifts = lifts.sort(
+    (a, b) => {
+      if (a === 'Squat') return -1
+      if (b === 'Squat') return 1
+      if (a === 'Bench') return -1
+      if (b === 'Bench') return 1
+      if (a === 'Deadlift') return -1
+      if (b === 'Deadlift') return 1
+    }
+  )
 
   return (
     <Listbox
@@ -86,11 +100,38 @@ const Lift: NextPage = () => {
     lift,
     setLift,
   ] = useState('')
+  const [
+    weight,
+    setWeight,
+  ] = useState(10.00)
+  const [
+    isDialogOpen,
+    setIsDialogOpen,
+  ] = useState(false)
+  const [
+    newLift,
+    setNewLift,
+  ] = useState('')
+  const [
+    reps,
+    setReps,
+  ] = useState(5)
+
   const {
     data: userLifts, isLoading: userLiftsLoading,
   } = api.lifts.getAllUser.useQuery()
+
+  const userEachLift = userLifts?.map((lifts) => lifts.lift).flat()
+
   const ctx = api.useContext()
   const { mutate: mutateLifts, } = api.lifts.create.useMutation({
+    onSuccess: () => {
+      console.log('success')
+      void ctx.lifts.getAllUser.invalidate()
+    },
+  })
+
+  const { mutate: mutateDeleteLifts, } = api.lifts.delete.useMutation({
     onSuccess: () => {
       console.log('success')
       void ctx.lifts.getAllUser.invalidate()
@@ -105,60 +146,266 @@ const Lift: NextPage = () => {
 
   if (userLiftsLoading) return <div><LoadingPage /> </div>
 
+  const liftNames = userLifts?.map((lift) => lift.name)
+  console.log(liftNames)
+
   const onAddLift = () => {
+    console.log('add lift', lift, weight)
+    const liftId = userLifts?.find((l) => l.name === lift)?.id
+    if (!liftId) return
     mutateLift({
-      weight: 100,
-      reps: 5,
-      liftId: 'clkbzigq60007iv6ndi506x5t',
+      liftId: liftId,
+      liftName: lift,
+      weight: weight,
+      reps: reps,
+
     })
+
   }
   const onAddLifts = () => {
-    mutateLifts({ name: 'test3', })
+    const lifts = userLifts?.map((lift) => lift.name)
+
+    if (lifts?.includes(newLift)) {
+      toast.error('Lift already exists')
+      return
+    }
+    if (newLift === '') {
+      toast.error('Lift name cannot be empty')
+      return
+    }
+    mutateLifts({ name: newLift, })
   }
 
-  console.log(userLifts)
+  const onWeightChange = (e: number) => {
+    if (weight + e < 0) {
+      setWeight(0)
+      return
+    }
+    setWeight(weight + e)
+  }
+
+  const onRepChange = (e: number) => {
+    if (reps + e < 0) {
+      setReps(0)
+      return
+    }
+    setReps(reps + e)
+  }
+
+  const closeDialog = () => {
+    setIsDialogOpen(false)
+  }
+
+  console.log('userLifts', userLifts)
+  console.log(userEachLift)
+
   return (
     <>
       <main className='h-full flex flex-col gap-6 max-w-2xl mx-auto text-gray-300 font-semibold px-2'>
-        <Button
-          onClick={() => onAddLifts()}
-        >
-          click me lifts
-        </Button>
-        <Button
-          onClick={() => onAddLift()}
-        >
-          click me lift
-        </Button>
-        <div className='flex flex-col gap-4'>
-          {userLifts?.map((lift) => (
-            <div key={lift.id}>{lift.name}</div>
-          ))}
-        </div>
-        <div className='flex flex-col gap-2 border border-gray-600 rounded-lg'>
+        <div className='flex flex-col gap-6 border border-gray-600 rounded-lg p-4'>
           hello
           <LiftPicker
             onChange={(e) => setLift(e)}
             value={lift}
-            lifts={[
-              'Squat',
-              'Bench',
-              'Deadlift',
-            ]}
+            lifts={liftNames}
           />
-          <div>
-            Weight
-            <Slider defaultValue={[33,]} max={100} step={1} />
+          <div className='flex flex-col'>
+            <div className='flex justify-center text-3xl'>
+              Weight
+            </div>
+            <div className='flex justify-center items-center gap-4 '>
+              <div
+                className='text-lg font-bold border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer'
+                onClick={() => onWeightChange(-10)}
+              >
+                10
+              </div>
+              <div
+                className='text-lg font-bold border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer'
+                onClick={() => onWeightChange(-1)}
+              >
+                1
+              </div>
+              <div
+                className='text-lg font-bold border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer tracking-[-0.1rem]'
+                onClick={() => onWeightChange(-0.25)}
+              >
+                1/4
+              </div>
+              <div className='text-xl font-bold'>
+                -
+              </div>
+              <div className='text-2xl font-bold flex justify-center w-20 tracking-tight'>
+                {weight}kg
+              </div>
+              <div className='text-xl font-bold'>
+                +
+              </div>
+              <div
+                className='text-lg font-bold border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer tracking-[-0.1rem]'
+                onClick={() => onWeightChange(0.25)}
+              >
+                1/4
+              </div>
+              <div
+                className='text-lg font-bold border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer'
+                onClick={() => onWeightChange(1)}
+              >
+                1
+              </div>
+              <div
+                className='text-lg font-bold border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer'
+                onClick={() => onWeightChange(10)}
+              >
+                10
+              </div>
+            </div>
           </div>
+          <div className='flex flex-col'>
+            <div className='flex justify-center text-3xl'>
+              Reps
+            </div>
+            <div className='flex justify-center items-center gap-8 '>
+              <div
+                className='text-xl font-bold border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer'
+                onClick={() => onRepChange(-1)}
+              >
+                1
+              </div>
+              <div className='text-xl font-bold'>
+                -
+              </div>
+              <div className='text-2xl font-bold flex justify-center w-20 tracking-tight'>
+                {reps}
+              </div>
+              <div className='text-xl font-bold'>
+                +
+              </div>
+              <div
+                className='text-xl font-bold border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer'
+                onClick={() => onRepChange(1)}
+              >
+                1
+              </div>
+            </div>
+          </div>
+          <div
+            className='flex justify-center items-center gap-4 '
+          >
+            <Button
+              onClick={onAddLift}
+            >
+              Save
+            </Button>
+            <Button
+              onClick={() => {
+                setWeight(10)
+                setReps(5)
+              }}
+            >
+              Reset
+            </Button>
+            <Button
+              onClick={() => setIsDialogOpen(true)}
+            >
+              Lifts
+            </Button>
 
-          <div>
           </div>
-          <div>
-          </div>
-          <div>
+          <div className='flex flex-col gap-4'>
+            {
+              userEachLift?.map((l) => (
+                <div
+                  key={l.id}
+                  className='flex justify-around items-center'
+                >
+                  <div className='text-lg font-bold'>
+                    {l.liftName}
+                  </div>
+                  <div className='text-lg font-bold'>
+                    {l.weight.toString()}kg
+                  </div>
+                  <div className='text-lg font-bold'>
+                    {l.reps}
+                  </div>
+                </div>
+              ))
+            }
+
           </div>
 
         </div>
+        <Transition appear show={isDialogOpen} as={Fragment}>
+          <Dialog className='relative z-10' onClose={closeDialog}>
+            <Transition.Child
+              as={Fragment}
+              enter='ease-out duration-300'
+              enterFrom='opacity-0'
+              enterTo='opacity-100'
+              leave='ease-in duration-200'
+              leaveFrom='opacity-100'
+              leaveTo='opacity-0'
+            >
+              <div className='fixed inset-0 bg-black bg-opacity-25' />
+            </Transition.Child>
+
+            <div className='fixed inset-0 overflow-y-auto'>
+              <div className='flex min-h-full items-center justify-center p-4 text-center'>
+                <Transition.Child
+                  as={Fragment}
+                  enter='ease-out duration-300'
+                  enterFrom='opacity-0 scale-95'
+                  enterTo='opacity-100 scale-100'
+                  leave='ease-in duration-200'
+                  leaveFrom='opacity-100 scale-100'
+                  leaveTo='opacity-0 scale-95'
+                >
+                  <Dialog.Panel className='w-full max-w-2xl transform text-gray-200 overflow-hidden rounded-2xl bg-gray-800 p-6 text-left align-middle shadow-xl transition-all'>
+                    <Dialog.Title
+                      as='h3'
+                      className='text-lg font-medium leading-6 flex justify-between'
+                    >
+                      Lifts
+                      <button onClick={closeDialog}>X</button>
+                    </Dialog.Title>
+                    <div className='mt-2 flex justify-center'>
+                      <div className='flex flex-col gap-4'>
+                        {userLifts?.map((lift) => (
+                          <div
+                            key={lift.id}
+                          >
+                            {
+                              lift.name !== 'Squat' && lift.name !== 'Bench' && lift.name !== 'Deadlift' && (
+                                <div
+                                  className='flex justify-between'
+                                >
+                                  <div>
+                                    {lift.name}
+                                  </div>
+                                  <div
+                                    className='font-bold cursor-pointer'
+                                    onClick={() => mutateDeleteLifts({ id: lift.id, })}
+                                  >
+                                    X
+                                  </div>
+                                </div>
+                              )
+                            }</div>
+                        ))}
+                        <div className='flex gap-4'>
+                          <Input value={newLift} onChange={(e) => setNewLift(e.target.value)} />
+                          <Button onClick={onAddLifts}>Add</Button>
+                          <Button onClick={() => setNewLift('')}>Clear</Button>
+                        </div>
+                      </div>
+                    </div>
+
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </Dialog>
+        </Transition>
       </main>
     </>
   )
