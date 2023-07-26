@@ -6,6 +6,8 @@ import { type NextPage, } from 'next'
 import { LoadingPage, } from '~/components/loading'
 import { api, } from '~/utils/api'
 
+import dayjs from 'dayjs'
+
 import { Slider, } from '@/components/ui/slider'
 import {
   Listbox, Transition, Dialog,
@@ -44,8 +46,8 @@ const LiftPicker = ({
         setSelectedLift(e)
       }}
     >
-      <div className='relative  h-full text-xs sm:text-sm'>
-        <Listbox.Button className='relative min-h-[2rem] h-full w-full border border-gray-600 cursor-default rounded-lg py-1 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300'>
+      <div className='relative text-xl  h-full flex justify-center'>
+        <Listbox.Button className='relative min-h-[3rem] h-full w-80 border border-gray-600 cursor-default rounded-lg py-1 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300'>
           <span className='flex items-center'>{selectedLift}</span>
           <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
             <ChevronUpDownIcon
@@ -60,7 +62,7 @@ const LiftPicker = ({
           leaveFrom='opacity-100'
           leaveTo='opacity-0'
         >
-          <Listbox.Options className='absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-md bg-gray-900 border border-gray-600 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
+          <Listbox.Options className='absolute z-20 mt-1 max-h-60 w-80 overflow-auto rounded-md bg-gray-900 border border-gray-600 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
             {lifts.map((lift, Idx) => (
               <Listbox.Option
                 key={Idx}
@@ -141,6 +143,7 @@ const Lift: NextPage = () => {
   const { mutate: mutateLift, } = api.lift.create.useMutation({
     onSuccess: () => {
       console.log('success')
+      void ctx.lifts.getAllUser.invalidate()
     },
   })
 
@@ -201,9 +204,8 @@ const Lift: NextPage = () => {
 
   return (
     <>
-      <main className='h-full flex flex-col gap-6 max-w-2xl mx-auto text-gray-300 font-semibold px-2'>
+      <main className='h-full flex flex-col gap-6 max-w-2xl my-10 mx-auto text-gray-300 font-semibold px-2'>
         <div className='flex flex-col gap-6 border border-gray-600 rounded-lg p-4'>
-          hello
           <LiftPicker
             onChange={(e) => setLift(e)}
             value={lift}
@@ -327,6 +329,9 @@ const Lift: NextPage = () => {
                   </div>
                   <div className='text-lg font-bold'>
                     {l.reps}
+                  </div>
+                  <div>
+                    {dayjs(l?.createdAt).fromNow()}
                   </div>
                 </div>
               ))
