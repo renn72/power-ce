@@ -38,11 +38,11 @@ const Navbar = () => {
         {({ open, }) => (
           <>
             <div className='mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8'>
-              <div className='flex p-1 md:p-4 items-center justify-between'>
+              <div className='flex p-2 md:p-4 items-center justify-between'>
                 <div className='flex items-center'>
                   <div className='flex-shrink-0'>
                     <Link href='/'>
-                      <FingerPrintIcon className='h-6 w-6 md:h-8 md:w-8 text-indigo-300' aria-hidden='true' />
+                      <FingerPrintIcon className='h-8 w-8 md:h-8 md:w-8 text-indigo-300' aria-hidden='true' />
                     </Link>
                   </div>
                   <div className='hidden md:block'>
@@ -55,7 +55,7 @@ const Navbar = () => {
                             item.href === router.pathname
                               ? 'bg-gray-900 text-white'
                               : 'text-gray-400 hover:bg-gray-700 hover:text-white',
-                            'rounded-md px-3 py-2 text-md'
+                            'rounded-md px-3 py-2 text-lg'
                           )}
                           aria-current={item.href === router.pathname ? 'page' : undefined}
                         >
@@ -70,10 +70,10 @@ const Navbar = () => {
                     <UserButton />
                   </div>
                 </div>
-                <div className='flex md:hidden text-white'>
+                <div className='flex text-lg md:hidden text-white'>
                   {navigation.filter((item) => item.href === router.pathname)[0]?.name}
                 </div>
-                <div className='flex md:hidden'>
+                <div className='flex gap-4 md:hidden'>
                   {/* Mobile menu button */}
                   <Disclosure.Button className='inline-flex items-center mr-2 justify-center rounded-md bg-gray-800 p-0 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800'>
                     <span className='sr-only'>Open main menu</span>

@@ -104,7 +104,7 @@ const ChangeButton = ({
 }: { onChange: (arg0 : number) => void, value: number }) => {
   return (
     <div
-      className='font-bold border border-gray-600 h-8 w-8 rounded-full flex items-center justify-center cursor-pointer'
+      className='font-bold text-xl border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer'
       onClick={() => onChange(value)}
     >
       {Math.abs(value) === 0.25 ? '1/4' : Math.abs(value)}
@@ -230,7 +230,7 @@ const Lift: NextPage = () => {
             <div className='flex justify-center text-3xl'>
               Weight
             </div>
-            <div className='flex justify-center items-center gap-4 text-base'>
+            <div className='flex justify-around items-center gap-2 text-base'>
               <ChangeButton onChange={onWeightChange} value={-10} />
               <ChangeButton onChange={onWeightChange} value={-1} />
               <div className='text-base font-bold'>
