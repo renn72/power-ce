@@ -6,7 +6,9 @@ import { type NextPage, } from 'next'
 import { LoadingPage, } from '~/components/loading'
 import { api, } from '~/utils/api'
 
-import dayjs from 'dayjs'
+import * as dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+dayjs.extend(relativeTime)
 
 import { Slider, } from '@/components/ui/slider'
 import {
@@ -94,6 +96,19 @@ const LiftPicker = ({
         </Transition>
       </div>
     </Listbox>
+  )
+}
+
+const ChangeButton = ({
+  onChange, value,
+}: { onChange: (arg0 : number) => void, value: number }) => {
+  return (
+    <div
+      className='font-bold border border-gray-600 h-8 w-8 rounded-full flex items-center justify-center cursor-pointer'
+      onClick={() => onChange(value)}
+    >
+      {Math.abs(value) === 0.25 ? '1/4' : Math.abs(value)}
+    </div>
   )
 }
 
@@ -205,7 +220,7 @@ const Lift: NextPage = () => {
   return (
     <>
       <main className='h-full flex flex-col gap-6 max-w-2xl my-10 mx-auto text-gray-300 font-semibold px-2'>
-        <div className='flex flex-col gap-6 border border-gray-600 rounded-lg p-4'>
+        <div className='flex flex-col gap-6 border border-gray-600 rounded-lg p-2'>
           <LiftPicker
             onChange={(e) => setLift(e)}
             value={lift}
@@ -215,52 +230,20 @@ const Lift: NextPage = () => {
             <div className='flex justify-center text-3xl'>
               Weight
             </div>
-            <div className='flex justify-center items-center gap-4 '>
-              <div
-                className='text-lg font-bold border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer'
-                onClick={() => onWeightChange(-10)}
-              >
-                10
-              </div>
-              <div
-                className='text-lg font-bold border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer'
-                onClick={() => onWeightChange(-1)}
-              >
-                1
-              </div>
-              <div
-                className='text-lg font-bold border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer tracking-[-0.1rem]'
-                onClick={() => onWeightChange(-0.25)}
-              >
-                1/4
-              </div>
-              <div className='text-xl font-bold'>
+            <div className='flex justify-center items-center gap-4 text-base'>
+              <ChangeButton onChange={onWeightChange} value={-10} />
+              <ChangeButton onChange={onWeightChange} value={-1} />
+              <div className='text-base font-bold'>
                 -
               </div>
-              <div className='text-2xl font-bold flex justify-center w-20 tracking-tight'>
+              <div className='text-2xl font-bold flex justify-center w-20 tracking-tighter'>
                 {weight}kg
               </div>
-              <div className='text-xl font-bold'>
+              <div className='text-base font-bold'>
                 +
               </div>
-              <div
-                className='text-lg font-bold border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer tracking-[-0.1rem]'
-                onClick={() => onWeightChange(0.25)}
-              >
-                1/4
-              </div>
-              <div
-                className='text-lg font-bold border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer'
-                onClick={() => onWeightChange(1)}
-              >
-                1
-              </div>
-              <div
-                className='text-lg font-bold border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer'
-                onClick={() => onWeightChange(10)}
-              >
-                10
-              </div>
+              <ChangeButton onChange={onWeightChange} value={1} />
+              <ChangeButton onChange={onWeightChange} value={10} />
             </div>
           </div>
           <div className='flex flex-col'>
@@ -268,12 +251,7 @@ const Lift: NextPage = () => {
               Reps
             </div>
             <div className='flex justify-center items-center gap-8 '>
-              <div
-                className='text-xl font-bold border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer'
-                onClick={() => onRepChange(-1)}
-              >
-                1
-              </div>
+              <ChangeButton onChange={onRepChange} value={-1} />
               <div className='text-xl font-bold'>
                 -
               </div>
@@ -283,12 +261,7 @@ const Lift: NextPage = () => {
               <div className='text-xl font-bold'>
                 +
               </div>
-              <div
-                className='text-xl font-bold border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer'
-                onClick={() => onRepChange(1)}
-              >
-                1
-              </div>
+              <ChangeButton onChange={onRepChange} value={-1} />
             </div>
           </div>
           <div
@@ -331,7 +304,7 @@ const Lift: NextPage = () => {
                     {l.reps}
                   </div>
                   <div>
-                    {dayjs(l?.createdAt).fromNow()}
+                    {dayjs(l.createdAt).fromNow()}
                   </div>
                 </div>
               ))
