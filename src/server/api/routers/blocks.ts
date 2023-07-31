@@ -20,6 +20,7 @@ const exerciseSchema = z.object({
   sets: z.number().min(0).max(55).optional().nullable(),
   reps: z.number().min(0).max(55).optional().nullable(),
   onerm: z.number().min(0).max(100).optional().nullable(),
+  onermTop: z.number().min(0).max(100).optional().nullable(),
   notes: z.string().min(0).max(280).optional().nullable(),
 })
 const daySchema = z.object({
@@ -104,6 +105,7 @@ export const blocksRouter = createTRPCRouter({
                       sets: exercise.sets,
                       reps: exercise.reps,
                       onerm: exercise.onerm,
+                      onermTop: exercise.onermTop,
                       notes: exercise?.notes,
                     })),
                   },
@@ -145,6 +147,7 @@ export const blocksRouter = createTRPCRouter({
                   sets: exercise.sets,
                   reps: exercise.reps,
                   onerm: exercise.onerm,
+                      onermTop: exercise.onermTop,
                 })),
               },
             })),
@@ -198,6 +201,7 @@ export const blocksRouter = createTRPCRouter({
                       sets: exercise.sets,
                       reps: exercise.reps,
                       onerm: exercise.onerm,
+                      onermTop: exercise.onermTop,
                     })),
                   },
                 })),

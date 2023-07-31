@@ -1,5 +1,5 @@
 import {
-  useState, Fragment,
+  useState, Fragment, useEffect,
 
 } from 'react'
 import {
@@ -27,6 +27,7 @@ const checkWeight = (exercise: StoreExercise, range: boolean, energyRating: stri
   if (energyRating === 'D') energyAdjust = 0.94
 
   let onerm = exercise.onerm
+  let onermTop = exercise.onermTop
 
   const squat = coreLifts[0]
   const deadlift = coreLifts[1]
@@ -37,45 +38,57 @@ const checkWeight = (exercise: StoreExercise, range: boolean, energyRating: stri
   if (lift === 'unlinked') return null
 
   onerm = +onerm * energyAdjust
+  if (onermTop) onermTop = +onermTop * energyAdjust
 
   if (lift === 'Squat') {
     if (!squat || squat === 0) return null
-    if (range) return `${getWeight(+squat, +onerm)}kg-${getWeight(+squat, +onerm * 1.05)}kg`
+    if (range) {
+      if (onermTop) {
+        return `${getWeight(+squat, +onerm)}kg-${getWeight(+squat, +onermTop)}kg`
+      } else {
+        return `${getWeight(+squat, +onerm)}kg-${getWeight(+squat, +onerm * 1.05)}kg`
+      }
+    }
     return getWeight(+squat, +onerm)
   }
   if (lift === 'Deadlift') {
     if (!deadlift || deadlift === 0) return null
-    if (range) return `${getWeight(+deadlift, +onerm)}kg-${getWeight(+deadlift, +onerm * 1.05)}kg`
+    if (range) {
+      if (onermTop) {
+        return `${getWeight(+deadlift, +onerm)}kg-${getWeight(+deadlift, +onermTop)}kg`
+      } else {
+        return `${getWeight(+deadlift, +onerm)}kg-${getWeight(+deadlift, +onerm * 1.05)}kg`
+      }
+    }
     return getWeight(+deadlift, +onerm)
   }
   if (lift === 'Bench') {
     if (!bench || bench === 0) return null
-    if (range) return `${getWeight(+bench, +onerm)}kg-${getWeight(+bench, +onerm * 1.05)}kg`
+    if (range) {
+      if (onermTop) {
+        return `${getWeight(+bench, +onerm)}kg-${getWeight(+bench, +onermTop)}kg`
+      } else {
+        return `${getWeight(+bench, +onerm)}kg-${getWeight(+bench, +onerm * 1.05)}kg`
+      }
+    }
     return getWeight(+bench, +onerm)
   }
   return null
 }
 
-const DayModal = ({ day, }: { day: Day }) => {
+const ExerciseModal = ({
+  exercise, selectedEnergy, coreLifts,
+}: { exercise: StoreExercise, selectedEnergy: string, coreLifts: number[] }) => {
+
+  const [
+    rpe,
+    setRpe,
+  ] = useState('')
+
   const [
     weights,
     setWeights,
-  ] = useState<(null | string)[]>(
-    () => day.exercise.map((exercise) => '') // checkWeight(exercise, false, day?.energyRating))
-  )
-
-  const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery()
-  const squat = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'squat')[0]?.weight || 0
-  const deadlift = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'deadlift')[0]?.weight || 0
-  const bench = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'bench')[0]?.weight || 0
-  const coreLifts = [
-    squat,
-    deadlift,
-    bench,
-  ]
-  // const { data: programs, } = api.blocks.getAllUserPrograms.useQuery()
-
-  console.log('weights', weights)
+  ] = useState<null | string | number>('')
 
   const utils = api.useContext()
 
@@ -139,16 +152,212 @@ const DayModal = ({ day, }: { day: Day }) => {
       isComplete: !set.isComplete,
     })
   }
+
+  const setWeight = (exercise: StoreExercise, range: boolean, energyRating: string | null,) => {
+    if (weights) {
+      return weights.toString() + 'kg'
+    }
+    return null
+  }
+
+  useEffect(() => {
+    setWeights(checkWeight(exercise, false, selectedEnergy, coreLifts))
+  }, [
+    selectedEnergy,
+    exercise,
+  ])
+
+  return (
+    <>
+      <Disclosure >
+        {({ open, }) => (
+          <div className='flex flex-col justify-start gap-2 border-0'>
+            <div className='flex flex-col gap-0'>
+              <Disclosure.Button className={`w-full text-lg md:text-xl`}>
+                <div className='flex flex-col gap-2'>
+                  <div className='flex items-end gap-4 md:gap-8'>
+                    <ChevronUpIcon
+                      className={`${open ? 'rotate-180 transform' : ''} h-6 w-8 text-gray-300 `}
+                    />
+                    <div className='first-letter:uppercase first-letter:text-2xl first-letter:font-bold'>
+                      {exercise.name}
+                    </div>
+                    {exercise.sets && exercise.reps && (
+                      <div>
+                        {exercise.sets} x {exercise.reps}
+                      </div>
+                    )}
+                    {exercise.lift && exercise.onerm && (
+                      <div className=''>
+                        {checkWeight(exercise, true, selectedEnergy, coreLifts)}
+                      </div>
+                    )
+                    }
+                  </div>
+                  <div className='transition ease-in-out delay-150'>
+                    <div className={open ? `absolute font-extralight text-sm opacity-40 transition-all ease-out delay-[10ms]` : `absolute w-full font-extralight text-sm flex flex-row gap-1 justify-start opacity-100 transition-all ease-out delay-[45ms]`}>
+                      {exercise?.notes?.slice(0, 35).trim()}
+                      {exercise?.notes?.length && exercise?.notes?.length > 35 && (<span className={open ? `opacity-0` : ``}>...</span>)}
+                    </div>
+                  </div>
+                </div>
+              </Disclosure.Button>
+              <Transition
+                enter='transition duration-100 ease-in'
+                enterFrom='transform opacity-0'
+                enterTo='transform opacity-100'
+                leave='transition duration-75 ease-out'
+                leaveFrom='transform opacity-100'
+                leaveTo='transform opacity-0'
+              >
+                <Disclosure.Panel>
+                  <div className='flex flex-col gap-4'>
+                    <div className='font-extralight text-sm'>
+                      {exercise?.notes}
+                    </div>
+                    {exercise.sets && exercise.reps && (
+                      <div className='flex flex-col gap-4 md:gap-6'>
+                        <div className='flex gap-4 md:gap-6 w-full justify-center text-2xl font-bold'>
+                          <div>
+                            {setWeight(exercise, false, selectedEnergy,)}
+                          </div>
+                        </div>
+
+                        <div className='flex gap-4 md:gap-6 w-full justify-center text-xl font-medium'>
+                          {
+                            exercise.set.reduce((acc, curr) => {
+                              return acc + (curr.isComplete ? 1 : 0)
+                            }, 0)
+                          } / {exercise.reps}
+                        </div>
+                        <RadioGroup value={rpe} onChange={setRpe}>
+                          <div className={`flex gap-2 p-2  items-center`}>
+                            <RadioGroup.Label className=''>RPE</RadioGroup.Label>
+                            {[
+                              '6',
+                              '7',
+                              '8',
+                              '9',
+                              '10',
+                            ].map((energy) => (
+                              <RadioGroup.Option
+                                key={energy}
+                                value={energy}
+                                className={({
+                                  active, checked,
+                                }) => `${active
+                                  ? ''
+                                  : ''
+                                }
+                                            ${checked ? 'bg-gray-400 bg-opacity-75 text-white font-extrabold' : 'bg-gray-700 text-gray-200'}
+                                                relative flex cursor-pointer rounded-lg px-2 py-1 shadow-md focus:outline-none`
+                                }
+                              >
+                                {({
+                                  active, checked,
+                                }) => (
+                                  <>
+                                    <div className='flex w-full items-center justify-between'>
+                                      <div className='flex items-center'>
+                                        <div className='text-sm'>
+                                          <RadioGroup.Label
+                                            as='p'
+                                            className={`font-medium  ${checked ? 'text-gray-100' : 'text-gray-300'
+                                              }`}
+                                          >
+                                            {energy}
+                                          </RadioGroup.Label>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </>
+                                )}
+                              </RadioGroup.Option>
+                            ))}
+                          </div>
+                        </RadioGroup>
+                        <div className={`flex gap-4 px-1 items-center overflow-x-scroll md:overflow-x-auto h-20 `}>
+                          {
+                            exercise?.set?.map((set,) => (
+                              <div
+                                key={set.id}
+                                onClick={() => onSetDone(set)}
+                                className={set.isComplete ? `bg-gray-600 text-xl border border-gray-600 rounded-full  h-12 min-w-[3rem] flex items-center justify-center cursor-pointer hover:scale-105` : `text-xl border border-gray-600 rounded-full h-12 min-w-[3rem] flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}
+                              >
+                                {set.rep}
+                              </div>
+                            ))
+                          }
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </Disclosure.Panel>
+
+              </Transition>
+            </div>
+          </div>
+        )}
+      </Disclosure >
+    </>
+  )
+}
+
+const DayModal = ({
+  day, selectedEngery,
+}: { day: Day, selectedEngery: string }) => {
+
+  const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery()
+  const squat = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'squat')[0]?.weight || 0
+  const deadlift = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'deadlift')[0]?.weight || 0
+  const bench = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'bench')[0]?.weight || 0
+  const coreLifts = [
+    squat,
+    deadlift,
+    bench,
+  ]
+
+  const [
+    weights,
+    setWeights,
+  ] = useState<(null | string | number)[]>(
+    () => day.exercise.map((exercise) => checkWeight(exercise, false, selectedEngery, coreLifts)) // checkWeight(exercise, false, day?.energyRating))
+  )
+
+  const [
+    rpe,
+    setRpe,
+  ] = useState<string[]>(day.exercise.map(() => ''))
+
+  console.log('rpe', rpe)
+
+  useEffect(() => {
+    setWeights(day.exercise.map((exercise) => checkWeight(exercise, false, selectedEngery, coreLifts)))
+  }, [
+    day,
+    selectedEngery,
+  ])
+  // const { data: programs, } = api.blocks.getAllUserPrograms.useQuery()
+
+  console.log('weights', weights)
+
+  const utils = api.useContext()
+
+  const onChangeRpe = (e: string, idx: number) => {
+    setRpe((prev) => {
+      const newArr = [...prev,]
+      newArr[idx] = e
+      return newArr
+    })
+  }
+
   const setWeight = (exercise: StoreExercise, range: boolean, energyRating: string | null, exerciseIdx: number) => {
-
-    const weight = checkWeight(exercise, range, energyRating, coreLifts)
-
+    const weight = weights[exerciseIdx]
     if (weight) {
       return weight.toString() + 'kg'
     }
     return null
   }
-
   console.log(day)
 
   return (
@@ -163,90 +372,7 @@ const DayModal = ({ day, }: { day: Day }) => {
           <div className='w-full flex flex-col gap-10 md:p-2 '>
             {day.exercise.map((exercise, exerciseIdx) => (
               <div key={exercise.id} >
-                <Disclosure >
-                  {({ open, }) => (
-                    <div className='flex flex-col justify-start gap-2 border-0'>
-                      <div className='flex flex-col gap-0'>
-                        <Disclosure.Button className={`w-full text-lg md:text-xl`}>
-                          <div className='flex flex-col gap-2'>
-                            <div className='flex items-end gap-4 md:gap-8'>
-                              <ChevronUpIcon
-                                className={`${open ? 'rotate-180 transform' : ''} h-6 w-8 text-gray-300 `}
-                              />
-                              <div className='first-letter:uppercase first-letter:text-2xl first-letter:font-bold'>
-                                {exercise.name}
-                              </div>
-                              {exercise.sets && exercise.reps && (
-                                <div>
-                                  {exercise.sets} x {exercise.reps}
-                                </div>
-                              )}
-                              {exercise.lift && exercise.onerm && (
-                                <div className=''>
-                                  {checkWeight(exercise, true, day.energyRating, coreLifts)}
-                                </div>
-                              )
-                              }
-                            </div>
-                            <div className='transition ease-in-out delay-150'>
-                              <div className={open ? `absolute font-extralight text-sm opacity-40 transition-all ease-out delay-[10ms]` : `absolute w-full font-extralight text-sm flex flex-row gap-1 justify-start opacity-100 transition-all ease-out delay-[45ms]`}>
-                                {exercise?.notes?.slice(0, 35).trim()}
-                                {exercise?.notes?.length && exercise?.notes?.length > 35 && (<span className={open ? `opacity-0` : ``}>...</span>)}
-                              </div>
-                            </div>
-                          </div>
-                        </Disclosure.Button>
-                        <Transition
-                          enter='transition duration-100 ease-in'
-                          enterFrom='transform opacity-0'
-                          enterTo='transform opacity-100'
-                          leave='transition duration-75 ease-out'
-                          leaveFrom='transform opacity-100'
-                          leaveTo='transform opacity-0'
-                        >
-                          <Disclosure.Panel>
-                            <div className='flex flex-col gap-4'>
-                              <div className='font-extralight text-sm'>
-                                {exercise?.notes}
-                              </div>
-                              {exercise.sets && exercise.reps && (
-                                <div className='flex flex-col gap-4 md:gap-6'>
-                                  <div className='flex gap-4 md:gap-6 w-full justify-center text-2xl font-bold'>
-                                    <div>
-                                      {setWeight(exercise, false, day.energyRating, exerciseIdx)}
-                                    </div>
-                                  </div>
-
-                                  <div className='flex gap-4 md:gap-6 w-full justify-center text-xl font-medium'>
-                                    {
-                                      exercise.set.reduce((acc, curr) => {
-                                        return acc + (curr.isComplete ? 1 : 0)
-                                      }, 0)
-                                    } / {exercise.reps}
-                                  </div>
-                                  <div className={`flex gap-4 px-1 items-center overflow-x-scroll md:overflow-x-auto h-20 `}>
-                                    {
-                                      exercise?.set?.map((set,) => (
-                                        <div
-                                          key={set.id}
-                                          onClick={() => onSetDone(set)}
-                                          className={set.isComplete ? `bg-gray-600 text-xl border border-gray-600 rounded-full  h-12 min-w-[3rem] flex items-center justify-center cursor-pointer hover:scale-105` : `text-xl border border-gray-600 rounded-full h-12 min-w-[3rem] flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}
-                                        >
-                                          {set.rep}
-                                        </div>
-                                      ))
-                                    }
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </Disclosure.Panel>
-
-                        </Transition>
-                      </div>
-                    </div>
-                  )}
-                </Disclosure >
+                <ExerciseModal exercise={exercise} selectedEnergy={selectedEngery} coreLifts={coreLifts} />
               </div>
             ))}
           </div>
@@ -429,7 +555,7 @@ const ProgramDay = ({
                     <button className='px-2 py-1' onClick={() => closeModal()}>X</button>
                   </Dialog.Title>
                   <div className='mt-2 flex justify-center'>
-                    <DayModal day={day} />
+                    <DayModal day={day} selectedEngery={selectedEngery} />
                   </div>
 
                 </Dialog.Panel>

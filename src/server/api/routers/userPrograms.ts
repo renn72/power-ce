@@ -72,6 +72,7 @@ export const userProgramsRouter = createTRPCRouter({
                       sets: exercise.sets,
                       reps: exercise.reps,
                       onerm: exercise.onerm,
+                      onermTop: exercise?.onermTop,
                       notes: exercise?.notes,
                       isComplete: false,
                       set: {

@@ -101,7 +101,7 @@ const LiftPicker = ({
 
 const ChangeButton = ({
   onChange, value,
-}: { onChange: (arg0 : number) => void, value: number }) => {
+}: { onChange: (arg0: number) => void, value: number }) => {
   return (
     <div
       className='font-bold text-xl border border-gray-600 h-10 w-10 rounded-full flex items-center justify-center cursor-pointer'
@@ -227,17 +227,18 @@ const Lift: NextPage = () => {
             lifts={liftNames}
           />
           <div className='flex flex-col'>
-            <div className='flex justify-center text-3xl'>
+            <div className='flex justify-center text-xl'>
               Weight
             </div>
-            <div className='flex justify-around items-center gap-2 text-base'>
+            <div className='flex justify-around items-baseline gap-2 text-base'>
               <ChangeButton onChange={onWeightChange} value={-10} />
               <ChangeButton onChange={onWeightChange} value={-1} />
               <div className='text-base font-bold'>
                 -
               </div>
-              <div className='text-2xl font-bold flex justify-center w-20 tracking-tighter'>
-                {weight}kg
+              <div className='text-xl font-bold flex justify-center items-baseline w-20 tracking-tighter'>
+                <Input className='text-xl font-bold text-center border-0 tracking-tighter p-0' value={weight} onChange={(e) => setWeight(Number(e.target.value))} />
+                <span className='text-lg ml-1'>kg</span>
               </div>
               <div className='text-base font-bold'>
                 +
@@ -247,7 +248,7 @@ const Lift: NextPage = () => {
             </div>
           </div>
           <div className='flex flex-col'>
-            <div className='flex justify-center text-3xl'>
+            <div className='flex justify-center text-xl'>
               Reps
             </div>
             <div className='flex justify-center items-center gap-8 '>
@@ -298,7 +299,7 @@ const Lift: NextPage = () => {
                     {l.liftName}
                   </div>
                   <div className='text-lg font-bold'>
-                    {l.weight.toString()}kg
+                    {l.weight.toString()} kg
                   </div>
                   <div className='text-lg font-bold'>
                     {l.reps}

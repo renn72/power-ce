@@ -126,6 +126,7 @@ const Form = () => {
                   name: exercise.name,
                   lift: exercise.lift,
                   onerm: exercise.onerm ? +exercise.onerm : null,
+                  onermTop: exercise.onermTop ? +exercise.onermTop : null,
                   sets: exercise.sets ? +exercise.sets : null,
                   reps: exercise.reps ? +exercise.reps : null,
                   notes: exercise.notes,
@@ -210,6 +211,7 @@ const Form = () => {
                   name: exercise.name || '',
                   lift: exercise.lift || '',
                   onerm: exercise.onerm ? exercise.onerm.toString() : undefined,
+                  onermTop: exercise.onermTop ? exercise.onermTop.toString() : undefined,
                   sets: exercise.sets ? exercise.sets.toString() : undefined,
                   reps: exercise.reps ? exercise.reps.toString() : undefined,
                 })

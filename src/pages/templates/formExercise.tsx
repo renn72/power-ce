@@ -25,27 +25,42 @@ const GetWeight = ({
   const watch = formMethods.watch([
     `week.${week}.day.${day}.exercise.${exercise}.onerm`,
     `week.${week}.day.${day}.exercise.${exercise}.lift`,
+    `week.${week}.day.${day}.exercise.${exercise}.onermTop`,
   ])
 
   const checkWeight = () => {
     const lift = watch[1] //block?.week[weekIdx]?.day[dayIdx]?.exercise[exerciseIdx]?.lift
     const onerm = watch[0] //block?.week[weekIdx]?.day[dayIdx]?.exercise[exerciseIdx]?.onerm
+    const onermTop = watch[2] //block?.week[weekIdx]?.day[dayIdx]?.exercise[exerciseIdx]?.onerm
 
     if (!lift) return null
     if (!onerm) return null
     if (lift === 'unlinked') return null
 
     if (lift === 'Squat') {
-      return `${getWeight(squat, +onerm)} - ${getWeight(squat, +onerm * 1.05)}kg`
+      if (onermTop) {
+        return `${getWeight(squat, +onerm)} - ${getWeight(squat, +onermTop)}kg`
+      } else {
+        return `${getWeight(squat, +onerm)} - ${getWeight(squat, +onerm * 1.05)}kg`
+      }
     }
     if (lift === 'Deadlift') {
-      return `${getWeight(deadlift, +onerm)} - ${getWeight(deadlift, +onerm * 1.05)}kg`
+      if (onermTop) {
+        return `${getWeight(deadlift, +onerm)} - ${getWeight(deadlift, +onermTop)}kg`
+      } else {
+        return `${getWeight(deadlift, +onerm)} - ${getWeight(deadlift, +onerm * 1.05)}kg`
+      }
     }
     if (lift === 'Bench') {
-      return `${getWeight(bench, +onerm)} - ${getWeight(bench, +onerm * 1.05)}kg`
+      if (onermTop) {
+        return `${getWeight(bench, +onerm)} - ${getWeight(bench, +onermTop)}kg`
+      } else {
+        return `${getWeight(bench, +onerm)} - ${getWeight(bench, +onerm * 1.05)}kg`
+      }
     }
     return null
   }
+
   return (
     <div>
       {checkWeight()}
@@ -64,47 +79,56 @@ const FormExercise = ({
 
   return (
 
-
     <li className='flex flex-col gap-2'>
-      <div className='grid grid-cols-3 md:grid-cols-6 gap-2'>
-      <div className='flex flex-col justify-center'>
-        <Controller
-          control={control}
-          name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.lift`}
-          defaultValue='unlinked'
-          render={({ field: { onChange, value}, }) => (<LiftPicker onChange={onChange} value={value} />)}
+      <div className='grid grid-cols-3 md:grid-cols-7 gap-2'>
+        <div className='flex flex-col justify-center'>
+          <Controller
+            control={control}
+            name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.lift`}
+            defaultValue='unlinked'
+            render={({
+              field: {
+                onChange, value,
+              },
+            }) => (<LiftPicker onChange={onChange} value={value} />)}
+          />
+        </div>
+        <Input
+          className='hover:bg-gray-800'
+          {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`,)}
+          placeholder='name'
         />
-      </div>
-      <Input
-        className='hover:bg-gray-800'
-        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`,)}
-        placeholder='name'
-      />
-      <Input
-        className='hover:bg-gray-800'
-        type='number'
-        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, { valueAsNumber: true, })}
-        placeholder='1rm percent'
-      />
-      <Input
-        className='hover:bg-gray-800'
-        type='number'
-        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`, { valueAsNumber: true, })}
-        placeholder='sets'
-      />
-      <Input
-        className='hover:bg-gray-800'
-        type='number'
-        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`, { valueAsNumber: true, })}
-        placeholder='reps'
-      />
-      <div className='text-sm flex flex-col items-center justify-center'>
-        <GetWeight
-          week={weekIdx}
-          day={dayIdx}
-          exercise={exerciseIdx}
+        <Input
+          className='hover:bg-gray-800'
+          type='number'
+          {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, { valueAsNumber: true, })}
+          placeholder='1rm percent'
         />
-      </div>
+        <Input
+          className='hover:bg-gray-800'
+          type='number'
+          {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onermTop`, { valueAsNumber: true, })}
+          placeholder='1rm percent top'
+        />
+        <Input
+          className='hover:bg-gray-800'
+          type='number'
+          {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`, { valueAsNumber: true, })}
+          placeholder='sets'
+        />
+        <Input
+          className='hover:bg-gray-800'
+          type='number'
+          {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`, { valueAsNumber: true, })}
+          placeholder='reps'
+        />
+        <div className='text-sm flex flex-col items-center justify-center'>
+          <GetWeight
+            week={weekIdx}
+            day={dayIdx}
+            exercise={exerciseIdx}
+          />
+        </div>
       </div>
       <Input
         className='hover:bg-gray-800'

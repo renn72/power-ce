@@ -1,6 +1,8 @@
 export type Set = {
   id: string,
   rep: string | number | null,
+  rpe: string | number | null,
+  weight: string | number | null,
   isComplete: boolean,
 }
 
@@ -9,6 +11,7 @@ export type Exercise = {
   lift: string,
   name: string,
   onerm: string | number | null,
+  onermTop: string | number | null,
   sets: string | number | null,
   reps: string | number | null,
   notes: string | null,
@@ -39,6 +42,7 @@ export type ExerciseData = {
   lift: string,
   name: string,
   onerm: number | null,
+  onermTop: number | null,
   sets: number | null,
   reps: number | null,
 }
