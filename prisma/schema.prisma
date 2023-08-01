@@ -27,7 +27,7 @@ model Set {
 
   rep        Int
   rpe        Int?
-  weight     Int?
+  weight     Decimal?
   isComplete Boolean
 
   exerciseId String?
@@ -60,7 +60,7 @@ model Exercise {
 
   set    Set[]
   rpe    Int?
-  weight Int?
+  weight Decimal?
 
   dayId String
 

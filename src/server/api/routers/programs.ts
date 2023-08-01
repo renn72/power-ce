@@ -29,7 +29,9 @@ export const programsRouter = createTRPCRouter({
       return programDay
     }),
   updateSet: privateProcedure
-    .input(z.object({ id: z.string(), isComplete: z.boolean(), }))
+    .input(z.object({
+      id: z.string(), isComplete: z.boolean(), rpe: z.number(), weight: z.number(),
+    }))
     .mutation(async ({
       ctx, input,
     }) => {
@@ -40,7 +42,11 @@ export const programsRouter = createTRPCRouter({
 
       const programSet = await ctx.prisma.set.update({
         where: { id: input.id, },
-        data: { isComplete: input.isComplete, },
+        data: {
+          isComplete: input.isComplete,
+          rpe: input.rpe,
+          weight: input.weight,
+        },
       })
 
       return programSet

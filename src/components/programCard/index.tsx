@@ -83,12 +83,17 @@ const ExerciseModal = ({
   const [
     rpe,
     setRpe,
-  ] = useState('')
+  ] = useState('7')
 
   const [
     weights,
     setWeights,
-  ] = useState<null | string | number>('')
+  ] = useState<number | string>(
+    () => {
+      const _w = checkWeight(exercise, false, selectedEnergy, coreLifts)
+      return _w || ''
+    }
+  )
 
   const utils = api.useContext()
 
@@ -119,6 +124,8 @@ const ExerciseModal = ({
                           return {
                             ...set,
                             isComplete: newSet.isComplete,
+                            rpe: newSet.rpe,
+                            weight: newSet.weight,
                           }
                         }
                         return set
@@ -150,6 +157,8 @@ const ExerciseModal = ({
     updateSet({
       id: set.id,
       isComplete: !set.isComplete,
+      rpe: +rpe,
+      weight: +weights,
     })
   }
 
@@ -161,17 +170,15 @@ const ExerciseModal = ({
   }
 
   useEffect(() => {
-    setWeights(checkWeight(exercise, false, selectedEnergy, coreLifts))
-  }, [
-    selectedEnergy,
-    exercise,
-  ])
+    const _w = checkWeight(exercise, false, selectedEnergy, coreLifts)
+    setWeights(_w || '')
+  }, [selectedEnergy,])
 
   return (
     <>
       <Disclosure >
         {({ open, }) => (
-          <div className='flex flex-col justify-start gap-2 border-0'>
+          <div className='flex flex-col justify-start gap-2 border border-gray-600 rounded-xl'>
             <div className='flex flex-col gap-0'>
               <Disclosure.Button className={`w-full text-lg md:text-xl`}>
                 <div className='flex flex-col gap-2'>
@@ -196,8 +203,8 @@ const ExerciseModal = ({
                   </div>
                   <div className='transition ease-in-out delay-150'>
                     <div className={open ? `absolute font-extralight text-sm opacity-40 transition-all ease-out delay-[10ms]` : `absolute w-full font-extralight text-sm flex flex-row gap-1 justify-start opacity-100 transition-all ease-out delay-[45ms]`}>
-                      {exercise?.notes?.slice(0, 35).trim()}
-                      {exercise?.notes?.length && exercise?.notes?.length > 35 && (<span className={open ? `opacity-0` : ``}>...</span>)}
+                      {exercise?.notes && exercise?.notes?.length > 0 && exercise?.notes?.slice(0, 35).trim()}
+                      {exercise?.notes && exercise?.notes?.length > 0 && exercise?.notes?.length > 35 && (<span className={open ? `opacity-0` : ``}>...</span>)}
                     </div>
                   </div>
                 </div>
@@ -217,9 +224,15 @@ const ExerciseModal = ({
                     </div>
                     {exercise.sets && exercise.reps && (
                       <div className='flex flex-col gap-4 md:gap-6'>
-                        <div className='flex gap-4 md:gap-6 w-full justify-center text-2xl font-bold'>
+                        <div className='flex gap-4 md:gap-6 w-full justify-center text-2xl font-bold cursor-pointer'>
+                          <div className='' onClick={() => setWeights(+weights + 1.25)}>
+                            +
+                          </div>
+                          <div className='w-28 text-center'>
+                            {weights}kg
+                          </div>
                           <div>
-                            {setWeight(exercise, false, selectedEnergy,)}
+                            -
                           </div>
                         </div>
 
@@ -231,8 +244,8 @@ const ExerciseModal = ({
                           } / {exercise.reps}
                         </div>
                         <RadioGroup value={rpe} onChange={setRpe}>
-                          <div className={`flex gap-2 p-2  items-center`}>
-                            <RadioGroup.Label className=''>RPE</RadioGroup.Label>
+                          <div className={`flex gap-2 p-2  items-center justify-around`}>
+                            <RadioGroup.Label className='text-2xl font-medium'>RPE</RadioGroup.Label>
                             {[
                               '6',
                               '7',
@@ -250,19 +263,19 @@ const ExerciseModal = ({
                                   : ''
                                 }
                                             ${checked ? 'bg-gray-400 bg-opacity-75 text-white font-extrabold' : 'bg-gray-700 text-gray-200'}
-                                                relative flex cursor-pointer rounded-lg px-2 py-1 shadow-md focus:outline-none`
+                                                relative flex cursor-pointer rounded-full w-8 h-8 shadow-md focus:outline-none`
                                 }
                               >
                                 {({
                                   active, checked,
                                 }) => (
                                   <>
-                                    <div className='flex w-full items-center justify-between'>
+                                    <div className='flex w-full items-center justify-center'>
                                       <div className='flex items-center'>
-                                        <div className='text-sm'>
+                                        <div className='text-xl'>
                                           <RadioGroup.Label
                                             as='p'
-                                            className={`font-medium  ${checked ? 'text-gray-100' : 'text-gray-300'
+                                            className={`font-bold  ${checked ? 'text-gray-100 scale-120' : 'text-gray-300'
                                               }`}
                                           >
                                             {energy}
@@ -276,15 +289,30 @@ const ExerciseModal = ({
                             ))}
                           </div>
                         </RadioGroup>
-                        <div className={`flex gap-4 px-1 items-center overflow-x-scroll md:overflow-x-auto h-20 `}>
+                        <div className={`flex gap-4 px-1 items-center overflow-x-scroll md:overflow-x-auto h-28 `}>
                           {
                             exercise?.set?.map((set,) => (
                               <div
                                 key={set.id}
                                 onClick={() => onSetDone(set)}
-                                className={set.isComplete ? `bg-gray-600 text-xl border border-gray-600 rounded-full  h-12 min-w-[3rem] flex items-center justify-center cursor-pointer hover:scale-105` : `text-xl border border-gray-600 rounded-full h-12 min-w-[3rem] flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}
+                                className='flex flex-col gap-1'
                               >
-                                {set.rep}
+                                <div className={set.isComplete ? `bg-gray-600 text-xl border border-gray-600 rounded-full  h-12 min-w-[3rem] flex items-center justify-center cursor-pointer hover:scale-105` : `text-xl border border-gray-600 rounded-full h-12 min-w-[3rem] flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}>
+                                  {set.rep}
+                                </div>
+                                <div className='h-8'>
+                                  {set.isComplete && (
+                                    <div className='flex flex-col items-center text-xs tracking-tighter text-gray-400'>
+                                      <div>
+                                        RPE:{set.rpe}
+                                      </div>
+                                      <div>
+                                        W:{set.weight}
+                                      </div>
+                                    </div>
+                                  )
+                                  }
+                                </div>
                               </div>
                             ))
                           }
@@ -317,47 +345,6 @@ const DayModal = ({
     bench,
   ]
 
-  const [
-    weights,
-    setWeights,
-  ] = useState<(null | string | number)[]>(
-    () => day.exercise.map((exercise) => checkWeight(exercise, false, selectedEngery, coreLifts)) // checkWeight(exercise, false, day?.energyRating))
-  )
-
-  const [
-    rpe,
-    setRpe,
-  ] = useState<string[]>(day.exercise.map(() => ''))
-
-  console.log('rpe', rpe)
-
-  useEffect(() => {
-    setWeights(day.exercise.map((exercise) => checkWeight(exercise, false, selectedEngery, coreLifts)))
-  }, [
-    day,
-    selectedEngery,
-  ])
-  // const { data: programs, } = api.blocks.getAllUserPrograms.useQuery()
-
-  console.log('weights', weights)
-
-  const utils = api.useContext()
-
-  const onChangeRpe = (e: string, idx: number) => {
-    setRpe((prev) => {
-      const newArr = [...prev,]
-      newArr[idx] = e
-      return newArr
-    })
-  }
-
-  const setWeight = (exercise: StoreExercise, range: boolean, energyRating: string | null, exerciseIdx: number) => {
-    const weight = weights[exerciseIdx]
-    if (weight) {
-      return weight.toString() + 'kg'
-    }
-    return null
-  }
   console.log(day)
 
   return (
