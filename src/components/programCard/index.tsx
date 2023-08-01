@@ -224,14 +224,14 @@ const ExerciseModal = ({
                     </div>
                     {exercise.sets && exercise.reps && (
                       <div className='flex flex-col gap-4 md:gap-6'>
-                        <div className='flex gap-4 md:gap-6 w-full justify-center text-2xl font-bold cursor-pointer'>
-                          <div className='' onClick={() => setWeights(+weights + 1.25)}>
+                        <div className='flex gap-4 md:gap-6 w-full justify-center text-2xl font-bold'>
+                          <div className='cursor-pointer rounded-full w-8 h-8 text-center' onClick={() => setWeights(+weights + 1.25)}>
                             +
                           </div>
                           <div className='w-28 text-center'>
                             {weights}kg
                           </div>
-                          <div>
+                          <div className='cursor-pointer rounded-full w-8 h-8 text-center' onClick={() => setWeights(+weights - 1.25)}>
                             -
                           </div>
                         </div>
