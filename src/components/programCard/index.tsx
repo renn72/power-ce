@@ -178,7 +178,7 @@ const ExerciseModal = ({
   useEffect(() => {
     const _w = checkWeight(exercise, false, selectedEnergy, coreLifts)
     setWeights(_w || '')
-  }, [selectedEnergy,])
+  }, [selectedEnergy, coreLifts])
 
   useEffect(() => {
     const index = 8 - ((+rpe - 6) / 0.5)
