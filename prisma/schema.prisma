@@ -26,7 +26,7 @@ model Set {
   createdAt DateTime @default(now())
 
   rep        Int
-  rpe        Int?
+  rpe        Decimal?
   weight     Decimal?
   isComplete Boolean
 
@@ -59,7 +59,7 @@ model Exercise {
   isComplete Boolean?
 
   set    Set[]
-  rpe    Int?
+  rpe    Decimal?
   weight Decimal?
 
   dayId String

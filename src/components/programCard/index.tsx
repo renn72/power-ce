@@ -18,6 +18,7 @@ import {
   ScrollArea, ScrollBar,
 } from '@/components/ui/scroll-area'
 import getWeight from '~/utils/getWeight'
+import { rpe as rpeTable, } from '~/store/defaultValues'
 
 const checkWeight = (exercise: StoreExercise, range: boolean, energyRating: string | null, coreLifts: number[]) => {
   const lift = exercise.lift
@@ -94,6 +95,11 @@ const ExerciseModal = ({
       return _w || ''
     }
   )
+
+  const [
+    e1rm,
+    setE1rm,
+  ] = useState<number[]>([0,])
 
   const utils = api.useContext()
 
@@ -174,6 +180,17 @@ const ExerciseModal = ({
     setWeights(_w || '')
   }, [selectedEnergy,])
 
+  useEffect(() => {
+    const index = 8 - ((+rpe - 6) / 0.5)
+
+    console.log('index', index)
+    console.log(rpeTable[index])
+    setE1rm(rpeTable[index])
+  }, [
+    weights,
+    rpe,
+  ])
+
   return (
     <>
       <Disclosure >
@@ -244,13 +261,17 @@ const ExerciseModal = ({
                           } / {exercise.reps}
                         </div>
                         <RadioGroup value={rpe} onChange={setRpe}>
-                          <div className={`flex gap-2 p-2  items-center justify-around`}>
-                            <RadioGroup.Label className='text-2xl font-medium'>RPE</RadioGroup.Label>
+                          <div className={`grid grid-cols-9 md:grid-cols-10 gap-1 md:p-2 mx-1 md:mx-6  items-center justify-between`}>
+                            <RadioGroup.Label className='text-xl font-medium col-span-9 md:col-span-1 text-center md:text-left'>RPE</RadioGroup.Label>
                             {[
                               '6',
+                              '6.5',
                               '7',
+                              '7.5',
                               '8',
+                              '8.5',
                               '9',
+                              '9.5',
                               '10',
                             ].map((energy) => (
                               <RadioGroup.Option
@@ -262,7 +283,7 @@ const ExerciseModal = ({
                                   ? ''
                                   : ''
                                 }
-                                            ${checked ? 'bg-gray-400 bg-opacity-75 text-white font-extrabold' : 'bg-gray-700 text-gray-200'}
+                                            ${checked ? 'bg-gray-400 bg-opacity-75 text-white font-bold' : 'bg-gray-700 text-gray-200'}
                                                 relative flex cursor-pointer rounded-full w-8 h-8 shadow-md focus:outline-none`
                                 }
                               >
@@ -272,10 +293,10 @@ const ExerciseModal = ({
                                   <>
                                     <div className='flex w-full items-center justify-center'>
                                       <div className='flex items-center'>
-                                        <div className='text-xl'>
+                                        <div className='text-lg'>
                                           <RadioGroup.Label
                                             as='p'
-                                            className={`font-bold  ${checked ? 'text-gray-100 scale-120' : 'text-gray-300'
+                                            className={`font-semibold tracking-tighter ${checked ? 'text-gray-100 scale-120' : 'text-gray-300'
                                               }`}
                                           >
                                             {energy}
@@ -289,6 +310,14 @@ const ExerciseModal = ({
                             ))}
                           </div>
                         </RadioGroup>
+                        <div className='flex px-2 gap-2 mx-1 md:mx-6'>
+                          <div>
+                            E1RM
+                          </div>
+                          <div>
+                            {(+weights / ( e1rm[exercise.reps - 1] / 100)).toFixed(0)}kg
+                          </div>
+                        </div>
                         <div className={`flex gap-4 px-1 items-center overflow-x-scroll md:overflow-x-auto h-28 `}>
                           {
                             exercise?.set?.map((set,) => (
