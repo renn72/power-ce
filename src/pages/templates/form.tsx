@@ -130,6 +130,7 @@ const Form = () => {
                   sets: exercise.sets ? +exercise.sets : null,
                   reps: exercise.reps ? +exercise.reps : null,
                   notes: exercise.notes,
+                  isEstimatedOnerm: exercise.isEstimatedOnerm,
                 })
               ),
             })
@@ -214,6 +215,7 @@ const Form = () => {
                   onermTop: exercise.onermTop ? exercise.onermTop.toString() : undefined,
                   sets: exercise.sets ? exercise.sets.toString() : undefined,
                   reps: exercise.reps ? exercise.reps.toString() : undefined,
+                  isEstimatedOnerm: exercise.isEstimatedOnerm,
                 })
               ),
             })
@@ -227,12 +229,10 @@ const Form = () => {
     toast.success('Loaded')
   }
 
-
   const weekField = useFieldArray({
     control,
     name: 'week',
   })
-
 
   const [parent,] = useAutoAnimate(/* optional config */)
 

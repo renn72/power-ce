@@ -12,6 +12,7 @@ export type Exercise = {
   name: string,
   onerm: string | number | null,
   onermTop: string | number | null,
+  isEstimatedOnerm: boolean,
   sets: string | number | null,
   reps: string | number | null,
   notes: string | null,
@@ -43,6 +44,7 @@ export type ExerciseData = {
   name: string,
   onerm: number | null,
   onermTop: number | null,
+  isEstimatedOnerm: boolean,
   sets: number | null,
   reps: number | null,
 }

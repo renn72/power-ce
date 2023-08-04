@@ -13,6 +13,7 @@ import {
 import getWeight from '~/utils/getWeight'
 
 import { type Block, } from '~/store/types'
+import { Checkbox, } from '@/components/ui/checkbox'
 
 const GetWeight = ({
   week, day, exercise,
@@ -130,12 +131,36 @@ const FormExercise = ({
           />
         </div>
       </div>
-      <Input
-        className='hover:bg-gray-800'
-        type='text'
-        {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.notes`)}
-        placeholder='notes'
-      />
+      <div className='flex gap-2 items-center justify-between'>
+        <Input
+          className='hover:bg-gray-800'
+          type='text'
+          {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.notes`)}
+          placeholder='notes'
+        />
+
+        <Controller
+          control={control}
+          name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.isEstimatedOnerm`}
+          defaultValue='unlinked'
+          render={({
+            field: {
+              onChange, value,
+            },
+          }) => (
+            <div className='flex text-gray-400 gap-2 items-center'>
+              <label htmlFor='isEstimatedOnerm' className='text-sm'>e1rm</label>
+              <Checkbox
+                id='isEstimatedOnerm'
+                className='hover:bg-gray-800 w-6 h-6 '
+                  onCheckedChange={() => onChange(!value)}
+                  checked={value}
+              />
+            </div>
+          )}
+        />
+
+      </div>
     </li>
   )
 }

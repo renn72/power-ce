@@ -84,7 +84,7 @@ const ExerciseModal = ({
   const [
     rpe,
     setRpe,
-  ] = useState('7')
+  ] = useState('8')
 
   const [
     weights,
@@ -168,24 +168,9 @@ const ExerciseModal = ({
     })
   }
 
-  const setWeight = (exercise: StoreExercise, range: boolean, energyRating: string | null,) => {
-    if (weights) {
-      return weights.toString() + 'kg'
-    }
-    return null
-  }
-
-  useEffect(() => {
-    const _w = checkWeight(exercise, false, selectedEnergy, coreLifts)
-    setWeights(_w || '')
-  }, [selectedEnergy, coreLifts])
-
   useEffect(() => {
     const index = 8 - ((+rpe - 6) / 0.5)
-
-    console.log('index', index)
-    console.log(rpeTable[index])
-    setE1rm(rpeTable[index])
+    if (rpeTable[index]) setE1rm(rpeTable[index])
   }, [
     weights,
     rpe,
@@ -315,7 +300,7 @@ const ExerciseModal = ({
                             E1RM
                           </div>
                           <div>
-                            {(+weights / ( e1rm[exercise.reps - 1] / 100)).toFixed(0)}kg
+                            {(+weights / (e1rm[exercise.reps - 1] / 100)).toFixed(0)}kg
                           </div>
                         </div>
                         <div className={`flex gap-4 px-1 items-center overflow-x-scroll md:overflow-x-auto h-28 `}>
@@ -365,16 +350,19 @@ const DayModal = ({
 }: { day: Day, selectedEngery: string }) => {
 
   const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery()
-  const squat = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'squat')[0]?.weight || 0
-  const deadlift = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'deadlift')[0]?.weight || 0
-  const bench = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'bench')[0]?.weight || 0
-  const coreLifts = [
-    squat,
-    deadlift,
-    bench,
-  ]
 
-  console.log(day)
+  const [coreLifts] = useState(() => {
+    return [
+      +userCoreOneRM.filter((coreLift) => coreLift.lift === 'squat')[0].weight || 0,
+      +userCoreOneRM.filter((coreLift) => coreLift.lift === 'deadlift')[0].weight || 0,
+    +userCoreOneRM.filter((coreLift) => coreLift.lift === 'bench')[0].weight || 0,
+    ]
+  })
+
+  console.log('corelift', coreLifts)
+  console.log('userCoreOneRM', userCoreOneRM)
+
+  // console.log('day', day)
 
   return (
     <>
@@ -410,6 +398,7 @@ const ProgramDay = ({
   ] = useState(day.energyRating)
 
   const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery()
+
   const squat = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'squat')[0]?.weight || 0
   const deadlift = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'deadlift')[0]?.weight || 0
   const bench = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'bench')[0]?.weight || 0
@@ -451,7 +440,7 @@ const ProgramDay = ({
   return (
     <>
       <div
-        className='border border-gray-600 rounded-lg p-1 hover:bg-gray-600 hover:scale-105 transform transition-all cursor-pointer'
+        className='border border-gray-600 rounded-lg p-1 hover:bg-gray-600 hover:scale-105 transform transition-all cursor-pointer min-h-[6rem]'
         onClick={() => openModal()}
       >
         <div className='font-bold'>
@@ -459,16 +448,16 @@ const ProgramDay = ({
         </div>
         {day.isRestDay
           ? (
-            <div>
+            <div className=''>
               Rest Day
             </div>
           )
           : day.exercise.map((exercise) => (
             <div
               key={exercise.id}
-              className='flex flex-row justify-start gap-2'
+              className='flex flex-row justify-start gap-2 '
             >
-              <div className='md:w-14 break-words'>
+              <div className='break-words'>
                 {exercise.name}
               </div>
               {exercise.sets && exercise.reps && (
@@ -609,7 +598,7 @@ const ProgramCard = ({ userProgram, }: { userProgram: UserProgram }) => {
                     Week {weekIdx + 1}
                   </div>
                   <div
-                    className='grid md:grid-cols-7 gap-2 mt-4 '
+                    className='grid md:grid-cols-4 gap-2 mt-4 '
                   >
                     {week.day.map((day, dayIdx) => (
                       <ProgramDay

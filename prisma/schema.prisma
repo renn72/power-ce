@@ -30,6 +30,8 @@ model Set {
   weight     Decimal?
   isComplete Boolean
 
+  estiamtedOnerm Decimal?
+
   exerciseId String?
 
   flield1 String?
@@ -53,6 +55,8 @@ model Exercise {
   onermTop Int?
   sets     Int?
   reps     Int?
+
+  isEstimatedOnerm Boolean @default(false)
 
   actualSets Int?
   actualReps Int?
@@ -109,6 +113,7 @@ model Week {
   name String? @db.VarChar(255)
 
   isTemplate Boolean?
+  isDeleted Boolean @default(false)
 
   day Day[]
 
@@ -178,6 +183,8 @@ model Lifts {
 
   name String
 
+  isDeleted Boolean @default(false)
+
   lift Lift[]
 
   flield1 String?
@@ -192,6 +199,8 @@ model Lift {
   userId String
 
   liftId String
+
+  isDeleted Boolean @default(false)
 
   lift     Lifts   @relation(fields: [liftId], references: [id], onDelete: Cascade)
   weight   Decimal
