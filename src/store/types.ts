@@ -3,13 +3,14 @@ export type Set = {
   rep: string | number | null,
   rpe: string | number | null,
   weight: string | number | null,
+  estiamtedOnerm: string | number | null,
   isComplete: boolean,
 }
 
 export type Exercise = {
   id: string,
-  lift: string,
-  name: string,
+  lift: string | null,
+  name: string | null,
   onerm: string | number | null,
   onermTop: string | number | null,
   isEstimatedOnerm: boolean,

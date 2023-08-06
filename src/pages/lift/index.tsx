@@ -262,7 +262,7 @@ const Lift: NextPage = () => {
               <div className='text-xl font-bold'>
                 +
               </div>
-              <ChangeButton onChange={onRepChange} value={-1} />
+              <ChangeButton onChange={onRepChange} value={1} />
             </div>
           </div>
           <div

@@ -196,6 +196,8 @@ model Lift {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
+  createdAtUser DateTime @default(now())
+
   userId String
 
   liftId String
