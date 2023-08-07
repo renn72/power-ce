@@ -4,7 +4,7 @@ import React from 'react'
 import { api, } from '~/utils/api'
 import OneRMCard from '~/components/oneRMCard'
 import ProgramCard from '~/components/programCard'
-import { LoadingPage } from '~/components/loading'
+import { LoadingPage, } from '~/components/loading'
 
 const Home: NextPage = () => {
   const {
@@ -12,7 +12,7 @@ const Home: NextPage = () => {
   } = api.userPrograms.getAllUser.useQuery()
   const { isLoading: programsLoading, } = api.blocks.getAllUserPrograms.useQuery()
   const { isLoading: coreLoading, } = api.oneRepMax.getUserCoreLifts.useQuery()
-  if (userProgramsLoading && programsLoading && coreLoading) return <div><LoadingPage/></div>
+  if (userProgramsLoading && programsLoading && coreLoading) return <div><LoadingPage /></div>
 
   return (
     <>

@@ -1,21 +1,20 @@
 import {
-  Fragment, useEffect, useState,
+  Fragment, useState,
 } from 'react'
 import { Button, } from '@/components/ui/button'
 import { type NextPage, } from 'next'
 import { LoadingPage, } from '~/components/loading'
 import { api, } from '~/utils/api'
 
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
 
-import { Slider, } from '@/components/ui/slider'
 import {
   Listbox, Transition, Dialog,
 } from '@headlessui/react'
 import {
-  ChevronUpDownIcon, CheckIcon,
+  ChevronUpDownIcon, CheckIcon, ChevronUpIcon, ChevronDownIcon,
 } from '@heroicons/react/24/outline'
 import { Input, } from '@/components/ui/input'
 
@@ -140,6 +139,12 @@ const Lift: NextPage = () => {
 
   const userEachLift = userLifts?.map((lifts) => lifts.lift).flat()
 
+  userEachLift?.sort(
+    (a, b) => {
+      return b.createdAt.valueOf() - a.createdAt.valueOf()
+    }
+  )
+
   const ctx = api.useContext()
   const { mutate: mutateLifts, } = api.lifts.create.useMutation({
     onSuccess: () => {
@@ -191,6 +196,8 @@ const Lift: NextPage = () => {
       toast.error('Lift name cannot be empty')
       return
     }
+
+    setNewLift('')
     mutateLifts({ name: newLift, })
   }
 
@@ -230,18 +237,18 @@ const Lift: NextPage = () => {
             <div className='flex justify-center text-xl'>
               Weight
             </div>
-            <div className='flex justify-around items-baseline gap-2 text-base'>
+            <div className='flex justify-around items-center gap-2 text-base'>
               <ChangeButton onChange={onWeightChange} value={-10} />
               <ChangeButton onChange={onWeightChange} value={-1} />
               <div className='text-base font-bold'>
-                -
+                <ChevronDownIcon className='h-5 w-5' />
               </div>
               <div className='text-xl font-bold flex justify-center items-baseline w-20 tracking-tighter'>
-                <Input className='text-xl font-bold text-center border-0 tracking-tighter p-0' value={weight} onChange={(e) => setWeight(Number(e.target.value))} />
+                <Input type='number' className='text-xl font-bold text-center border-0 tracking-tighter p-0' value={weight} onChange={(e) => setWeight(Number(e.target.value))} />
                 <span className='text-lg ml-1'>kg</span>
               </div>
               <div className='text-base font-bold'>
-                +
+                <ChevronUpIcon className='h-5 w-5' />
               </div>
               <ChangeButton onChange={onWeightChange} value={1} />
               <ChangeButton onChange={onWeightChange} value={10} />
@@ -288,23 +295,30 @@ const Lift: NextPage = () => {
             </Button>
 
           </div>
-          <div className='flex flex-col gap-4'>
+          <div className='flex flex-col gap-6'>
             {
               userEachLift?.map((l) => (
                 <div
                   key={l.id}
-                  className='flex justify-around items-center'
+                  className='flex flex-col justify-around items-center'
                 >
-                  <div className='text-lg font-bold'>
-                    {l.liftName}
+                  <div
+                    className='flex gap-2 justify-around items-center'
+                  >
+                    <div className='text-lg font-bold'>
+                      {l.liftName}
+                    </div>
+                    <div className='text-lg font-bold'>
+                      {l.weight.toString()} kg
+                    </div>
+                    <div className='text-lg font-bold'>
+                      x {l.reps}
+                    </div>
+
                   </div>
-                  <div className='text-lg font-bold'>
-                    {l.weight.toString()} kg
-                  </div>
-                  <div className='text-lg font-bold'>
-                    {l.reps}
-                  </div>
-                  <div>
+                  <div
+                    className='flex w-full text-sm text-gray-400 justify-end items-center'
+                  >
                     {dayjs(l.createdAt).fromNow()}
                   </div>
                 </div>
