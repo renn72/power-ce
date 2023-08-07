@@ -142,7 +142,7 @@ const FormExercise = ({
         <Controller
           control={control}
           name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.isEstimatedOnerm`}
-          defaultValue='unlinked'
+          defaultValue={false}
           render={({
             field: {
               onChange, value,

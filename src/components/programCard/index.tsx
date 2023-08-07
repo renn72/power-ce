@@ -6,7 +6,6 @@ import ProgramDay from './programDay'
 const ProgramCard = ({ userProgram, }: { userProgram: UserProgram }) => {
   const { data: programs, } = api.blocks.getAllUserPrograms.useQuery()
   const program = programs?.find((program) => program.id === userProgram.programId)
-  console.log('program', program)
   return (
     <>
       {userProgram.isProgramActive

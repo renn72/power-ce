@@ -16,8 +16,8 @@ import { rpe as rpeTable, } from '~/store/defaultValues'
 import checkWeight from '~/utils/checkWeigth'
 
 const ExerciseModal = ({
-  exercise, selectedEnergy, coreLifts,
-}: { exercise: StoreExercise, selectedEnergy: string, coreLifts: number[] }) => {
+  exercise, selectedEnergy, coreLifts, day,
+}: { exercise: StoreExercise, selectedEnergy: string, coreLifts: number[], day: Day, }) => {
 
   const [
     rpe,
@@ -104,7 +104,7 @@ const ExerciseModal = ({
       isComplete: !set.isComplete,
       rpe: +rpe,
       weight: +weights,
-      estiamtedOnerm: +(+weights / (e1rm[exercise.reps - 1] / 100)).toFixed(0), //e1rm,
+      estiamtedOnerm: !set.isComplete ? +(+weights / (e1rm[exercise?.reps - 1] / 100)).toFixed(0) : 0, //e1rm,
     })
   }
 
@@ -118,11 +118,30 @@ const ExerciseModal = ({
 
   const onCheckWeight = (exercise: StoreExercise, range: boolean, energyRating: string | null, coreLifts: number[]) => {
 
-    const res = checkWeight(exercise, range, energyRating, coreLifts)
-    return res
-  }
+    if (exercise.isEstimatedOnerm) {
+      if (exercise.id === day.exercise[0]?.id) return checkWeight(exercise, range, energyRating, coreLifts)
+      if (exercise.lift !== day.exercise[0]?.lift) return checkWeight(exercise, range, energyRating, coreLifts)
 
-  console.log('exercise', exercise)
+      if (!day.exercise[0]?.set[0]?.isComplete) return checkWeight(exercise, range, energyRating, coreLifts)
+       
+      const _map = day.exercise[0]?.set.map((set) => +set?.estiamtedOnerm || 0).filter((set) => set !== 0)
+      console.log('_map', _map)
+      const _m = _map.pop()
+        
+
+      if (exercise.lift === 'Squat') return checkWeight(exercise, range, energyRating, [_m, coreLifts[1], coreLifts[2]])
+      if (exercise.lift === 'Deadlift') return checkWeight(exercise, range, energyRating, [coreLifts[0], _m,, coreLifts[2]])
+      if (exercise.lift === 'Bench') return checkWeight(exercise, range, energyRating, [coreLifts[0], coreLifts[1], _m,])
+
+      const _e1rm = exercise.onerm
+
+      return checkWeight(exercise, range, energyRating, coreLifts)
+
+    }
+
+    return checkWeight(exercise, range, energyRating, coreLifts)
+
+  }
 
   return (
     <>
@@ -139,9 +158,9 @@ const ExerciseModal = ({
                     <div className='first-letter:uppercase first-letter:text-2xl first-letter:font-bold'>
                       {exercise.name}
                       {exercise.isEstimatedOnerm && (
-                      <span className='text-green-600'>
+                        <span className='text-green-600'>
                           {' '}-1rm linked
-                      </span>
+                        </span>
                       )}
                     </div>
                     {exercise.sets && exercise.reps && (
@@ -317,8 +336,6 @@ const DayModal = ({
     ]
   })
 
-  // console.log('day', day)
-
   return (
     <>
       {day.isRestDay
@@ -331,7 +348,7 @@ const DayModal = ({
           <div className='w-full flex flex-col gap-10 md:p-2 '>
             {day.exercise.map((exercise,) => (
               <div key={exercise.id} >
-                <ExerciseModal exercise={exercise} selectedEnergy={selectedEngery} coreLifts={coreLifts} />
+                <ExerciseModal exercise={exercise} selectedEnergy={selectedEngery} coreLifts={coreLifts} day={day} />
               </div>
             ))}
           </div>
