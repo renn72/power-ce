@@ -10,7 +10,7 @@ import { api, } from '~/utils/api'
 import {
   Transition, RadioGroup, Disclosure,
 } from '@headlessui/react'
-import { ChevronUpIcon, } from '@heroicons/react/20/solid'
+import { ChevronUpIcon, ChevronDownIcon, ChevronRightIcon, ChevronLeftIcon, CheckCircleIcon, PlusCircleIcon, MinusCircleIcon, } from '@heroicons/react/20/solid'
 import { rpe as rpeTable, } from '~/store/defaultValues'
 
 import checkWeight from '~/utils/checkWeigth'
@@ -145,21 +145,21 @@ const ExerciseModal = ({
             <div className='flex flex-col gap-0'>
               <Disclosure.Button className={`w-full text-lg md:text-xl`}>
                 <div className='flex flex-col gap-2'>
-                  <div className='flex items-end gap-4 md:gap-8'>
+                  <div className='flex items-end gap-2 md:gap-8'>
                     <ChevronUpIcon
                       className={`${open ? 'rotate-180 transform' : ''} h-6 w-8 text-gray-300 `}
                     />
-                    <div className='first-letter:uppercase first-letter:text-2xl first-letter:font-bold'>
-                      {exercise.name}
+                    <div className='flex items-center'>
+                      <div className='first-letter:uppercase first-letter:text-2xl first-letter:font-bold '>
+                        {exercise.name}
+                      </div>
                       {exercise.isEstimatedOnerm && (
-                        <span className='text-green-600'>
-                          {' '}-1rm linked
-                        </span>
-                      )}
+                        <CheckCircleIcon className='h-4 w-4 text-green-400' />)
+                      }
                     </div>
                     {exercise.sets && exercise.reps && (
                       <div>
-                        {exercise.sets} x {exercise.reps}
+                        {exercise.sets}x{exercise.reps}
                       </div>
                     )}
                     {exercise.lift && exercise.onerm && (
@@ -269,17 +269,25 @@ const ExerciseModal = ({
                             {(+weights / (e1rm[exercise.reps - 1] / 100)).toFixed(0)}kg
                           </div>
                         </div>
-                        <div className={`flex gap-4 px-1 items-center overflow-x-scroll md:overflow-x-auto h-32 `}>
+                        <div className={`flex gap-4 px-1 items-center overflow-x-scroll md:overflow-x-auto h-48 `}>
+                          <MinusCircleIcon className='h-8 w-8 text-gray-600 mb-9 flex-shrink-0' />
+
                           {
                             exercise?.set?.map((set,) => (
                               <div
                                 key={set.id}
                                 onClick={() => onSetDone(set)}
-                                className='flex flex-col gap-1'
+                                className='flex flex-col items-center justify-center gap-1'
                               >
-                                <div className={set.isComplete ? `bg-gray-600 text-xl border border-gray-600 rounded-full  h-12 min-w-[3rem] flex items-center justify-center cursor-pointer hover:scale-105` : `text-xl border border-gray-600 rounded-full h-12 min-w-[3rem] flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}>
-                                  {set.rep}
+                                <ChevronUpIcon className='h-8 w-8 text-gray-400' />
+                                <div
+                                  className='flex flex-col gap-1'
+                                >
+                                  <div className={set.isComplete ? `bg-gray-600 text-xl border border-gray-600 rounded-full  h-12 min-w-[3rem] flex items-center justify-center cursor-pointer hover:scale-105` : `text-xl border border-gray-600 rounded-full h-12 min-w-[3rem] flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}>
+                                    {set.rep}
+                                  </div>
                                 </div>
+                                <ChevronDownIcon className='h-8 w-8 text-gray-400' />
                                 <div className='h-8'>
                                   {set.isComplete && (
                                     <div className='flex flex-col items-center text-xs tracking-tighter text-gray-400'>
@@ -301,6 +309,7 @@ const ExerciseModal = ({
                               </div>
                             ))
                           }
+                          <PlusCircleIcon className='h-8 w-8 text-gray-600 mb-9 flex-shrink-0' />
                         </div>
                       </div>
                     )}
