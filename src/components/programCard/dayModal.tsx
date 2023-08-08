@@ -41,6 +41,56 @@ const ExerciseModal = ({
 
   const utils = api.useContext()
 
+  const { mutate: updateRpe } = api.programs.updateSetRpe.useMutation({
+    onMutate: async (newRpe) => {
+      console.log('id', newRpe)
+      await utils.blocks.getAllUserPrograms.cancel()
+      const previousPrograms = utils.blocks.getAllUserPrograms.getData()
+      utils.blocks.getAllUserPrograms.setData(undefined, (prev) => {
+        console.log('prev', prev)
+        return prev
+      })
+
+      utils.blocks.getAllUserPrograms.setData(undefined, (prev) => prev?.map((program) => {
+        return {
+          ...program,
+          week: program.week.map((week) => {
+            return {
+              ...week,
+              day: week.day.map((day) => {
+                return {
+                  ...day,
+                  exercise: day.exercise.map((exercise) => {
+                    return {
+                      ...exercise,
+                      set: exercise.set.map((set) => {
+                        if (set.id === newRpe.id) {
+                          return {
+                            ...set,
+                            rpe: newRpe.rpe,
+                          }
+                        }
+                        return set
+                      }),
+                    }
+                  }),
+                }
+              }),
+            }
+          }),
+        }
+      }))
+      return previousPrograms
+    },
+    onError: (err, newRpe, context) => {
+      console.log('err', err)
+      utils.blocks.getAllUserPrograms.setData(undefined, context?.previousPrograms)
+    },
+    onSettled: () => {
+      void utils.blocks.getAllUserPrograms.invalidate()
+    },
+  })
+
   const { mutate: updateSet, } = api.programs.updateSet.useMutation({
     onMutate: async (newSet) => {
       console.log('id', newSet)
@@ -121,20 +171,19 @@ const ExerciseModal = ({
     if (exercise.isEstimatedOnerm) {
       if (exercise.id === day.exercise[0]?.id) return checkWeight(exercise, range, energyRating, coreLifts)
       if (exercise.lift !== day.exercise[0]?.lift) return checkWeight(exercise, range, energyRating, coreLifts)
-
       if (!day.exercise[0]?.set[0]?.isComplete) return checkWeight(exercise, range, energyRating, coreLifts)
 
       const _map = day.exercise[0]?.set.map((set) => +set?.estiamtedOnerm || 0).filter((set) => set !== 0)
       const _m = _map.pop()
-
       if (_m) return checkWeight(exercise, range, energyRating, [_m, _m, _m,],)
-
       return checkWeight(exercise, range, energyRating, coreLifts)
-
     }
-
     return checkWeight(exercise, range, energyRating, coreLifts)
+  }
 
+  const onUpdateRpe = (set : Set, increase: boolean) => {
+    console.log('id', set)
+    console.log('increase', increase)
   }
 
   return (
@@ -266,10 +315,10 @@ const ExerciseModal = ({
                             E1RM
                           </div>
                           <div>
-                            {(+weights / (e1rm[exercise.reps - 1] / 100)).toFixed(0)}kg
+                            {(weights / (e1rm[exercise.reps - 1] / 100)).toFixed(0)}kg
                           </div>
                         </div>
-                        <div className={`flex gap-4 px-1 items-center overflow-x-scroll md:overflow-x-auto h-48 `}>
+                        <div className={`flex gap-4 px-1 items-center overflow-x-scroll md:overflow-x-auto h-56 `}>
                           <MinusCircleIcon className='h-8 w-8 text-gray-600 mb-9 flex-shrink-0' />
 
                           {
@@ -279,7 +328,10 @@ const ExerciseModal = ({
                                 onClick={() => onSetDone(set)}
                                 className='flex flex-col items-center justify-center gap-1'
                               >
-                                <ChevronUpIcon className='h-8 w-8 text-gray-400' />
+                                <ChevronUpIcon 
+                                  onClick={() => onUpdateRpe(set, true)}
+                                  className='h-10 w-10 text-gray-400 cursor-pointer' 
+                                />
                                 <div
                                   className='flex flex-col gap-1'
                                 >
@@ -287,7 +339,10 @@ const ExerciseModal = ({
                                     {set.rep}
                                   </div>
                                 </div>
-                                <ChevronDownIcon className='h-8 w-8 text-gray-400' />
+                                <ChevronDownIcon 
+                                  onClick={() => onUpdateRpe(set, false)}
+                                  className='h-10 w-10 text-gray-400 cursor-pointer'
+                                />
                                 <div className='h-8'>
                                   {set.isComplete && (
                                     <div className='flex flex-col items-center text-xs tracking-tighter text-gray-400'>

@@ -11,7 +11,7 @@ const ProgramCard = ({ userProgram, }: { userProgram: UserProgram }) => {
       {userProgram.isProgramActive
         ? (
           <div
-            className='border font-normal border-gray-600 rounded-lg px-2 py-4'
+            className='border-0 font-normal border-gray-600 rounded-lg md:px-2 py-4'
           >
             <div className='font-bold'>
               Name: {program?.name}

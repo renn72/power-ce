@@ -76,6 +76,7 @@ export const userProgramsRouter = createTRPCRouter({
                       notes: exercise?.notes,
                       isEstimatedOnerm: exercise?.isEstimatedOnerm,
                       isComplete: false,
+                      actualSets: exercise.sets,
                       set: {
                         create: Array.from({ length: exercise.sets ? +exercise.sets : 0, }, (_,) => ({
                           rep: exercise.reps,

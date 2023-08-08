@@ -29,6 +29,8 @@ model Set {
   rpe        Decimal?
   weight     Decimal?
   isComplete Boolean
+   
+  actualReps Int?
 
   estiamtedOnerm Decimal?
 
@@ -58,9 +60,9 @@ model Exercise {
 
   isEstimatedOnerm Boolean @default(false)
 
-  actualSets Int?
+  actualSets Int
   actualReps Int?
-  isComplete Boolean?
+  isComplete Boolean @default(false)
 
   set    Set[]
   rpe    Decimal?
@@ -208,6 +210,8 @@ model Lift {
   weight   Decimal
   reps     Int
   liftName String
+
+  notes String? @db.Text
 
   flield1 String?
   flield2 String?

@@ -74,8 +74,10 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
               name: exercise.name,
               lift: exercise.lift,
               onerm: exercise.onerm ? +exercise.onerm : null,
+              onermTop: exercise.onermTop ? +exercise.onermTop : null,
               sets: exercise.sets ? +exercise.sets : null,
               reps: exercise.reps ? +exercise.reps : null,
+              isEstimatedOnerm: exercise.isEstimatedOnerm,
             })
           ),
         })

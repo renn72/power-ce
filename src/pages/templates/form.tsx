@@ -216,6 +216,7 @@ const Form = () => {
                   sets: exercise.sets ? exercise.sets.toString() : undefined,
                   reps: exercise.reps ? exercise.reps.toString() : undefined,
                   isEstimatedOnerm: exercise.isEstimatedOnerm,
+                  notes: exercise.notes || '',
                 })
               ),
             })

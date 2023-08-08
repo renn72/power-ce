@@ -17,8 +17,14 @@ const Home: NextPage = () => {
   return (
     <>
       <main className='h-full flex flex-col text-gray-300 font-semibold px-2'>
+        <iframe src='https://www.youtube.com/watch?v=wrYAxMv1yW0'
+          frameBorder='0'
+          allow='autoplay; encrypted-media'
+          allowfullscreen
+          title='video'
+        />
         <div className='w-full md:mx-auto max-w-screen-2xl  flex flex-col py-6 sm:px-6 lg:px-8'>
-          <OneRMCard />
+          {/* <OneRMCard /> */}
 
           <div className='grid mt-6'>
             <div className='text-gray-300'>
