@@ -123,17 +123,11 @@ const ExerciseModal = ({
       if (exercise.lift !== day.exercise[0]?.lift) return checkWeight(exercise, range, energyRating, coreLifts)
 
       if (!day.exercise[0]?.set[0]?.isComplete) return checkWeight(exercise, range, energyRating, coreLifts)
-       
+
       const _map = day.exercise[0]?.set.map((set) => +set?.estiamtedOnerm || 0).filter((set) => set !== 0)
-      console.log('_map', _map)
       const _m = _map.pop()
-        
 
-      if (exercise.lift === 'Squat') return checkWeight(exercise, range, energyRating, [_m, coreLifts[1], coreLifts[2]])
-      if (exercise.lift === 'Deadlift') return checkWeight(exercise, range, energyRating, [coreLifts[0], _m,, coreLifts[2]])
-      if (exercise.lift === 'Bench') return checkWeight(exercise, range, energyRating, [coreLifts[0], coreLifts[1], _m,])
-
-      const _e1rm = exercise.onerm
+      if (_m) return checkWeight(exercise, range, energyRating, [_m, _m, _m,],)
 
       return checkWeight(exercise, range, energyRating, coreLifts)
 

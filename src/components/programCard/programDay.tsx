@@ -67,7 +67,7 @@ const ProgramDay = ({
   return (
     <>
       <div
-        className='border border-gray-600 rounded-lg p-1 hover:bg-gray-600 hover:scale-105 transform transition-all cursor-pointer min-h-[6rem]'
+        className='md:px-4 py-2 my-4 hover:bg-gray-600 hover:scale-105 transform transition-all cursor-pointer min-h-[6rem]'
         onClick={() => openModal()}
       >
         <div className='font-bold'>
@@ -84,7 +84,7 @@ const ProgramDay = ({
               key={exercise.id}
               className='flex flex-row justify-start gap-2 '
             >
-              <div className='break-words'>
+              <div className='break-words capitalize'>
                 {exercise.name}
               </div>
               {exercise.sets && exercise.reps && (

@@ -11,7 +11,7 @@ const ProgramCard = ({ userProgram, }: { userProgram: UserProgram }) => {
       {userProgram.isProgramActive
         ? (
           <div
-            className='border font-normal border-gray-600 rounded-lg shadow-md shadow-gray-400/20 p-2'
+            className='border font-normal border-gray-600 rounded-lg px-2 py-4'
           >
             <div className='font-bold'>
               Name: {program?.name}
@@ -22,13 +22,13 @@ const ProgramCard = ({ userProgram, }: { userProgram: UserProgram }) => {
               {program?.week.map((week, weekIdx) => (
                 <div
                   key={week.id}
-                  className='border border-gray-600 rounded-lg p-1 '
+                  className='border border-gray-600 rounded-lg px-1 py-6 '
                 >
                   <div className='text-lg font-bold text-center md:text-left'>
                     Week {weekIdx + 1}
                   </div>
                   <div
-                    className='grid md:grid-cols-4 gap-2 mt-4 '
+                    className='grid md:grid-cols-4 mt-4 divide-y md:divide-y-0 md:divide-x divide-gray-600 px-2'
                   >
                     {week.day.map((day, dayIdx) => (
                       <ProgramDay
