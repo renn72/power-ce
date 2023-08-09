@@ -171,7 +171,7 @@ const ExerciseModal = ({
     if (exercise.isEstimatedOnerm) {
       if (exercise.id === day.exercise[0]?.id) return checkWeight(exercise, range, energyRating, coreLifts)
       if (exercise.lift !== day.exercise[0]?.lift) return checkWeight(exercise, range, energyRating, coreLifts)
-      if (!day.exercise[0]?.set[0]?.isComplete) return checkWeight(exercise, range, energyRating, coreLifts)
+      if (!day.exercise[0]?.set[0]?.isComplete) return '' //checkWeight(exercise, range, energyRating, coreLifts)
 
       const _map = day.exercise[0]?.set.map((set) => +set?.estiamtedOnerm || 0).filter((set) => set !== 0)
       const _m = _map.pop()
@@ -318,7 +318,7 @@ const ExerciseModal = ({
                             {(weights / (e1rm[exercise.reps - 1] / 100)).toFixed(0)}kg
                           </div>
                         </div>
-                        <div className={`flex gap-4 px-1 items-center overflow-x-scroll md:overflow-x-auto h-56 `}>
+                        <div className={`flex gap-4 px-1 items-center overflow-x-scroll md:overflow-x-auto h-56`}>
                           <MinusCircleIcon className='h-8 w-8 text-gray-600 mb-9 flex-shrink-0' />
 
                           {

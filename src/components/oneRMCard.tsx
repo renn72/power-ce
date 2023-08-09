@@ -162,7 +162,7 @@ const LiftCard = (
   )
 }
 
-const OneRMCard = () => {
+const OneRMCard = ({ userId, }: { userId: string }) => {
   const ctx = api.useContext()
   const {
     data: userCoreOneRM, isLoading: userCoreOneRMLoading,
@@ -198,7 +198,7 @@ const OneRMCard = () => {
 
   const onUpdateOneRM = (lift: string, weight: number) => {
     updateUserCoreOneRM({
-      weight: weight, lift: lift.toLowerCase(),
+      weight: weight, lift: lift.toLowerCase(), userId: userId,
     })
   }
 

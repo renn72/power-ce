@@ -60,7 +60,7 @@ model Exercise {
 
   isEstimatedOnerm Boolean @default(false)
 
-  actualSets Int
+  actualSets Int?
   actualReps Int?
   isComplete Boolean @default(false)
 
@@ -136,6 +136,10 @@ model Block {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
+  creatorId String?
+
+  isGlobal Boolean @default(false)
+
   name String @db.VarChar(255)
 
   isProgram Boolean
@@ -188,6 +192,33 @@ model Lifts {
   isDeleted Boolean @default(false)
 
   lift Lift[]
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+}
+
+model PrimaryLifts {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  name String
+
+  isDeleted Boolean @default(false)
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+}
+
+model TrainerToClient {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  trainerId String
+  clientId  String
+
+  isDeleted Boolean @default(false)
 
   flield1 String?
   flield2 String?

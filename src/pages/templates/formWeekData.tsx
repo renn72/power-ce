@@ -71,13 +71,14 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
           isRestDay: day.isRestDay,
           exercise: day.exercise.map(
             (exercise) => ({
-              name: exercise.name,
-              lift: exercise.lift,
+              name: exercise.name ? exercise.name : '',
+              lift: exercise.lift ? exercise.lift : '',
               onerm: exercise.onerm ? +exercise.onerm : null,
               onermTop: exercise.onermTop ? +exercise.onermTop : null,
               sets: exercise.sets ? +exercise.sets : null,
               reps: exercise.reps ? +exercise.reps : null,
               isEstimatedOnerm: exercise.isEstimatedOnerm,
+              notes: exercise.notes ? exercise.notes : '',
             })
           ),
         })

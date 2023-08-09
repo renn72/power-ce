@@ -50,15 +50,14 @@ export const oneRepMaxRouter = createTRPCRouter({
     }),
   create: privateProcedure
     .input(z.object({
-      weight: z.number(), lift: z.string(),
+      weight: z.number(), lift: z.string(), userId: z.string(),
     }))
     .mutation(async ({
       ctx, input,
     }) => {
-      const { userId, } = ctx
       const onerm = await ctx.prisma.oneRepMax.create({
         data: {
-          userId: userId, weight: input.weight, lift: input.lift,
+          userId: input.userId, weight: input.weight, lift: input.lift,
         },
       })
       return onerm

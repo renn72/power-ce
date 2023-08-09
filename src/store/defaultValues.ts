@@ -8,101 +8,37 @@ export const defaultValues = {
       isTemplate: false,
       day: [
         {
-          isRestDay: false,
-          exercise: [
-            {
-              lift: 'unlinked',
-              name: '',
-              onerm: '',
-              sets: '',
-              reps: '',
-              estimatedOnerm: false,
-            },
-          ],
+          isRestDay: true,
+          exercise: [],
         },
         {
-          isRestDay: false,
-          exercise: [
-            {
-              lift: 'unlinked',
-              name: '',
-              onerm: '',
-              sets: '',
-              reps: '',
-              estimatedOnerm: false,
-            },
-          ],
+          isRestDay: true,
+          exercise: [],
         },
         {
-          isRestDay: false,
-          exercise: [
-            {
-              lift: 'unlinked',
-              name: '',
-              onerm: '',
-              sets: '',
-              reps: '',
-              estimatedOnerm: false,
-            },
-          ],
+          isRestDay: true,
+          exercise: [],
         },
         {
-          isRestDay: false,
-          exercise: [
-            {
-              lift: 'unlinked',
-              name: '',
-              onerm: '',
-              sets: '',
-              reps: '',
-              estimatedOnerm: false,
-            },
-          ],
+          isRestDay: true,
+          exercise: [],
         },
         {
-          isRestDay: false,
-          exercise: [
-            {
-              lift: 'unlinked',
-              name: '',
-              onerm: '',
-              sets: '',
-              reps: '',
-              estimatedOnerm: false,
-            },
-          ],
+          isRestDay: true,
+          exercise: [],
         },
         {
-          isRestDay: false,
-          exercise: [
-            {
-              lift: 'unlinked',
-              name: '',
-              onerm: '',
-              sets: '',
-              reps: '',
-              estimatedOnerm: false,
-            },
-          ],
+          isRestDay: true,
+          exercise: [],
         },
         {
-          isRestDay: false,
-          exercise: [
-            {
-              lift: 'unlinked',
-              name: '',
-              onerm: '',
-              sets: '',
-              reps: '',
-              estimatedOnerm: false,
-            },
-          ],
+          isRestDay: true,
+          exercise: [],
         },
       ],
     },
   ],
 }
-
 
 export const rpe = [
   [

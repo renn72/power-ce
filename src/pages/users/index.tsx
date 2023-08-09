@@ -5,6 +5,7 @@ import { api, } from '~/utils/api'
 
 import TemplateSelect from './templateSelect'
 import { LoadingPage, } from '~/components/loading'
+import OneRMCard from '~/components/oneRMCard'
 
 const Users: NextPage = () => {
   // Check for admin role
@@ -81,15 +82,20 @@ const Users: NextPage = () => {
               <div className='text-xl font-bold text-gray-200'>Admins</div>
               <div className='flex flex-col gap-4'>
                 {allUsers?.admins?.map((user) => (
-                  <TemplateSelect
+                  <div
                     key={user.id}
-                    onSelectTemplate={onSelectTemplate}
-                    onSetTemplate={onSetTemplate}
-                    onClearTemplate={onClearTemplate}
-                    userId={user.id}
-                    userFirstName={user.firstName}
-                    userLastName={user.lastName}
-                  />
+                  >
+                    <TemplateSelect
+                      onSelectTemplate={onSelectTemplate}
+                      onSetTemplate={onSetTemplate}
+                      onClearTemplate={onClearTemplate}
+                      userId={user.id}
+                      userFirstName={user.firstName}
+                      userLastName={user.lastName}
+                    />
+                    <OneRMCard userId={user.id} />
+
+                  </div>
                 ))}
               </div>
             </div>
@@ -97,15 +103,19 @@ const Users: NextPage = () => {
               <div className='text-xl font-bold text-gray-200'>Users</div>
               <div className='flex flex-col gap-4'>
                 {allUsers?.users?.map((user) => (
-                  <TemplateSelect
+                  <div
                     key={user.id}
-                    onSelectTemplate={onSelectTemplate}
-                    onSetTemplate={onSetTemplate}
-                    onClearTemplate={onClearTemplate}
-                    userId={user.id}
-                    userFirstName={user.firstName}
-                    userLastName={user.lastName}
-                  />
+                  >
+                    <TemplateSelect
+                      onSelectTemplate={onSelectTemplate}
+                      onSetTemplate={onSetTemplate}
+                      onClearTemplate={onClearTemplate}
+                      userId={user.id}
+                      userFirstName={user.firstName}
+                      userLastName={user.lastName}
+                    />
+                    <OneRMCard userId={user.id} />
+                  </div>
                 ))}
               </div>
             </div>
