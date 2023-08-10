@@ -164,9 +164,14 @@ const LiftCard = (
 
 const OneRMCard = ({ userId, }: { userId: string }) => {
   const ctx = api.useContext()
+
+  const {
+    data: primaryLifts, isLoading: primaryLiftsLoading,
+  } = api.primaryLifts.getAll.useQuery()
+
   const {
     data: userCoreOneRM, isLoading: userCoreOneRMLoading,
-  } = api.oneRepMax.getUserCoreLifts.useQuery({userId: userId})
+  } = api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
   const { mutate: updateUserCoreOneRM, } = api.oneRepMax.create.useMutation({
     onSuccess: () => {
       console.log('success')
@@ -179,23 +184,6 @@ const OneRMCard = ({ userId, }: { userId: string }) => {
     },
   })
 
-  const squats = userCoreOneRM
-    ?.filter((oneRM) => oneRM.lift === 'squat')
-  const squat = squats?.[0]
-  const squatPercentage = squats?.length > 1 ? (((parseFloat(squats[0]?.weight) / parseFloat(squats[1]?.weight)) - 1) * 100).toFixed(1) : ''
-
-  const benchs = userCoreOneRM
-    ?.filter((oneRM) => oneRM.lift === 'bench')
-    .sort((a, b) => b.weight - a.weight)
-  const bench = benchs?.[0]
-  const benchPercentage = benchs?.length > 1 ? (((parseFloat(benchs[0]?.weight) / parseFloat(benchs[1]?.weight)) - 1) * 100).toFixed(1) : ''
-
-  const deadlifts = userCoreOneRM
-    ?.filter((oneRM) => oneRM.lift === 'deadlift')
-    .sort((a, b) => b.weight - a.weight)
-  const deadlift = deadlifts?.[0]
-  const deadliftPercentage = deadlifts?.length > 1 ? (((parseFloat(deadlifts[0]?.weight) / parseFloat(deadlifts[1]?.weight)) - 1) * 100).toFixed(1) : ''
-
   const onUpdateOneRM = (lift: string, weight: number) => {
     updateUserCoreOneRM({
       weight: weight, lift: lift.toLowerCase(), userId: userId,
@@ -206,32 +194,17 @@ const OneRMCard = ({ userId, }: { userId: string }) => {
   return (
     <>
       <div
-        className={`grid text-gray-300 grid-cols-3 md:grid-cols-3 
-                    border rounded-md border-gray-600
-                    divide-x md:divide-x divide-gray-600
-`}
+        className='grid text-gray-300 grid-cols-3 md:grid-cols-3 '
       >
-        <LiftCard
-          lift='Squat'
-          oneRM={squat?.weight.toString() || ''}
-          date={dayjs(squat?.createdAt).fromNow()}
-          onUpdateOneRM={onUpdateOneRM}
-          percentage={squatPercentage}
-        />
-        <LiftCard
-          lift='Bench'
-          oneRM={bench?.weight.toString() || ''}
-          date={dayjs(bench?.createdAt).fromNow()}
-          onUpdateOneRM={onUpdateOneRM}
-          percentage={benchPercentage}
-        />
-        <LiftCard
-          lift='Dead'
-          oneRM={deadlift?.weight.toString() || ''}
-          date={dayjs(deadlift?.createdAt).fromNow()}
-          onUpdateOneRM={onUpdateOneRM}
-          percentage={deadliftPercentage}
-        />
+        {primaryLifts?.map((lift) => (
+          <div
+            key={lift.id}
+          >
+            {lift.name}
+          </div>
+        ))
+        }
+
       </div>
     </>
   )
