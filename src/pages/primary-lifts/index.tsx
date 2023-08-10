@@ -85,14 +85,20 @@ const PrimaryLifts: NextPage = () => {
                 className='flex justify-between items-center gap-8'
               >
                 <div
-                  className='first-letter:uppercase text-xl font-bold text-gray-200'
+                  className='capitalize text-xl font-bold text-gray-200'
                 >{primaryLift.name}</div>
+                  {
+                    !defaultLifts.includes(primaryLift.name) &&
+                    (
+
                 <div
-                  className='first-letter:uppercase text-xl font-bold text-gray-200 cursor-pointer'
+                  className='text-xl font-bold text-gray-200 cursor-pointer'
                   onClick={() => onDelete(primaryLift.id)}
                 >
                   X
                 </div>
+                    )
+                  }
               </div>
             ))
           }

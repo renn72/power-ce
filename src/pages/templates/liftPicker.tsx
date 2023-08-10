@@ -9,18 +9,20 @@ import {
   ChevronUpDownIcon, CheckIcon,
 } from '@heroicons/react/24/outline'
 
-const lifts = [
-  'unlinked',
-  'Squat',
-  'Deadlift',
-  'Bench',
-]
+import { api, } from '~/utils/api'
+
 
 const LiftPicker = ({ onChange,  value}: { onChange: (arg0: string) => void, value : string }) => {
   const [
     selectedLift,
     setSelectedLift,
   ] = useState(value)
+
+  const {
+    data: lifts, isLoading: primaryLiftsLoading,
+  } = api.primaryLifts.getAll.useQuery()
+
+  if (primaryLiftsLoading) return null
 
   return (
     <Listbox
@@ -53,15 +55,15 @@ const LiftPicker = ({ onChange,  value}: { onChange: (arg0: string) => void, val
                 className={({ active, }) => `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-amber-100 text-amber-900' : 'text-gray-200'
                   }`
                 }
-                value={lift}
+                value={lift.name}
               >
                 {({ selected, }) => (
                   <>
                     <span
-                      className={`block truncate ${selected ? 'font-bold' : 'font-semibold'
+                      className={`block capitalize truncate ${selected ? 'font-bold' : 'font-semibold'
                         }`}
                     >
-                      {lift}
+                      {lift.name}
                     </span>
                     {selected
                       ? (
