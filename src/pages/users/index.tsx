@@ -79,7 +79,7 @@ const Users: NextPage = () => {
         <main >
           <div className='mx-auto max-w-4xl py-6 sm:px-6 lg:px-8'>
             <div className='flex flex-col gap-4 border border-gray-400 rounded-lg m-2 p-4'>
-              <div className='text-xl font-bold text-gray-200'>Admins</div>
+              <div className='text-xl font-bold text-gray-200'>Trainers</div>
               <div className='flex flex-col gap-4'>
                 {allUsers?.admins?.map((user) => (
                   <div

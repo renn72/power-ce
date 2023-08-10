@@ -58,6 +58,9 @@ model Exercise {
   sets     Int?
   reps     Int?
 
+  setWieght Decimal?
+  setTopWeight Decimal?
+
   isEstimatedOnerm Boolean @default(false)
 
   actualSets Int?
@@ -202,7 +205,8 @@ model PrimaryLifts {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  name String
+  name String @unique
+  creadedBy String
 
   isDeleted Boolean @default(false)
 

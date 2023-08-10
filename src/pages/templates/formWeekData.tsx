@@ -29,6 +29,7 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
 
   const ctx = api.useContext()
   const { data: weeksData, } = api.blocks.getAllWeekTemplates.useQuery()
+  
   const { mutate: weekCreateMutate, } = api.blocks.createWeek.useMutation({
     onSuccess: () => {
       console.log('success')

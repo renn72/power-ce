@@ -40,6 +40,26 @@ export const defaultValues = {
   ],
 }
 
+export const defaultLifts = [
+  'squat',
+  'bench',
+  'deadlift',
+  'front squat',
+  'deficit deadlift',
+  'pause squat',
+  'pause front squat',
+  'close grip bench',
+  'saftety bar squat',
+  'paused deficit deadlift',
+  'paused deadlift',
+  'spoto press',
+  'larsen press',
+  'tempo bench',
+  'tempo squat',
+  'tempo deadlift',
+  'stiffbar deadlift',
+]
+
 export const rpe = [
   [
     100.00,

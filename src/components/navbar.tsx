@@ -17,6 +17,9 @@ const navigation = [
     name: 'Users', href: '/users',
   },
   {
+    name: 'Primary Lifts', href: '/primary-lifts',
+  },
+  {
     name: 'Templates', href: '/templates',
   },
   {

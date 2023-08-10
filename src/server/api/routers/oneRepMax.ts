@@ -24,9 +24,9 @@ export const oneRepMaxRouter = createTRPCRouter({
       const onerm = await ctx.prisma.oneRepMax.findFirst({ where: { userId: userId, }, })
       return onerm
     }),
-  getUserCoreLifts: privateProcedure
-    .query(async ({ ctx, }) => {
-      const { userId, } = ctx
+  getUserCoreLifts: privateProcedure.input(z.object({ userId: z.string(), }))
+    .query(async ({ ctx, input }) => {
+    const userId = input.userId
       if (!userId) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',

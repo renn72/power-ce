@@ -166,7 +166,7 @@ const OneRMCard = ({ userId, }: { userId: string }) => {
   const ctx = api.useContext()
   const {
     data: userCoreOneRM, isLoading: userCoreOneRMLoading,
-  } = api.oneRepMax.getUserCoreLifts.useQuery()
+  } = api.oneRepMax.getUserCoreLifts.useQuery({userId: userId})
   const { mutate: updateUserCoreOneRM, } = api.oneRepMax.create.useMutation({
     onSuccess: () => {
       console.log('success')
