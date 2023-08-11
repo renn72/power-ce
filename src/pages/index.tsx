@@ -11,8 +11,7 @@ const Home: NextPage = () => {
     data: userPrograms, isLoading: userProgramsLoading,
   } = api.userPrograms.getAllUser.useQuery()
   const { isLoading: programsLoading, } = api.blocks.getAllUserPrograms.useQuery()
-  const { isLoading: coreLoading, } = api.oneRepMax.getUserCoreLifts.useQuery()
-  if (userProgramsLoading && programsLoading && coreLoading) return <div><LoadingPage /></div>
+  if (userProgramsLoading && programsLoading ) return <div><LoadingPage /></div>
 
   return (
     <>

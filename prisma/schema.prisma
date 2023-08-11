@@ -172,7 +172,6 @@ model UserProgram {
 }
 
 model OneRepMax {
-  id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
   userId String
@@ -182,6 +181,8 @@ model OneRepMax {
   flield1 String?
   flield2 String?
   flield3 String?
+
+  @@id([userId, lift])
 }
 
 model Lifts {

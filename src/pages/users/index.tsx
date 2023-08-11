@@ -104,7 +104,7 @@ const Users: NextPage = () => {
                         <div className='flex flex-col gap-8 border border-gray-400 min-w-full p-2 rounded-xl'>
                           <div className='flex flex-col sm:flex-row justify-between items-center gap-6'>
                             <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-base sm:text-lg hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
-                              <span>Lifts</span>
+                              <span>One Rep Maxes</span>
                               <ChevronUpIcon
                                 className={`${open ? 'rotate-180 transform' : ''
                                   } h-8 w-8 text-gray-400`}
@@ -154,7 +154,7 @@ const Users: NextPage = () => {
                         <div className='flex flex-col gap-8 border border-gray-400 min-w-full p-2 rounded-xl'>
                           <div className='flex flex-col sm:flex-row justify-between items-center gap-6'>
                             <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-base sm:text-lg hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
-                              <span>Lifts</span>
+                              <span>One Rep Maxes</span>
                               <ChevronUpIcon
                                 className={`${open ? 'rotate-180 transform' : ''
                                   } h-8 w-8 text-gray-400`}
