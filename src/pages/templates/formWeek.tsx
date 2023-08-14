@@ -45,7 +45,7 @@ const FormWeek = ({ weekIdx, }: { weekIdx: number }) => {
                 key={item.id}
                 className={classNames(
                   'rounded-xl',
-                  'ring-gray-200 ring-opacity-20 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
+                  ''
                 )}
               >
                 <FormDay weekIdx={weekIdx} dayIdx={index} />

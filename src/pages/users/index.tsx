@@ -11,6 +11,7 @@ import { ChevronUpIcon, } from '@heroicons/react/20/solid'
 import TemplateSelect from './templateSelect'
 import { LoadingPage, } from '~/components/loading'
 import OneRMCard from '~/components/oneRMCard'
+import { Button, } from '@/components/ui/button'
 
 const Users: NextPage = () => {
   // Check for admin role
@@ -54,6 +55,20 @@ const Users: NextPage = () => {
     },
   })
 
+  const {
+    data: primaryLifts, isLoading: primaryLiftsLoading,
+  } = api.primaryLifts.getAll.useQuery()
+
+  const { mutate: createUserCoreOneRM, } = api.oneRepMax.create.useMutation({
+    onSettled: async () => {
+      await ctx.oneRepMax.getUserCoreLifts.invalidate()
+    },
+    onError: (e) => {
+      console.log('error', e)
+      toast.error('Error')
+    },
+  })
+
   const onSelectTemplate = (template: string, userId: string) => {
     console.log('template', template)
     console.log('userId', userId)
@@ -76,13 +91,36 @@ const Users: NextPage = () => {
     })
   }
 
+  const onUpdateOneRM = (userId: string, lift: string, weight: number) => {
+    createUserCoreOneRM({
+      userId: userId, lift: lift.toLowerCase(), weight: +weight,
+    })
+  }
+
+  const onGenerate = () => {
+    console.log('gen')
+    allUsers?.admins?.forEach((user) => {
+      primaryLifts?.forEach((lift) => {
+        const weight = (Math.floor(Math.random() * 15) + 5) * 10
+        onUpdateOneRM(user.id, lift.name, weight)
+      })
+    })
+    allUsers?.users?.forEach((user) => {
+      primaryLifts?.forEach((lift) => {
+        const weight = (Math.floor(Math.random() * 15) + 5) * 10
+        onUpdateOneRM(user.id, lift.name, weight)
+      })
+    })
+
+  }
+
   if (usersLoading || userProgramsLoading || blocksLoading) return <div><LoadingPage /></div>
 
   return (
     <>
       <div className='h-full flex flex-col'>
         <main >
-          <div className='mx-auto max-w-4xl py-6 sm:px-6 lg:px-8'>
+          <div className='mx-auto max-w-4xl py-6 sm:px-6 lg:px-8 flex flex-col gap-8'>
             <div className='flex flex-col gap-4  m-2 p-4'>
               <div className='text-xl font-bold text-gray-200'>Trainers</div>
               <div className='flex flex-col gap-8'>
@@ -183,6 +221,7 @@ const Users: NextPage = () => {
                 ))}
               </div>
             </div>
+            <Button onClick={onGenerate}>Generate</Button>
           </div>
         </main>
       </div>

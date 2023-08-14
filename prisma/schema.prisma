@@ -53,15 +53,20 @@ model Exercise {
 
   name     String? @db.VarChar(255)
   lift     String? @db.VarChar(55)
-  onerm    Int?
-  onermTop Int?
   sets     Int?
   reps     Int?
+
+  onerm    Int?
+  onermTop Int?
+
+  weightTop Decimal?
+  weightBottom Decimal?
 
   setWieght Decimal?
   setTopWeight Decimal?
 
-  isEstimatedOnerm Boolean @default(false)
+  isEstimatedOnerm Boolean? @default(false)
+  estimatedOnermIndex Int?
 
   actualSets Int?
   actualReps Int?

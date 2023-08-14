@@ -9,15 +9,18 @@ export type Set = {
 
 export type Exercise = {
   id: string,
-  lift: string | null,
-  name: string | null,
+  lift: string,
+  name: string,
   onerm: string | number | null,
   onermTop: string | number | null,
-  isEstimatedOnerm: boolean,
+  weightTop: string | number | null,
+  weightBottom: string | number | null,
+  isEstimatedOnerm: boolean | null,
   sets: string | number | null,
   reps: string | number | null,
   notes: string | null,
   set: Set[],
+  estimatedOnermIndex: number | null,
 }
 
 export type Day = {
@@ -45,9 +48,12 @@ export type ExerciseData = {
   name: string,
   onerm: number | null,
   onermTop: number | null,
+  weightTop: number | null,
+  weightBottom: number | null,
   isEstimatedOnerm: boolean,
   sets: number | null,
   reps: number | null,
+  estimatedOnermIndex: number | null,
 }
 
 export type DayData = {
