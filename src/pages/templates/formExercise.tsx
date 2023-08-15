@@ -5,12 +5,16 @@ import {
 import { Fragment, } from 'react'
 
 import { useAtom, } from 'jotai'
+import { useUser, } from '@clerk/nextjs'
+import { api, } from '~/utils/api'
 
 import LiftPicker from './liftPicker'
-import { Input, } from '@/components/ui/input'
+import {
+  Input, InputNumber,
+} from '@/components/ui/input'
 
 import {
-  Listbox, Transition,
+  Listbox, Transition, RadioGroup,
 } from '@headlessui/react'
 
 import {
@@ -18,7 +22,7 @@ import {
 } from '~/store/store'
 
 import {
-  ChevronUpDownIcon, CheckIcon, XCircleIcon,
+  ChevronUpDownIcon, CheckIcon, XCircleIcon, CheckCircleIcon,
 } from '@heroicons/react/24/outline'
 
 import getWeight from '~/utils/getWeight'
@@ -26,12 +30,11 @@ import getWeight from '~/utils/getWeight'
 import { type Block, } from '~/store/types'
 import { Checkbox, } from '@/components/ui/checkbox'
 
+import { NumericFormat, } from 'react-number-format'
+
 const GetWeight = ({
-  week, day, exercise,
-}: { week: number, day: number, exercise: number }) => {
-  const [squat,] = useAtom(squatAtom)
-  const [deadlift,] = useAtom(deadliftAtom)
-  const [bench,] = useAtom(benchAtom)
+  week, day, exercise, lifts,
+}: { week: number, day: number, exercise: number, lifts: { lift: string, weight: string } }) => {
   const formMethods = useFormContext<Block>()
 
   const watch = formMethods.watch([
@@ -40,45 +43,42 @@ const GetWeight = ({
     `week.${week}.day.${day}.exercise.${exercise}.onermTop`,
   ])
 
-  const checkWeight = () => {
-    const lift = watch[1] //block?.week[weekIdx]?.day[dayIdx]?.exercise[exerciseIdx]?.lift
-    const onerm = watch[0] //block?.week[weekIdx]?.day[dayIdx]?.exercise[exerciseIdx]?.onerm
-    const onermTop = watch[2] //block?.week[weekIdx]?.day[dayIdx]?.exercise[exerciseIdx]?.onerm
+  const weight = lifts.filter((lift) => lift.lift === watch[1])[0]?.weight
+  console.log('watch', watch)
+  console.log('lifts', lifts)
+  console.log('weight', weight)
 
-    if (!lift) return null
-    if (!onerm) return null
-    if (lift === 'unlinked') return null
+  if (!weight) return null
+  if (!watch[0]) return null
 
-    if (lift === 'Squat') {
-      if (onermTop) {
-        return `${getWeight(squat, +onerm)} - ${getWeight(squat, +onermTop)}kg`
-      } else {
-        return `${getWeight(squat, +onerm)} - ${getWeight(squat, +onerm * 1.05)}kg`
-      }
-    }
-    if (lift === 'Deadlift') {
-      if (onermTop) {
-        return `${getWeight(deadlift, +onerm)} - ${getWeight(deadlift, +onermTop)}kg`
-      } else {
-        return `${getWeight(deadlift, +onerm)} - ${getWeight(deadlift, +onerm * 1.05)}kg`
-      }
-    }
-    if (lift === 'Bench') {
-      if (onermTop) {
-        return `${getWeight(bench, +onerm)} - ${getWeight(bench, +onermTop)}kg`
-      } else {
-        return `${getWeight(bench, +onerm)} - ${getWeight(bench, +onerm * 1.05)}kg`
-      }
-    }
-    return null
-  }
+  const res = getWeight(+watch[0], +weight)
+
+  if (!watch[2]) return (<div>{res}kg</div>) 
+
+  const res2 = getWeight(+watch[2], +weight)
 
   return (
     <div>
-      {checkWeight()}
+      {res}kg - {res2}kg
     </div>
   )
+
 }
+
+const plans = [
+  {
+    name: 'OneRM Percent',
+    value: 'onerm',
+  },
+  {
+    name: 'Weight',
+    value: 'weight',
+  },
+  {
+    name: 'RPE Target',
+    value: 'rpe',
+  },
+]
 
 const FormExercise = ({
   weekIdx, dayIdx, exerciseIdx,
@@ -86,13 +86,26 @@ const FormExercise = ({
   { weekIdx: number, dayIdx: number, exerciseIdx: number }) => {
   const formMethods = useFormContext()
   const {
-    register, control,
+    register, control, getValues, watch,
   } = formMethods
 
   const exerciseField = useFieldArray({
     control,
     name: `week.${weekIdx}.day.${dayIdx}.exercise`,
   })
+
+  const { user, } = useUser()
+
+  const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery({ userId: user?.id || '', })
+  const userLifts = userCoreOneRM?.map((lift) => {
+    return {
+      lift: lift.lift, weight: lift.weight,
+    }
+  })
+
+  const weightType = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`)
+
+  const w = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.targetRpe`)
 
   return (
 
@@ -134,48 +147,137 @@ const FormExercise = ({
             placeholder='reps'
           />
         </div>
-        <div className='grid grid-cols-4 gap-2'>
-          <Input
-            className='hover:bg-gray-800'
-            type='number'
-            {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, { valueAsNumber: true, })}
-            placeholder='1rm percent'
+        <div className='my-4'>
+          <Controller
+            control={control}
+            name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`}
+            defaultValue={null}
+            render={({
+              field: {
+                onChange, value,
+              },
+            }) => (
+              <div className=''>
+                <RadioGroup value={value} onChange={onChange}>
+                  <RadioGroup.Label className='sr-only'>Server size</RadioGroup.Label>
+                  <div className='flex items-center justify-start gap-4'>
+                    {plans.map((plan) => (
+                      <RadioGroup.Option
+                        key={plan.name}
+                        value={plan.value}
+                        className={({
+                          active, checked,
+                        }) => `${checked ? 'bg-gray-600 bg-opacity-75 text-gray-200' : 'bg-gray-200 text-gray-800'}
+                                relative flex cursor-pointer rounded-lg px-5 shadow-md focus:outline-none w-52 h-16`
+                        }
+                      >
+                        {({
+                          active, checked,
+                        }) => (
+                          <>
+                            <div className='flex w-full items-center justify-between'>
+                              <div className='flex items-center'>
+                                <div className='text-base tracking-tighter'>
+                                  <RadioGroup.Label
+                                    as='p'
+                                    className={`font-medium  ${checked ? 'text-gray-200' : 'text-gray-800'
+                                      }`}
+                                  >
+                                    {plan.name}
+                                  </RadioGroup.Label>
+                                </div>
+                              </div>
+                              {checked && (
+                                <div className='shrink-0 text-white'>
+                                  <CheckCircleIcon className='h-6 w-6' />
+                                </div>
+                              )}
+                            </div>
+                          </>
+                        )}
+                      </RadioGroup.Option>
+                    ))}
+                  </div>
+                </RadioGroup>
+              </div>
+            )}
           />
-          <Input
-            className='hover:bg-gray-800'
-            type='number'
-            {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onermTop`, { valueAsNumber: true, })}
-            placeholder='1rm percent top'
-          />
-          <div className='text-sm flex flex-col items-center justify-center'>
-            <GetWeight
-              week={weekIdx}
-              day={dayIdx}
-              exercise={exerciseIdx}
-            />
-          </div>
         </div>
-        <div className='grid grid-cols-4 gap-2'>
-          <Input
-            className='hover:bg-gray-800'
-            type='number'
-            {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightBottom`, { valueAsNumber: true, })}
-            placeholder='weight bottom'
-          />
-          <Input
-            className='hover:bg-gray-800'
-            type='number'
-            {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightTop`, { valueAsNumber: true, })}
-            placeholder='weight top'
-          />
-          <div className='text-sm flex flex-col items-center justify-center'>
-            <GetWeight
-              week={weekIdx}
-              day={dayIdx}
-              exercise={exerciseIdx}
-            />
-          </div>
-        </div>
+        {weightType === 'onerm'
+          && (
+            <div className='grid grid-cols-4 gap-2'>
+              <Input
+                className='hover:bg-gray-800'
+                type='number'
+                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, { valueAsNumber: true, })}
+                placeholder='1rm percent'
+              />
+              <Input
+                className='hover:bg-gray-800'
+                type='number'
+                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onermTop`, { valueAsNumber: true, })}
+                placeholder='1rm percent top'
+              />
+              <div className='text-sm flex flex-col items-center justify-center'>
+                <GetWeight
+                  week={weekIdx}
+                  day={dayIdx}
+                  exercise={exerciseIdx}
+                  lifts={userLifts}
+                />
+              </div>
+            </div>
+          )}
+        {weightType === 'weight'
+          && (
+
+            <div className='grid grid-cols-4 gap-2'>
+              <Input
+                className='hover:bg-gray-800'
+                type='number'
+                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightBottom`, { valueAsNumber: true, })}
+                placeholder='weight bottom'
+              />
+              <Input
+                className='hover:bg-gray-800'
+                type='number'
+                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightTop`, { valueAsNumber: true, })}
+                placeholder='weight top'
+              />
+            </div>
+          )
+        }
+        {
+          weightType === 'rpe'
+          && (
+
+            <div className='grid grid-cols-4 gap-2'>
+              <Controller
+                name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.targetRpe`}
+                control={control}
+                render={({
+                  field: {
+                    onChange, value,
+                  },
+                }) => (
+                  <NumericFormat
+                    className='hover:bg-gray-800 flex h-10 w-full rounded-md border focus:bg-gray-700 border-gray-600 bg-gray-900 px-3 py-2 text-sm text-gray-200 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+                    value={value}
+                    onChange={onChange}
+                    placeholder='rpe target'
+                  />
+                )}
+              />
+
+              <Input
+                className='hover:bg-gray-800'
+                type='number'
+                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.rpeTarget2`, { valueAsNumber: true, })}
+                placeholder='rpe target2'
+              />
+            </div>
+          )
+        }
         <div className='flex gap-2 items-center justify-between'>
           <Input
             className='hover:bg-gray-800'

@@ -129,11 +129,14 @@ const Form = () => {
                   onermTop: exercise.onermTop ? +exercise.onermTop : null,
                   weightTop: exercise.weightTop ? +exercise.weightTop : null,
                   weightBottom: exercise.weightBottom ? +exercise.weightBottom : null,
+                  targetRpe: exercise.targetRpe ? +exercise.targetRpe : null,
                   sets: exercise.sets ? +exercise.sets : null,
                   reps: exercise.reps ? +exercise.reps : null,
                   notes: exercise.notes,
                   isEstimatedOnerm: exercise.isEstimatedOnerm || false,
                   estimatedOnermIndex: exercise.estimatedOnermIndex,
+                  weightType: exercise.weightType,
+
                 })
               ),
             })
@@ -220,9 +223,11 @@ const Form = () => {
                   weightBottom: exercise.weightBottom ? exercise.weightBottom.toString() : undefined,
                   sets: exercise.sets ? exercise.sets.toString() : undefined,
                   reps: exercise.reps ? exercise.reps.toString() : undefined,
+                  targetRpe: exercise.targetRpe ? exercise.targetRpe.toString() : undefined,
                   isEstimatedOnerm: exercise.isEstimatedOnerm || false,
                   estimatedOnermIndex: exercise.estimatedOnermIndex,
                   notes: exercise.notes || '',
+                  weightType: exercise.weightType || undefined,
                 })
               ),
             })

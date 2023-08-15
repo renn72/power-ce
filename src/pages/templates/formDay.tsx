@@ -29,7 +29,6 @@ const FormDay = ({
     name: `week.${weekIdx}.day.${dayIdx}.exercise`,
   })
 
-  console.log('exerciseField', exerciseField)
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const isRest = watch(`week.${weekIdx}.day.${dayIdx}.isRestDay`)

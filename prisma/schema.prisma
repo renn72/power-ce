@@ -56,11 +56,15 @@ model Exercise {
   sets     Int?
   reps     Int?
 
+  weightType String? @db.VarChar(55)
+
   onerm    Int?
   onermTop Int?
 
   weightTop Decimal?
   weightBottom Decimal?
+
+  targetRpe Decimal?
 
   setWieght Decimal?
   setTopWeight Decimal?
