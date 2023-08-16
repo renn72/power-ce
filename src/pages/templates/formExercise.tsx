@@ -115,7 +115,7 @@ const FormExercise = ({
         {exerciseIdx + 1}
       </div>
       <li className='flex flex-col gap-2'>
-        <div className='grid grid-cols-2 md:grid-cols-4 gap-2'>
+        <div className='grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-10'>
           <div className='flex flex-col justify-center'>
             <Controller
               control={control}
@@ -159,7 +159,7 @@ const FormExercise = ({
               <div className=''>
                 <RadioGroup value={value} onChange={onChange}>
                   <RadioGroup.Label className='sr-only'>Server size</RadioGroup.Label>
-                  <div className='flex items-center justify-start gap-4'>
+                  <div className='flex items-center justify-start gap-4 md:gap-10'>
                     {plans.map((plan) => (
                       <RadioGroup.Option
                         key={plan.name}
@@ -204,7 +204,7 @@ const FormExercise = ({
         </div>
         {weightType === 'onerm'
           && (
-            <div className='grid grid-cols-4 gap-2'>
+            <div className='grid grid-cols-4 gap-4 md:gap-10'>
               <Input
                 className='hover:bg-gray-800'
                 type='number'
@@ -230,7 +230,7 @@ const FormExercise = ({
         {weightType === 'weight'
           && (
 
-            <div className='grid grid-cols-4 gap-2'>
+            <div className='grid grid-cols-4 gap-4 md:gap-10'>
               <Input
                 className='hover:bg-gray-800'
                 type='number'
@@ -250,7 +250,7 @@ const FormExercise = ({
           weightType === 'rpe'
           && (
 
-            <div className='grid grid-cols-4 gap-2'>
+            <div className='grid grid-cols-4 gap-4 md:gap-10'>
               <Controller
                 name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.targetRpe`}
                 control={control}
@@ -260,7 +260,7 @@ const FormExercise = ({
                   },
                 }) => (
                   <NumericFormat
-                    className='hover:bg-gray-800 flex h-10 w-full rounded-md border focus:bg-gray-700 border-gray-600 bg-gray-900 px-3 py-2 text-sm text-gray-200 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+                    className='hover:bg-gray-800 flex h-10 w-full border-b border-gray-600 bg-black px-3 py-2 text-sm text-gray-200 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
                     value={value}
                     onChange={onChange}
                     placeholder='rpe target'
@@ -270,7 +270,7 @@ const FormExercise = ({
             </div>
           )
         }
-        <div className='flex gap-2 items-center justify-between'>
+        <div className='flex gap-4 md:gap-10 items-center justify-between'>
           <Input
             className='hover:bg-gray-800'
             type='text'
