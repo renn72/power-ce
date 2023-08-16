@@ -34,7 +34,7 @@ import { NumericFormat, } from 'react-number-format'
 
 const GetWeight = ({
   week, day, exercise, lifts,
-}: { week: number, day: number, exercise: number, lifts: { lift: string, weight: string } }) => {
+}: { week: number, day: number, exercise: number, lifts: { lift: string, weight: string }[] }) => {
   const formMethods = useFormContext<Block>()
 
   const watch = formMethods.watch([
@@ -44,9 +44,6 @@ const GetWeight = ({
   ])
 
   const weight = lifts.filter((lift) => lift.lift === watch[1])[0]?.weight
-  console.log('watch', watch)
-  console.log('lifts', lifts)
-  console.log('weight', weight)
 
   if (!weight) return null
   if (!watch[0]) return null
@@ -111,7 +108,7 @@ const FormExercise = ({
 
     <div className='flex flex-col justify-center'>
       <div
-        className='text-lg p-1'
+        className='text-lg p-1 font-bold'
       >
         {exerciseIdx + 1}
       </div>
@@ -147,7 +144,7 @@ const FormExercise = ({
             placeholder='reps'
           />
         </div>
-        <div className='my-4'>
+        <div className='my-1'>
           <Controller
             control={control}
             name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`}
@@ -167,8 +164,8 @@ const FormExercise = ({
                         value={plan.value}
                         className={({
                           active, checked,
-                        }) => `${checked ? 'bg-gray-600 bg-opacity-75 text-gray-200' : 'bg-gray-200 text-gray-800'}
-                                relative flex cursor-pointer rounded-lg px-5 shadow-md focus:outline-none w-52 h-16`
+                        }) => `${checked ? 'bg-gray-600 bg-opacity-75 text-gray-200' : 'bg-gray-800 text-gray-400'}
+                                relative flex cursor-pointer rounded-lg px-5 shadow-md focus:outline-none w-52 h-10`
                         }
                       >
                         {({
@@ -180,7 +177,7 @@ const FormExercise = ({
                                 <div className='text-base tracking-tighter'>
                                   <RadioGroup.Label
                                     as='p'
-                                    className={`font-medium  ${checked ? 'text-gray-200' : 'text-gray-800'
+                                    className={`font-medium  ${checked ? 'text-gray-200' : 'text-gray-400'
                                       }`}
                                   >
                                     {plan.name}
@@ -267,13 +264,6 @@ const FormExercise = ({
                     placeholder='rpe target'
                   />
                 )}
-              />
-
-              <Input
-                className='hover:bg-gray-800'
-                type='number'
-                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.rpeTarget2`, { valueAsNumber: true, })}
-                placeholder='rpe target2'
               />
             </div>
           )

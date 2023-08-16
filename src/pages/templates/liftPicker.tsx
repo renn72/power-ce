@@ -34,7 +34,7 @@ const LiftPicker = ({ onChange,  value}: { onChange: (arg0: string) => void, val
     >
       <div className='relative h-full text-xs sm:text-sm'>
         <Listbox.Button className='relative h-full w-full border border-gray-600 cursor-default rounded-lg py-1 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300'>
-          <span className='flex items-center'>{selectedLift}</span>
+          <span className='flex items-center capitalize'>{selectedLift}</span>
           <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
             <ChevronUpDownIcon
               className='h-5 w-5 text-gray-400'

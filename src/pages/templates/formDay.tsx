@@ -73,7 +73,7 @@ const FormDay = ({
             )}
           />
         </div>
-        <ul ref={parent} className='flex flex-col gap-4 mb-2'>
+        <ul ref={parent} className='flex flex-col gap-12 mb-2'>
           {exerciseField.fields.map((item, index) => {
             return (
               <FormExercise
