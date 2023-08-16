@@ -87,7 +87,7 @@ const TemplateSelect = (
   // if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
 
   return (
-    <div className='p-2 grid grid-cols-4 sm:grid-cols-7 sm:gap-2 justify-between place-items-center sm:place-items-center text-gray-200 border-gray-500 border rounded-lg'>
+    <div className='p-2 grid grid-cols-4 sm:grid-cols-7 sm:gap-2 justify-between place-items-center text-gray-200 border-gray-600 border rounded-lg'>
       <div
         className='text-sm md:text-lg font-bold w-full rounded-lg p-2 col-span-2'>
         {capitaliseString(userFirstName)} {capitaliseString(userLastName)}
@@ -96,7 +96,7 @@ const TemplateSelect = (
         {isSet && (<CheckCircleIcon className='h-8 w-8 text-green-500' />)}
       </div>
 
-      <div className='text-xs md:text-sm font-bold place-self-start flex flex-col justify-center col-span-2 border-gray-400 border rounded-lg'>
+      <div className='text-xs md:text-sm font-bold flex flex-col justify-center col-span-2 border-gray-600 border rounded-lg'>
         <Listbox value={template} onChange={(e) => onSetLocalTemplate(e)}>
           <div className='relative z-1'>
             <Listbox.Button
@@ -116,7 +116,7 @@ const TemplateSelect = (
               leaveFrom='opacity-100'
               leaveTo='opacity-0'
             >
-              <Listbox.Options className='absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-gray-900 border-gray-400 border rounded-md py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none '>
+              <Listbox.Options className='absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-gray-900 border-gray-600 border rounded-md py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none '>
                 {blocksTitle?.map((templateName, Idx) => (
                   <Listbox.Option
                     key={Idx}

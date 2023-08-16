@@ -43,7 +43,9 @@ const GetWeight = ({
     `week.${week}.day.${day}.exercise.${exercise}.onermTop`,
   ])
 
-  const weight = lifts.filter((lift) => lift.lift === watch[1])[0]?.weight
+
+
+  const weight = lifts?.filter((lift) => lift.lift === watch[1])[0]?.weight
 
   if (!weight) return null
   if (!watch[0]) return null

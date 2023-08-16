@@ -161,6 +161,8 @@ export const blocksRouter = createTRPCRouter({
                   reps: exercise.reps,
                   onerm: exercise.onerm,
                   onermTop: exercise.onermTop,
+                  weightTop: exercise.weightTop,
+                  weightBottom: exercise.weightBottom,
                   notes: exercise?.notes,
                   targetRpe: exercise.targetRpe,
                   isEstimatedOnerm: exercise.isEstimatedOnerm,
