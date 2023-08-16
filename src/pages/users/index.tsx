@@ -124,7 +124,7 @@ const Users: NextPage = () => {
         <main >
           <div className='mx-auto max-w-6xl py-6 sm:px-6 lg:px-8 flex flex-col gap-8'>
             <div className='flex flex-col gap-4  m-2 p-4'>
-              <div className='text-xl font-bold text-gray-200'>Trainers</div>
+              <div className='text-xl font-bold'>Trainers</div>
               <div className='flex flex-col gap-8'>
                 {allUsers?.admins?.map((user) => (
                   <div
@@ -143,7 +143,7 @@ const Users: NextPage = () => {
                       {({ open, }) => (
                         <div className='flex flex-col gap-8 border border-gray-600 min-w-full p-2 rounded-xl'>
                           <div className='flex flex-col sm:flex-row justify-between items-center gap-6'>
-                            <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-base sm:text-lg hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
+                            <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-base sm:text-lg hover:bg-yellow-400 hover:text-black'>
                               <span>One Rep Maxes</span>
                               <ChevronUpIcon
                                 className={`${open ? 'rotate-180 transform' : ''
@@ -172,7 +172,7 @@ const Users: NextPage = () => {
                       {({ open, }) => (
                         <div className='flex flex-col gap-8 border border-gray-600 min-w-full p-2 rounded-xl'>
                           <div className='flex flex-col sm:flex-row justify-between items-center gap-6'>
-                            <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-base sm:text-lg hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
+                            <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-base sm:text-lg hover:bg-yellow-400 hover:text-black'>
                               <span>Program</span>
                               <ChevronUpIcon
                                 className={`${open ? 'rotate-180 transform' : ''
@@ -222,7 +222,7 @@ const Users: NextPage = () => {
                       {({ open, }) => (
                         <div className='flex flex-col gap-8 border border-gray-600 min-w-full p-2 rounded-xl'>
                           <div className='flex flex-col sm:flex-row justify-between items-center gap-6'>
-                            <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-base sm:text-lg hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
+                            <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-base sm:text-lg hover:bg-yellow-400 hover:text-black'>
                               <span>One Rep Maxes</span>
                               <ChevronUpIcon
                                 className={`${open ? 'rotate-180 transform' : ''
@@ -251,7 +251,7 @@ const Users: NextPage = () => {
                       {({ open, }) => (
                         <div className='flex flex-col gap-8 border border-gray-600 min-w-full p-2 rounded-xl'>
                           <div className='flex flex-col sm:flex-row justify-between items-center gap-6'>
-                            <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-base sm:text-lg hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'>
+                            <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-base sm:text-lg hover:bg-yellow-400 hover:text-black'>
                               <span>Program</span>
                               <ChevronUpIcon
                                 className={`${open ? 'rotate-180 transform' : ''

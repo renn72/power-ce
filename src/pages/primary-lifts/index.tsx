@@ -46,6 +46,7 @@ const PrimaryLifts: NextPage = () => {
 
   const onAdd = () => {
     console.log('onAdd')
+    if (!value || value == '') return
     addPrimaryLift({ name: value.trim().toLowerCase(), })
     setValue('')
   }
@@ -66,7 +67,7 @@ const PrimaryLifts: NextPage = () => {
   return (
     <>
       <div
-        className='h-full flex flex-col gap-8 max-w-lg my-10 mx-auto text-gray-300 font-semibold px-2'
+        className='h-full flex flex-col gap-8 max-w-lg my-10 mx-auto font-medium px-2 tracking-wider'
       >
         <div className='flex gap-4'>
           <Input value={value} onChange={(e) => setValue(e.target.value)} />
@@ -85,14 +86,14 @@ const PrimaryLifts: NextPage = () => {
                 className='flex justify-between items-center gap-8'
               >
                 <div
-                  className='capitalize text-xl font-bold text-gray-200'
+                  className='capitalize text-2xl'
                 >{primaryLift.name}</div>
                   {
                     !defaultLifts.includes(primaryLift.name) &&
                     (
 
                 <div
-                  className='text-xl font-bold text-gray-200 cursor-pointer'
+                  className='text-xl font-bold cursor-pointer'
                   onClick={() => onDelete(primaryLift.id)}
                 >
                   X

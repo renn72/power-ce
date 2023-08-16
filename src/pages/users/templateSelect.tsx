@@ -87,25 +87,25 @@ const TemplateSelect = (
   // if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
 
   return (
-    <div className='p-2 grid grid-cols-4 sm:grid-cols-7 sm:gap-2 justify-between place-items-center text-gray-200 border-gray-600 border rounded-lg'>
+    <div className='p-2 grid grid-cols-5 sm:grid-cols-7 sm:gap-2 justify-between place-items-center border-gray-600 border rounded-lg'>
       <div
-        className='text-sm md:text-lg font-bold w-full rounded-lg p-2 col-span-2'>
+        className='text-base md:text-lg font-bold w-full rounded-lg p-2 col-span-2'>
         {capitaliseString(userFirstName)} {capitaliseString(userLastName)}
       </div>
       <div className='flex justify-center col-span-2 sm:col-span-1'>
-        {isSet && (<CheckCircleIcon className='h-8 w-8 text-green-500' />)}
+        {isSet && (<CheckCircleIcon className='h-8 w-8 text-yellow-400' />)}
       </div>
 
-      <div className='text-xs md:text-sm font-bold flex flex-col justify-center col-span-2 border-gray-600 border rounded-lg'>
+      <div className='text-sm md:text-base font-bold flex flex-col justify-center col-span-3 sm:col-span-2 border-gray-600 border rounded-lg'>
         <Listbox value={template} onChange={(e) => onSetLocalTemplate(e)}>
           <div className='relative z-1'>
             <Listbox.Button
-              className='relative w-32 sm:w-48 cursor-default rounded-lg  max-h-min h-10 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300'
+              className='relative w-44 sm:w-64 cursor-default rounded-lg  max-h-min h-10 py-2 pl-3 pr-10 text-left shadow-md '
             >
               <span className='block truncate'>{template}</span>
               <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
                 <ChevronUpDownIcon
-                  className='h-5 w-5 text-gray-400'
+                  className='h-5 w-5'
                   aria-hidden='true'
                 />
               </span>
@@ -116,11 +116,11 @@ const TemplateSelect = (
               leaveFrom='opacity-100'
               leaveTo='opacity-0'
             >
-              <Listbox.Options className='absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-gray-900 border-gray-600 border rounded-md py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none '>
+              <Listbox.Options className='absolute z-10 mt-1 max-h-120 w-full overflow-auto bg-black border-gray-600 border rounded-md py-1 shadow-lg '>
                 {blocksTitle?.map((templateName, Idx) => (
                   <Listbox.Option
                     key={Idx}
-                    className={({ active, }) => `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-gray-200 text-gray-900' : 'text-gray-200'
+                    className={({ active, }) => `relative cursor-default select-none py-2 pl-8 pr-4 ${active ? 'bg-yellow-400 text-black' : 'text-gray-200'
                       }`
                     }
                     value={templateName}
@@ -134,7 +134,7 @@ const TemplateSelect = (
                         </span>
                         {selected
                           ? (
-                            <span className='absolute inset-y-0 left-0 flex items-center pl-3 text-gray-200'>
+                            <span className='absolute inset-y-0 left-0 flex items-center pl-1'>
                               <CheckIcon className='h-5 w-5' aria-hidden='true' />
                             </span>
                           )
@@ -149,11 +149,11 @@ const TemplateSelect = (
         </Listbox>
       </div>
       <PencilSquareIcon
-        className='text-gray-400 hover:text-gray-100 h-12 w-12 p-2 place-self-end'
+        className='text-gray-400 hover:text-yellow-400 h-12 w-12 p-2 place-self-end col-span-1'
         onClick={() => onSetTemplateWrapper(template, userId)}
       />
       <XCircleIcon
-        className='text-gray-400 hover:text-gray-100 h-12 w-12 p-2'
+        className='text-gray-400 hover:text-yellow-400 h-12 w-12 p-2 col-span-1'
         onClick={() => onClearTemplate(userId)}
       />
     </div>

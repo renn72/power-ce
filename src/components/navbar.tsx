@@ -23,12 +23,12 @@ const navigation = [
   {
     name: 'Templates', href: '/templates',
   },
-  {
-    name: 'Lift', href: '/lift',
-  },
-  {
-    name: "PB's", href: '/pbs',
-  },
+  // {
+  //   name: 'Lift', href: '/lift',
+  // },
+  // {
+  //   name: "PB's", href: '/pbs',
+  // },
 ]
 
 const classNames = (...classes: string[]) => {
