@@ -15,13 +15,13 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <main className='h-full flex flex-col text-gray-300 font-semibold px-2'>
+      <main className='h-full flex flex-col font-semibold px-2'>
         <div className='w-full md:mx-auto max-w-screen-2xl  flex flex-col py-6 sm:px-6 lg:px-8'>
           {/* <OneRMCard /> */}
 
           <div className='grid mt-6'>
-            <div className='text-gray-300'>
-              <h2 className='text-xl font-bold text-gray-200'>Active Program</h2>
+            <div className=''>
+              <h2 className='text-xl font-bold'>Active Program</h2>
               {
                 userPrograms
                 && userPrograms
@@ -33,8 +33,8 @@ const Home: NextPage = () => {
                   ))
               }
             </div>
-            <div className='text-gray-300 mt-10'>
-              <h2 className='text-xl font-bold text-gray-200'>Old Programs</h2>
+            <div className='mt-10'>
+              <h2 className='text-xl font-bold'>Old Programs</h2>
               {
                 userPrograms
                 && userPrograms

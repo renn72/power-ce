@@ -8,6 +8,7 @@ import { Disclosure, } from '@headlessui/react'
 import {
   Bars3Icon, XMarkIcon, FingerPrintIcon,
 } from '@heroicons/react/24/outline'
+import Image from 'next/image'
 
 const navigation = [
   {
@@ -37,7 +38,7 @@ const Navbar = () => {
   const router = useRouter()
   return (
     <>
-      <Disclosure as='nav' className='bg-gray-900 font-semibold tracking-wider text-gray-400'>
+      <Disclosure as='nav' className='bg-black font-semibold tracking-wider text-gray-200'>
         {({ open, }) => (
           <>
             <div className='mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8'>
@@ -45,7 +46,12 @@ const Navbar = () => {
                 <div className='flex items-center'>
                   <div className='flex-shrink-0'>
                     <Link href='/'>
-                      <FingerPrintIcon className='h-8 w-8 md:h-8 md:w-8 text-indigo-300' aria-hidden='true' />
+                      <Image  
+                        src='/ce.png'
+                        alt='logo'
+                        width={50}
+                        height={50}
+                      />
                     </Link>
                   </div>
                   <div className='hidden md:block'>
@@ -56,8 +62,8 @@ const Navbar = () => {
                           href={item.href}
                           className={classNames(
                             item.href === router.pathname
-                              ? 'bg-gray-900 text-white'
-                              : 'text-gray-400 hover:bg-gray-700 hover:text-white',
+                              ? 'bg-yellow-400 text-black'
+                              : 'text-gray-200 hover:bg-gray-800 hover:text-white',
                             'rounded-md px-3 py-2 text-lg'
                           )}
                           aria-current={item.href === router.pathname ? 'page' : undefined}
@@ -73,12 +79,12 @@ const Navbar = () => {
                     <UserButton />
                   </div>
                 </div>
-                <div className='flex text-lg md:hidden text-white'>
+                <div className='flex text-lg md:hidden text-gray-200'>
                   {navigation.filter((item) => item.href === router.pathname)[0]?.name}
                 </div>
                 <div className='flex gap-4 md:hidden'>
                   {/* Mobile menu button */}
-                  <Disclosure.Button className='inline-flex items-center mr-2 justify-center rounded-md bg-gray-800 p-0 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800'>
+                  <Disclosure.Button className='inline-flex items-center mr-2 justify-center rounded-md p-0'>
                     <span className='sr-only'>Open main menu</span>
                     {open
                       ? (
@@ -103,17 +109,13 @@ const Navbar = () => {
                     as='a'
                     href={item.href}
                     className={classNames(
-                      item.href === router.pathname ? 'bg-gray-900 text-white' : 'text-gray-400 hover:bg-gray-700 hover:text-white',
+                      item.href === router.pathname ? 'bg-yellow-400 text-black' : 'hover:bg-gray-800',
                       'block rounded-md px-3 py-2 text-base'
                     )}
                   >
                     {item.name}
                   </Disclosure.Button>
                 ))}
-              </div>
-              <div className='border-t border-gray-700 pb-3 pt-4'>
-                <div className='p-4 ml-4 text-gray-100 flex justify-end items-center md:ml-6'>
-                </div>
               </div>
             </Disclosure.Panel>
           </>
