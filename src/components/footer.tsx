@@ -7,6 +7,8 @@ import DealoadModal from './deloadModal'
 import {
   rmModalIsOpenAtom, rpeModalIsOpenAtom, deloadModalIsOpenAtom,
 } from '~/store/store'
+import Image from 'next/image'
+import Link from 'next/link'
 
 const Footer = () => {
   const [, setRmModalIsOpen,] = useAtom(rmModalIsOpenAtom)
@@ -14,8 +16,15 @@ const Footer = () => {
   const [, setDeloadModalIsOpen,] = useAtom(deloadModalIsOpenAtom)
   return (
     <>
-      <div className='bg-gray-800 p-2 md:p-4 px-6 flex justify-between items-center'>
-        <FingerPrintIcon className='h-6 w-6 md:h-8 md:w-8 text-indigo-300' aria-hidden='true' />
+      <div className='px-4 sm:px-6 lg:px-8 py-2 flex justify-between items-center'>
+        <Link href='/'>
+          <Image
+            src='/ce.png'
+            alt='logo'
+            width={50}
+            height={50}
+          />
+        </Link>
         <div className='flex gap-2 text-sm md:text-lg font-bold text-gray-400'>
           <button
             className='bg-transparent hover:bg-gray-400 bg-gray-800 font-semibold hover:text-white w-10 h-10 md:w-12 md:h-12 border-2 border-gray-400 hover:border-transparent rounded-full'

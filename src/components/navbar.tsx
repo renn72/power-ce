@@ -41,8 +41,8 @@ const Navbar = () => {
       <Disclosure as='nav' className='bg-black font-semibold tracking-wider text-gray-200'>
         {({ open, }) => (
           <>
-            <div className='mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8'>
-              <div className='flex p-2 md:p-4 items-center justify-between'>
+            <div className='px-4 sm:px-6 lg:px-8 py-2 md:py-4'>
+              <div className='flex items-center justify-between'>
                 <div className='flex items-center'>
                   <div className='flex-shrink-0'>
                     <Link href='/'>
