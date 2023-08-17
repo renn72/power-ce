@@ -21,7 +21,7 @@ layout {
       pane split_direction="horizontal" {
         pane  {
           command "npx" 
-          args "prisma" "studio"
+          args "prisma" "studio" "-b" "none"
           start_suspended true
           size "20%"
         }

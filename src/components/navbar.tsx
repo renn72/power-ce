@@ -62,9 +62,9 @@ const Navbar = () => {
                           href={item.href}
                           className={classNames(
                             item.href === router.pathname
-                              ? 'bg-yellow-400 text-black'
-                              : 'text-gray-200 hover:bg-gray-800 hover:text-white',
-                            'rounded-md px-3 py-2 text-lg'
+                              ? 'border-b-yellow-400 border-b'
+                              : 'text-gray-200 hover:border-b hover:border-gray-600',
+                            'px-3 py-2 text-lg'
                           )}
                           aria-current={item.href === router.pathname ? 'page' : undefined}
                         >
