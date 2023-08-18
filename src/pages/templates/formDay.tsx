@@ -29,7 +29,6 @@ const FormDay = ({
     name: `week.${weekIdx}.day.${dayIdx}.exercise`,
   })
 
-
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const isRest = watch(`week.${weekIdx}.day.${dayIdx}.isRestDay`)
 
@@ -44,18 +43,17 @@ const FormDay = ({
   return (
     <>
       <div className='flex flex-col justify-center items-stretch gap-2'>
-        <div className='flex justify-start items-center sm:gap-4 mb-2'>
-          <label>rest day</label>
-          <Controller
-            control={control}
-            name={`week.${weekIdx}.day.${dayIdx}.isRestDay`}
-            defaultValue={false}
-            render={({
-              field: {
-                onChange, value,
-              },
-            }) => (
-
+        <Controller
+          control={control}
+          name={`week.${weekIdx}.day.${dayIdx}.isRestDay`}
+          defaultValue={false}
+          render={({
+            field: {
+              onChange, value,
+            },
+          }) => (
+            <div className='flex text-lg text-gray-600 justify-start items-center sm:gap-6 mb-2'>
+              <label className={value ? `text-gray-200 scale-110` : ``}>Rest Day</label>
               <Switch
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 checked={value}
@@ -70,9 +68,9 @@ const FormDay = ({
             pointer-events-none inline-block h-[14px] w-[24px] sm:h-[24px] sm:w-[34px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out`}
                 />
               </Switch>
-            )}
-          />
-        </div>
+            </div>
+          )}
+        />
         <ul ref={parent} className='flex flex-col gap-12 mb-2'>
           {exerciseField.fields.map((item, index) => {
             return (
@@ -88,17 +86,19 @@ const FormDay = ({
         <div className='flex gap-2 mx-auto'>
           <Button
             type='button'
-            className='border-0'
+            className='border-0 text-gray-200'
+            disabled={isRest}
             onClick={() => exerciseField.append({})}
           >
-            <PlusCircleIcon className='w-8 h-8 hover:scale-110' />
+            <PlusCircleIcon className={isRest ? `w-10 h-10` : `w-10 h-10 hover:scale-110`} />
           </Button>
           <Button
             type='button'
-            className='border-0'
+            className='border-0 text-gray-200'
+            disabled={isRest}
             onClick={() => exerciseField.remove(exerciseField.fields.length - 1)}
           >
-            <MinusCircleIcon className='w-8 h-8 hover:scale-90' />
+            <MinusCircleIcon className={isRest ? `w-10 h-10` : `w-10 h-10 hover:scale-110`}/>
           </Button>
         </div>
 

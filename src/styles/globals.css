@@ -6,6 +6,7 @@
 
 @layer base {
   :root {
+    --t-yellow: 45.5 100% 50%;
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
  

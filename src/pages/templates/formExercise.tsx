@@ -110,7 +110,7 @@ const FormExercise = ({
 
     <div className='flex flex-col justify-center'>
       <div
-        className='text-lg p-1 font-bold'
+        className='text-xl p-1 font-extrabold'
       >
         {exerciseIdx + 1}
       </div>
@@ -129,7 +129,7 @@ const FormExercise = ({
             />
           </div>
           <Input
-            className='focus:border-white'
+            className=''
             {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`,)}
             placeholder='name'
           />

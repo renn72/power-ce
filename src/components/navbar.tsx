@@ -23,6 +23,9 @@ const navigation = [
   {
     name: 'Templates', href: '/templates',
   },
+  {
+    name: 'Templates-2', href: '/templates2',
+  },
   // {
   //   name: 'Lift', href: '/lift',
   // },

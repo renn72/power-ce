@@ -19,7 +19,7 @@ import { Input, } from '@/components/ui/input'
 import { useAutoAnimate, } from '@formkit/auto-animate/react'
 
 import {
-  Disclosure, Transition,
+  Disclosure, Transition, Tab,
 } from '@headlessui/react'
 import { ChevronUpIcon, } from '@heroicons/react/20/solid'
 
@@ -32,7 +32,9 @@ import {
   type BlockData, type WeekData,
 } from '~/store/types'
 
-import { getRandomInt, } from '~/utils/utils'
+import {
+  getRandomInt, classNames,
+} from '~/utils/utils'
 import WeekTemplateSelect from './weekTemplateSelect'
 
 export const selectedTemplateAtom = atom('')
@@ -296,11 +298,44 @@ const Form = () => {
                   />
                 </div>
 
-                <div className='flex flex-col w-full gap-10 sm:gap-12 divide-y divide-yellow-400'>
-                  {
-                    weekField.fields.map((week, weekIdx) => (
-                      <FormWeekData key={week.id} weekIdx={weekIdx} />
-                    ))}
+                <div className='flex flex-col w-full gap-2 '>
+                  <Tab.Group >
+                    <Tab.List className='flex gap-8 justify-start text-xl'>
+                      {weekField.fields.map((item, index) => {
+                        return (
+                          <Tab
+                            key={item.id}
+                            className={({ selected, }) => classNames(
+                              'py-1.5 px-6 mx-1 border-b border-transparent',
+                              'focus:outline-none',
+                              selected
+                                ? 'border-yellow-400 border-b shadow text-bold'
+                                : 'hover:border-b hover:border-gray-400 font-normal',
+                            )
+                            }
+                          >
+                            {`Week ${index + 1}`}
+                          </Tab>
+                        )
+                      })}
+                    </Tab.List>
+                    <Tab.Panels className='mt-4'>
+                      {weekField.fields.map((item, index) => {
+                        return (
+                          <Tab.Panel
+                            key={item.id}
+                            className={classNames(
+                              'rounded-xl',
+                              ''
+                            )}
+                          >
+                            <FormWeekData weekIdx={index} />
+                          </Tab.Panel>
+                        )
+                      })}
+
+                    </Tab.Panels>
+                  </Tab.Group>
 
                   <div className='flex gap-2 items-center justify-center pt-12'>
                     <Button type='button' className='w-fit px-6 md:px-12' onClick={() => onAddWeek()}>Add Week</Button>

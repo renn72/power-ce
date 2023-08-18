@@ -19,21 +19,21 @@ const FormWeek = ({ weekIdx, }: { weekIdx: number }) => {
   return (
     <>
       <Tab.Group >
-        <Tab.List className='flex rounded-xl p-1 border border-gray-600'>
+        <Tab.List className='flex gap-8 justify-start text-lg '>
           {dayField.fields.map((item, index) => {
             return (
               <Tab
                 key={item.id}
                 className={({ selected, }) => classNames(
-                  'w-full text-gray-400 rounded-lg py-2.5 leading-5 mx-1',
-                  'ring-white ring-opacity-60 ring-offset-2 ring-offset-gray-400 focus:outline-none focus:ring-2',
+                  'py-1.5 w-full px-6 mx-1 border-b border-transparent',
+                  'focus:outline-none',
                   selected
-                    ? 'bg-gray-300 shadow text-gray-900 text-bold'
-                    : 'text-blue-100 hover:bg-white/[0.07] hover:text-white'
+                    ? 'border-yellow-400 border-b shadow text-bold'
+                    : 'hover:border-b hover:border-gray-400 font-normal'
                 )
                 }
               >
-                {`day ${index + 1}`}
+                {`Day ${index + 1}`}
               </Tab>
             )
           })}

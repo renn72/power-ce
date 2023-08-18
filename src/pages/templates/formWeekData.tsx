@@ -124,71 +124,51 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
 
   return (
     <>
-      <Disclosure defaultOpen={false} >
-        {({ open, }) => (
-          <div className='flex flex-col gap-8 min-w-full pt-12'>
-            <div className='flex flex-col sm:flex-row justify-between items-center gap-6'>
-              <Disclosure.Button className='flex justify-between items-center gap-2 px-7 py-2 text-left text-base sm:text-xl hover:text-yellow-400 hover:scale-105 focus:outline-none'>
-                <span>{`Week ${weekIdx + 1}`}</span>
-                <ChevronUpIcon
-                  className={`${open ? 'rotate-180 transform' : ''
-                    } h-8 w-8 text-gray-400`}
-                />
-              </Disclosure.Button>
-              <div className='flex gap-2'>
-                <div className='relative flex flex-col gap-2'>
-                  <Input
-                    className='text-xs sm:text-sm'
-                    placeholder='Week Name'
-                    defaultValue={``}
-                    {...register(`week.${weekIdx}.name`,)}
-                    onChange={() => clearErrors(`week.${weekIdx}.name`)}
-                  />
-                  <div className='absolute top-12'>
-                    <ErrorMessage
-                      errors={errors}
-                      name={`week.${weekIdx}.name`}
-                      render={({ message, }) => <p className='text-red-400'>{message}</p>}
-                    />
-                  </div>
-                </div>
-                <Button
-                  type='button'
-                  className='text-xs sm:text-sm'
-                  onClick={() => onSaveWeekAsTemplate(weekIdx)}
-                >
-                  Save
-                </Button>
-                <WeekTemplateSelect
-                  onSelectWeekTemplate={onSelectWeekTemplate}
-                  selectedWeekTemplate={selectedWeekTemplate}
-
-                />
-                <Button
-                  type='button'
-                  className='text-xs sm:text-sm'
-                  onClick={() => onLoadWeekTemplate(weekIdx)}
-                >
-                  Load
-                </Button>
-
-              </div>
+      <div className='flex flex-col gap-6'>
+        <div className='flex gap-2'>
+          <div className='relative flex flex-col gap-2'>
+            <Input
+              className='text-xs sm:text-sm'
+              placeholder='Week Name'
+              defaultValue={``}
+              {...register(`week.${weekIdx}.name`,)}
+              onChange={() => clearErrors(`week.${weekIdx}.name`)}
+            />
+            <div className='absolute top-12'>
+              <ErrorMessage
+                errors={errors}
+                name={`week.${weekIdx}.name`}
+                render={({ message, }) => <p className='text-red-400'>{message}</p>}
+              />
             </div>
-
-            <Transition
-              className='transition-all duration-300 ease-out'
-              enterFrom='transform scale-70 opacity-0'
-              enterTo='transform scale-100 opacity-100'
-              leaveFrom='transform scale-100 opacity-100'
-              leaveTo='transform scale-70 opacity-0'
-            >
-              <Disclosure.Panel>
-                <FormWeek weekIdx={weekIdx} />
-              </Disclosure.Panel>
-            </Transition>
           </div>
-        )}
-      </Disclosure>
+          <Button
+            type='button'
+            className='text-xs sm:text-sm'
+            onClick={() => onSaveWeekAsTemplate(weekIdx)}
+          >
+            Save
+          </Button>
+          <WeekTemplateSelect
+            onSelectWeekTemplate={onSelectWeekTemplate}
+            selectedWeekTemplate={selectedWeekTemplate}
+
+          />
+          <Button
+            type='button'
+            className='text-xs sm:text-sm'
+            onClick={() => onLoadWeekTemplate(weekIdx)}
+          >
+            Load
+          </Button>
+
+        </div>
+        <div
+          className='md:px-6'
+        >
+          <FormWeek weekIdx={weekIdx} />
+        </div>
+      </div>
     </>
   )
 }
