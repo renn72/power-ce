@@ -5,6 +5,7 @@ import {
 import {
   PlusCircleIcon,
   MinusCircleIcon,
+  CogIcon,
 } from '@heroicons/react/24/outline'
 
 import { Button, } from '@/components/ui/button'
@@ -71,15 +72,17 @@ const FormDay = ({
             </div>
           )}
         />
-        <ul ref={parent} className='flex flex-col gap-12 mb-2'>
+        <ul ref={parent} className='flex flex-col gap-12 mb-12'>
           {exerciseField.fields.map((item, index) => {
             return (
-              <FormExercise
-                key={item.id}
-                weekIdx={weekIdx}
-                dayIdx={dayIdx}
-                exerciseIdx={index}
-              />
+              <li key={item.id}>
+                <FormExercise
+                  weekIdx={weekIdx}
+                  dayIdx={dayIdx}
+                  exerciseIdx={index}
+                />
+                <CogIcon className='w-6 h-6 mx-auto text-gray-600 mt-12' />
+              </li>
             )
           })}
         </ul>
@@ -98,7 +101,7 @@ const FormDay = ({
             disabled={isRest}
             onClick={() => exerciseField.remove(exerciseField.fields.length - 1)}
           >
-            <MinusCircleIcon className={isRest ? `w-10 h-10` : `w-10 h-10 hover:scale-110`}/>
+            <MinusCircleIcon className={isRest ? `w-10 h-10` : `w-10 h-10 hover:scale-110`} />
           </Button>
         </div>
 

@@ -43,8 +43,6 @@ const GetWeight = ({
     `week.${week}.day.${day}.exercise.${exercise}.onermTop`,
   ])
 
-
-
   const weight = lifts?.filter((lift) => lift.lift === watch[1])[0]?.weight
 
   if (!weight) return null
@@ -52,7 +50,7 @@ const GetWeight = ({
 
   const res = getWeight(+watch[0], +weight)
 
-  if (!watch[2]) return (<div>{res}kg</div>) 
+  if (!watch[2]) return (<div>{res}kg</div>)
 
   const res2 = getWeight(+watch[2], +weight)
 
@@ -114,7 +112,7 @@ const FormExercise = ({
       >
         {exerciseIdx + 1}
       </div>
-      <li className='flex flex-col gap-2'>
+      <div className='flex flex-col gap-2'>
         <div className='grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-10'>
           <div className='flex flex-col justify-center'>
             <Controller
@@ -144,7 +142,7 @@ const FormExercise = ({
             placeholder='reps'
           />
         </div>
-        <div className='my-1'>
+        <div className='my-1 grid grid-cols-2 gap-4 md:gap-10'>
           <Controller
             control={control}
             name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`}
@@ -164,7 +162,7 @@ const FormExercise = ({
                         value={plan.value}
                         className={({
                           active, checked,
-                        }) => `${checked ? 'bg-gray-600 bg-opacity-75 text-gray-200' : 'bg-gray-800 text-gray-400'}
+                        }) => `${checked ? 'bg-gray-600 bg-opacity-75 text-gray-200' : 'bg-black text-gray-400'}
                                 relative flex cursor-pointer rounded-lg px-5 shadow-md focus:outline-none w-52 h-10`
                         }
                       >
@@ -199,71 +197,63 @@ const FormExercise = ({
               </div>
             )}
           />
-        </div>
-        {weightType === 'onerm'
-          && (
-            <div className='grid grid-cols-4 gap-4 md:gap-10'>
-              <Input
-                type='number'
-                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, { valueAsNumber: true, })}
-                placeholder='1rm percent'
-              />
-              <Input
-                type='number'
-                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onermTop`, { valueAsNumber: true, })}
-                placeholder='1rm percent top'
-              />
-              <div className='text-sm flex flex-col items-center justify-center'>
-                <GetWeight
-                  week={weekIdx}
-                  day={dayIdx}
-                  exercise={exerciseIdx}
-                  lifts={userLifts}
+          {weightType === 'onerm'
+            && (
+              <div className='grid grid-cols-2 gap-4 md:gap-10'>
+                <Input
+                  type='number'
+                  {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, { valueAsNumber: true, })}
+                  placeholder='1rm percent'
+                />
+                <Input
+                  type='number'
+                  {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onermTop`, { valueAsNumber: true, })}
+                  placeholder='1rm percent top'
                 />
               </div>
-            </div>
-          )}
-        {weightType === 'weight'
-          && (
+            )}
+          {weightType === 'weight'
+            && (
 
-            <div className='grid grid-cols-4 gap-4 md:gap-10'>
-              <Input
-                type='number'
-                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightBottom`, { valueAsNumber: true, })}
-                placeholder='weight bottom'
-              />
-              <Input
-                type='number'
-                {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightTop`, { valueAsNumber: true, })}
-                placeholder='weight top'
-              />
-            </div>
-          )
-        }
-        {
-          weightType === 'rpe'
-          && (
+              <div className='grid grid-cols-2 gap-4 md:gap-10'>
+                <Input
+                  type='number'
+                  {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightBottom`, { valueAsNumber: true, })}
+                  placeholder='weight bottom'
+                />
+                <Input
+                  type='number'
+                  {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightTop`, { valueAsNumber: true, })}
+                  placeholder='weight top'
+                />
+              </div>
+            )
+          }
+          {
+            weightType === 'rpe'
+            && (
 
-            <div className='grid grid-cols-4 gap-4 md:gap-10'>
-              <Controller
-                name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.targetRpe`}
-                control={control}
-                render={({
-                  field: {
-                    onChange, value,
-                  },
-                }) => (
-                  <NumericFormat
-                    className=' flex h-10 w-full border-b border-gray-600 bg-black px-3 py-2 text-sm text-gray-200 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50'
-                    value={value}
-                    onChange={onChange}
-                    placeholder='rpe target'
-                  />
-                )}
-              />
-            </div>
-          )
-        }
+              <div className='grid grid-cols-2 gap-4 md:gap-10'>
+                <Controller
+                  name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.targetRpe`}
+                  control={control}
+                  render={({
+                    field: {
+                      onChange, value,
+                    },
+                  }) => (
+                    <NumericFormat
+                      className=' flex h-10 w-full border-b border-gray-600 bg-black px-3 py-2 text-sm text-gray-200 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50'
+                      value={value}
+                      onChange={onChange}
+                      placeholder='rpe target'
+                    />
+                  )}
+                />
+              </div>
+            )
+          }
+        </div>
         <div className='flex gap-4 md:gap-10 items-center justify-between'>
           <Input
             type='text'
@@ -285,8 +275,8 @@ const FormExercise = ({
                   value={value}
                   onChange={onChange}
                 >
-                  <div className='relative text-xs sm:text-sm w-24 h-10'>
-                    <Listbox.Button className='relative h-full w-full border border-gray-600 cursor-default rounded-lg py-1 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300'>
+                  <div className='relative text-xs sm:text-sm w-24'>
+                    <Listbox.Button className='relative w-full border-b border-gray-600 cursor-default py-2 pl-3 pr-10 text-left shadow-md focus:outline-none '>
                       <span className={value ? `flex items-center` : `flex items-center text-gray-400`}>{value || 'e1rm'}</span>
                       <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
                         <ChevronUpDownIcon
@@ -301,7 +291,7 @@ const FormExercise = ({
                       leaveFrom='opacity-100'
                       leaveTo='opacity-0'
                     >
-                      <Listbox.Options className='absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-md bg-gray-900 border border-gray-600 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
+                      <Listbox.Options className='absolute z-20 mt-1 max-h-160 w-full border border-gray-600 overflow-auto bg-black py-1 '>
                         {exerciseField?.fields?.map((_, idx) => (
                           <Listbox.Option
                             key={idx}
@@ -342,7 +332,7 @@ const FormExercise = ({
           />
 
         </div>
-      </li>
+      </div>
     </div>
   )
 }

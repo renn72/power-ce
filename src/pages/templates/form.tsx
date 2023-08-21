@@ -152,6 +152,43 @@ const Form = () => {
 
   const updateBlock = (data: Block) => {
     console.log('updateBlock', data)
+    console.log('blockId', blockId)
+    const block: BlockData = {
+      name: data.name,
+      id: blockId,
+      isProgram: false,
+      week: data.week.map(
+        (week) => ({
+          name: week.name || '',
+          isTemplate: false,
+          day: week.day.map(
+            (day) => ({
+              isRestDay: day.isRestDay,
+              exercise: day.exercise.map(
+                (exercise) => ({
+                  name: exercise.name,
+                  lift: exercise.lift,
+                  onerm: exercise.onerm ? +exercise.onerm : null,
+                  onermTop: exercise.onermTop ? +exercise.onermTop : null,
+                  weightTop: exercise.weightTop ? +exercise.weightTop : null,
+                  weightBottom: exercise.weightBottom ? +exercise.weightBottom : null,
+                  targetRpe: exercise.targetRpe ? +exercise.targetRpe : null,
+                  sets: exercise.sets ? +exercise.sets : null,
+                  reps: exercise.reps ? +exercise.reps : null,
+                  notes: exercise.notes,
+                  isEstimatedOnerm: exercise.isEstimatedOnerm || false,
+                  estimatedOnermIndex: exercise.estimatedOnermIndex,
+                  weightType: exercise.weightType,
+
+                })
+              ),
+            })
+          ),
+        })
+      ),
+    }
+
+    blockUpdateMutate(block)
   }
 
   const onError = (errors, e) => {
@@ -280,6 +317,20 @@ const Form = () => {
                   >
                     Load
                   </Button>
+                  <Button
+                    type='submit'
+                    className='text-sm sm:text-xl tracking-tighter sm:tracking-normal'
+                    onClick={() => setIsUpdate(false)}
+                  >
+                    Save New
+                  </Button>
+                  <Button
+                    type='submit'
+                    className='text-sm sm:text-xl tracking-tighter sm:tracking-normal'
+                    onClick={() => setIsUpdate(true)}
+                  >
+                    Update
+                  </Button>
                 </div>
 
                 {/* Title */}
@@ -344,20 +395,6 @@ const Form = () => {
                 </div>
               </div>
               <div className='flex gap-4 justify-center'>
-                <button
-                  type='submit'
-                  className='rounded-lg py-2 px-4 bg-white text-gray-600'
-                  onClick={() => setIsUpdate(false)}
-                >
-                  save new
-                </button>
-                <button
-                  type='submit'
-                  className='rounded-lg py-2 px-4 bg-white text-gray-600'
-                  onClick={() => setIsUpdate(true)}
-                >
-                  update
-                </button>
               </div>
             </div>
           </form>
