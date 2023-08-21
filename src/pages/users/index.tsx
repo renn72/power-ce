@@ -15,6 +15,84 @@ import { Button, } from '@/components/ui/button'
 
 import ProgramView from './programView'
 
+const UserDisclosure = ({
+  userId, isOneRM,
+}: { userId: string, isOneRM: boolean }) => (
+  <Disclosure defaultOpen={false} >
+    {({ open, }) => (
+      <div className='flex flex-col gap-8 min-w-full p-2'>
+        <div className='flex flex-col sm:flex-row justify-between items-center gap-6'>
+          <Disclosure.Button className={`${open ? 'border-b border-yellow-500' : 'hover:border-white border-b border-black'} flex justify-between items-center gap-2 px-4 py-2 text-left text-base sm:text-lg `}>
+            <span>{isOneRM ? 'One Rep Maxes' : 'Program'}</span>
+            <ChevronUpIcon
+              className={`${open ? 'rotate-180 transform' : ''
+                } h-8 w-8 text-gray-400`}
+            />
+          </Disclosure.Button>
+          <div className='flex gap-2'>
+          </div>
+        </div>
+
+        <Transition
+          className='transition-all duration-300 ease-out'
+          enterFrom='transform scale-70 opacity-0'
+          enterTo='transform scale-100 opacity-100'
+          leaveFrom='transform scale-100 opacity-100'
+          leaveTo='transform scale-70 opacity-0'
+        >
+          <Disclosure.Panel>
+            {
+              isOneRM
+                ? (
+                  <OneRMCard userId={userId} />
+                )
+                : (
+                  <ProgramView userId={userId} />
+                )
+            }
+          </Disclosure.Panel>
+        </Transition>
+      </div>
+    )}
+  </Disclosure>
+)
+const UserPage = (
+  {
+    onSelectTemplate,
+    onSetTemplate,
+    onClearTemplate,
+    userId,
+    userFirstName,
+    userLastName,
+  }:
+    {
+      onSelectTemplate: (arg0: string, arg1: string) => void,
+      onSetTemplate: (arg0: string, arg1: string) => void,
+      onClearTemplate: (arg0: string,) => void,
+      userId: string,
+      userFirstName: string | null,
+      userLastName: string | null
+    }
+) => {
+
+  return (
+    <div
+      className='flex flex-col gap-2'
+    >
+      <TemplateSelect
+        onSelectTemplate={onSelectTemplate}
+        onSetTemplate={onSetTemplate}
+        onClearTemplate={onClearTemplate}
+        userId={userId}
+        userFirstName={userFirstName}
+        userLastName={userLastName}
+      />
+      <UserDisclosure userId={userId} isOneRM={true} />
+      <UserDisclosure userId={userId} isOneRM={false} />
+    </div>
+  )
+}
+
 const Users: NextPage = () => {
   // Check for admin role
   const { user, } = useUser()
@@ -118,171 +196,47 @@ const Users: NextPage = () => {
 
   if (usersLoading || userProgramsLoading || blocksLoading) return <div><LoadingPage /></div>
 
+  console.log(allUsers)
+
   return (
     <>
       <div className='h-full flex flex-col'>
         <main >
           <div className='mx-auto max-w-6xl py-6 sm:px-6 lg:px-8 flex flex-col gap-8'>
             <div className='flex flex-col gap-4  m-2 p-4'>
-              <div className='text-xl font-bold'>Trainers</div>
+              <div className='text-2xl font-bold'>Trainers</div>
               <div className='flex flex-col gap-8'>
                 {allUsers?.admins?.map((user) => (
-                  <div
+                  <UserPage
                     key={user.id}
-                    className='flex flex-col gap-2'
-                  >
-                    <TemplateSelect
-                      onSelectTemplate={onSelectTemplate}
-                      onSetTemplate={onSetTemplate}
-                      onClearTemplate={onClearTemplate}
-                      userId={user.id}
-                      userFirstName={user.firstName}
-                      userLastName={user.lastName}
-                    />
-                    <Disclosure defaultOpen={false} >
-                      {({ open, }) => (
-                        <div className='flex flex-col gap-8 border border-gray-600 min-w-full p-2 rounded-xl'>
-                          <div className='flex flex-col sm:flex-row justify-between items-center gap-6'>
-                            <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-base sm:text-lg hover:bg-yellow-400 hover:text-black'>
-                              <span>One Rep Maxes</span>
-                              <ChevronUpIcon
-                                className={`${open ? 'rotate-180 transform' : ''
-                                  } h-8 w-8 text-gray-400`}
-                              />
-                            </Disclosure.Button>
-                            <div className='flex gap-2'>
-                            </div>
-                          </div>
-
-                          <Transition
-                            className='transition-all duration-300 ease-out'
-                            enterFrom='transform scale-70 opacity-0'
-                            enterTo='transform scale-100 opacity-100'
-                            leaveFrom='transform scale-100 opacity-100'
-                            leaveTo='transform scale-70 opacity-0'
-                          >
-                            <Disclosure.Panel>
-                              <OneRMCard userId={user.id} />
-                            </Disclosure.Panel>
-                          </Transition>
-                        </div>
-                      )}
-                    </Disclosure>
-                    <Disclosure defaultOpen={false} >
-                      {({ open, }) => (
-                        <div className='flex flex-col gap-8 border border-gray-600 min-w-full p-2 rounded-xl'>
-                          <div className='flex flex-col sm:flex-row justify-between items-center gap-6'>
-                            <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-base sm:text-lg hover:bg-yellow-400 hover:text-black'>
-                              <span>Program</span>
-                              <ChevronUpIcon
-                                className={`${open ? 'rotate-180 transform' : ''
-                                  } h-8 w-8 text-gray-400`}
-                              />
-                            </Disclosure.Button>
-                            <div className='flex gap-2'>
-                            </div>
-                          </div>
-
-                          <Transition
-                            className='transition-all duration-300 ease-out'
-                            enterFrom='transform scale-70 opacity-0'
-                            enterTo='transform scale-100 opacity-100'
-                            leaveFrom='transform scale-100 opacity-100'
-                            leaveTo='transform scale-70 opacity-0'
-                          >
-                            <Disclosure.Panel>
-                              <ProgramView userId={user.id} />
-                            </Disclosure.Panel>
-                          </Transition>
-                        </div>
-                      )}
-                    </Disclosure>
-
-                  </div>
+                    userId={user?.id}
+                    userFirstName={user.firstName}
+                    userLastName={user.lastName}
+                    onSetTemplate={onSetTemplate}
+                    onClearTemplate={onClearTemplate}
+                    onSelectTemplate={onSelectTemplate}
+                  />
                 ))}
               </div>
             </div>
             <div className='flex flex-col gap-4 m-2 mt-8 p-4'>
-              <div className='text-xl font-bold text-gray-200'>Users</div>
+              <div className='text-2xl font-bold text-gray-200'>Users</div>
               <div className='flex flex-col gap-4'>
                 {allUsers?.users?.map((user) => (
-                  <div
+                  <UserPage
                     key={user.id}
-                    className='flex flex-col gap-2'
-                  >
-                    <TemplateSelect
-                      onSelectTemplate={onSelectTemplate}
-                      onSetTemplate={onSetTemplate}
-                      onClearTemplate={onClearTemplate}
-                      userId={user.id}
-                      userFirstName={user.firstName}
-                      userLastName={user.lastName}
-                    />
-                    <Disclosure defaultOpen={false} >
-                      {({ open, }) => (
-                        <div className='flex flex-col gap-8 border border-gray-600 min-w-full p-2 rounded-xl'>
-                          <div className='flex flex-col sm:flex-row justify-between items-center gap-6'>
-                            <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-base sm:text-lg hover:bg-yellow-400 hover:text-black'>
-                              <span>One Rep Maxes</span>
-                              <ChevronUpIcon
-                                className={`${open ? 'rotate-180 transform' : ''
-                                  } h-8 w-8 text-gray-400`}
-                              />
-                            </Disclosure.Button>
-                            <div className='flex gap-2'>
-                            </div>
-                          </div>
-
-                          <Transition
-                            className='transition-all duration-300 ease-out'
-                            enterFrom='transform scale-70 opacity-0'
-                            enterTo='transform scale-100 opacity-100'
-                            leaveFrom='transform scale-100 opacity-100'
-                            leaveTo='transform scale-70 opacity-0'
-                          >
-                            <Disclosure.Panel>
-                              <OneRMCard userId={user.id} />
-                            </Disclosure.Panel>
-                          </Transition>
-                        </div>
-                      )}
-                    </Disclosure>
-                    <Disclosure defaultOpen={false} >
-                      {({ open, }) => (
-                        <div className='flex flex-col gap-8 border border-gray-600 min-w-full p-2 rounded-xl'>
-                          <div className='flex flex-col sm:flex-row justify-between items-center gap-6'>
-                            <Disclosure.Button className='flex justify-between items-center gap-2 rounded-lg px-8 py-2 text-left text-base sm:text-lg hover:bg-yellow-400 hover:text-black'>
-                              <span>Program</span>
-                              <ChevronUpIcon
-                                className={`${open ? 'rotate-180 transform' : ''
-                                  } h-8 w-8 text-gray-400`}
-                              />
-                            </Disclosure.Button>
-                            <div className='flex gap-2'>
-                            </div>
-                          </div>
-
-                          <Transition
-                            className='transition-all duration-300 ease-out'
-                            enterFrom='transform scale-70 opacity-0'
-                            enterTo='transform scale-100 opacity-100'
-                            leaveFrom='transform scale-100 opacity-100'
-                            leaveTo='transform scale-70 opacity-0'
-                          >
-                            <Disclosure.Panel>
-                              <ProgramView userId={user.id} />
-                            </Disclosure.Panel>
-                          </Transition>
-                        </div>
-                      )}
-                    </Disclosure>
-
-                  </div>
+                    userId={user?.id}
+                    userFirstName={user.firstName}
+                    userLastName={user.lastName}
+                    onSetTemplate={onSetTemplate}
+                    onClearTemplate={onClearTemplate}
+                    onSelectTemplate={onSelectTemplate}
+                  />
                 ))}
               </div>
             </div>
-            <Button 
-              className='w-24' 
+            <Button
+              className='w-24'
               onClick={onGenerate}>
               Generate
             </Button>
