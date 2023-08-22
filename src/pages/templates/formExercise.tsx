@@ -31,6 +31,7 @@ import { type Block, } from '~/store/types'
 import { Checkbox, } from '@/components/ui/checkbox'
 
 import { NumericFormat, } from 'react-number-format'
+import { Label, } from '@/components/ui/label'
 
 const GetWeight = ({
   week, day, exercise, lifts,
@@ -131,16 +132,39 @@ const FormExercise = ({
             {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`,)}
             placeholder='name'
           />
+          <div className='flex items-center'>
+            < Label
+              htmlFor='sets'
+              className='text-gray-400 absolute'
+            >
+              Sets:
+            </Label>
+            <Input
+              id='sets'
+              type='number'
+              className='pl-12'
+              {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`, { valueAsNumber: true, })}
+              placeholder='sets'
+              defaultValue={1}
+            />
+
+          </div>
+          <div className='flex items-center'>
+            < Label
+              htmlFor='reps'
+              className='text-gray-400 absolute'
+            >
+              Reps:
+            </Label>
           <Input
-            type='number'
-            {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`, { valueAsNumber: true, })}
-            placeholder='sets'
-          />
-          <Input
+            id='reps'
+              className='pl-12'
             type='number'
             {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`, { valueAsNumber: true, })}
             placeholder='reps'
+            defaultValue={1}
           />
+          </div>
         </div>
         <div className='my-1 grid grid-cols-2 gap-4 md:gap-10'>
           <Controller
