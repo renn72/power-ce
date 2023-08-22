@@ -202,8 +202,8 @@ const Users: NextPage = () => {
     <>
       <div className='h-full flex flex-col'>
         <main >
-          <div className='mx-auto max-w-6xl py-6 sm:px-6 lg:px-8 flex flex-col gap-8'>
-            <div className='flex flex-col gap-4  m-2 p-4'>
+          <div className='max-w-screen-2xl py-6 sm:px-6 flex flex-col gap-8 justify-center items-center'>
+            <div className='flex flex-col gap-4  m-2 p-4 w-full'>
               <div className='text-2xl font-bold'>Trainers</div>
               <div className='flex flex-col gap-8'>
                 {allUsers?.admins?.map((user) => (
@@ -219,7 +219,7 @@ const Users: NextPage = () => {
                 ))}
               </div>
             </div>
-            <div className='flex flex-col gap-4 m-2 mt-8 p-4'>
+            <div className='flex flex-col gap-4 m-2 mt-8 p-4 w-full'>
               <div className='text-2xl font-bold text-gray-200'>Users</div>
               <div className='flex flex-col gap-4'>
                 {allUsers?.users?.map((user) => (

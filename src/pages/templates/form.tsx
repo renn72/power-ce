@@ -301,36 +301,38 @@ const Form = () => {
               <div className='flex flex-col w-full gap-1 min-h-[80vh] sm:gap-8 p-2 sm:p-6 max-w-screen-2xl items-center '>
 
                 {/* template select */}
-                <div className='flex gap-2 md:gap-8 items-center justify-start'>
+                <div className='flex flex-col md:flex-row gap-2 md:gap-8 items-center justify-start'>
                   <TemplateSelect onSelectTemplate={onSelectTemplate} />
-                  <Button
-                    type='button'
-                    className='text-sm sm:text-xl tracking-tighter sm:tracking-normal '
-                    onClick={() => onNewTemplate()}
-                  >
-                    New
-                  </Button>
-                  <Button
-                    type='button'
-                    className='text-sm sm:text-xl tracking-tighter sm:tracking-normal '
-                    onClick={() => onLoadTemplate()}
-                  >
-                    Load
-                  </Button>
-                  <Button
-                    type='submit'
-                    className='text-sm sm:text-xl tracking-tighter sm:tracking-normal'
-                    onClick={() => setIsUpdate(false)}
-                  >
-                    Save New
-                  </Button>
-                  <Button
-                    type='submit'
-                    className='text-sm sm:text-xl tracking-tighter sm:tracking-normal'
-                    onClick={() => setIsUpdate(true)}
-                  >
-                    Update
-                  </Button>
+                  <div className='flex gap-2 md:gap-8 items-center justify-start'>
+                    <Button
+                      type='button'
+                      className='text-sm sm:text-xl tracking-tighter sm:tracking-normal '
+                      onClick={() => onNewTemplate()}
+                    >
+                      New
+                    </Button>
+                    <Button
+                      type='button'
+                      className='text-sm sm:text-xl tracking-tighter sm:tracking-normal '
+                      onClick={() => onLoadTemplate()}
+                    >
+                      Load
+                    </Button>
+                    <Button
+                      type='submit'
+                      className='text-sm sm:text-xl tracking-tighter sm:tracking-normal'
+                      onClick={() => setIsUpdate(false)}
+                    >
+                      Save New
+                    </Button>
+                    <Button
+                      type='submit'
+                      className='text-sm sm:text-xl tracking-tighter sm:tracking-normal'
+                      onClick={() => setIsUpdate(true)}
+                    >
+                      Update
+                    </Button>
+                  </div>
                 </div>
 
                 {/* Title */}
@@ -388,7 +390,7 @@ const Form = () => {
                     </Tab.Panels>
                   </Tab.Group>
 
-                  <div className='flex gap-2 items-center justify-center pt-12'>
+                  <div className='flex gap-2 items-center justify-center'>
                     <Button type='button' className='w-fit px-6 md:px-12' onClick={() => onAddWeek()}>Add Week</Button>
                     <Button type='button' className='w-fit px-6 md:px-12' onClick={() => onRemoveWeek()}>Remove Week</Button>
                   </div>

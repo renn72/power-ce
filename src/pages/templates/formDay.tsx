@@ -53,20 +53,20 @@ const FormDay = ({
               onChange, value,
             },
           }) => (
-            <div className='flex text-lg text-gray-600 justify-start items-center sm:gap-6 mb-2'>
+            <div className='flex text-lg text-gray-600 justify-start items-center gap-4 sm:gap-6 mb-2'>
               <label className={value ? `text-gray-200 scale-110` : ``}>Rest Day</label>
               <Switch
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 checked={value}
                 onChange={onChange}
                 className={`${value ? 'bg-gray-200' : 'bg-gray-600'}
-          relative inline-flex h-[18px] w-[64px] sm:h-[28px] sm:w-[74px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+          relative inline-flex h-[24px] w-[64px] sm:h-[28px] sm:w-[74px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
               >
                 <span className='sr-only'>Is it a Rest Day</span>
                 <span
                   aria-hidden='true'
                   className={`${value ? 'translate-x-9' : 'translate-x-0'}
-            pointer-events-none inline-block h-[14px] w-[24px] sm:h-[24px] sm:w-[34px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out`}
+            pointer-events-none inline-block h-[20px] w-[24px] sm:h-[24px] sm:w-[34px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out`}
                 />
               </Switch>
             </div>
