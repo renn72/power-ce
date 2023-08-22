@@ -176,7 +176,7 @@ const OneRMCard = ({ userId, }: { userId: string }) => {
     <>
       <div>
         <div
-          className='grid text-gray-300 grid-cols-1 md:grid-cols-2 '
+          className='grid text-gray-300 grid-cols-1 md:grid-cols-3 '
         >
           {primaryLifts?.map((lift, idx) => (
             <div
