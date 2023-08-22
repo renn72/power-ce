@@ -64,7 +64,7 @@ const ProgramView = ({ userId, }: { userId: string }) => {
               <h1
                 className='text-2xl font-bold mb-4'
               >Week {weekIndex + 1}</h1>
-              <div className='grid grid-cols-7 md:px-2'>
+              <div className='grid grid-cols-1 md:grid-cols-7 md:px-2'>
                 {
                   week.day.map((day, dayIndex) => (
                     <div key={day.id} className='hover:bg-gray-900/70 hover:rounded-md p-2'>
@@ -77,7 +77,7 @@ const ProgramView = ({ userId, }: { userId: string }) => {
                               >
                                 Day {dayIndex + 1}
                               </h2>
-                              <h2 className='w-44 text-gray-400'>Rest Day</h2>
+                              <h2 className='lg:w-44 text-gray-400'>Rest Day</h2>
                             </div>
 
                           )
@@ -108,10 +108,11 @@ const ProgramView = ({ userId, }: { userId: string }) => {
                                         </h3>
                                       </div>
                                       <div
-                                        className='flex gap-4'>
+                                        className='flex gap-4 '>
                                         <h3>{exercise.sets}</h3>
                                         <h3>X</h3>
-                                        <h3>{exercise.reps} reps</h3>
+                                        <h3>{exercise.reps}</h3>
+                                        <h3>reps</h3>
                                       </div>
                                       <div>
                                         {

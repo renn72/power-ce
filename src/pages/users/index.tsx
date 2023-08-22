@@ -20,7 +20,7 @@ const UserDisclosure = ({
 }: { userId: string, isOneRM: boolean }) => (
   <Disclosure defaultOpen={false} >
     {({ open, }) => (
-      <div className='flex flex-col gap-8 min-w-full p-2'>
+      <div className='flex flex-col gap-8 p-2'>
         <div className='flex flex-col sm:flex-row justify-between items-center gap-6'>
           <Disclosure.Button className={`${open ? 'border-b border-yellow-500' : 'hover:border-white border-b border-black'} flex justify-between items-center gap-2 px-4 py-2 text-left text-base sm:text-lg `}>
             <span>{isOneRM ? 'One Rep Maxes' : 'Program'}</span>
@@ -202,7 +202,7 @@ const Users: NextPage = () => {
     <>
       <div className='h-full flex flex-col items-center'>
         <main >
-          <div className=' max-w-[1800px] min-w-[80vw]  py-6 sm:px-2 flex flex-col gap-8 justify-center items-center'>
+          <div className=' max-w-[1800px] md:min-w-[80vw]  py-6 sm:px-2 flex flex-col gap-8 justify-center items-center'>
             <div className='flex flex-col gap-4  m-2 p-4 w-full'>
               <div className='text-2xl font-bold'>Trainers</div>
               <div className='flex flex-col gap-8'>
