@@ -196,7 +196,6 @@ const Users: NextPage = () => {
 
   if (usersLoading || userProgramsLoading || blocksLoading) return <div><LoadingPage /></div>
 
-  console.log(allUsers)
 
   return (
     <>

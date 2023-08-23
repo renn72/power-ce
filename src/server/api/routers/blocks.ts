@@ -58,7 +58,7 @@ export const blocksRouter = createTRPCRouter({
     const blocks = await ctx.prisma.block.findMany({
       orderBy: { createdAt: 'desc', },
       where: { isProgram: true, },
-      include: { week: { include: { day: { include: { exercise: true, }, }, }, }, },
+      include: { week: { include: { day: { include: { exercise: { include: { set: true, }, }, }, }, }, }, },
     })
     return blocks
   }),

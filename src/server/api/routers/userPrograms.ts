@@ -8,6 +8,23 @@ import {
 
 import { getRandomInt, } from '~/utils/utils'
 
+const exerciseSchema = z.object({
+  id: z.string(),
+  name: z.string().min(0).max(280),
+  lift: z.string().min(0).max(55).optional().nullable(),
+  sets: z.number().min(0).max(55).optional().nullable(),
+  reps: z.number().min(0).max(55).optional().nullable(),
+  onerm: z.number().min(0).max(100).optional().nullable(),
+  onermTop: z.number().min(0).max(100).optional().nullable(),
+  weightTop: z.number().min(0).max(100).optional().nullable(),
+  weightBottom: z.number().min(0).max(100).optional().nullable(),
+  targetRpe: z.number().min(0).max(100).optional().nullable(),
+  notes: z.string().min(0).max(280).optional().nullable(),
+  isEstimatedOnerm: z.boolean().optional(),
+  estimatedOnermIndex: z.number().min(0).max(100).optional().nullable(),
+  weightType: z.string().min(0).max(280).optional().nullable(),
+})
+
 const programSchema = z.object({
   id: z.string().optional(),
   userId: z.string(),
@@ -146,4 +163,41 @@ export const userProgramsRouter = createTRPCRouter({
 
       return res
     }),
+  updateExercise: privateProcedure
+    .input(z.object({ exercise: exerciseSchema, }))
+    .mutation(async ({
+      ctx, input,
+    }) => {
+      const exercise = input.exercise
+      await ctx.prisma.set.deleteMany({ where: { exerciseId: exercise.id, }, })
+      const res = await ctx.prisma.exercise.update({
+        where: { id: exercise.id, },
+        data: {
+          name: exercise.name,
+          lift: exercise.lift,
+          sets: exercise.sets,
+          reps: exercise.reps,
+          onerm: exercise.onerm,
+          onermTop: exercise?.onermTop,
+          weightTop: exercise.weightTop,
+          weightBottom: exercise.weightBottom,
+          targetRpe: exercise.targetRpe,
+          estimatedOnermIndex: exercise.estimatedOnermIndex,
+          weightType: exercise.weightType,
+          notes: exercise.notes,
+          isEstimatedOnerm: exercise.isEstimatedOnerm ? exercise.isEstimatedOnerm : false,
+          isComplete: false,
+          actualSets: exercise.sets,
+          set: {
+            create: Array.from({ length: exercise.sets ? +exercise.sets : 0, }, (_,) => ({
+              rep: exercise.reps ? +exercise.reps : 1,
+              isComplete: false,
+            }),),
+          },
+        },
+      })
+
+      return res
+    }),
+
 })
