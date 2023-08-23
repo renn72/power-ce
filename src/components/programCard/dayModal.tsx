@@ -10,29 +10,40 @@ import { api, } from '~/utils/api'
 import {
   Transition, RadioGroup, Disclosure,
 } from '@headlessui/react'
-import { ChevronUpIcon, ChevronDownIcon, ChevronRightIcon, ChevronLeftIcon, CheckCircleIcon, PlusCircleIcon, MinusCircleIcon, } from '@heroicons/react/20/solid'
+import {
+  ChevronUpIcon, ChevronDownIcon, ChevronRightIcon, ChevronLeftIcon, CheckCircleIcon, PlusCircleIcon, MinusCircleIcon,
+} from '@heroicons/react/20/solid'
 import { rpe as rpeTable, } from '~/store/defaultValues'
 
-import checkWeight from '~/utils/checkWeigth'
+import { useUser, } from '@clerk/nextjs'
+
+import getWeight from '~/utils/getWeight'
+import { Input, } from '@/components/ui/input'
 
 const ExerciseModal = ({
-  exercise, selectedEnergy, coreLifts, day,
-}: { exercise: StoreExercise, selectedEnergy: string, coreLifts: number[], day: Day, }) => {
+  exercise, selectedEnergy, day,
+}: { exercise: StoreExercise, selectedEnergy: string, day: Day, }) => {
 
   const [
     rpe,
     setRpe,
   ] = useState('8')
 
+  const { user, } = useUser()
+  const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery({ userId: user?.id || '', })
+  const checkWeight = (lift: string | null, onerm: number | null) => {
+    if (!lift || !onerm) return ''
+    const w = userCoreOneRM?.find((coreLift) => coreLift?.lift === lift.toLowerCase())?.weight
+
+    if (!w) return ''
+
+    return getWeight(+w, onerm,)
+  }
+
   const [
     weights,
     setWeights,
-  ] = useState<number | string>(
-    () => {
-      const _w = checkWeight(exercise, false, selectedEnergy, coreLifts)
-      return _w || ''
-    }
-  )
+  ] = useState<number | string>('')
 
   const [
     e1rm,
@@ -41,7 +52,7 @@ const ExerciseModal = ({
 
   const utils = api.useContext()
 
-  const { mutate: updateRpe } = api.programs.updateSetRpe.useMutation({
+  const { mutate: updateRpe, } = api.programs.updateSetRpe.useMutation({
     onMutate: async (newRpe) => {
       console.log('id', newRpe)
       await utils.blocks.getAllUserPrograms.cancel()
@@ -166,22 +177,12 @@ const ExerciseModal = ({
     rpe,
   ])
 
-  const onCheckWeight = (exercise: StoreExercise, range: boolean, energyRating: string | null, coreLifts: number[]) => {
+  const onCheckWeight = (exercise: StoreExercise, energyRating: string | null) => {
 
-    if (exercise.isEstimatedOnerm) {
-      if (exercise.id === day.exercise[0]?.id) return checkWeight(exercise, range, energyRating, coreLifts)
-      if (exercise.lift !== day.exercise[0]?.lift) return checkWeight(exercise, range, energyRating, coreLifts)
-      if (!day.exercise[0]?.set[0]?.isComplete) return '' //checkWeight(exercise, range, energyRating, coreLifts)
-
-      const _map = day.exercise[0]?.set.map((set) => +set?.estiamtedOnerm || 0).filter((set) => set !== 0)
-      const _m = _map.pop()
-      if (_m) return checkWeight(exercise, range, energyRating, [_m, _m, _m,],)
-      return checkWeight(exercise, range, energyRating, coreLifts)
-    }
-    return checkWeight(exercise, range, energyRating, coreLifts)
+    return '10kg'
   }
 
-  const onUpdateRpe = (set : Set, increase: boolean) => {
+  const onUpdateRpe = (set: Set, increase: boolean) => {
     console.log('id', set)
     console.log('increase', increase)
   }
@@ -190,7 +191,7 @@ const ExerciseModal = ({
     <>
       <Disclosure >
         {({ open, }) => (
-          <div className='flex flex-col justify-start gap-2 border border-gray-600 rounded-xl'>
+          <div className='flex flex-col justify-start gap-2 '>
             <div className='flex flex-col gap-0'>
               <Disclosure.Button className={`w-full text-lg md:text-xl`}>
                 <div className='flex flex-col gap-2'>
@@ -199,7 +200,7 @@ const ExerciseModal = ({
                       className={`${open ? 'rotate-180 transform' : ''} h-6 w-8 text-gray-300 `}
                     />
                     <div className='flex items-center'>
-                      <div className='first-letter:uppercase first-letter:text-2xl first-letter:font-bold '>
+                      <div className='first-letter:uppercase first-letter:text-2xl first-letter:font-bold text-yellow-500 '>
                         {exercise.name}
                       </div>
                       {exercise.isEstimatedOnerm && (
@@ -213,7 +214,7 @@ const ExerciseModal = ({
                     )}
                     {exercise.lift && exercise.onerm && (
                       <div className=''>
-                        {onCheckWeight(exercise, true, selectedEnergy, coreLifts)}
+                        {onCheckWeight(exercise, selectedEnergy,)}
                       </div>
                     )
                     }
@@ -242,13 +243,18 @@ const ExerciseModal = ({
                     {exercise.sets && exercise.reps && (
                       <div className='flex flex-col gap-4 md:gap-6'>
                         <div className='flex gap-4 md:gap-6 w-full justify-center text-2xl font-bold'>
-                          <div className='cursor-pointer rounded-full w-8 h-8 text-center' onClick={() => setWeights(+weights + 1.25)}>
+                          <div className='cursor-pointer rounded-full w-8 h-8 text-center' onClick={() => setWeights(+weights + 2.5)}>
                             +
                           </div>
                           <div className='w-28 text-center'>
-                            {weights}kg
+                            <Input
+                              type='number'
+                              className='text-center md:text-xl font-bold'
+                              value={weights}
+                              onChange={(e) => setWeights(+e.target.value)}
+                            />
                           </div>
-                          <div className='cursor-pointer rounded-full w-8 h-8 text-center' onClick={() => setWeights(+weights - 1.25)}>
+                          <div className='cursor-pointer rounded-full w-8 h-8 text-center' onClick={() => setWeights(+weights - 2.5)}>
                             -
                           </div>
                         </div>
@@ -258,7 +264,7 @@ const ExerciseModal = ({
                             exercise.set.reduce((acc, curr) => {
                               return acc + (curr.isComplete ? 1 : 0)
                             }, 0)
-                          } / {exercise.reps}
+                          } / {exercise.sets}
                         </div>
                         <RadioGroup value={rpe} onChange={setRpe}>
                           <div className={`grid grid-cols-9 md:grid-cols-10 gap-1 md:p-2 mx-1 md:mx-6  items-center justify-between`}>
@@ -325,21 +331,21 @@ const ExerciseModal = ({
                             exercise?.set?.map((set,) => (
                               <div
                                 key={set.id}
-                                onClick={() => onSetDone(set)}
                                 className='flex flex-col items-center justify-center gap-1'
                               >
-                                <ChevronUpIcon 
+                                <ChevronUpIcon
                                   onClick={() => onUpdateRpe(set, true)}
-                                  className='h-10 w-10 text-gray-400 cursor-pointer' 
+                                  className='h-10 w-10 text-gray-400 cursor-pointer'
                                 />
                                 <div
                                   className='flex flex-col gap-1'
+                                  onClick={() => onSetDone(set)}
                                 >
                                   <div className={set.isComplete ? `bg-gray-600 text-xl border border-gray-600 rounded-full  h-12 min-w-[3rem] flex items-center justify-center cursor-pointer hover:scale-105` : `text-xl border border-gray-600 rounded-full h-12 min-w-[3rem] flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}>
                                     {set.rep}
                                   </div>
                                 </div>
-                                <ChevronDownIcon 
+                                <ChevronDownIcon
                                   onClick={() => onUpdateRpe(set, false)}
                                   className='h-10 w-10 text-gray-400 cursor-pointer'
                                 />
@@ -384,16 +390,6 @@ const DayModal = ({
   day, selectedEngery,
 }: { day: Day, selectedEngery: string }) => {
 
-  const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery()
-
-  const [coreLifts,] = useState(() => {
-    return [
-      +userCoreOneRM.filter((coreLift) => coreLift.lift === 'squat')[0].weight || 0,
-      +userCoreOneRM.filter((coreLift) => coreLift.lift === 'deadlift')[0].weight || 0,
-      +userCoreOneRM.filter((coreLift) => coreLift.lift === 'bench')[0].weight || 0,
-    ]
-  })
-
   return (
     <>
       {day.isRestDay
@@ -406,7 +402,7 @@ const DayModal = ({
           <div className='w-full flex flex-col gap-10 md:p-2 '>
             {day.exercise.map((exercise,) => (
               <div key={exercise.id} >
-                <ExerciseModal exercise={exercise} selectedEnergy={selectedEngery} coreLifts={coreLifts} day={day} />
+                <ExerciseModal exercise={exercise} selectedEnergy={selectedEngery} day={day} />
               </div>
             ))}
           </div>

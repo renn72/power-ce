@@ -8,9 +8,10 @@ import {
   Dialog, Transition, RadioGroup,
 } from '@headlessui/react'
 
+import { useUser, } from '@clerk/nextjs'
 import DayModal from './dayModal'
 
-import checkWeight from '~/utils/checkWeigth'
+import getWeight from '~/utils/getWeight'
 
 const ProgramDay = ({
   day, dayIdx,
@@ -24,22 +25,21 @@ const ProgramDay = ({
     setSelectedEngery,
   ] = useState(day.energyRating || 'A')
 
-  const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery()
+  const { user, } = useUser()
+  const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery({ userId: user?.id || '', })
+  const checkWeight = (lift: string | null, onerm: number | null) => {
+    if (!lift || !onerm) return ''
+    const w = userCoreOneRM?.find((coreLift) => coreLift?.lift === lift.toLowerCase())?.weight
 
-  const squat = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'squat')[0]?.weight || 0
-  const deadlift = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'deadlift')[0]?.weight || 0
-  const bench = +userCoreOneRM?.filter((coreLift) => coreLift?.lift === 'bench')[0]?.weight || 0
-  const coreLifts = [
-    squat,
-    deadlift,
-    bench,
-  ]
+    if (!w) return ''
 
+    return getWeight(+w, onerm,)
+  }
   const closeModal = () => {
     setIsOpen(false)
   }
 
-  const openModal = () => {
+  const openModal = (id: string) => {
     setIsOpen(true)
   }
 
@@ -67,45 +67,71 @@ const ProgramDay = ({
   return (
     <>
       <div
-        className='md:px-4 py-2 my-4 hover:bg-gray-600 hover:scale-105 transform transition-all cursor-pointer min-h-[6rem]'
-        onClick={() => openModal()}
+        className='flex flex-col gap-4'
+        onClick={() => openModal('')}
       >
-        <div className='font-bold'>
+        <h2
+          className='text-xl font-bold mb-4'
+        >
           Day {dayIdx + 1}
-        </div>
-        {day.isRestDay
-          ? (
-            <div className=''>
-              Rest Day
-            </div>
-          )
-          : day.exercise.map((exercise) => (
-            <div
-              key={exercise.id}
-              className='flex flex-row justify-start gap-2 '
-            >
-              <div className='break-words capitalize'>
-                {exercise.name}
-              </div>
-              {exercise.sets && exercise.reps && (
-                <div className='flex gap-1'>
-                  <div>
-                    {exercise.sets} x {exercise.reps}
-                  </div>
-                  {exercise.lift && exercise.onerm && (
-                    <div>
-                      {checkWeight(exercise, false, null, coreLifts)}kg
-                    </div>
-                  )
+        </h2>
+        <div className='flex flex-col divide-y divide-dashed divide-gray-600'>
+          {
+            day.exercise.map((exercise, exerciseIndex) => (
+              <div key={exercise.id}
+                className='flex flex-col gap-1 py-2 hover:bg-gray-900 hover:rounded-md cursor-pointer'
+              >
+                <div>
+                  <h3
+                    className='capitalize text-yellow-500'
+                  >
+                    {exercise.name}
+                  </h3>
+                  <h3
+                    className='text-gray-600 text-xxs leading-none capitalize'
+                  >
+                    {exercise.lift != 'unlinked' && exercise.lift}
+                  </h3>
+                </div>
+                <div
+                  className='flex gap-4 '>
+                  <h3>{exercise.sets}</h3>
+                  <h3>X</h3>
+                  <h3>{exercise.reps}</h3>
+                  <h3>reps</h3>
+                </div>
+                <div>
+                  {
+                    exercise.weightType === 'onerm'
+                    && (
+                      <div className='flex'>
+                        <h4>
+                          {checkWeight(exercise.lift, exercise?.onerm,)}
+                        </h4>
+                        <h4>-</h4>
+                        <h4>
+                          {checkWeight(exercise.lift, exercise?.onermTop,)}kg
+                        </h4>
+                      </div>
+
+                    )
+
                   }
                 </div>
-              )}
-            </div>
-          ))}
+                <h3
+                  className='text-gray-600 text-xxs'
+                >
+                  {exercise.weightType}
+                </h3>
+
+              </div>
+            ))
+          }
+        </div>
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as='div' className='relative z-10' onClose={closeModal}>
+        <Dialog as='div' className='z-10' onClose={closeModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -115,7 +141,7 @@ const ProgramDay = ({
             leaveFrom='opacity-100'
             leaveTo='opacity-0'
           >
-            <div className='fixed inset-0 bg-black bg-opacity-25' />
+            <div className='fixed inset-0 bg-black/90' />
           </Transition.Child>
 
           <div className='fixed inset-0 overflow-y-auto'>
@@ -129,18 +155,18 @@ const ProgramDay = ({
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className='w-full min-h-[600px] text-gray-200 bg-gray-800 max-w-3xl transform overflow-hidden rounded-2xl p-2 text-left align-middle shadow-sm shadow-gray-800 transition-all'>
+                <Dialog.Panel className='w-full min-h-[600px] text-gray-200 bg-black border-gray-800 border max-w-3xl transform overflow-hidden rounded-xl p-1 md:p-3 text-left align-middle transition-all'>
                   <Dialog.Title
                     as='h3'
                     className='text-base md:text-lg font-medium leading-6 flex justify-between items-center'
                   >
-                    <div className='flex justify-between items-center gap-2 md:gap-8'>
-                      <div className='font-bold'>
+                    <div className='flex justify-between items-center gap-2 md:gap-12'>
+                      <div className='font-bold text-xl'>
                         Day {dayIdx + 1}
                       </div>
                       <RadioGroup value={selectedEngery} onChange={onSetEnergy}>
                         <div className={`flex gap-2 p-2  items-center`}>
-                          <RadioGroup.Label className=''>Energy Level</RadioGroup.Label>
+                          <RadioGroup.Label className='tracking-tighter'>Energy Level</RadioGroup.Label>
                           {[
                             'A',
                             'B',
@@ -156,7 +182,7 @@ const ProgramDay = ({
                                 ? ''
                                 : ''
                               }
-                              ${checked ? 'bg-gray-400 bg-opacity-75 text-white font-extrabold' : 'bg-gray-700 text-gray-200'}
+                              ${checked ? 'bg-yellow-500 text-black font-extrabold' : 'bg-gray-900 text-gray-700'}
                                   relative flex cursor-pointer rounded-lg px-2 py-1 shadow-md focus:outline-none`
                               }
                             >
@@ -169,7 +195,7 @@ const ProgramDay = ({
                                       <div className='text-sm'>
                                         <RadioGroup.Label
                                           as='p'
-                                          className={`font-medium  ${checked ? 'text-gray-100' : 'text-gray-300'
+                                          className={`${checked ? 'text-black' : 'text-gray-400'
                                             }`}
                                         >
                                           {energy}
