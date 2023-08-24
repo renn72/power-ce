@@ -114,7 +114,7 @@ const FormExercise = ({
         &nbsp;{exerciseIdx + 1}&nbsp;
       </div>
       <div className='flex flex-col gap-4'>
-        <div className='grid grid-cols-2 md:grid-cols-5 gap-1 gap-x-4  md:gap-8 overflow-hidden'>
+        <div className='grid grid-cols-2 md:grid-cols-5 gap-1 gap-x-4  md:gap-8'>
           <div className='flex flex-col justify-center'>
             <Controller
               control={control}

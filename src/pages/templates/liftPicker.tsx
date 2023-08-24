@@ -32,8 +32,8 @@ const LiftPicker = ({ onChange,  value}: { onChange: (arg0: string) => void, val
         setSelectedLift(e)
       }}
     >
-      <div className='relative h-full text-xs sm:text-base'>
-        <Listbox.Button className='relative w-full h-full border-b border-gray-600 cursor-default max-h-min py-2 pl-3 pr-10 text-left shadow-md focus:outline-none '>
+      <div className='relative overflow-visible h-full text-xs sm:text-base'>
+        <Listbox.Button className='relative w-full h-full border-b border-gray-600 cursor-default max-h-min py-2 pl-3 pr-10 text-left cursor-pointer focus:outline-none '>
           <span className='flex items-center capitalize'>{selectedLift}</span>
           <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
             <ChevronUpDownIcon
@@ -48,7 +48,7 @@ const LiftPicker = ({ onChange,  value}: { onChange: (arg0: string) => void, val
           leaveFrom='opacity-100'
           leaveTo='opacity-0'
         >
-          <Listbox.Options className='absolute z-20 mt-1 max-h-160 w-full border border-gray-600 overflow-auto bg-black py-1 '>
+          <Listbox.Options className='absolute z-30 mt-1 max-h-160 w-full border border-gray-600 overflow-auto bg-black py-1 '>
             {lifts.map((lift, Idx) => (
               <Listbox.Option
                 key={Idx}
