@@ -321,6 +321,25 @@ const Form = () => {
                     >
                       Load
                     </Button>
+                  </div>
+                </div>
+
+                {/* Title */}
+                <div className='flex  gap-2'>
+                <div className='flex flex-col gap-2 items-start justify-center'>
+                  <div className='relative rounded-md shadow-lg'>
+                    <Input className=''
+                      placeholder='Title'
+                      defaultValue={``}
+                      {...register('name', { required: 'This is required.', })}
+                    />
+                  </div>
+                  <ErrorMessage
+                    errors={errors}
+                    name='name'
+                    render={({ message, }) => <p className='text-red-400'>{message}</p>}
+                  />
+                </div>
                     <Button
                       type='submit'
                       className='text-sm sm:text-xl tracking-tighter sm:tracking-normal'
@@ -335,23 +354,6 @@ const Form = () => {
                     >
                       Update
                     </Button>
-                  </div>
-                </div>
-
-                {/* Title */}
-                <div className='flex flex-col gap-2 items-start justify-center'>
-                  <div className='relative rounded-md shadow-lg'>
-                    <Input className=''
-                      placeholder='Title'
-                      defaultValue={``}
-                      {...register('name', { required: 'This is required.', })}
-                    />
-                  </div>
-                  <ErrorMessage
-                    errors={errors}
-                    name='name'
-                    render={({ message, }) => <p className='text-red-400'>{message}</p>}
-                  />
                 </div>
 
                 <div className='flex flex-col w-full gap-2 '>
@@ -393,13 +395,13 @@ const Form = () => {
                     </Tab.Panels>
                   </Tab.Group>
 
-                  <div className='flex gap-2 items-center justify-center'>
+                  <div className='flex gap-2 items-center justify-center mt-12'>
                     <Button type='button' className='w-fit px-6 md:px-12' onClick={() => onAddWeek()}>Add Week</Button>
                     <Button type='button' className='w-fit px-6 md:px-12' onClick={() => onRemoveWeek()}>Remove Week</Button>
                   </div>
                 </div>
               </div>
-              <div className='flex gap-4 justify-center'>
+              <div className='flex gap-4 justify-center my-28'>
               </div>
             </div>
           </form>
