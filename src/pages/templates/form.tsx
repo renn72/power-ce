@@ -304,19 +304,19 @@ const Form = () => {
               <div className='flex flex-col w-full gap-1 min-h-[80vh] sm:gap-8 p-1 sm:p-6 max-w-screen-2xl items-center '>
 
                 {/* template select */}
-                <div className='flex flex-col md:flex-row gap-2 md:gap-8 items-center justify-start'>
+                <div className='flex gap-2  items-center w-full'>
                   <TemplateSelect onSelectTemplate={onSelectTemplate} />
-                  <div className='flex gap-2 md:gap-8 items-center justify-start'>
+                  <div className='flex gap-2 items-center justify-start'>
                     <Button
                       type='button'
-                      className='text-sm sm:text-xl tracking-tighter sm:tracking-normal '
+                      className='text-sm sm:text-xl tracking-tighter sm:tracking-normal w-24 md:w-36'
                       onClick={() => onNewTemplate()}
                     >
                       New
                     </Button>
                     <Button
                       type='button'
-                      className='text-sm sm:text-xl tracking-tighter sm:tracking-normal '
+                      className='text-sm sm:text-xl tracking-tighter sm:tracking-normal w-24 md:w-36'
                       onClick={() => onLoadTemplate()}
                     >
                       Load
@@ -325,35 +325,35 @@ const Form = () => {
                 </div>
 
                 {/* Title */}
-                <div className='flex  gap-2'>
-                <div className='flex flex-col gap-2 items-start justify-center'>
-                  <div className='relative rounded-md shadow-lg'>
-                    <Input className=''
-                      placeholder='Title'
-                      defaultValue={``}
-                      {...register('name', { required: 'This is required.', })}
+                <div className='flex  gap-2 w-full'>
+                  <div className='flex flex-col gap-2 items-start justify-center'>
+                    <div className='relative rounded-md shadow-lg'>
+                      <Input className='w-40 md:w-72'
+                        placeholder='Title'
+                        defaultValue={``}
+                        {...register('name', { required: 'This is required.', })}
+                      />
+                    </div>
+                    <ErrorMessage
+                      errors={errors}
+                      name='name'
+                      render={({ message, }) => <p className='text-red-400'>{message}</p>}
                     />
                   </div>
-                  <ErrorMessage
-                    errors={errors}
-                    name='name'
-                    render={({ message, }) => <p className='text-red-400'>{message}</p>}
-                  />
-                </div>
-                    <Button
-                      type='submit'
-                      className='text-sm sm:text-xl tracking-tighter sm:tracking-normal'
-                      onClick={() => setIsUpdate(false)}
-                    >
-                      Save New
-                    </Button>
-                    <Button
-                      type='submit'
-                      className='text-sm sm:text-xl tracking-tighter sm:tracking-normal'
-                      onClick={() => setIsUpdate(true)}
-                    >
-                      Update
-                    </Button>
+                  <Button
+                    type='submit'
+                    className='text-sm sm:text-xl tracking-tighter sm:tracking-normal w-24 md:w-36 px-0'
+                    onClick={() => setIsUpdate(false)}
+                  >
+                    Save New
+                  </Button>
+                  <Button
+                    type='submit'
+                    className='text-sm sm:text-xl tracking-tighter sm:tracking-normal w-24 md:w-36'
+                    onClick={() => setIsUpdate(true)}
+                  >
+                    Update
+                  </Button>
                 </div>
 
                 <div className='flex flex-col w-full gap-2 '>
