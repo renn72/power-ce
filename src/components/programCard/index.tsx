@@ -66,13 +66,13 @@ const ProgramCard = ({ userProgram, }: { userProgram: UserProgram }) => {
                             {
                               day.isRestDay
                                 ? (
-                                  <div>
+                                  <div className='h-full'>
                                     <h2
                                       className='text-xl font-bold mb-4'
                                     >
                                       Day {dayIndex + 1}
                                     </h2>
-                                    <h2 className='lg:w-44 text-gray-400'>Rest Day</h2>
+                                    <h2 className='lg:w-44 text-xl md:text-2xl text-gray-500 h-full flex flex-col justify-center items-center'>Rest Day</h2>
                                   </div>
 
                                 )

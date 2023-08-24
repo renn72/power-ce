@@ -90,7 +90,7 @@ const ProgramDay = ({
                   <h3
                     className='text-gray-600 text-xxs leading-none capitalize'
                   >
-                    {exercise.lift != 'unlinked' && exercise.lift}
+                    {/* {exercise.lift != 'unlinked' && exercise.lift} */}
                   </h3>
                 </div>
                 <div
@@ -121,7 +121,7 @@ const ProgramDay = ({
                 <h3
                   className='text-gray-600 text-xxs'
                 >
-                  {exercise.weightType}
+                  {/* {exercise.weightType} */}
                 </h3>
 
               </div>

@@ -125,43 +125,46 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
   return (
     <>
       <div className='flex flex-col gap-6'>
-        <div className='flex gap-2'>
-          <div className='relative flex flex-col gap-2'>
-            <Input
-              className='text-xs sm:text-sm'
-              placeholder='Week Name'
-              defaultValue={``}
-              {...register(`week.${weekIdx}.name`,)}
-              onChange={() => clearErrors(`week.${weekIdx}.name`)}
-            />
-            <div className='absolute top-12'>
-              <ErrorMessage
-                errors={errors}
-                name={`week.${weekIdx}.name`}
-                render={({ message, }) => <p className='text-red-400'>{message}</p>}
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+          <div className='flex gap-2'>
+            <div className='relative flex flex-col gap-2'>
+              <Input
+                className='text-xs sm:text-sm'
+                placeholder='Week Name'
+                defaultValue={``}
+                {...register(`week.${weekIdx}.name`,)}
+                onChange={() => clearErrors(`week.${weekIdx}.name`)}
               />
+              <div className='absolute top-12'>
+                <ErrorMessage
+                  errors={errors}
+                  name={`week.${weekIdx}.name`}
+                  render={({ message, }) => <p className='text-red-400'>{message}</p>}
+                />
+              </div>
             </div>
+            <Button
+              type='button'
+              className='text-xs sm:text-sm'
+              onClick={() => onSaveWeekAsTemplate(weekIdx)}
+            >
+              Save
+            </Button>
           </div>
-          <Button
-            type='button'
-            className='text-xs sm:text-sm'
-            onClick={() => onSaveWeekAsTemplate(weekIdx)}
-          >
-            Save
-          </Button>
-          <WeekTemplateSelect
-            onSelectWeekTemplate={onSelectWeekTemplate}
-            selectedWeekTemplate={selectedWeekTemplate}
+          <div className='flex gap-2'>
+            <WeekTemplateSelect
+              onSelectWeekTemplate={onSelectWeekTemplate}
+              selectedWeekTemplate={selectedWeekTemplate}
 
-          />
-          <Button
-            type='button'
-            className='text-xs sm:text-sm'
-            onClick={() => onLoadWeekTemplate(weekIdx)}
-          >
-            Load
-          </Button>
-
+            />
+            <Button
+              type='button'
+              className='text-xs sm:text-sm'
+              onClick={() => onLoadWeekTemplate(weekIdx)}
+            >
+              Load
+            </Button>
+          </div>
         </div>
         <div
           className='md:px-6'

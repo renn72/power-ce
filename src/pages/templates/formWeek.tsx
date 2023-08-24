@@ -25,7 +25,7 @@ const FormWeek = ({ weekIdx, }: { weekIdx: number }) => {
               <Tab
                 key={item.id}
                 className={({ selected, }) => classNames(
-                  'py-1.5 w-full md:px-6 mx-1 border-b border-transparent',
+                  'py-1.5 w-full md:px-6 border-b border-transparent',
                   'focus:outline-none',
                   selected
                     ? 'border-yellow-400 border-b shadow text-bold'

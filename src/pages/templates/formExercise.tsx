@@ -65,7 +65,7 @@ const GetWeight = ({
 
 const plans = [
   {
-    name: 'OneRM Percent',
+    name: 'OneRM %',
     value: 'onerm',
   },
   {
@@ -101,7 +101,7 @@ const FormExercise = ({
     }
   })
 
-  const weightType = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`)
+  const weightType = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`) as string
 
   const w = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.targetRpe`)
 
@@ -109,12 +109,12 @@ const FormExercise = ({
 
     <div className='flex flex-col justify-center'>
       <div
-        className='text-xl p-1 font-extrabold'
+        className='text-xl p-1 font-extrabold italic underline decoration-yellow-500 tracking-widest decoration-2 underline-offset-8 px-4'
       >
-        {exerciseIdx + 1}
+        &nbsp;{exerciseIdx + 1}&nbsp;
       </div>
       <div className='flex flex-col gap-4'>
-        <div className='grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-10'>
+        <div className='grid grid-cols-2 md:grid-cols-5 gap-1 gap-x-4  md:gap-8 overflow-hidden'>
           <div className='flex flex-col justify-center'>
             <Controller
               control={control}
@@ -128,11 +128,11 @@ const FormExercise = ({
             />
           </div>
           <Input
-            className=''
+            className='text-yellow-500'
             {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`,)}
             placeholder='name'
           />
-          <div className='flex items-center'>
+          <div className='flex items-center col-span-2 md:col-span-1'>
             < Label
               htmlFor='sets'
               className='text-gray-400 absolute'
@@ -156,17 +156,22 @@ const FormExercise = ({
             >
               Reps:
             </Label>
-          <Input
-            id='reps'
+            <Input
+              id='reps'
               className='pl-12'
-            type='number'
-            {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`, { valueAsNumber: true, })}
-            placeholder='reps'
-            defaultValue={1}
-          />
+              type='number'
+              {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`, { valueAsNumber: true, })}
+              placeholder='reps'
+              defaultValue={1}
+            />
           </div>
+          <Input
+            className=''
+            {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.repUnit`,)}
+            placeholder='rep unit'
+          />
         </div>
-        <div className='my-1 grid grid-cols-2 gap-4 md:gap-10'>
+        <div className='my-1 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10'>
           <Controller
             control={control}
             name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`}
@@ -178,8 +183,7 @@ const FormExercise = ({
             }) => (
               <div className=''>
                 <RadioGroup value={value} onChange={onChange}>
-                  <RadioGroup.Label className='sr-only'>Server size</RadioGroup.Label>
-                  <div className='flex items-center justify-start gap-4 md:gap-10'>
+                  <div className='flex items-center justify-start gap-1 md:gap-10'>
                     {plans.map((plan) => (
                       <RadioGroup.Option
                         key={plan.name}
@@ -187,7 +191,7 @@ const FormExercise = ({
                         className={({
                           active, checked,
                         }) => `${checked ? 'bg-gray-600 bg-opacity-75 text-gray-200' : 'bg-black text-gray-400'}
-                                relative flex cursor-pointer rounded-lg px-5 shadow-md focus:outline-none w-52 h-10`
+                                relative flex cursor-pointer rounded-lg px-2 md:px-5 shadow-md focus:outline-none w-52 h-10`
                         }
                       >
                         {({
@@ -199,7 +203,7 @@ const FormExercise = ({
                                 <div className='text-base tracking-tighter'>
                                   <RadioGroup.Label
                                     as='p'
-                                    className={`font-medium  ${checked ? 'text-gray-200' : 'text-gray-400'
+                                    className={`font-medium  ${checked ? 'text-yellow-500' : 'text-gray-400'
                                       }`}
                                   >
                                     {plan.name}
@@ -223,33 +227,48 @@ const FormExercise = ({
           />
           {weightType === 'onerm'
             && (
-              <div className='grid grid-cols-2 gap-4 md:gap-10'>
-                <Input
-                  type='number'
-                  {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, { valueAsNumber: true, })}
-                  placeholder='1rm percent'
-                />
-                <Input
-                  type='number'
-                  {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onermTop`, { valueAsNumber: true, })}
-                  placeholder='1rm percent top'
-                />
+              <div className='flex gap-0 md:gap-10'>
+                <div className='relative'>
+                  <Input
+                    type='number'
+                    {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, { valueAsNumber: true, })}
+                    placeholder='1rm percent'
+                  />
+                  <span className='absolute top-2 right-8 text-gray-400'>%</span>
+                </div>
+                <span className='shrink flex items-center'>-</span>
+                <div className='relative'>
+                  <Input
+                    type='number'
+                    {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onermTop`, { valueAsNumber: true, })}
+                    placeholder='1rm percent top'
+                  />
+                  <span className='absolute top-2 right-8 text-gray-400'>%</span>
+                </div>
               </div>
             )}
           {weightType === 'weight'
             && (
 
-              <div className='grid grid-cols-2 gap-4 md:gap-10'>
-                <Input
-                  type='number'
-                  {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightBottom`, { valueAsNumber: true, })}
-                  placeholder='weight bottom'
-                />
-                <Input
-                  type='number'
-                  {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightTop`, { valueAsNumber: true, })}
-                  placeholder='weight top'
-                />
+              <div className='flex gap-0 md:gap-10'>
+                <div className='relative'>
+                  <Input
+                    type='number'
+                    {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightBottom`, { valueAsNumber: true, })}
+                    placeholder='weight bottom'
+                  />
+                  <span className='absolute top-2 right-8 text-gray-400'>kg</span>
+                </div>
+
+                <span className='shrink flex items-center'>-</span>
+                <div className='relative'>
+                  <Input
+                    type='number'
+                    {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightTop`, { valueAsNumber: true, })}
+                    placeholder='weight top'
+                  />
+                  <span className='absolute top-2 right-8 text-gray-400'>kg</span>
+                </div>
               </div>
             )
           }
@@ -278,7 +297,7 @@ const FormExercise = ({
             )
           }
         </div>
-        <div className='flex gap-4 md:gap-10 items-center justify-between'>
+        <div className='flex flex-col md:flex-row gap-4 md:gap-10 items-center justify-between'>
           <Input
             type='text'
             {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.notes`)}

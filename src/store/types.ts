@@ -23,6 +23,7 @@ export type Exercise = {
   set: Set[],
   estimatedOnermIndex: number | null,
   weightType: string | null,
+  repUnit: string | null,
 }
 
 export type Day = {
@@ -58,6 +59,7 @@ export type ExerciseData = {
   reps: number | null,
   estimatedOnermIndex: number | null,
   weightType: string | null,
+  repUnit: string | null,
 }
 
 export type DayData = {

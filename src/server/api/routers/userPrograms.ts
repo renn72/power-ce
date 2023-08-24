@@ -23,6 +23,7 @@ const exerciseSchema = z.object({
   isEstimatedOnerm: z.boolean().optional(),
   estimatedOnermIndex: z.number().min(0).max(100).optional().nullable(),
   weightType: z.string().min(0).max(280).optional().nullable(),
+  repUnit: z.string().min(0).max(55).optional().nullable(),
 })
 
 const programSchema = z.object({
@@ -188,6 +189,7 @@ export const userProgramsRouter = createTRPCRouter({
           isEstimatedOnerm: exercise.isEstimatedOnerm ? exercise.isEstimatedOnerm : false,
           isComplete: false,
           actualSets: exercise.sets,
+          repUnit: exercise.repUnit,
           set: {
             create: Array.from({ length: exercise.sets ? +exercise.sets : 0, }, (_,) => ({
               rep: exercise.reps ? +exercise.reps : 1,

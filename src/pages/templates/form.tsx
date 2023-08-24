@@ -138,6 +138,7 @@ const Form = () => {
                   isEstimatedOnerm: exercise.isEstimatedOnerm || false,
                   estimatedOnermIndex: exercise.estimatedOnermIndex,
                   weightType: exercise.weightType,
+                  repUnit: exercise.repUnit,
 
                 })
               ),
@@ -179,6 +180,7 @@ const Form = () => {
                   isEstimatedOnerm: exercise.isEstimatedOnerm || false,
                   estimatedOnermIndex: exercise.estimatedOnermIndex,
                   weightType: exercise.weightType,
+                  repUnit: exercise.repUnit,
 
                 })
               ),
@@ -267,6 +269,7 @@ const Form = () => {
                   estimatedOnermIndex: exercise.estimatedOnermIndex,
                   notes: exercise.notes || '',
                   weightType: exercise.weightType || undefined,
+                  repUnit: exercise.repUnit || undefined,
                 })
               ),
             })
@@ -298,7 +301,7 @@ const Form = () => {
         <FormProvider {...formMethods}>
           <form onSubmit={handleSubmit(onSubmit, onError)} className='w-full flex flex-col justify-center items-center '>
             <div ref={parent} className='flex flex-col w-full gap-1 sm:gap-8 items-center'>
-              <div className='flex flex-col w-full gap-1 min-h-[80vh] sm:gap-8 p-2 sm:p-6 max-w-screen-2xl items-center '>
+              <div className='flex flex-col w-full gap-1 min-h-[80vh] sm:gap-8 p-1 sm:p-6 max-w-screen-2xl items-center '>
 
                 {/* template select */}
                 <div className='flex flex-col md:flex-row gap-2 md:gap-8 items-center justify-start'>
