@@ -471,7 +471,7 @@ const ProgramView = ({ userId, }: { userId: string }) => {
                                         <h3>{exercise.sets}</h3>
                                         <h3>X</h3>
                                         <h3>{exercise.reps}</h3>
-                                        <h3>reps</h3>
+                                        <h3>{exercise.repUnit ? exercise.repUnit : 'reps'}</h3>
                                       </div>
                                       <div>
                                         {

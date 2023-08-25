@@ -24,6 +24,7 @@ export type Exercise = {
   estimatedOnermIndex: number | null,
   weightType: string | null,
   repUnit: string | null,
+  isComplete: boolean,
 }
 
 export type Day = {
@@ -32,6 +33,7 @@ export type Day = {
   weekId: string;
   energyRating: string | null;
   isRestDay: boolean,
+  isComplete: boolean,
   exercise: Exercise[],
 };
 
@@ -60,11 +62,13 @@ export type ExerciseData = {
   estimatedOnermIndex: number | null,
   weightType: string | null,
   repUnit: string | null,
+  isComplete: boolean,
 }
 
 export type DayData = {
   isRestDay: boolean,
   exercise: ExerciseData[],
+  isComplete: boolean,
 };
 
 export type WeekData = {

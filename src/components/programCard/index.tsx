@@ -62,7 +62,7 @@ const ProgramCard = ({ userProgram, }: { userProgram: UserProgram }) => {
                     <div className='grid grid-cols-1 md:grid-cols-7 md:px-2'>
                       {
                         week.day.map((day, dayIndex) => (
-                          <div key={day.id} className='hover:bg-gray-900/70 hover:rounded-md p-2'>
+                          <div key={day.id} className='p-2'>
                             {
                               day.isRestDay
                                 ? (
