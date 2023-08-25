@@ -123,7 +123,7 @@ const ExerciseModal = ({
     },
   })
 
-  const { mutate: updateExerciseComplete} = api.programs.completeExercise.useMutation({
+  const { mutate: updateExerciseComplete } = api.programs.completeExercise.useMutation({
     onMutate: async (newExercise) => {
       console.log('id', newExercise)
       await utils.blocks.getAllUserPrograms.cancel()
@@ -157,7 +157,45 @@ const ExerciseModal = ({
           }),
         }
       }))
-      return previousPrograms
+      return { previousPrograms, }
+    },
+    onError: (err, newExercise, context) => {
+      console.log('err', err)
+      utils.blocks.getAllUserPrograms.setData(undefined, context?.previousPrograms)
+    }
+
+  })
+
+  const { mutate: updateDayComplete } = api.programs.completeDay.useMutation({
+    onMutate: async (newDay) => {
+      console.log('id', newDay)
+      await utils.blocks.getAllUserPrograms.cancel()
+      const previousPrograms = utils.blocks.getAllUserPrograms.getData()
+      utils.blocks.getAllUserPrograms.setData(undefined, (prev) => {
+        console.log('prev', prev)
+        return prev
+      })
+
+      utils.blocks.getAllUserPrograms.setData(undefined, (prev) => prev?.map((program) => {
+        return {
+          ...program,
+          week: program.week.map((week) => {
+            return {
+              ...week,
+              day: week.day.map((day) => {
+                if (day.id === newDay.id) {
+                  return {
+                    ...day,
+                    isComplete: newDay.isComplete,
+                  }
+                }
+                return day
+              }),
+            }
+          }),
+        }
+      }))
+      return { previousPrograms, }
     },
     onError: (err, newExercise, context) => {
       console.log('err', err)
@@ -241,9 +279,25 @@ const ExerciseModal = ({
           if (curr.id == set.id) return acc
           return curr.isComplete ? acc : false
         }
-      , true)
+        , true)
 
-    if (isDone) updateExerciseComplete({id: exercise.id,isComplete: true,})
+    if (!exercise.isComplete && isDone) updateExerciseComplete({ id: exercise.id, isComplete: true, })
+    if (exercise.isComplete && !isDone) updateExerciseComplete({ id: exercise.id, isComplete: false, })
+
+    const isDayDone = day.exercise.reduce((acc, curr) => {
+      if (curr.id == exercise.id && exercise.isComplete) return false
+      if (curr.id == exercise.id && isDone) return acc
+      return curr.isComplete ? acc : false
+    }, true)
+
+    console.log('isdaydone', isDayDone)
+    console.log('day', day)
+
+    if (!day.isComplete && isDayDone) updateDayComplete({ id: day.id, isComplete: true, })
+    console.log('daycomp', day.isComplete)
+    console.log('isdaydone', isDayDone)
+    if (day.isComplete && !isDayDone) updateDayComplete({ id: day.id, isComplete: false, })
+
   }
 
 
@@ -284,7 +338,7 @@ const ExerciseModal = ({
         {({ open, }) => (
           <div className='flex flex-col justify-start gap-2 '>
             <div className='flex flex-col gap-0'>
-              <Disclosure.Button className={`w-full text-lg md:text-xl`}>
+              <Disclosure.Button className={`w-full text-lg md:text-xl mt-2`}>
                 <div className='flex flex-col gap-2'>
                   <div className='flex flex-col gap-2 '>
                     <div className='flex items-end gap-2 md:gap-8'>
@@ -390,7 +444,7 @@ const ExerciseModal = ({
                           <div className='w-28 text-center'>
                             <Input
                               type='number'
-                              className='text-center md:text-xl font-bold border-white border-b-4'
+                              className='text-center text-xl font-bold border-white border-b-4'
                               value={weights}
                               placeholder='weight'
                               onChange={(e) => setWeights(+e.target.value)}
@@ -537,9 +591,12 @@ const DayModal = ({
           </div>
         )
         : (
-          <div className='w-full flex flex-col gap-10 md:p-2 '>
+          <div className='w-full flex flex-col gap-10 md:p-2 divide-y divide-dashed divide-gray-600'>
             {day.exercise.map((exercise,) => (
-              <div key={exercise.id} >
+              <div
+                key={exercise.id}
+                className=''
+              >
                 <ExerciseModal exercise={exercise} selectedEnergy={selectedEngery} day={day} />
               </div>
             ))}
