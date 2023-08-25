@@ -31,13 +31,34 @@ const ExerciseModal = ({
 
   const { user, } = useUser()
   const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery({ userId: user?.id || '', })
-  const checkWeight = (lift: string | null, onerm: number | null) => {
+
+  const checkWeight = (lift: string | null, onerm: number | null, index: number | null) => {
     if (!lift || !onerm) return ''
+    let energyAdjust = 1
+    if (selectedEnergy === 'B') energyAdjust = 0.98
+    if (selectedEnergy === 'C') energyAdjust = 0.96
+    if (selectedEnergy === 'D') energyAdjust = 0.94
+
+    if (lift == 'weight') {
+      return getWeight(+onerm, 100 * energyAdjust,)
+    }
+
+    if (index) {
+      console.log('index', index)
+      const rm = day?.exercise[index - 1]?.set.filter((s) => s.isComplete)
+      const rmWeight = rm?.map((s) => s.estiamtedOnerm)
+      const w = rmWeight[rmWeight.length - 1]
+
+      console.log('w', w)
+
+      if (w) return getWeight(+w, onerm * energyAdjust,)
+    }
+
     const w = userCoreOneRM?.find((coreLift) => coreLift?.lift === lift.toLowerCase())?.weight
 
     if (!w) return ''
 
-    return getWeight(+w, onerm,)
+    return getWeight(+w, onerm * energyAdjust,)
   }
 
   const [
@@ -132,6 +153,7 @@ const ExerciseModal = ({
                             rpe: newSet.rpe,
                             weight: newSet.weight,
                             estiamtedOnerm: newSet.estiamtedOnerm,
+                            rep: newSet.rep,
                           }
                         }
                         return set
@@ -166,6 +188,7 @@ const ExerciseModal = ({
       rpe: +rpe,
       weight: +weights,
       estiamtedOnerm: !set.isComplete ? +(+weights / (e1rm[exercise?.reps - 1] / 100)).toFixed(0) : 0, //e1rm,
+      rep: set?.rep,
     })
   }
 
@@ -185,6 +208,18 @@ const ExerciseModal = ({
   const onUpdateRpe = (set: Set, increase: boolean) => {
     console.log('id', set)
     console.log('increase', increase)
+    if (!set.rpe) return
+    const newRep = increase ? +set.rep + 1 : +set.rep - 1
+    if (newRep < 1) return
+
+    updateSet({
+      id: set.id,
+      isComplete: set.isComplete,
+      rpe: +rpe,
+      weight: +weights,
+      estiamtedOnerm: !set.isComplete ? +(+weights / (e1rm[exercise?.reps - 1] / 100)).toFixed(0) : 0, //e1rm,
+      rep: newRep,
+    })
   }
 
   return (
@@ -195,31 +230,83 @@ const ExerciseModal = ({
             <div className='flex flex-col gap-0'>
               <Disclosure.Button className={`w-full text-lg md:text-xl`}>
                 <div className='flex flex-col gap-2'>
-                  <div className='flex items-end gap-2 md:gap-8'>
-                    <ChevronUpIcon
-                      className={`${open ? 'rotate-180 transform' : ''} h-6 w-8 text-gray-300 `}
-                    />
-                    <div className='flex items-center'>
-                      <div className='first-letter:uppercase first-letter:text-2xl first-letter:font-bold text-yellow-500 '>
-                        {exercise.name}
+                  <div className='flex flex-col gap-2 '>
+                    <div className='flex items-end gap-2 md:gap-8'>
+                      <ChevronUpIcon
+                        className={`${open ? 'rotate-180 transform' : ''} h-6 w-8 text-gray-300 `}
+                      />
+                      <div className='flex items-center'>
+                        <div className='first-letter:uppercase first-letter:text-2xl first-letter:font-bold text-yellow-500 '>
+                          {exercise.name}
+                        </div>
+                        {exercise.isEstimatedOnerm && (
+                          <CheckCircleIcon className='h-4 w-4 text-green-400' />)
+                        }
                       </div>
-                      {exercise.isEstimatedOnerm && (
-                        <CheckCircleIcon className='h-4 w-4 text-green-400' />)
-                      }
                     </div>
-                    {exercise.sets && exercise.reps && (
+                    <div className='flex items-end gap-2 md:gap-8 ml-10 md:ml-16'>
+                      <div
+                        className='flex gap-1 '>
+                        <h3>{exercise.sets}</h3>
+                        <h3>X</h3>
+                        <h3>{exercise.reps}</h3>
+                        <h3>{exercise.repUnit ? exercise.repUnit : ''}</h3>
+                      </div>
                       <div>
-                        {exercise.sets}x{exercise.reps}
+                        {
+                          exercise.weightType === 'onerm'
+                          && (
+                            <div className='flex'>
+                              <h4>
+                                {checkWeight(exercise.lift, +exercise?.onerm, exercise.estimatedOnermIndex)}
+                              </h4>
+                              <h4>-</h4>
+                              <h4>
+                                {checkWeight(exercise.lift, +exercise?.onermTop, exercise.estimatedOnermIndex)}kg
+                              </h4>
+                            </div>
+
+                          )
+
+                        }
+                        {
+                          exercise.weightType === 'rpe'
+                          && (
+                            <div className='flex gap-2 items-baseline'>
+                              <h4>
+                                RPE Target
+                              </h4>
+                              <h4>-</h4>
+                              <h4 className='text-xl font-semibold border border-gray-400 rounded-full w-7 h-7 flex justify-center items-baseline'>
+                                {exercise?.targetRpe && +exercise?.targetRpe}
+                              </h4>
+                            </div>
+
+                          )
+
+                        }
+                        {
+                          exercise.weightType === 'weight'
+                          && (
+                            <div className='flex items-baseline'>
+                              <h4>
+                                {exercise?.weightBottom && checkWeight('weight', +exercise?.weightBottom)}
+                              </h4>
+                              <h4>
+                                {exercise?.weightTop && '-'}
+                              </h4>
+                              <h4>
+                                {exercise?.weightTop && checkWeight('weight', +exercise?.weightTop)}kg
+                              </h4>
+                            </div>
+
+                          )
+
+                        }
                       </div>
-                    )}
-                    {exercise.lift && exercise.onerm && (
-                      <div className=''>
-                        {onCheckWeight(exercise, selectedEnergy,)}
-                      </div>
-                    )
-                    }
+                    </div>
                   </div>
-                  <div className='transition ease-in-out delay-150 ml-16'>
+                  <div className='transition ease-in-out delay-150 ml-10 md:ml-16'>
                     <div className={open ? `absolute font-extralight text-sm opacity-40 transition-all ease-out delay-[10ms]` : `absolute w-full font-extralight text-sm flex flex-row gap-1 justify-start opacity-100 transition-all ease-out delay-[45ms]`}>
                       {exercise?.notes && exercise?.notes?.length > 0 && exercise?.notes?.slice(0, 35).trim()}
                       {exercise?.notes && exercise?.notes?.length > 0 && exercise?.notes?.length > 35 && (<span className={open ? `opacity-0` : ``}>...</span>)}
@@ -237,7 +324,7 @@ const ExerciseModal = ({
               >
                 <Disclosure.Panel>
                   <div className='flex flex-col gap-4'>
-                    <div className='font-extralight text-sm ml-16'>
+                    <div className='font-extralight text-sm ml-10 md:ml-16'>
                       {exercise?.notes}
                     </div>
                     {exercise.sets && exercise.reps && (
@@ -249,8 +336,9 @@ const ExerciseModal = ({
                           <div className='w-28 text-center'>
                             <Input
                               type='number'
-                              className='text-center md:text-xl font-bold'
+                              className='text-center md:text-xl font-bold border-white border-b-4'
                               value={weights}
+                              placeholder='weight'
                               onChange={(e) => setWeights(+e.target.value)}
                             />
                           </div>
@@ -289,26 +377,22 @@ const ExerciseModal = ({
                                   ? ''
                                   : ''
                                 }
-                                            ${checked ? 'bg-gray-400 bg-opacity-75 text-white font-bold' : 'bg-gray-700 text-gray-200'}
-                                                relative flex cursor-pointer rounded-full w-8 h-8 shadow-md focus:outline-none`
+                                            ${checked ? 'bg-yellow-500 text-white font-bold' : 'bg-gray-800 text-gray-200'}
+                                                relative flex justify-center items-center cursor-pointer rounded-full shadow-md focus:outline-none w-8 h-8 `
                                 }
                               >
                                 {({
                                   active, checked,
                                 }) => (
                                   <>
-                                    <div className='flex w-full items-center justify-center'>
-                                      <div className='flex items-center'>
-                                        <div className='text-lg'>
-                                          <RadioGroup.Label
-                                            as='p'
-                                            className={`font-semibold tracking-tighter ${checked ? 'text-gray-100 scale-120' : 'text-gray-300'
-                                              }`}
-                                          >
-                                            {energy}
-                                          </RadioGroup.Label>
-                                        </div>
-                                      </div>
+                                    <div className='flex w-full items-center text-xs justify-center'>
+                                      <RadioGroup.Label
+                                        as='p'
+                                        className={`font-semibold tracking-tighter first-letter:text-lg mt-[4px] ${checked ? 'text-gray-900' : 'text-gray-300'
+                                          } ${energy === '10' ? 'text-lg' : ''}`}
+                                      >
+                                        {energy}
+                                      </RadioGroup.Label>
                                     </div>
                                   </>
                                 )}

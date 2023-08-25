@@ -30,7 +30,12 @@ export const programsRouter = createTRPCRouter({
     }),
   updateSet: privateProcedure
     .input(z.object({
-      id: z.string(), isComplete: z.boolean(), rpe: z.number(), weight: z.number(), estiamtedOnerm: z.number()
+      id: z.string(),
+      isComplete: z.boolean(),
+      rpe: z.number(),
+      weight: z.number(),
+      estiamtedOnerm: z.number(),
+      rep: z.number(),
     }))
     .mutation(async ({
       ctx, input,
@@ -47,6 +52,7 @@ export const programsRouter = createTRPCRouter({
           rpe: input.rpe,
           weight: input.weight,
           estiamtedOnerm: input.estiamtedOnerm,
+          rep: input.rep,
         },
       })
 
