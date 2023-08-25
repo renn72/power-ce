@@ -416,7 +416,7 @@ const ProgramView = ({ userId, }: { userId: string }) => {
   const blocksTitle = blocksData?.map((block) => block.name)
   return (
     <>
-      <div className='flex flex-col gap-8 text-base sm:text-lg md:px-2'>
+      <div className='flex flex-col gap-8 text-base sm:text-lg md:px-2 mt-8'>
         {
           program.week.map((week, weekIndex) => (
             <div key={week.id}>
@@ -463,7 +463,7 @@ const ProgramView = ({ userId, }: { userId: string }) => {
                                         <h3
                                           className='text-gray-600 text-xxs leading-none capitalize'
                                         >
-                                          {exercise.lift != 'unlinked' && exercise.lift}
+                                          {exercise.lift}
                                         </h3>
                                       </div>
                                       <div
@@ -484,6 +484,22 @@ const ProgramView = ({ userId, }: { userId: string }) => {
                                               <h4>-</h4>
                                               <h4>
                                                 {checkWeight(exercise.lift, exercise?.onermTop,)}kg
+                                              </h4>
+                                            </div>
+
+                                          )
+
+                                        }
+                                        {
+                                          exercise.weightType === 'rpe'
+                                          && (
+                                            <div className='flex gap-2 items-baseline'>
+                                              <h4>
+                                                  RPE Target
+                                              </h4>
+                                              <h4>-</h4>
+                                              <h4 className='text-xl font-semibold border border-gray-400 rounded-full w-7 h-7 flex justify-center items-baseline'>
+                                                  {exercise?.targetRpe && +exercise?.targetRpe}
                                               </h4>
                                             </div>
 

@@ -20,9 +20,9 @@ const UserDisclosure = ({
 }: { userId: string, isOneRM: boolean }) => (
   <Disclosure defaultOpen={false} >
     {({ open, }) => (
-      <div className='flex flex-col gap-8 p-2'>
-        <div className='flex flex-col sm:flex-row justify-between items-center gap-6'>
-          <Disclosure.Button className={`${open ? 'border-b border-yellow-500' : 'hover:border-white border-b border-black'} flex justify-between items-center gap-2 px-4 py-2 text-left text-base sm:text-lg `}>
+      <div className='flex flex-col md:gap-8'>
+        <div className='flex flex-col sm:flex-row md:gap-6'>
+          <Disclosure.Button className={`${open ? 'border-b border-yellow-500' : 'hover:border-white border-b border-black'} flex items-center gap-2 px-2 py-2 text-lg font-medium `}>
             <span>{isOneRM ? 'One Rep Maxes' : 'Program'}</span>
             <ChevronUpIcon
               className={`${open ? 'rotate-180 transform' : ''
@@ -40,7 +40,7 @@ const UserDisclosure = ({
           leaveFrom='transform scale-100 opacity-100'
           leaveTo='transform scale-70 opacity-0'
         >
-          <Disclosure.Panel>
+          <Disclosure.Panel className=''>
             {
               isOneRM
                 ? (
@@ -77,7 +77,7 @@ const UserPage = (
 
   return (
     <div
-      className='flex flex-col gap-2'
+      className='flex flex-col w-full gap-2 justify-start'
     >
       <TemplateSelect
         onSelectTemplate={onSelectTemplate}
@@ -201,10 +201,10 @@ const Users: NextPage = () => {
     <>
       <div className='h-full flex flex-col items-center'>
         <main >
-          <div className=' max-w-[1800px] md:min-w-[80vw]  py-6 sm:px-2 flex flex-col gap-8 justify-center items-center'>
-            <div className='flex flex-col gap-4  m-2 p-4 w-full'>
+          <div className=' max-w-[1800px] min-w-[95vw] 2xl:min-w-[80vw] md:mt-6 py-6 sm:px-2 flex flex-col gap-8 justify-center items-center'>
+            <div className='flex flex-col gap-4 w-full'>
               <div className='text-2xl font-bold'>Trainers</div>
-              <div className='flex flex-col gap-8'>
+              <div className='flex flex-col w-full gap-8'>
                 {allUsers?.admins?.map((user) => (
                   <UserPage
                     key={user.id}
@@ -218,7 +218,7 @@ const Users: NextPage = () => {
                 ))}
               </div>
             </div>
-            <div className='flex flex-col gap-4 m-2 mt-8 p-4 w-full'>
+            <div className='flex flex-col gap-4 mt-8 w-full'>
               <div className='text-2xl font-bold text-gray-200'>Users</div>
               <div className='flex flex-col gap-4'>
                 {allUsers?.users?.map((user) => (

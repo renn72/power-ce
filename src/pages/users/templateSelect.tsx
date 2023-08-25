@@ -87,75 +87,81 @@ const TemplateSelect = (
   // if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
 
   return (
-    <div className='p-2 flex sm:gap-2 justify-start place-items-center'>
-      <div
-        className='text-base md:text-xl font-bold w-44 rounded-lg p-2 col-span-2'>
-        {capitaliseString(userFirstName)} {capitaliseString(userLastName)}
-      </div>
-      <div className='flex justify-center w-12'>
-        {isSet && (<CheckCircleIcon className='h-8 w-8 text-green-600' />)}
+    <div className='md:p-2 flex flex-col w-full md:flex-row sm:gap-2 justify-start md:items-center'>
+      <div className='flex w-full sm:gap-2 justify-start md:items-center'>
+        <div
+          className='text-xl font-bold md:w-44 pr-2 rounded-lg text-yellow-500'>
+          {capitaliseString(userFirstName)} {capitaliseString(userLastName)}
+        </div>
+        <div className='flex justify-center w-12'>
+          {isSet && (<CheckCircleIcon className='h-8 w-8 text-green-600' />)}
+        </div>
       </div>
 
-      <div className='text-sm md:text-base font-bold flex flex-col justify-center col-span-3 sm:col-span-2'>
-        <Listbox value={template} onChange={(e) => onSetLocalTemplate(e)}>
-          <div className='relative z-1'>
-            <Listbox.Button
-              className='relative w-60 h-10 border-b border-gray-600 hover:border-white cursor-default py-2 pl-3 pr-10 text-left shadow-md focus:outline-none '
-            >
-              <span className='block truncate'>{template}</span>
-              <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
-                <ChevronUpDownIcon
-                  className='h-5 w-5'
-                  aria-hidden='true'
-                />
-              </span>
-            </Listbox.Button>
-            <Transition
-              as={Fragment}
-              leave='transition ease-in duration-100'
-              leaveFrom='opacity-100'
-              leaveTo='opacity-0'
-            >
-              <Listbox.Options className='absolute z-10 mt-1 max-h-120 w-full overflow-auto bg-black border-gray-600 border py-1 shadow-lg '>
-                {blocksTitle?.map((templateName, Idx) => (
-                  <Listbox.Option
-                    key={Idx}
-                    className={({ active, }) => `relative cursor-default select-none py-2 pl-8 pr-4 ${active ? 'bg-yellow-400 text-black' : 'text-gray-200'
-                      }`
-                    }
-                    value={templateName}
-                  >
-                    {({ selected, }) => (
-                      <>
-                        <span
-                          className={`block truncate`}
-                        >
-                          {templateName}
-                        </span>
-                        {selected
-                          ? (
-                            <span className='absolute inset-y-0 left-0 flex items-center pl-1'>
-                              <CheckIcon className='h-5 w-5' aria-hidden='true' />
-                            </span>
-                          )
-                          : null}
-                      </>
-                    )}
-                  </Listbox.Option>
-                ))}
-              </Listbox.Options>
-            </Transition>
-          </div>
-        </Listbox>
+      <div className='flex w-full sm:gap-2 justify-start md:items-center'>
+        <div className='text-sm md:text-base font-bold flex flex-col justify-center'>
+          <Listbox value={template} onChange={(e) => onSetLocalTemplate(e)}>
+            <div className='relative z-1'>
+              <Listbox.Button
+                className='relative w-60 h-10 border-b border-gray-600 hover:border-white cursor-default pl-3 pr-10 text-left shadow-md focus:outline-none '
+              >
+                <span className='block truncate'>{template}</span>
+                <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
+                  <ChevronUpDownIcon
+                    className='h-5 w-5'
+                    aria-hidden='true'
+                  />
+                </span>
+              </Listbox.Button>
+              <Transition
+                as={Fragment}
+                leave='transition ease-in duration-100'
+                leaveFrom='opacity-100'
+                leaveTo='opacity-0'
+              >
+                <Listbox.Options className='absolute z-10 mt-1 max-h-120 w-full overflow-auto bg-black border-gray-600 border py-1 shadow-lg '>
+                  {blocksTitle?.map((templateName, Idx) => (
+                    <Listbox.Option
+                      key={Idx}
+                      className={({ active, }) => `relative cursor-default select-none py-2 pl-8 pr-4 ${active ? 'bg-yellow-400 text-black' : 'text-gray-200'
+                        }`
+                      }
+                      value={templateName}
+                    >
+                      {({ selected, }) => (
+                        <>
+                          <span
+                            className={`block truncate`}
+                          >
+                            {templateName}
+                          </span>
+                          {selected
+                            ? (
+                              <span className='absolute inset-y-0 left-0 flex items-center pl-1'>
+                                <CheckIcon className='h-5 w-5' aria-hidden='true' />
+                              </span>
+                            )
+                            : null}
+                        </>
+                      )}
+                    </Listbox.Option>
+                  ))}
+                </Listbox.Options>
+              </Transition>
+            </div>
+          </Listbox>
+        </div>
+        <div className='flex gap-2 ml-4 justify-start items-end'>
+          <PencilSquareIcon
+            className='text-gray-400 hover:text-green-600 h-8 w-8'
+            onClick={() => onSetTemplateWrapper(template, userId)}
+          />
+          <XCircleIcon
+            className='text-gray-400 hover:text-red-600 h-8 w-8 col-span-1'
+            onClick={() => onClearTemplate(userId)}
+          />
+        </div>
       </div>
-      <PencilSquareIcon
-        className='text-gray-400 hover:text-green-600 h-12 w-12 p-2 place-self-end col-span-1'
-        onClick={() => onSetTemplateWrapper(template, userId)}
-      />
-      <XCircleIcon
-        className='text-gray-400 hover:text-red-600 h-12 w-12 p-2 col-span-1'
-        onClick={() => onClearTemplate(userId)}
-      />
     </div>
   )
 }
