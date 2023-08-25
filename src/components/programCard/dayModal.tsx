@@ -442,7 +442,7 @@ const ExerciseModal = ({
                                     <div className='flex w-full items-center text-xs justify-center'>
                                       <RadioGroup.Label
                                         as='p'
-                                        className={`font-semibold tracking-tighter first-letter:text-lg mt-[2px] ${checked ? 'text-gray-900' : 'text-gray-300'
+                                        className={`font-semibold tracking-tighter first-letter:text-lg md:mt-[2px] ${checked ? 'text-gray-900' : 'text-gray-300'
                                           } ${energy === '10' ? 'text-lg' : ''}`}
                                       >
                                         {energy}
