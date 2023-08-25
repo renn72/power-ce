@@ -506,6 +506,33 @@ const ProgramView = ({ userId, }: { userId: string }) => {
                                           )
 
                                         }
+                                        {
+                                          exercise.weightType === 'weight'
+                                          && (
+                                            <div className='flex items-baseline'>
+                                              <h4>
+                                                  {exercise?.weightBottom && +exercise?.weightBottom}
+                                              </h4>
+                                              <h4>
+                                                  {exercise?.weightTop && '-'}
+                                                </h4>
+                                              <h4>
+                                                  {exercise?.weightTop && +exercise?.weightTop}kg
+                                              </h4>
+                                            </div>
+
+                                          )
+
+                                        }
+                                      </div>
+                                      <div>
+                                        {
+                                          exercise.notes && (
+                                            <div className='text-sm text-gray-400'>
+                                              {exercise.notes}
+                                            </div>
+                                          )
+                                        }
                                       </div>
                                       <h3
                                         className='text-gray-600 text-xxs'
