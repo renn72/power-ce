@@ -1,7 +1,9 @@
 import {
   useState, useEffect,
 } from 'react'
-import { type Set, } from '@prisma/client'
+import {
+  type Set, type Exercise,
+} from '@prisma/client'
 import {
   type Day, type Exercise as StoreExercise,
 } from '~/store/types'
@@ -11,8 +13,9 @@ import {
   Transition, RadioGroup, Disclosure,
 } from '@headlessui/react'
 import {
-  ChevronUpIcon, ChevronDownIcon, ChevronRightIcon, ChevronLeftIcon, CheckCircleIcon, PlusCircleIcon, MinusCircleIcon,
+  ChevronUpIcon, StarIcon, ChevronDownIcon, ChevronRightIcon, ChevronLeftIcon, CheckCircleIcon, PlusCircleIcon, MinusCircleIcon,
 } from '@heroicons/react/20/solid'
+import { StarIcon as StarIconHollow, } from '@heroicons/react/24/outline'
 import { rpe as rpeTable, } from '~/store/defaultValues'
 
 import { useUser, } from '@clerk/nextjs'
@@ -44,12 +47,9 @@ const ExerciseModal = ({
     }
 
     if (index) {
-      console.log('index', index)
       const rm = day?.exercise[index - 1]?.set.filter((s) => s.isComplete)
       const rmWeight = rm?.map((s) => s.estiamtedOnerm)
       const w = rmWeight[rmWeight.length - 1]
-
-      console.log('w', w)
 
       if (w) return getWeight(+w, onerm * energyAdjust,)
     }
@@ -123,6 +123,49 @@ const ExerciseModal = ({
     },
   })
 
+  const { mutate: updateExerciseComplete} = api.programs.completeExercise.useMutation({
+    onMutate: async (newExercise) => {
+      console.log('id', newExercise)
+      await utils.blocks.getAllUserPrograms.cancel()
+      const previousPrograms = utils.blocks.getAllUserPrograms.getData()
+      utils.blocks.getAllUserPrograms.setData(undefined, (prev) => {
+        console.log('prev', prev)
+        return prev
+      })
+
+      utils.blocks.getAllUserPrograms.setData(undefined, (prev) => prev?.map((program) => {
+        return {
+          ...program,
+          week: program.week.map((week) => {
+            return {
+              ...week,
+              day: week.day.map((day) => {
+                return {
+                  ...day,
+                  exercise: day.exercise.map((exercise) => {
+                    if (exercise.id === newExercise.id) {
+                      return {
+                        ...exercise,
+                        isComplete: newExercise.isComplete,
+                      }
+                    }
+                    return exercise
+                  }),
+                }
+              }),
+            }
+          }),
+        }
+      }))
+      return previousPrograms
+    },
+    onError: (err, newExercise, context) => {
+      console.log('err', err)
+      utils.blocks.getAllUserPrograms.setData(undefined, context?.previousPrograms)
+    }
+
+  })
+
   const { mutate: updateSet, } = api.programs.updateSet.useMutation({
     onMutate: async (newSet) => {
       console.log('id', newSet)
@@ -190,7 +233,20 @@ const ExerciseModal = ({
       estiamtedOnerm: !set.isComplete ? +(+weights / (e1rm[exercise?.reps - 1] / 100)).toFixed(0) : 0, //e1rm,
       rep: set?.rep,
     })
+
+    const isDone = exercise.set
+      .reduce(
+        (acc, curr) => {
+          if (curr.id == set.id && set.isComplete) return false
+          if (curr.id == set.id) return acc
+          return curr.isComplete ? acc : false
+        }
+      , true)
+
+    if (isDone) updateExerciseComplete({id: exercise.id,isComplete: true,})
   }
+
+
 
   useEffect(() => {
     const index = 8 - ((+rpe - 6) / 0.5)
@@ -235,13 +291,11 @@ const ExerciseModal = ({
                       <ChevronUpIcon
                         className={`${open ? 'rotate-180 transform' : ''} h-6 w-8 text-gray-300 `}
                       />
-                      <div className='flex items-center'>
+                      <div className='flex items-center justify-between w-full mr-4'>
                         <div className='first-letter:uppercase first-letter:text-2xl first-letter:font-bold text-yellow-500 '>
                           {exercise.name}
                         </div>
-                        {exercise.isEstimatedOnerm && (
-                          <CheckCircleIcon className='h-4 w-4 text-green-400' />)
-                        }
+                        {exercise?.isComplete ? (<StarIcon className='h-6 w-6 text-yellow-500' />) : (<StarIconHollow className='h-6 w-6 text-gray-600' />)}
                       </div>
                     </div>
                     <div className='flex items-end gap-2 md:gap-8 ml-10 md:ml-16'>
@@ -409,7 +463,7 @@ const ExerciseModal = ({
                           </div>
                         </div>
                         <div className={`flex gap-4 px-1 items-center overflow-x-scroll md:overflow-x-auto h-56`}>
-                          <MinusCircleIcon className='h-8 w-8 text-gray-600 mb-9 flex-shrink-0' />
+                          {/* <MinusCircleIcon className='h-8 w-8 text-gray-600 mb-9 flex-shrink-0' /> */}
 
                           {
                             exercise?.set?.map((set,) => (
@@ -425,7 +479,7 @@ const ExerciseModal = ({
                                   className='flex flex-col gap-1'
                                   onClick={() => onSetDone(set)}
                                 >
-                                  <div className={set.isComplete ? `bg-gray-600 text-xl border border-gray-600 rounded-full  h-12 min-w-[3rem] flex items-center justify-center cursor-pointer hover:scale-105` : `text-xl border border-gray-600 rounded-full h-12 min-w-[3rem] flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}>
+                                  <div className={set.isComplete ? `bg-yellow-500 text-xl rounded-full text-black  h-12 min-w-[3rem] flex items-center justify-center cursor-pointer hover:scale-105` : `text-xl rounded-full h-12 min-w-[3rem] flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}>
                                     {set.rep}
                                   </div>
                                 </div>
@@ -454,7 +508,7 @@ const ExerciseModal = ({
                               </div>
                             ))
                           }
-                          <PlusCircleIcon className='h-8 w-8 text-gray-600 mb-9 flex-shrink-0' />
+                          {/* <PlusCircleIcon className='h-8 w-8 text-gray-600 mb-9 flex-shrink-0' /> */}
                         </div>
                       </div>
                     )}

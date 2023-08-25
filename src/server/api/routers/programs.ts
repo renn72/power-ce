@@ -28,6 +28,24 @@ export const programsRouter = createTRPCRouter({
 
       return programDay
     }),
+  completeExercise: privateProcedure
+    .input(z.object({
+      id: z.string(), isComplete: z.boolean(),
+    })).mutation(async ({
+      ctx, input,
+    }) => {
+      // const authorId = ctx.userId;
+      // console.log('ctx', ctx.userId)
+
+      console.log('input', JSON.stringify(input, null, 2))
+
+      const programExercise = await ctx.prisma.exercise.update({
+        where: { id: input.id, },
+        data: { isComplete: input.isComplete, },
+      })
+      return programExercise
+    }),
+
   updateSet: privateProcedure
     .input(z.object({
       id: z.string(),
