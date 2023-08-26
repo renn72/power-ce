@@ -198,54 +198,99 @@ export const blocksRouter = createTRPCRouter({
         include: { week: { include: { day: { include: { exercise: true, }, }, }, }, },
       })
 
-      const exercise_array = oldBlock?.week.map((week) => week.day.map((day) => day.exercise.map((exercise) => exercise.id))).flat(2)
-      console.log('exercise_array', exercise_array)
-      const deleteExercise = await ctx.prisma.exercise.deleteMany({ where: { id: { in: exercise_array, }, }, })
+      const exerciseArray = oldBlock?.week.map((week) => week.day.map((day) => day.exercise.map((exercise) => exercise.id))).flat(2)
+      const dayArray = oldBlock?.week.map((week) => week.day.map((day) => day.id)).flat(1)
+      const weekArray = oldBlock?.week.map((week) => week.id)
 
-      const day_array = oldBlock?.week.map((week) => week.day.map((day) => day.id)).flat(1)
-      const deleteDay = await ctx.prisma.day.deleteMany({ where: { id: { in: day_array, }, }, })
-
-      const week_array = oldBlock?.week.map((week) => week.id)
-      const deleteWeek = await ctx.prisma.week.deleteMany({ where: { id: { in: week_array, }, }, })
-
-      const deleteBlock = await ctx.prisma.block.delete({ where: { id: oldBlock?.id, }, })
-
-      const block = await ctx.prisma.block.create({
-        data: {
-          name: input.name,
-          isProgram: false,
-          week: {
-            create: input.week.map((week) => ({
-              day: {
-                create: week.day.map((day) => ({
-                  isRestDay: day.isRestDay,
-                  exercise: {
-                    create: day.exercise.map((exercise) => ({
-                      name: exercise.name,
-                      lift: exercise.lift,
-                      sets: exercise.sets,
-                      reps: exercise.reps,
-                      onerm: exercise.onerm,
-                      onermTop: exercise.onermTop,
-                      weightTop: exercise.weightTop,
-                      weightBottom: exercise.weightBottom,
-                      targetRpe: exercise.targetRpe,
-                      notes: exercise?.notes,
-                      isEstimatedOnerm: exercise.isEstimatedOnerm,
-                      actualSets: exercise.sets,
-                      estimatedOnermIndex: exercise.estimatedOnermIndex,
-                      weightType: exercise.weightType,
-                      repUnit: exercise.repUnit,
-                    })),
-                  },
-                })),
-              },
-            })),
+      const updateAction = await ctx.prisma.$transaction([
+        ctx.prisma.exercise.deleteMany({ where: { id: { in: exerciseArray, }, }, }),
+        ctx.prisma.day.deleteMany({ where: { id: { in: dayArray, }, }, }),
+        ctx.prisma.week.deleteMany({ where: { id: { in: weekArray, }, }, }),
+        ctx.prisma.block.delete({ where: { id: oldBlock?.id, }, }),
+        ctx.prisma.block.create({
+          data: {
+            name: input.name,
+            isProgram: false,
+            week: {
+              create: input.week.map((week) => ({
+                day: {
+                  create: week.day.map((day) => ({
+                    isRestDay: day.isRestDay,
+                    exercise: {
+                      create: day.exercise.map((exercise) => ({
+                        name: exercise.name,
+                        lift: exercise.lift,
+                        sets: exercise.sets,
+                        reps: exercise.reps,
+                        onerm: exercise.onerm,
+                        onermTop: exercise.onermTop,
+                        weightTop: exercise.weightTop,
+                        weightBottom: exercise.weightBottom,
+                        targetRpe: exercise.targetRpe,
+                        notes: exercise?.notes,
+                        isEstimatedOnerm: exercise.isEstimatedOnerm,
+                        actualSets: exercise.sets,
+                        estimatedOnermIndex: exercise.estimatedOnermIndex,
+                        weightType: exercise.weightType,
+                        repUnit: exercise.repUnit,
+                      })),
+                    },
+                  })),
+                },
+              })),
+            },
           },
-        },
-      })
+        }),
+      ])
 
-      return block
+      // const deleteExercise = await ctx.prisma.exercise.deleteMany({ where: { id: { in: exercise_array, }, }, })
+      //
+      // const day_array = oldBlock?.week.map((week) => week.day.map((day) => day.id)).flat(1)
+      // const deleteDay = await ctx.prisma.day.deleteMany({ where: { id: { in: day_array, }, }, })
+      //
+      // const week_array = oldBlock?.week.map((week) => week.id)
+      // const deleteWeek = await ctx.prisma.week.deleteMany({ where: { id: { in: week_array, }, }, })
+      //
+      // const deleteBlock = await ctx.prisma.block.delete({ where: { id: oldBlock?.id, }, })
+      //
+      // const block = await ctx.prisma.block.create({
+      //   data: {
+      //     name: input.name,
+      //     isProgram: false,
+      //     week: {
+      //       create: input.week.map((week) => ({
+      //         day: {
+      //           create: week.day.map((day) => ({
+      //             isRestDay: day.isRestDay,
+      //             exercise: {
+      //               create: day.exercise.map((exercise) => ({
+      //                 name: exercise.name,
+      //                 lift: exercise.lift,
+      //                 sets: exercise.sets,
+      //                 reps: exercise.reps,
+      //                 onerm: exercise.onerm,
+      //                 onermTop: exercise.onermTop,
+      //                 weightTop: exercise.weightTop,
+      //                 weightBottom: exercise.weightBottom,
+      //                 targetRpe: exercise.targetRpe,
+      //                 notes: exercise?.notes,
+      //                 isEstimatedOnerm: exercise.isEstimatedOnerm,
+      //                 actualSets: exercise.sets,
+      //                 estimatedOnermIndex: exercise.estimatedOnermIndex,
+      //                 weightType: exercise.weightType,
+      //                 repUnit: exercise.repUnit,
+      //               })),
+      //             },
+      //           })),
+      //         },
+      //       })),
+      //     },
+      //   },
+      // })
+      //
+      // console.log('block', JSON.stringify(block, null, 2))
+
+      return updateAction
 
     }),
 })
