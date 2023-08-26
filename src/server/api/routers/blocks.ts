@@ -193,20 +193,8 @@ export const blocksRouter = createTRPCRouter({
       console.log('ctx', ctx.userId)
       console.log('input', JSON.stringify(input, null, 2))
 
-      const oldBlock = await ctx.prisma.block.findUnique({
-        where: { id: input.id, },
-        include: { week: { include: { day: { include: { exercise: true, }, }, }, }, },
-      })
-
-      const exerciseArray = oldBlock?.week.map((week) => week.day.map((day) => day.exercise.map((exercise) => exercise.id))).flat(2)
-      const dayArray = oldBlock?.week.map((week) => week.day.map((day) => day.id)).flat(1)
-      const weekArray = oldBlock?.week.map((week) => week.id)
-
       const updateAction = await ctx.prisma.$transaction([
-        ctx.prisma.exercise.deleteMany({ where: { id: { in: exerciseArray, }, }, }),
-        ctx.prisma.day.deleteMany({ where: { id: { in: dayArray, }, }, }),
-        ctx.prisma.week.deleteMany({ where: { id: { in: weekArray, }, }, }),
-        ctx.prisma.block.delete({ where: { id: oldBlock?.id, }, }),
+        ctx.prisma.block.delete({ where: { id: input.id, }, }),
         ctx.prisma.block.create({
           data: {
             name: input.name,
