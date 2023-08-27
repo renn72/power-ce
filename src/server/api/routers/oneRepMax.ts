@@ -79,5 +79,10 @@ export const oneRepMaxRouter = createTRPCRouter({
       )
       return onerm
     }),
+  deleteAll: privateProcedure
+    .mutation(async ({ ctx, }) => {
+      const onerm = await ctx.prisma.oneRepMax.deleteMany({})
+      return onerm
+    }),
 
 })

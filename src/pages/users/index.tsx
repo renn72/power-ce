@@ -234,11 +234,6 @@ const Users: NextPage = () => {
                 ))}
               </div>
             </div>
-            <Button
-              className='w-24'
-              onClick={onGenerate}>
-              Generate
-            </Button>
           </div>
         </main>
       </div>

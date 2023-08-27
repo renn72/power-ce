@@ -76,8 +76,24 @@ const ExerciseDialog = ({
     register, unregister, getValues, watch, reset, setValue, control, handleSubmit, clearErrors, setError, formState: { errors, },
   } = formMethods
 
-  const onSubmit = (data: Exercise) => {
-    data.id = exerciseId
+  const onSubmit = (exercise: Exercise) => {
+    const data = {
+      id: exerciseId,
+      name: exercise.name || '',
+      lift: exercise.lift,
+      onerm: exercise.onerm ? +exercise.onerm : null,
+      onermTop: exercise.onermTop ? +exercise.onermTop : null,
+      weightTop: exercise.weightTop ? +exercise.weightTop : null,
+      weightBottom: exercise.weightBottom ? +exercise.weightBottom : null,
+      targetRpe: exercise.targetRpe ? +exercise.targetRpe : null,
+      sets: exercise.sets ? +exercise.sets : null,
+      reps: exercise.reps ? +exercise.reps : null,
+      notes: exercise.notes,
+      isEstimatedOnerm: exercise.isEstimatedOnerm || false,
+      estimatedOnermIndex: exercise.estimatedOnermIndex,
+      weightType: exercise.weightType,
+      repUnit: exercise.repUnit,
+    }
     console.log('data', data)
     updateExercise({ exercise: data, })
   }
@@ -404,6 +420,16 @@ const ProgramView = ({ userId, }: { userId: string }) => {
     return getWeight(+w, onerm,)
   }
 
+  const isOneRm = (lift: string | null) => {
+
+    if (!lift) return false
+
+    const w = userCoreOneRM?.find((coreLift) => coreLift?.lift === lift?.toLowerCase())?.weight
+
+    if (!w) return false
+    return true
+  }
+
   const closeModal = () => {
     setIsOpen(false)
   }
@@ -477,16 +503,26 @@ const ProgramView = ({ userId, }: { userId: string }) => {
                                         {
                                           exercise.weightType === 'onerm'
                                           && (
-                                            <div className='flex'>
-                                              <h4>
-                                                {checkWeight(exercise.lift, exercise?.onerm,)}
-                                              </h4>
-                                              <h4>-</h4>
-                                              <h4>
-                                                {checkWeight(exercise.lift, exercise?.onermTop,)}kg
-                                              </h4>
-                                            </div>
+                                            <div>
+                                              {isOneRm(exercise.lift)
+                                                ? (
+                                                  <div className='flex'>
+                                                    <h4>
+                                                      {exercise.onerm ? checkWeight(exercise.lift, exercise?.onerm,) : (<div className='text-red-500'>Missing %</div>)}
+                                                    </h4>
+                                                    <h4>{exercise.onermTop && '-'}</h4>
+                                                    <h4>
+                                                      {exercise.onermTop && checkWeight(exercise.lift, exercise.onermTop,)}kg
+                                                    </h4>
+                                                  </div>
 
+                                                )
+                                                : (
+                                                  <div className='text-red-500'>
+                                                    Missing 1rm
+                                                  </div>
+                                                )}
+                                            </div>
                                           )
 
                                         }
@@ -495,11 +531,11 @@ const ProgramView = ({ userId, }: { userId: string }) => {
                                           && (
                                             <div className='flex gap-2 items-baseline'>
                                               <h4>
-                                                  RPE Target
+                                                RPE Target
                                               </h4>
                                               <h4>-</h4>
-                                              <h4 className='text-xl font-semibold border border-gray-400 rounded-full w-7 h-7 flex justify-center items-baseline'>
-                                                  {exercise?.targetRpe && +exercise?.targetRpe}
+                                              <h4 className='text-xl font-semibold flex justify-center items-baseline'>
+                                                {exercise?.targetRpe && +exercise?.targetRpe}
                                               </h4>
                                             </div>
 
@@ -511,13 +547,13 @@ const ProgramView = ({ userId, }: { userId: string }) => {
                                           && (
                                             <div className='flex items-baseline'>
                                               <h4>
-                                                  {exercise?.weightBottom && +exercise?.weightBottom}
+                                                {exercise?.weightBottom ? +exercise?.weightBottom : (<div className='text-red-500'>Missing W</div>)}
                                               </h4>
                                               <h4>
-                                                  {exercise?.weightTop && '-'}
-                                                </h4>
+                                                {exercise?.weightTop && '-'}
+                                              </h4>
                                               <h4>
-                                                  {exercise?.weightTop && +exercise?.weightTop}kg
+                                                {exercise?.weightTop && +exercise?.weightTop}kg
                                               </h4>
                                             </div>
 
@@ -554,7 +590,7 @@ const ProgramView = ({ userId, }: { userId: string }) => {
             </div>
           ))
         }
-      </div>
+      </div >
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as='div' className='relative z-10 text-gray-200' onClose={closeModal}>
           <Transition.Child

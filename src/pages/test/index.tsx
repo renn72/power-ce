@@ -1,8 +1,8 @@
 import { api, } from '~/utils/api'
 
 import { toast, } from 'react-hot-toast'
-import { testBlock } from '~/store/defaultValues'
-import { Button } from '@/components/ui/button'
+import { testBlock, } from '~/store/defaultValues'
+import { Button, } from '@/components/ui/button'
 const Test = () => {
   const ctx = api.useContext()
   const {
@@ -30,7 +30,52 @@ const Test = () => {
     },
   })
 
-  if (tempLoading && proLoading) return <div>Loading</div>
+  const {
+    data: primaryLifts, isLoading: primaryLiftsLoading,
+  } = api.primaryLifts.getAll.useQuery()
+
+  const {
+    data: allUsers, isLoading: usersLoading,
+  } = api.users.getAll.useQuery()
+
+  const { mutate: createUserCoreOneRM, } = api.oneRepMax.create.useMutation({
+    onSettled: async () => {
+      await ctx.oneRepMax.getUserCoreLifts.invalidate()
+    },
+    onError: (e) => {
+      console.log('error', e)
+      toast.error('Error')
+    },
+  })
+  const { mutate: deleteAllRM, } = api.oneRepMax.deleteAll.useMutation({
+    onSuccess: () => {
+      console.log('deleted')
+      void ctx.oneRepMax.getUserCoreLifts.invalidate()
+    },
+  })
+  const onUpdateOneRM = (userId: string, lift: string, weight: number) => {
+    createUserCoreOneRM({
+      userId: userId, lift: lift.toLowerCase(), weight: +weight,
+    })
+  }
+  const onGenerate = () => {
+    console.log('gen')
+    allUsers?.admins?.forEach((user) => {
+      primaryLifts?.forEach((lift) => {
+        const weight = (Math.floor(Math.random() * 15) + 5) * 10
+        onUpdateOneRM(user.id, lift.name, weight)
+      })
+    })
+    allUsers?.users?.forEach((user) => {
+      primaryLifts?.forEach((lift) => {
+        const weight = (Math.floor(Math.random() * 15) + 5) * 10
+        onUpdateOneRM(user.id, lift.name, weight)
+      })
+    })
+
+  }
+
+  if (tempLoading && proLoading && primaryLiftsLoading && usersLoading) return <div>Loading</div>
 
   const all = allTemplates?.concat(allPrograms)
 
@@ -40,9 +85,14 @@ const Test = () => {
   }
 
   const onCreate = () => {
-    
+
     console.log('create')
     blockCreateMutate(testBlock)
+  }
+
+  const onDeleteAll = () => {
+    console.log('delete')
+    deleteAllRM()
   }
 
   return (
@@ -69,11 +119,25 @@ const Test = () => {
             >X</h3>
           </div>
         ))}
-        <Button
-          onClick={onCreate}
-        >
-          create tempate
-        </Button>
+        <div className='flex flex-col gap-6'>
+
+          <Button
+            className='w-44'
+            onClick={onCreate}
+          >
+            create tempate
+          </Button>
+          <Button
+            className='w-44'
+            onClick={onGenerate}>
+            Generate 1rm
+          </Button>
+          <Button
+            className='w-44'
+            onClick={onDeleteAll}>
+            Delete 1rm
+          </Button>
+        </div>
       </div>
     </div>
   )
