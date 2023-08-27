@@ -270,7 +270,7 @@ const ExerciseModal = ({
       isComplete: !set.isComplete,
       rpe: +rpe,
       weight: +weights,
-      estiamtedOnerm: !set.isComplete ? e ? e : 0  : 0, //e1rm,
+      estiamtedOnerm: !set.isComplete ? e ? e : 0 : 0, //e1rm,
       rep: set?.rep,
     })
 
@@ -387,7 +387,7 @@ const ExerciseModal = ({
                                 RPE Target
                               </h4>
                               <h4>-</h4>
-                              <h4 className='text-xl font-semibold border border-gray-400 rounded-full w-7 h-7 flex justify-center items-baseline'>
+                              <h4 className='text-xl font-semibold flex justify-center items-baseline'>
                                 {exercise?.targetRpe && +exercise?.targetRpe}
                               </h4>
                             </div>
@@ -510,14 +510,21 @@ const ExerciseModal = ({
                             ))}
                           </div>
                         </RadioGroup>
-                        <div className='flex px-2 gap-2 mx-1 md:mx-6'>
-                          <div>
-                            E1RM
-                          </div>
-                          <div>
-                            {(weights / (e1rm[exercise.reps - 1] / 100)).toFixed(0)}kg
-                          </div>
-                        </div>
+
+                        {
+                          exercise.lift && exercise.lift !== 'unlinked' && (+weights / +(e1rm[+exercise?.reps - 1] / 100))?.toFixed(0) && (
+                            <div className='flex px-2 gap-2 mx-1 md:mx-6'>
+                              <div>
+                                E1RM
+                              </div>
+                              {weights && weights !== 0 && e1rm[+exercise.reps - 1] && (
+                                <div>
+                                  {(+weights / (e1rm[+exercise.reps - 1] / 100))?.toFixed(0)}kg
+                                </div>
+                              )}
+                            </div>
+                          )
+                        }
                         <div className={`flex gap-4 px-1 items-center overflow-x-scroll md:overflow-x-auto h-56`}>
                           {/* <MinusCircleIcon className='h-8 w-8 text-gray-600 mb-9 flex-shrink-0' /> */}
 
