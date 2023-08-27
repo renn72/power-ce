@@ -10,19 +10,24 @@ import {
 } from '@heroicons/react/24/outline'
 import Image from 'next/image'
 
-const navigation = [
+import { useUser, } from '@clerk/nextjs'
+
+const nav = [
   {
     name: 'Dashboard', href: '/',
   },
   {
-    name: 'Users', href: '/users',
+    name: 'Users', href: '/users', admin: true,
   },
   {
-    name: 'Primary Lifts', href: '/primary-lifts',
+    name: 'Primary Lifts', href: '/primary-lifts', admin: true,
   },
   {
-    name: 'Templates', href: '/templates',
+    name: 'Templates', href: '/templates', admin: true,
   },
+  {
+    name: 'test', href: '/test', admin: true,
+  }
   // {
   //   name: 'Lift', href: '/lift',
   // },
@@ -31,11 +36,16 @@ const navigation = [
   // },
 ]
 
+const admin = ['user_2RB3u3X0pKDxnvmHraPW3RfwrAv', 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a']
+
 const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(' ')
 }
 const Navbar = () => {
+  const { user, } = useUser()
   const router = useRouter()
+  const isUserAdmin = admin.includes(user?.id || '')
+  const navigation = nav.filter((item) => !item.admin || item.admin && isUserAdmin)
   return (
     <>
       <Disclosure as='nav' className='bg-black font-semibold tracking-wider text-gray-200'>

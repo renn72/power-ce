@@ -33,7 +33,9 @@ const FormWeek = ({ weekIdx, }: { weekIdx: number }) => {
                 )
                 }
               >
-                {`Day ${index + 1}`}
+                <h2>
+                  {`Day ${index + 1}`}
+                </h2>
               </Tab>
             )
           })}

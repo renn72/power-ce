@@ -148,6 +148,8 @@ const Form = () => {
       ),
     }
 
+    console.log('block', JSON.stringify(block, null, 2))
+
     blockCreateMutate(block)
   }
 

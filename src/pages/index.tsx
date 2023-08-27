@@ -1,12 +1,14 @@
 import { type NextPage, } from 'next'
 import React from 'react'
 
+import { useUser, } from '@clerk/nextjs'
 import { api, } from '~/utils/api'
-import OneRMCard from '~/components/oneRMCard'
 import ProgramCard from '~/components/programCard'
 import { LoadingPage, } from '~/components/loading'
 
 const Home: NextPage = () => {
+  const { user, } = useUser()
+  api.oneRepMax.getUserCoreLifts.useQuery({ userId: user?.id || '', })
   const {
     data: userPrograms, isLoading: userProgramsLoading,
   } = api.userPrograms.getAllUser.useQuery()

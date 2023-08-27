@@ -86,7 +86,7 @@ const ProgramDay = ({
       <div
         className='flex flex-col gap-4'
       >
-        <Disclosure defaultOpen={true} >
+        <Disclosure defaultOpen={!day.isComplete} >
           {({ open, }) => (
             <div className='flex flex-col md:gap-8'>
               <div className='flex flex-col sm:flex-row md:gap-6'>
@@ -100,7 +100,7 @@ const ProgramDay = ({
                     className={`${open ? 'rotate-180 transform text-white/80' : 'text-white/30'
                       } h-8 w-8 text-gray-400`}
                   />
-                  {day?.isComplete ? (<StarIcon className='h-4 w-4 text-yellow-500' />) : (<StarIconHollow className='h-6 w-6 text-gray-600' />)}
+                  {day?.isComplete ? (<StarIcon className='h-6 w-6 text-yellow-500' />) : (<StarIconHollow className='h-6 w-6 text-gray-600' />)}
                 </Disclosure.Button>
                 <div className='flex gap-2'>
                 </div>
@@ -130,7 +130,7 @@ const ProgramDay = ({
                             </h3>
                             <div>
                               {
-                                exercise.isComplete ? <StarIcon className='h-4 w-4 text-yellow-500/60' /> : <StarIconHollow className='h-4 w-4 text-gray-600' />
+                                exercise.isComplete ? <StarIcon className='h-4 w-4 text-yellow-500' /> : <StarIconHollow className='h-4 w-4 text-gray-600' />
                               }
                             </div>
                           </div>
@@ -167,7 +167,7 @@ const ProgramDay = ({
                                       RPE Target
                                     </h4>
                                     <h4>-</h4>
-                                    <h4 className='text-xl font-semibold border border-gray-400 rounded-full w-7 h-7 flex justify-center items-baseline'>
+                                    <h4 className='text-xl font-semibold flex justify-center items-baseline'>
                                       {exercise?.targetRpe && +exercise?.targetRpe}
                                     </h4>
                                   </div>

@@ -281,4 +281,10 @@ export const blocksRouter = createTRPCRouter({
       return updateAction
 
     }),
+  hardDelete: privateProcedure
+    .input(z.object({ id: z.string(), }))
+    .mutation(async ({ ctx, input, }) => {
+      const block = await ctx.prisma.block.delete({ where: { id: input.id, }, })
+      return block
+    }),
 })
