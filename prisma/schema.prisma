@@ -110,7 +110,7 @@ model Day {
 
   week Week @relation(fields: [weekId], references: [id], onDelete: Cascade)
 
-  energyRating String?  @db.VarChar(1)
+  energyRating String?  @db.VarChar(1) @default("A")
   isComplete   Boolean?
 
   flield1 String?

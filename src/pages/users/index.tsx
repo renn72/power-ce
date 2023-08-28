@@ -201,7 +201,7 @@ const Users: NextPage = () => {
     <>
       <div className='h-full flex flex-col items-center'>
         <main >
-          <div className=' max-w-[1800px] min-w-[95vw] 2xl:min-w-[80vw] md:mt-6 py-6 sm:px-2 flex flex-col gap-8 justify-center items-center'>
+          <div className=' max-w-[2000px] min-w-[95vw] 2xl:min-w-[80vw] md:mt-6 py-6 sm:px-2 flex flex-col gap-8 justify-center items-center'>
             <div className='flex flex-col gap-4 w-full'>
               <div className='text-2xl font-bold'>Trainers</div>
               <div className='flex flex-col w-full gap-8'>
