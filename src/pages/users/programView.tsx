@@ -455,7 +455,7 @@ const ProgramView = ({ userId, }: { userId: string }) => {
               <h1
                 className='text-2xl font-bold mb-4'
               >Week {weekIndex + 1}</h1>
-              <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 md:px-2'>
+              <div className='grid grid-cols-1 xl:grid-cols-3 2xl:grid-cols-7 md:px-2'>
                 {
                   week.day.map((day, dayIndex) => (
                     <div key={day.id} className='hover:bg-gray-900/70 hover:rounded-md p-2'>
@@ -579,13 +579,12 @@ const ProgramView = ({ userId, }: { userId: string }) => {
                                             <div className='mt-6 flex flex-col gap-4 text-base'>
                                               {
                                                 exercise?.set.map((s, setIndex) => (
-                                                  <div key={s.id} className='grid grid-cols-7 md:grid-cols-4  2xl:grid-cols-7 gap-x-1 tracking-tighter'>
+                                                  <div key={s.id} className='grid grid-cols-7 gap-x-1 tracking-tighter'>
                                                     {/* <h4 className=''>{setIndex + 1}.</h4> */}
                                                     <h4 className=''>{s?.rep}</h4>
                                                     {s.weight && +s.weight !== 0 && (<h4 className='col-span-2'>{+s.weight}kg</h4>)}
-                                                    <h4 className='col-span-2'>rpe.{s?.rpe && +s?.rpe}</h4>
-                                                    <h4 className='col-span-2'>1rm.{s.estiamtedOnerm &&+s.estiamtedOnerm}kg</h4>
-
+                                                    <h4 className='col-span-2'>rpe {s?.rpe && +s?.rpe}</h4>
+                                                    {s.estiamtedOnerm && s.estiamtedOnerm != 0 && (<h4 className='col-span-2'>1rm {+s.estiamtedOnerm}kg</h4>)}
                                                   </div>
                                                 ))
                                               }
