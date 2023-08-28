@@ -70,6 +70,7 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
       day: week.day.map(
         (day) => ({
           isRestDay: day.isRestDay,
+          isComplete: false,
           exercise: day.exercise.map(
             (exercise) => ({
               name: exercise.name ? exercise.name : '',
@@ -86,6 +87,8 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
               estimatedOnermIndex: exercise.estimatedOnermIndex,
               weightType: exercise.weightType,
               repUnit: exercise.repUnit,
+              htmlLink: exercise.htmlLink,
+              isComplete: false
 
             })
           ),

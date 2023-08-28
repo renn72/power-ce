@@ -123,6 +123,7 @@ const Form = () => {
           day: week.day.map(
             (day) => ({
               isRestDay: day.isRestDay,
+              isComplete: false,
               exercise: day.exercise.map(
                 (exercise) => ({
                   name: exercise.name,
@@ -139,6 +140,8 @@ const Form = () => {
                   estimatedOnermIndex: exercise.estimatedOnermIndex,
                   weightType: exercise.weightType,
                   repUnit: exercise.repUnit,
+                  htmlLink: exercise.htmlLink,
+                  isComplete: false,
 
                 })
               ),
@@ -167,6 +170,7 @@ const Form = () => {
           day: week.day.map(
             (day) => ({
               isRestDay: day.isRestDay,
+              isComplete: false,
               exercise: day.exercise.map(
                 (exercise) => ({
                   name: exercise.name,
@@ -183,6 +187,8 @@ const Form = () => {
                   estimatedOnermIndex: exercise.estimatedOnermIndex,
                   weightType: exercise.weightType,
                   repUnit: exercise.repUnit,
+                  htmlLink: exercise.htmlLink,
+              isComplete: false,
 
                 })
               ),
@@ -205,25 +211,25 @@ const Form = () => {
       isTemplate: false,
       day: [
         {
-          exercise: [], isRestDay: false,
+          exercise: [], isRestDay: true,
         },
         {
-          exercise: [], isRestDay: false,
+          exercise: [], isRestDay: true,
         },
         {
-          exercise: [], isRestDay: false,
+          exercise: [], isRestDay: true,
         },
         {
-          exercise: [], isRestDay: false,
+          exercise: [], isRestDay: true,
         },
         {
-          exercise: [], isRestDay: false,
+          exercise: [], isRestDay: true,
         },
         {
-          exercise: [], isRestDay: false,
+          exercise: [], isRestDay: true,
         },
         {
-          exercise: [], isRestDay: false,
+          exercise: [], isRestDay: true,
         },
       ],
     })
@@ -233,7 +239,6 @@ const Form = () => {
     reset(defaultValues)
     setIsUpdate(false)
     setBlockId('')
-    setValue('name', `block-${getRandomInt(1000)}`)
   }
 
   const onSelectTemplate = (template: string) => {
@@ -272,6 +277,7 @@ const Form = () => {
                   notes: exercise.notes || '',
                   weightType: exercise.weightType || undefined,
                   repUnit: exercise.repUnit || undefined,
+                  htmlLink: exercise.htmlLink || undefined,
                 })
               ),
             })

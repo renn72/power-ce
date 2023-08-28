@@ -31,7 +31,7 @@ const FormDay = ({
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const isRest = watch(`week.${weekIdx}.day.${dayIdx}.isRestDay`)
+  const isRest : boolean = watch(`week.${weekIdx}.day.${dayIdx}.isRestDay`)
 
   useEffect(() => {
     if (isRest) {
