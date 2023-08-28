@@ -582,9 +582,9 @@ const ProgramView = ({ userId, }: { userId: string }) => {
                                                   <div key={s.id} className='grid grid-cols-7 md:grid-cols-4  2xl:grid-cols-7 gap-x-1 tracking-tighter'>
                                                     {/* <h4 className=''>{setIndex + 1}.</h4> */}
                                                     <h4 className=''>{s?.rep}</h4>
-                                                    {+s.weight !== 0 && +s.weight && (<h4 className='col-span-2'>{+s.weight}kg</h4>)}
-                                                    <h4 className='col-span-2'>rpe.{s?.rpe}</h4>
-                                                    <h4 className='col-span-2'>1rm.{s?.estiamtedOnerm}kg</h4>
+                                                    {s.weight && +s.weight !== 0 && (<h4 className='col-span-2'>{+s.weight}kg</h4>)}
+                                                    <h4 className='col-span-2'>rpe.{s?.rpe && +s?.rpe}</h4>
+                                                    <h4 className='col-span-2'>1rm.{s.estiamtedOnerm &&+s.estiamtedOnerm}kg</h4>
 
                                                   </div>
                                                 ))
