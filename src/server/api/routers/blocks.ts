@@ -50,7 +50,9 @@ export const blocksRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx, }) => {
     const blocks = await ctx.prisma.block.findMany({
       orderBy: { createdAt: 'desc', },
-      where: { isProgram: false, },
+      where: {
+        isProgram: false, isDeleted: false,
+      },
       include: { week: { include: { day: { include: { exercise: true, }, }, }, }, },
     })
     return blocks
@@ -58,7 +60,16 @@ export const blocksRouter = createTRPCRouter({
   getAllPrograms: publicProcedure.query(async ({ ctx, }) => {
     const blocks = await ctx.prisma.block.findMany({
       orderBy: { createdAt: 'desc', },
-      where: { isProgram: true, },
+      where: {
+        isProgram: true, isDeleted: false,
+      },
+      include: { week: { include: { day: { include: { exercise: { include: { set: true, }, }, }, }, }, }, },
+    })
+    return blocks
+  }),
+  getAllAdmin: publicProcedure.query(async ({ ctx, }) => {
+    const blocks = await ctx.prisma.block.findMany({
+      orderBy: { createdAt: 'desc', },
       include: { week: { include: { day: { include: { exercise: { include: { set: true, }, }, }, }, }, }, },
     })
     return blocks
@@ -283,8 +294,31 @@ export const blocksRouter = createTRPCRouter({
     }),
   hardDelete: privateProcedure
     .input(z.object({ id: z.string(), }))
-    .mutation(async ({ ctx, input, }) => {
+    .mutation(async ({
+      ctx, input,
+    }) => {
       const block = await ctx.prisma.block.delete({ where: { id: input.id, }, })
       return block
     }),
+  softDelete: privateProcedure
+    .input(z.object({ id: z.string(), }))
+    .mutation(async ({
+      ctx, input,
+    }) => {
+      const block = await ctx.prisma.block.update({
+        where: { id: input.id, }, data: { isDeleted: true, },
+      })
+      return block
+    }),
+  softUnDelete: privateProcedure
+    .input(z.object({ id: z.string(), }))
+    .mutation(async ({
+      ctx, input,
+    }) => {
+      const block = await ctx.prisma.block.update({
+        where: { id: input.id, }, data: { isDeleted: false, },
+      })
+      return block
+    }),
+
 })

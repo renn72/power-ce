@@ -6,23 +6,36 @@ import { Button, } from '@/components/ui/button'
 const Test = () => {
   const ctx = api.useContext()
   const {
-    data: allTemplates, isLoading: tempLoading,
-  } = api.blocks.getAll.useQuery()
-  const {
-    data: allPrograms, isLoading: proLoading,
-  } = api.blocks.getAllPrograms.useQuery()
+    data: all, isLoading: tempLoading,
+  } = api.blocks.getAllAdmin.useQuery()
+
   const { mutate: deleteTemplate, } = api.blocks.hardDelete.useMutation({
     onSuccess: () => {
       console.log('deleted')
-      void ctx.blocks.getAll.invalidate()
-      void ctx.blocks.getAllPrograms.invalidate()
+      void ctx.blocks.getAllAdmin.invalidate()
     },
   })
+
+  const { mutate: deleteSoftTemplate, } = api.blocks.softDelete.useMutation({
+    onSuccess: () => {
+      console.log('deleted')
+      void ctx.blocks.getAllAdmin.invalidate()
+    },
+  })
+
+  const { mutate: undeleteSoftTemplate, } = api.blocks.softUnDelete.useMutation({
+    onSuccess: () => {
+      console.log('deleted')
+      void ctx.blocks.getAllAdmin.invalidate()
+    },
+  })
+
   const { mutate: blockCreateMutate, } = api.blocks.create.useMutation({
     onSuccess: () => {
       console.log('success')
       toast.success('Saved')
       void ctx.blocks.getAll.invalidate()
+      void ctx.blocks.getAllAdmin.invalidate()
     },
     onError: (e) => {
       console.log('error', e)
@@ -47,12 +60,14 @@ const Test = () => {
       toast.error('Error')
     },
   })
+
   const { mutate: deleteAllRM, } = api.oneRepMax.deleteAll.useMutation({
     onSuccess: () => {
       console.log('deleted')
       void ctx.oneRepMax.getUserCoreLifts.invalidate()
     },
   })
+
   const onUpdateOneRM = (userId: string, lift: string, weight: number) => {
     createUserCoreOneRM({
       userId: userId, lift: lift.toLowerCase(), weight: +weight,
@@ -75,13 +90,21 @@ const Test = () => {
 
   }
 
-  if (tempLoading && proLoading && primaryLiftsLoading && usersLoading) return <div>Loading</div>
-
-  const all = allTemplates?.concat(allPrograms)
+  if (tempLoading && primaryLiftsLoading && usersLoading) return <div>Loading</div>
 
   const onDelete = (id: string) => {
     console.log('delete', id)
     deleteTemplate({ id: id, })
+  }
+
+  const onDeleteSoft = (id: string) => {
+    console.log('delete', id)
+    deleteSoftTemplate({ id: id, })
+  }
+
+  const onUnDeleteSoft = (id: string) => {
+    console.log('delete', id)
+    undeleteSoftTemplate({ id: id, })
   }
 
   const onCreate = () => {
@@ -102,21 +125,32 @@ const Test = () => {
         {all?.map((template) => (
           <div
             key={template.id}
-            className='flex divide-x-2 divide-gray-200 items-center'
+            className='grid auto-cols-auto grid-flow-col divide-x-2 divide-gray-200 items-center'
           >
             <h2
-              className='m-1 p-1'
+              className='m-1 pl-1'
             >{template.name}</h2>
             <h3
-              className='m-2 p-2'
+              className='m-2 pl-2'
             >{template.isProgram ? 'program' : 'template'}</h3>
             <h3
-              className='m-2 p-2'
+              className='m-2 pl-2 w-24'
             >{template.isProgramActive && 'active'}</h3>
+            <h3
+              className='m-2 pl-2'
+            >{template.isDeleted ? 'deleted' : 'not deleted'}</h3>
+            <h3
+              className='m-2 pl-2 cursor-pointer'
+              onClick={() => onUnDeleteSoft(template.id)}
+            >reverse delete</h3>
             <h3
               className='m-2 px-8 text-2xl cursor-pointer'
               onClick={() => onDelete(template.id)}
-            >X</h3>
+            >HardX</h3>
+            <h3
+              className='m-2 px-8 text-2xl cursor-pointer'
+              onClick={() => onDeleteSoft(template.id)}
+            >SoftX</h3>
           </div>
         ))}
         <div className='flex flex-col gap-6'>
