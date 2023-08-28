@@ -2,7 +2,9 @@ import {
   useFormContext, Controller, useFieldArray,
 } from 'react-hook-form'
 
-import { Fragment, } from 'react'
+import {
+  Fragment, useEffect,
+} from 'react'
 
 import { useAtom, } from 'jotai'
 import { useUser, } from '@clerk/nextjs'
@@ -102,8 +104,14 @@ const FormExercise = ({
   })
 
   const weightType = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`) as string
+  const liftType = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.lift`) as string
 
-  const w = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.targetRpe`)
+  // const w = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.targetRpe`)
+
+  useEffect(() => {
+    if (liftType != 'unlinked') formMethods.setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`, liftType.slice(0, 1).toUpperCase() + liftType.slice(1))
+
+  }, [liftType,])
 
   return (
 

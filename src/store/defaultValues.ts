@@ -1,7 +1,7 @@
 import { getRandomInt, } from '~/utils/utils'
 
 export const defaultValues = {
-  name: `block-${getRandomInt(1000)}`,
+  name: '',
   week: [
     {
       name: '',
