@@ -265,6 +265,7 @@ const ExerciseModal = ({
     console.log('set', set)
     const e = +(+weights / (e1rm[exercise?.reps - 1] / 100))?.toFixed(0)
     console.log('e', e)
+    console.log('exercise', exercise)
     updateSet({
       id: set.id,
       isComplete: !set.isComplete,
@@ -437,19 +438,19 @@ const ExerciseModal = ({
                     <div className='font-extralight text-sm ml-10 md:ml-16'>
                       {exercise?.notes}
                     </div>
-                    <div>
-                      {exercise.htmlLink && (<a href={exercise.htmlLink} target='_blank' >{exercise.htmlLink}</a>)}
+                    <div className='w-full ml-10 md:ml-16 text-base underline'>
+                      {exercise.htmlLink && (<a href={exercise.htmlLink} rel='noreferrer' target='_blank' >{exercise.htmlLink}</a>)}
                     </div>
                     {exercise.sets && exercise.reps && (
-                      <div className='flex flex-col gap-4 md:gap-6'>
-                        <div className='flex gap-4 md:gap-6 w-full justify-center text-2xl font-bold'>
+                      <div className='flex flex-col gap-4 md:gap-6 mt-8'>
+                        <div className='flex gap-4 md:gap-6 w-full justify-center items-center text-2xl font-bold'>
                           <div className='cursor-pointer rounded-full w-8 h-8 text-center' onClick={() => setWeights(+weights + 2.5)}>
                             +
                           </div>
-                          <div className='w-28 text-center'>
+                          <div className='w-44 text-center '>
                             <Input
                               type='number'
-                              className='text-center text-xl font-bold border-white border-b-4'
+                              className='text-center text-2xl md:text-2xl font-semibold border-gray-400 border rounded-lg p-6'
                               value={weights}
                               placeholder='weight'
                               onChange={(e) => setWeights(+e.target.value)}
@@ -528,7 +529,7 @@ const ExerciseModal = ({
                             </div>
                           )
                         }
-                        <div className={`flex gap-4 px-1 items-center overflow-x-scroll md:overflow-x-auto h-56`}>
+                        <div className={`flex gap-2 px-1 items-center overflow-x-scroll md:overflow-x-auto h-56`}>
                           {/* <MinusCircleIcon className='h-8 w-8 text-gray-600 mb-9 flex-shrink-0' /> */}
 
                           {
@@ -537,33 +538,45 @@ const ExerciseModal = ({
                                 key={set.id}
                                 className='flex flex-col items-center justify-center gap-1'
                               >
-                                <ChevronUpIcon
-                                  onClick={() => onUpdateRpe(set, true)}
-                                  className='h-10 w-10 text-gray-400 cursor-pointer'
-                                />
+                                <div className='h-10'>
+                                  {
+                                    !set.isComplete && (
+                                      <ChevronUpIcon
+                                        onClick={() => onUpdateRpe(set, true)}
+                                        className='h-10 w-10 text-gray-400 cursor-pointer'
+                                      />
+                                    )
+                                  }
+                                </div>
                                 <div
                                   className='flex flex-col gap-1'
                                   onClick={() => onSetDone(set)}
                                 >
-                                  <div className={set.isComplete ? `bg-yellow-500 text-xl rounded-full text-black  h-12 min-w-[3rem] flex items-center justify-center cursor-pointer hover:scale-105` : `text-xl rounded-full h-12 min-w-[3rem] flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}>
+                                  <div className={set.isComplete ? `bg-black text-2xl font-bold rounded-full text-yellow-500 h-12 min-w-[1rem] flex items-center justify-center cursor-pointer` : `text-xl rounded-full h-12 min-w-[3rem] flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}>
                                     {set.rep}
                                   </div>
                                 </div>
-                                <ChevronDownIcon
-                                  onClick={() => onUpdateRpe(set, false)}
-                                  className='h-10 w-10 text-gray-400 cursor-pointer'
-                                />
+                                <div className='h-10'>
+                                  {
+                                    !set.isComplete && (
+                                      <ChevronDownIcon
+                                        onClick={() => onUpdateRpe(set, false)}
+                                        className='h-10 w-10 text-gray-400 cursor-pointer'
+                                      />
+                                    )
+                                  }
+                                </div>
                                 <div className='h-8'>
                                   {set.isComplete && (
                                     <div className='flex flex-col items-center text-xs tracking-tighter text-gray-400'>
                                       <div>
                                         RPE:{set.rpe}
                                       </div>
-                                      <div>
+                                      <div className={set.weight == 0 && exercise.lift != 'unlinked' ?  'text-red-500' : ''}>
                                         W:{set.weight}
                                       </div>
                                       {set?.estiamtedOnerm && (
-                                        <div>
+                                        <div className={set?.estiamtedOnerm == 0 ?  'hidden' : ''}>
                                           E:{set?.estiamtedOnerm}
                                         </div>
                                       )}

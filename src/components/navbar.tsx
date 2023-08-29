@@ -26,8 +26,8 @@ const nav = [
     name: 'Templates', href: '/templates', admin: true,
   },
   {
-    name: 'Admin', href: '/test', admin: true,
-  }
+    name: 'Admin', href: '/test',  superAdmin: true,
+  },
   // {
   //   name: 'Lift', href: '/lift',
   // },
@@ -36,7 +36,11 @@ const nav = [
   // },
 ]
 
-const admin = ['user_2RB3u3X0pKDxnvmHraPW3RfwrAv', 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a']
+const admin = [
+  'user_2RB3u3X0pKDxnvmHraPW3RfwrAv',
+  'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a',
+]
+const superAdmin = ['user_2Pg92dlfZkKBNFSB50z9GJJBJ2a', 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a']
 
 const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(' ')
@@ -45,7 +49,8 @@ const Navbar = () => {
   const { user, } = useUser()
   const router = useRouter()
   const isUserAdmin = admin.includes(user?.id || '')
-  const navigation = nav.filter((item) => !item.admin || item.admin && isUserAdmin)
+  const isUserSuperAdmin = superAdmin.includes(user?.id || '')
+  const navigation = nav.filter((item) => !item.admin || item.admin && isUserAdmin || item.superAdmin && isUserSuperAdmin)
   return (
     <>
       <Disclosure as='nav' className='bg-black font-semibold tracking-wider text-gray-200'>
@@ -56,7 +61,7 @@ const Navbar = () => {
                 <div className='flex items-center'>
                   <div className='flex-shrink-0'>
                     <Link href='/'>
-                      <Image  
+                      <Image
                         src='/ce.png'
                         alt='logo'
                         width={50}

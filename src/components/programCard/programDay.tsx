@@ -251,12 +251,15 @@ const ProgramDay = ({
                     as='h3'
                     className='text-base md:text-lg font-medium leading-6 flex justify-between items-center'
                   >
-                    <div className='flex justify-between items-center gap-2 md:gap-12'>
-                      <div className='font-bold text-xl'>
-                        Day {dayIdx + 1}
+                    <div className='flex flex-col justify-between items-center w-full gap-6 md:gap-12 mb-4'>
+                      <div className='flex justify-between items-center w-full gap-2 md:gap-12'>
+                        <div className='font-bold text-xl'>
+                          Day {dayIdx + 1}
+                        </div>
+                        <button className='px-2 py-1 text-2xl font-bold' onClick={() => closeModal()}>X</button>
                       </div>
-                      <RadioGroup value={selectedEngery} onChange={onSetEnergy}>
-                        <div className={`flex gap-2 p-2  items-center`}>
+                      <RadioGroup value={selectedEngery} onChange={onSetEnergy} className='w-full'>
+                        <div className={`flex gap-2 items-center justify-around text-xl w-full`}>
                           <RadioGroup.Label className='tracking-tighter'>Energy Level</RadioGroup.Label>
                           {[
                             'A',
@@ -274,16 +277,16 @@ const ProgramDay = ({
                                 : ''
                               }
                               ${checked ? 'bg-yellow-500 text-black font-extrabold' : 'bg-gray-900 text-gray-700'}
-                                  relative flex cursor-pointer rounded-lg px-2 py-1 shadow-md focus:outline-none`
+                                  relative flex cursor-pointer rounded-lg h-8 w-8 shadow-md focus:outline-none`
                               }
                             >
                               {({
                                 active, checked,
                               }) => (
                                 <>
-                                  <div className='flex w-full items-center justify-between'>
+                                  <div className='flex w-full items-center justify-center'>
                                     <div className='flex items-center'>
-                                      <div className='text-sm'>
+                                      <div className=''>
                                         <RadioGroup.Label
                                           as='p'
                                           className={`${checked ? 'text-black' : 'text-gray-400'
@@ -301,7 +304,6 @@ const ProgramDay = ({
                         </div>
                       </RadioGroup>
                     </div>
-                    <button className='px-2 py-1' onClick={() => closeModal()}>X</button>
                   </Dialog.Title>
                   <div className='mt-2 flex justify-center'>
                     <DayModal day={day} selectedEngery={selectedEngery} />
