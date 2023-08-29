@@ -105,11 +105,12 @@ const FormExercise = ({
 
   const weightType = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`) as string
   const liftType = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.lift`) as string
+  const name = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`) as string
 
   // const w = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.targetRpe`)
 
   useEffect(() => {
-    if (liftType != 'unlinked' && liftType !== '') formMethods.setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`, (liftType?.slice(0, 1).toUpperCase() + liftType?.slice(1)) || '')
+    if (liftType != 'unlinked' && liftType !== '' && name == '') formMethods.setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`, (liftType?.slice(0, 1).toUpperCase() + liftType?.slice(1)) || '')
 
   }, [liftType,])
 

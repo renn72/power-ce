@@ -212,6 +212,9 @@ export const blocksRouter = createTRPCRouter({
       console.log('ctx', ctx.userId)
       console.log('input', JSON.stringify(input, null, 2))
 
+
+      console.log('input', JSON.stringify(input.week[0].day[0].exercise[0], null, 2))
+
       const updateAction = await ctx.prisma.$transaction([
         ctx.prisma.block.delete({ where: { id: input.id, }, }),
         ctx.prisma.block.create({
@@ -253,53 +256,6 @@ export const blocksRouter = createTRPCRouter({
           },
         }),
       ])
-
-      // const deleteExercise = await ctx.prisma.exercise.deleteMany({ where: { id: { in: exercise_array, }, }, })
-      //
-      // const day_array = oldBlock?.week.map((week) => week.day.map((day) => day.id)).flat(1)
-      // const deleteDay = await ctx.prisma.day.deleteMany({ where: { id: { in: day_array, }, }, })
-      //
-      // const week_array = oldBlock?.week.map((week) => week.id)
-      // const deleteWeek = await ctx.prisma.week.deleteMany({ where: { id: { in: week_array, }, }, })
-      //
-      // const deleteBlock = await ctx.prisma.block.delete({ where: { id: oldBlock?.id, }, })
-      //
-      // const block = await ctx.prisma.block.create({
-      //   data: {
-      //     name: input.name,
-      //     isProgram: false,
-      //     week: {
-      //       create: input.week.map((week) => ({
-      //         day: {
-      //           create: week.day.map((day) => ({
-      //             isRestDay: day.isRestDay,
-      //             exercise: {
-      //               create: day.exercise.map((exercise) => ({
-      //                 name: exercise.name,
-      //                 lift: exercise.lift,
-      //                 sets: exercise.sets,
-      //                 reps: exercise.reps,
-      //                 onerm: exercise.onerm,
-      //                 onermTop: exercise.onermTop,
-      //                 weightTop: exercise.weightTop,
-      //                 weightBottom: exercise.weightBottom,
-      //                 targetRpe: exercise.targetRpe,
-      //                 notes: exercise?.notes,
-      //                 isEstimatedOnerm: exercise.isEstimatedOnerm,
-      //                 actualSets: exercise.sets,
-      //                 estimatedOnermIndex: exercise.estimatedOnermIndex,
-      //                 weightType: exercise.weightType,
-      //                 repUnit: exercise.repUnit,
-      //               })),
-      //             },
-      //           })),
-      //         },
-      //       })),
-      //     },
-      //   },
-      // })
-      //
-      // console.log('block', JSON.stringify(block, null, 2))
 
       return updateAction
 

@@ -157,9 +157,7 @@ export const userProgramsRouter = createTRPCRouter({
         proUpdate,
       ])
 
-      return {
-        block: block, program: program, userProgram: userProgram, resUpdate: resUpdate,
-      }
+      return program
 
     }),
   remove: privateProcedure
