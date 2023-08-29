@@ -55,12 +55,6 @@ export const userProgramsRouter = createTRPCRouter({
     .mutation(async ({
       ctx, input,
     }) => {
-      const userPrograms = await ctx.prisma.userProgram.findFirst({
-        where: {
-          userId: input.userId,
-          isProgramActive: true,
-        },
-      })
 
       const block = await ctx.prisma.block.findUnique({
         where: { id: input.templateId, },
@@ -141,19 +135,13 @@ export const userProgramsRouter = createTRPCRouter({
         },
       })
 
-      if (userPrograms) {
-        const resUpdate = await ctx.prisma.userProgram.update({
-          where: { id: userPrograms.id, },
-          data: { isProgramActive: false, },
-        })
-        return {
-          userPrograms: userPrograms, block: block, program: program, userProgram: userProgram, resUpdate: resUpdate,
-        }
-
-      }
+      const resUpdate = await ctx.prisma.userProgram.updateMany({
+        where: { NOT: { programId: program.id, }, },
+        data: { isProgramActive: false, },
+      })
 
       return {
-        userPrograms: userPrograms, block: block, program: program, userProgram: userProgram,
+        block: block, program: program, userProgram: userProgram, resUpdate: resUpdate,
       }
 
     }),
