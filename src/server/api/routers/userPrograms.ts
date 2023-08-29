@@ -136,7 +136,18 @@ export const userProgramsRouter = createTRPCRouter({
       })
 
       const resUpdate = await ctx.prisma.userProgram.updateMany({
-        where: { NOT: { programId: program.id, }, },
+        where: {
+          NOT: { programId: program.id, },
+          userId: input.userId,
+        },
+        data: { isProgramActive: false, },
+      })
+
+      const proUpdate = await ctx.prisma.block.updateMany({
+        where: {
+          NOT: { id: program.id, },
+          userIdOfProgram: input.userId,
+        },
         data: { isProgramActive: false, },
       })
 
