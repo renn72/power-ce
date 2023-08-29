@@ -5,6 +5,9 @@ export type Set = {
   weight: string | number | null,
   estiamtedOnerm: string | number | null,
   isComplete: boolean,
+  name: string | null,
+  lift: string | null,
+  userId: string | null,
 }
 
 export type Exercise = {
@@ -25,6 +28,7 @@ export type Exercise = {
   weightType: string | null,
   repUnit: string | null,
   isComplete: boolean,
+  htmlLink: string | null,
 }
 
 export type Day = {
@@ -63,6 +67,7 @@ export type ExerciseData = {
   weightType: string | null,
   repUnit: string | null,
   isComplete: boolean,
+  htmlLink: string | null,
 }
 
 export type DayData = {
