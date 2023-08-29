@@ -151,7 +151,7 @@ const Form = () => {
       ),
     }
 
-    console.log('block', JSON.stringify(block, null, 2))
+    console.log('block', block)
 
     blockCreateMutate(block)
   }
@@ -309,7 +309,7 @@ const Form = () => {
         <FormProvider {...formMethods}>
           <form onSubmit={handleSubmit(onSubmit, onError)} className='w-full flex flex-col justify-center items-center '>
             <div ref={parent} className='flex flex-col w-full gap-1 sm:gap-8 items-center'>
-              <div className='flex flex-col w-full gap-1 min-h-[80vh] sm:gap-8 p-1 sm:p-6 max-w-screen-2xl items-center '>
+              <div className='flex flex-col w-full gap-1 min-h-[80vh] sm:gap-8 p-1 sm:p-4 max-w-[1600px] items-center '>
 
                 {/* template select */}
                 <div className='flex gap-2  items-center w-full'>

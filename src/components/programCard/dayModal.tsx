@@ -437,6 +437,9 @@ const ExerciseModal = ({
                     <div className='font-extralight text-sm ml-10 md:ml-16'>
                       {exercise?.notes}
                     </div>
+                    <div>
+                      {exercise.htmlLink && (<a href={exercise.htmlLink} target='_blank' >{exercise.htmlLink}</a>)}
+                    </div>
                     {exercise.sets && exercise.reps && (
                       <div className='flex flex-col gap-4 md:gap-6'>
                         <div className='flex gap-4 md:gap-6 w-full justify-center text-2xl font-bold'>

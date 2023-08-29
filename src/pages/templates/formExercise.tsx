@@ -86,7 +86,7 @@ const FormExercise = ({
   { weekIdx: number, dayIdx: number, exerciseIdx: number }) => {
   const formMethods = useFormContext()
   const {
-    register, control, getValues, watch,
+    register, control, getValues, watch, setValue
   } = formMethods
 
   const exerciseField = useFieldArray({
@@ -179,7 +179,7 @@ const FormExercise = ({
             placeholder='rep unit'
           />
         </div>
-        <div className='my-1 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10'>
+        <div className='my-1 grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-10 items-center'>
           <Controller
             control={control}
             name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`}
@@ -191,7 +191,7 @@ const FormExercise = ({
             }) => (
               <div className=''>
                 <RadioGroup value={value} onChange={onChange}>
-                  <div className='flex items-center justify-start gap-1 md:gap-10'>
+                  <div className='flex items-center justify-start gap-1 md:gap-2'>
                     {plans.map((plan) => (
                       <RadioGroup.Option
                         key={plan.name}
@@ -199,7 +199,7 @@ const FormExercise = ({
                         className={({
                           active, checked,
                         }) => `${checked ? 'bg-gray-600 bg-opacity-75 text-gray-200' : 'bg-black text-gray-400'}
-                                relative flex cursor-pointer rounded-lg px-2 md:px-5 shadow-md focus:outline-none w-52 h-10`
+                                relative flex cursor-pointer rounded-lg px-2 md:px-2 shadow-md focus:outline-none w-52 h-10`
                         }
                       >
                         {({
@@ -231,7 +231,12 @@ const FormExercise = ({
                   </div>
                 </RadioGroup>
               </div>
+
             )}
+          />
+          <XCircleIcon
+            className='h-6 w-6 text-gray-400 cursor-pointer'
+            onClick={() => setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`, '')}
           />
           {weightType === 'onerm'
             && (
@@ -383,6 +388,12 @@ const FormExercise = ({
           />
 
         </div>
+        <Input
+          type='text'
+          className='w-72'
+          {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.htmlLink`)}
+          placeholder='link'
+        />
       </div>
     </div>
   )

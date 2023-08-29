@@ -24,6 +24,8 @@ const exerciseSchema = z.object({
   estimatedOnermIndex: z.number().min(0).max(100).optional().nullable(),
   weightType: z.string().min(0).max(280).optional().nullable(),
   repUnit: z.string().min(0).max(55).optional().nullable(),
+  htmlLink: z.string().min(0).max(280).optional().nullable(),
+  userId: z.string().optional(),
 })
 
 const programSchema = z.object({
@@ -101,10 +103,15 @@ export const userProgramsRouter = createTRPCRouter({
                       isComplete: false,
                       actualSets: exercise.sets,
                       repUnit: exercise.repUnit,
+                      htmlLink: exercise.htmlLink,
                       set: {
                         create: Array.from({ length: exercise.sets ? +exercise.sets : 0, }, (_,) => ({
                           rep: exercise.reps,
                           isComplete: false,
+                          userId: input.userId,
+                          name: exercise.name,
+                          lift: exercise.lift,
+
                         }),),
                       },
                     })),
@@ -171,6 +178,7 @@ export const userProgramsRouter = createTRPCRouter({
       ctx, input,
     }) => {
       const exercise = input.exercise
+      const userId = exercise.userId || ''
       await ctx.prisma.set.deleteMany({ where: { exerciseId: exercise.id, }, })
       const res = await ctx.prisma.exercise.update({
         where: { id: exercise.id, },
@@ -191,10 +199,14 @@ export const userProgramsRouter = createTRPCRouter({
           isComplete: false,
           actualSets: exercise.sets,
           repUnit: exercise.repUnit,
+          htmlLink: exercise.htmlLink,
           set: {
             create: Array.from({ length: exercise.sets ? +exercise.sets : 0, }, (_,) => ({
               rep: exercise.reps ? +exercise.reps : 1,
               isComplete: false,
+              userId: userId,
+              name: exercise.name,
+              lift: exercise.lift,
             }),),
           },
         },

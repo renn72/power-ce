@@ -29,6 +29,7 @@ const exerciseSchema = z.object({
   estimatedOnermIndex: z.number().min(0).max(100).optional().nullable(),
   weightType: z.string().min(0).max(280).optional().nullable(),
   repUnit: z.string().min(0).max(55).optional().nullable(),
+  htmlLink: z.string().min(0).max(280).optional().nullable(),
 })
 const daySchema = z.object({
   isRestDay: z.boolean(),
@@ -133,6 +134,7 @@ export const blocksRouter = createTRPCRouter({
                       estimatedOnermIndex: exercise.estimatedOnermIndex,
                       weightType: exercise.weightType,
                       repUnit: exercise.repUnit,
+                      htmlLink: exercise.htmlLink,
                     })),
                   },
                 })),
@@ -183,6 +185,7 @@ export const blocksRouter = createTRPCRouter({
                   estimatedOnermIndex: exercise.estimatedOnermIndex,
                   weightType: exercise.weightType,
                   repUnit: exercise.repUnit,
+                      htmlLink: exercise.htmlLink,
 
                 })),
               },
@@ -232,6 +235,7 @@ export const blocksRouter = createTRPCRouter({
                         estimatedOnermIndex: exercise.estimatedOnermIndex,
                         weightType: exercise.weightType,
                         repUnit: exercise.repUnit,
+                      htmlLink: exercise.htmlLink,
                       })),
                     },
                   })),

@@ -80,23 +80,25 @@ const ExerciseDialog = ({
     register, unregister, getValues, watch, reset, setValue, control, handleSubmit, clearErrors, setError, formState: { errors, },
   } = formMethods
 
-  const onSubmit = (exercise: Exercise) => {
+  const onSubmit = (input: Exercise) => {
     const data = {
       id: exerciseId,
-      name: exercise.name || '',
-      lift: exercise.lift,
-      onerm: exercise.onerm ? +exercise.onerm : null,
-      onermTop: exercise.onermTop ? +exercise.onermTop : null,
-      weightTop: exercise.weightTop ? +exercise.weightTop : null,
-      weightBottom: exercise.weightBottom ? +exercise.weightBottom : null,
-      targetRpe: exercise.targetRpe ? +exercise.targetRpe : null,
-      sets: exercise.sets ? +exercise.sets : null,
-      reps: exercise.reps ? +exercise.reps : null,
-      notes: exercise.notes,
-      isEstimatedOnerm: exercise.isEstimatedOnerm || false,
-      estimatedOnermIndex: exercise.estimatedOnermIndex,
-      weightType: exercise.weightType,
-      repUnit: exercise.repUnit,
+      name: input.name || '',
+      lift: input.lift,
+      onerm: input.onerm ? +input.onerm : null,
+      onermTop: input.onermTop ? +input.onermTop : null,
+      weightTop: input.weightTop ? +input.weightTop : null,
+      weightBottom: input.weightBottom ? +input.weightBottom : null,
+      targetRpe: input.targetRpe ? +input.targetRpe : null,
+      sets: input.sets ? +input.sets : null,
+      reps: input.reps ? +input.reps : null,
+      notes: input.notes,
+      isEstimatedOnerm: input.isEstimatedOnerm || false,
+      estimatedOnermIndex: input.estimatedOnermIndex,
+      weightType: input.weightType,
+      repUnit: input.repUnit,
+      htmlLink: input.htmlLink,
+      userId: exercise.set[0].userId || '',
     }
     console.log('data', data)
     updateExercise({ exercise: data, })
@@ -380,6 +382,12 @@ const ExerciseDialog = ({
                 />
 
               </div>
+              <Input
+                type='text'
+                {...register(`htmlLink`)}
+                placeholder='link'
+                defaultValue={exercise.htmlLink || ''}
+              />
             </div>
           </div>
           <Button type='submit'>Update</Button>
@@ -699,6 +707,15 @@ const ProgramView = ({ userId, }: { userId: string }) => {
                                                   <div className='text-sm text-gray-400'>
                                                     {exercise.notes}
                                                   </div>
+                                                )
+                                              }
+                                            </div>
+                                            <div>
+                                              {
+                                                exercise.htmlLink && (
+                                                  <a href={exercise.htmlLink} target='_blank' className='text-sm text-gray-200' rel='noreferrer'>
+                                                    {exercise.htmlLink}
+                                                  </a>
                                                 )
                                               }
                                             </div>
