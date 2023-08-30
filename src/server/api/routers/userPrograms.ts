@@ -39,7 +39,11 @@ const programSchema = z.object({
 export const userProgramsRouter = createTRPCRouter({
   getAllUser: privateProcedure.query(async ({ ctx, }) => {
     const userId = ctx.userId
-    const res = await ctx.prisma.userProgram.findMany({ where: { userId: userId, }, })
+    const res = await ctx.prisma.userProgram.findMany({
+      where: {
+        userId: userId, isDeleted: false,
+      },
+    })
     return res
   }),
   getAll: privateProcedure.query(async ({ ctx, }) => {
@@ -214,6 +218,15 @@ export const userProgramsRouter = createTRPCRouter({
           },
         },
       })
+
+      return res
+    }),
+  deleteHard: privateProcedure
+    .input(z.object({ id: z.string(), }))
+    .mutation(async ({
+      ctx, input,
+    }) => {
+      const res = await ctx.prisma.userProgram.delete({ where: { id: input.id, }, })
 
       return res
     }),

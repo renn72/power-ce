@@ -26,6 +26,9 @@ const nav = [
     name: 'Templates', href: '/templates', admin: true,
   },
   {
+    name: 'Stats', href: '/stats',  superAdmin: true,
+  },
+  {
     name: 'Admin', href: '/test',  superAdmin: true,
   },
   // {

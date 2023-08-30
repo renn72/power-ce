@@ -12,7 +12,11 @@ const Home: NextPage = () => {
   const {
     data: userPrograms, isLoading: userProgramsLoading,
   } = api.userPrograms.getAllUser.useQuery()
+
+  console.log('userPrograms', userPrograms)
+
   const { isLoading: programsLoading, } = api.blocks.getAllUserPrograms.useQuery()
+
   if (userProgramsLoading && programsLoading ) return <div><LoadingPage /></div>
 
   return (

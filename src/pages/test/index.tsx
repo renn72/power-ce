@@ -43,6 +43,9 @@ const Test = () => {
     },
   })
 
+  const { data: allUserPrograms, } = api.userPrograms.getAll.useQuery()
+  console.log('allUserPrograms', allUserPrograms)
+
   const {
     data: primaryLifts, isLoading: primaryLiftsLoading,
   } = api.primaryLifts.getAll.useQuery()
@@ -65,6 +68,13 @@ const Test = () => {
     onSuccess: () => {
       console.log('deleted')
       void ctx.oneRepMax.getUserCoreLifts.invalidate()
+    },
+  })
+
+  const { mutate: deleteUserProgram, } = api.userPrograms.deleteHard.useMutation({
+    onSuccess: () => {
+      console.log('deleted')
+      void ctx.userPrograms.getAll.invalidate()
     },
   })
 
@@ -92,6 +102,11 @@ const Test = () => {
 
   if (tempLoading && primaryLiftsLoading && usersLoading) return <div>Loading</div>
 
+  const onDeleteUserProgram = (id: string) => {
+    console.log('delete', id)
+    deleteUserProgram({ id: id, })
+  }
+
   const onDelete = (id: string) => {
     console.log('delete', id)
     deleteTemplate({ id: id, })
@@ -117,6 +132,8 @@ const Test = () => {
     console.log('delete')
     deleteAllRM()
   }
+
+  console.log('all', all)
 
   return (
     <div>
@@ -153,6 +170,30 @@ const Test = () => {
             >SoftX</h3>
           </div>
         ))}
+        <div className='flex flex-col gap-6'>
+          {allUserPrograms?.map((program) => (
+            <div
+              key={program.id}
+              className='grid auto-cols-auto grid-flow-col divide-x-2 divide-gray-200 items-center'
+            >
+              <h2
+                className='m-1 pl-1'
+              >
+                {all?.find((template) => template.id === program.programId)?.name}
+              </h2>
+              <h3
+                className='m-2 pl-2'
+              >{program.isDeleted ? 'deleted' : 'not deleted'}</h3>
+              <h3
+                className='m-2 pl-2'
+              >{program.isProgramActive ? 'active' : 'not active'}</h3>
+              <h3
+                className='m-2 pl-2 cursor-pointer'
+                onClick={() => onDeleteUserProgram(program.id)}
+              >X</h3>
+            </div>
+          ))}
+        </div>
         <div className='flex flex-col gap-6'>
 
           <Button

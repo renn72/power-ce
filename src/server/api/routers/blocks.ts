@@ -79,7 +79,9 @@ export const blocksRouter = createTRPCRouter({
     const userId = ctx.userId
     const blocks = await ctx.prisma.block.findMany({
       orderBy: { createdAt: 'desc', },
-      where: { userIdOfProgram: userId, },
+      where: {
+        userIdOfProgram: userId, isDeleted: false,
+      },
       include: { week: { include: { day: { include: { exercise: { include: { set: true, }, }, }, }, }, }, },
     })
     return blocks
@@ -212,7 +214,6 @@ export const blocksRouter = createTRPCRouter({
       console.log('ctx', ctx.userId)
       console.log('input', JSON.stringify(input, null, 2))
 
-
       console.log('input', JSON.stringify(input.week[0].day[0].exercise[0], null, 2))
 
       const updateAction = await ctx.prisma.$transaction([
@@ -276,6 +277,12 @@ export const blocksRouter = createTRPCRouter({
       const block = await ctx.prisma.block.update({
         where: { id: input.id, }, data: { isDeleted: true, },
       })
+      // console.log('block', block)
+      if (block.isProgram) {
+        await ctx.prisma.userProgram.updateMany({
+          where: { programId: input.id, }, data: { isDeleted: true, },
+        })
+      }
       return block
     }),
   softUnDelete: privateProcedure
