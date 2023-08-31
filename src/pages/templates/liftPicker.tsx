@@ -1,5 +1,5 @@
 import {
-  Fragment, useState,
+  Fragment, useEffect, useState,
 } from 'react'
 
 import {
@@ -11,8 +11,9 @@ import {
 
 import { api, } from '~/utils/api'
 
-
-const LiftPicker = ({ onChange,  value}: { onChange: (arg0: string) => void, value : string }) => {
+const LiftPicker = ({
+  onChange, value,
+}: { onChange: (arg0: string) => void, value: string }) => {
   const [
     selectedLift,
     setSelectedLift,
@@ -23,6 +24,11 @@ const LiftPicker = ({ onChange,  value}: { onChange: (arg0: string) => void, val
   } = api.primaryLifts.getAll.useQuery()
 
   if (primaryLiftsLoading) return null
+  if (!lifts) return null
+
+  if (lifts.find((lift) => lift.name === 'unlinked') === undefined) {
+    lifts.unshift({ id: 'unlinked', name: 'unlinked', })
+  }
 
   return (
     <Listbox
