@@ -150,10 +150,10 @@ const ProgramDay = ({
                                     <h4>
                                       {checkWeight(exercise.lift, exercise?.onerm,)}
                                     </h4>
-                                    <h4>-</h4>
-                                    <h4>
-                                      {checkWeight(exercise.lift, exercise?.onermTop,)}kg
-                                    </h4>
+                                      {exercise.onermTop && (<h4>-</h4>)}
+                                      {exercise.onermTop && (<h4>{checkWeight(exercise.lift, exercise?.onermTop,)}</h4>)}
+                                      <h4>kg</h4>
+                                    
                                   </div>
 
                                 )

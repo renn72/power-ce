@@ -39,7 +39,7 @@ const SetsModal = ({ exercise, onUpdateRpe, onSetDone, isComplete }: { exercise:
               key={idx}
               initial={{ opacity: 0, scale: 1, y: 2 }}
               transition={{ ease: "easeIn", duration: 0.3 }}
-              animate={{ opacity: 1, y:0}}
+              animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0, }}
             >
               <div
@@ -444,10 +444,9 @@ const ExerciseModal = ({
                               <h4>
                                 {checkWeight(exercise.lift, +exercise?.onerm, exercise.estimatedOnermIndex)}
                               </h4>
-                              <h4>-</h4>
-                              <h4>
-                                {checkWeight(exercise.lift, +exercise?.onermTop, exercise.estimatedOnermIndex)}kg
-                              </h4>
+                              {exercise.onermTop && (<h4>-</h4>)}
+                              {exercise.onermTop && (<h4>{checkWeight(exercise.lift, exercise?.onermTop, exercise.estimatedOnermIndex)}</h4>)}
+                              <h4>kg</h4>
                             </div>
 
                           )
