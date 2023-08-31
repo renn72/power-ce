@@ -12,6 +12,66 @@ datasource db {
   relationMode = "prisma"
 }
 
+model CompLift {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId String
+
+  name String
+  AgeClass String
+  BirthYearClass String
+  Division String
+  Event String
+
+  BodyWeight Decimal?
+  WeightClass Decimal?
+
+  Squat1 Decimal?
+  Squat2 Decimal?
+  Squat3 Decimal?
+  Squat4 Decimal?
+  SquatBest Decimal?
+
+  Bench1 Decimal?
+  Bench2 Decimal?
+  Bench3 Decimal?
+  Bench4 Decimal?
+  BenchBest Decimal?
+
+  Deadlift1 Decimal?
+  Deadlift2 Decimal?
+  Deadlift3 Decimal?
+  Deadlift4 Decimal?
+  DeadliftBest Decimal?
+
+  Total Decimal?
+
+  Place Int?
+
+  Dots Decimal?
+  Wilks Decimal?
+  Glossbrenner Decimal?
+  GoodLift Decimal?
+
+  Federation String?
+
+  Date String?
+
+  MeetCountry String?
+  MeetState String?
+  MeetTown String?
+  MeetName String?
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+  flield4 String?
+
+
+
+
+  }
 model Post {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
