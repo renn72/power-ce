@@ -24,7 +24,7 @@ import {
 } from '~/store/store'
 
 import {
-  ChevronUpDownIcon, CheckIcon, XCircleIcon, CheckCircleIcon,
+  ChevronUpDownIcon, CheckIcon, XCircleIcon, CheckCircleIcon, XMarkIcon,
 } from '@heroicons/react/24/outline'
 
 import getWeight from '~/utils/getWeight'
@@ -81,18 +81,19 @@ const plans = [
 ]
 
 const FormExercise = ({
-  weekIdx, dayIdx, exerciseIdx,
+  weekIdx, dayIdx, exerciseIdx, onRemoveExercise
 }:
-  { weekIdx: number, dayIdx: number, exerciseIdx: number }) => {
+  { weekIdx: number, dayIdx: number, exerciseIdx: number, onRemoveExercise : (args0 : number)  => void }) => {
   const formMethods = useFormContext()
   const {
-    register, control, getValues, watch, setValue
+    register, control, getValues, watch, setValue,
   } = formMethods
 
   const exerciseField = useFieldArray({
     control,
     name: `week.${weekIdx}.day.${dayIdx}.exercise`,
   })
+  console.log('ef', exerciseField)
 
   const { user, } = useUser()
 
@@ -117,10 +118,16 @@ const FormExercise = ({
   return (
 
     <div className='flex flex-col justify-center'>
-      <div
-        className='text-xl p-1 font-extrabold italic underline decoration-yellow-500 tracking-widest decoration-2 underline-offset-8 px-4'
-      >
-        &nbsp;{exerciseIdx + 1}&nbsp;
+      <div className='flex justify-between items-center gap-4'>
+        <div
+          className='text-xl p-1 font-extrabold italic underline decoration-yellow-500 tracking-widest decoration-2 underline-offset-8 px-4'
+        >
+          &nbsp;{exerciseIdx + 1}&nbsp;
+        </div>
+        <XMarkIcon
+          className='h-9 w-9 font-bold text-gray-400 cursor-pointer hover:text-red-600'
+          onClick={() => onRemoveExercise(exerciseIdx)}
+        />
       </div>
       <div className='flex flex-col gap-4'>
         <div className='grid grid-cols-2 md:grid-cols-5 gap-1 gap-x-4  md:gap-8'>
@@ -236,7 +243,7 @@ const FormExercise = ({
             )}
           />
           <XCircleIcon
-            className='h-6 w-6 text-gray-400 cursor-pointer'
+            className='h-6 w-6 text-gray-400 cursor-pointer hover:text-red-600'
             onClick={() => setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`, '')}
           />
           {weightType === 'onerm'

@@ -27,8 +27,13 @@ const FormDay = ({
 
   const exerciseField = useFieldArray({
     control,
+    shouldUnregister: true,
     name: `week.${weekIdx}.day.${dayIdx}.exercise`,
   })
+
+  const onRemoveExercise = (index: number) => {
+    exerciseField.remove(index)
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const isRest : boolean = watch(`week.${weekIdx}.day.${dayIdx}.isRestDay`)
@@ -80,6 +85,7 @@ const FormDay = ({
                   weekIdx={weekIdx}
                   dayIdx={dayIdx}
                   exerciseIdx={index}
+                  onRemoveExercise={onRemoveExercise}
                 />
                 <CogIcon className='w-6 h-6 mx-auto text-gray-600 mt-12' />
               </li>
