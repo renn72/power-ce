@@ -86,10 +86,12 @@ const Form = () => {
   const { mutate: blockUpdateMutate, } = api.blocks.update.useMutation({
     onSuccess: () => {
       console.log('success')
+      toast.success('Saved')
       void ctx.blocks.getAll.invalidate()
     },
     onError: (e) => {
       console.log('error', e)
+      toast.error('Error')
     },
   })
 
