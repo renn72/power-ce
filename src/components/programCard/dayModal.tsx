@@ -386,10 +386,6 @@ const ExerciseModal = ({
     rpe,
   ])
 
-  const onCheckWeight = (exercise: StoreExercise, energyRating: string | null) => {
-
-    return '10kg'
-  }
 
   const onUpdateRpe = (set: Set, increase: boolean) => {
     console.log('id', set)
@@ -440,13 +436,32 @@ const ExerciseModal = ({
                         {
                           exercise.weightType === 'onerm'
                           && (
-                            <div className='flex'>
-                              <h4>
-                                {checkWeight(exercise.lift, +exercise?.onerm, exercise.estimatedOnermIndex)}
-                              </h4>
-                              {exercise.onermTop && (<h4>-</h4>)}
-                              {exercise.onermTop && (<h4>{checkWeight(exercise.lift, exercise?.onermTop, exercise.estimatedOnermIndex)}</h4>)}
-                              <h4>kg</h4>
+                            <div className=''>
+                              {exercise.estimatedOnermIndex
+                                ? (
+                                  <div>
+                                    {
+                                      +day.exercise[exercise.estimatedOnermIndex - 1]?.set[0]?.weight > 0
+                                      && (
+                                        <div className='flex'>
+                                          {exercise.onerm && (<h4>{checkWeight(exercise.lift, +exercise?.onerm, exercise.estimatedOnermIndex)}</h4>)}
+                                          {exercise.onermTop && (<h4>-</h4>)}
+                                          {exercise.onermTop && (<h4>{checkWeight(exercise.lift, +exercise?.onermTop, exercise.estimatedOnermIndex)}</h4>)}
+                                          <h4>kg</h4>
+                                        </div>
+                                      )
+                                    }
+                                  </div>
+                                )
+                                : (
+                                  <div className='flex'>
+                                    {exercise.onerm && (<h4>{checkWeight(exercise.lift, +exercise?.onerm, null)}</h4>)}
+                                    {exercise.onermTop && (<h4>-</h4>)}
+                                    {exercise.onermTop && (<h4>{checkWeight(exercise.lift, +exercise?.onermTop, null)}</h4>)}
+                                    <h4>kg</h4>
+                                  </div>
+                                )
+                              }
                             </div>
 
                           )

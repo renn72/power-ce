@@ -34,7 +34,7 @@ const ProgramDay = ({
   const { user, } = useUser()
   const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery({ userId: user?.id || '', })
 
-  const checkWeight = (lift: string | null, onerm: number | null) => {
+  const checkWeight = (lift: string | null, onerm: number | null, index: number | null) => {
     if (!lift || !onerm) return ''
     let energyAdjust = 1
     if (selectedEngery === 'B') energyAdjust = 0.98
@@ -43,8 +43,16 @@ const ProgramDay = ({
 
     if (lift == 'weight') {
       return getWeight(+onerm, 100 * energyAdjust,)
-
     }
+
+    if (index) {
+      const rm = day?.exercise[index - 1]?.set.filter((s) => s.isComplete)
+      const rmWeight = rm?.map((s) => s.estiamtedOnerm)
+      const w = rmWeight[rmWeight.length - 1]
+
+      if (w) return getWeight(+w, onerm * energyAdjust,)
+    }
+
     const w = userCoreOneRM?.find((coreLift) => coreLift?.lift === lift.toLowerCase())?.weight
 
     if (!w) return ''
@@ -146,14 +154,32 @@ const ProgramDay = ({
                               {
                                 exercise.weightType === 'onerm'
                                 && (
-                                  <div className='flex'>
-                                    <h4>
-                                      {checkWeight(exercise.lift, exercise?.onerm,)}
-                                    </h4>
-                                      {exercise.onermTop && (<h4>-</h4>)}
-                                      {exercise.onermTop && (<h4>{checkWeight(exercise.lift, exercise?.onermTop,)}</h4>)}
-                                      <h4>kg</h4>
-                                    
+                                  <div className=''>
+                                    {exercise.estimatedOnermIndex
+                                      ? (
+                                        <div>
+                                          {
+                                            +day.exercise[exercise.estimatedOnermIndex - 1]?.set[0]?.weight > 0
+                                            && (
+                                              <div className='flex'>
+                                                {exercise.onerm && (<h4>{checkWeight(exercise.lift, +exercise?.onerm, exercise.estimatedOnermIndex)}</h4>)}
+                                                {exercise.onermTop && (<h4>-</h4>)}
+                                                {exercise.onermTop && (<h4>{checkWeight(exercise.lift, +exercise?.onermTop, exercise.estimatedOnermIndex)}</h4>)}
+                                                <h4>kg</h4>
+                                              </div>
+                                            )
+                                          }
+                                        </div>
+                                      )
+                                      : (
+                                        <div className='flex'>
+                                          {exercise.onerm && (<h4>{checkWeight(exercise.lift, +exercise?.onerm, null)}</h4>)}
+                                          {exercise.onermTop && (<h4>-</h4>)}
+                                          {exercise.onermTop && (<h4>{checkWeight(exercise.lift, +exercise?.onermTop, null)}</h4>)}
+                                          <h4>kg</h4>
+                                        </div>
+                                      )
+                                    }
                                   </div>
 
                                 )
@@ -180,13 +206,13 @@ const ProgramDay = ({
                                 && (
                                   <div className='flex items-baseline'>
                                     <h4>
-                                      {exercise?.weightBottom && checkWeight('weight', +exercise?.weightBottom)}
+                                      {exercise?.weightBottom && checkWeight('weight', +exercise?.weightBottom, null)}
                                     </h4>
                                     <h4>
                                       {exercise?.weightTop && '-'}
                                     </h4>
                                     <h4>
-                                      {exercise?.weightTop && checkWeight('weight', +exercise?.weightTop)}kg
+                                      {exercise?.weightTop && checkWeight('weight', +exercise?.weightTop, null)}kg
                                     </h4>
                                   </div>
 
