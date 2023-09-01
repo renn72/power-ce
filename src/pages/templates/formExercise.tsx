@@ -93,7 +93,6 @@ const FormExercise = ({
     control,
     name: `week.${weekIdx}.day.${dayIdx}.exercise`,
   })
-  console.log('ef', exerciseField)
 
   const { user, } = useUser()
 

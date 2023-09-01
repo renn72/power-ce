@@ -1,7 +1,9 @@
 import { api, } from '~/utils/api'
 
 import { toast, } from 'react-hot-toast'
-import { testBlock, } from '~/store/defaultValues'
+import {
+  testBlock, testBlock2,
+} from '~/store/defaultValues'
 import { Button, } from '@/components/ui/button'
 const Test = () => {
   const ctx = api.useContext()
@@ -127,6 +129,10 @@ const Test = () => {
     console.log('create')
     blockCreateMutate(testBlock)
   }
+  const onCreate2 = () => {
+    console.log('create')
+    blockCreateMutate(testBlock2)
+  }
 
   const onDeleteAll = () => {
     console.log('delete')
@@ -201,6 +207,12 @@ const Test = () => {
             onClick={onCreate}
           >
             create tempate
+          </Button>
+          <Button
+            className='w-44'
+            onClick={onCreate2}
+          >
+            create tempate2
           </Button>
           <Button
             className='w-44'

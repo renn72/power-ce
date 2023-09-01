@@ -200,6 +200,8 @@ const Form = () => {
       ),
     }
 
+    console.log('block', JSON.stringify(block, null, 2))
+
     blockUpdateMutate(block)
   }
 
