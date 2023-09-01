@@ -6,8 +6,9 @@ import { userProgramsRouter, } from './routers/userPrograms'
 import { oneRepMaxRouter, } from './routers/oneRepMax'
 import { liftsRouter, } from './routers/lifts'
 import { liftRouter, } from './routers/lift'
-import { primaryLiftsRouter } from './routers/primaryLifts'
-import { compLiftsRouter } from './routers/compLifts'
+import { primaryLiftsRouter, } from './routers/primaryLifts'
+import { compLiftsRouter, } from './routers/compLifts'
+import { compDateRouter, } from './routers/compDate'
 
 /**
  * This is the primary router for your server.
@@ -24,6 +25,7 @@ export const appRouter = createTRPCRouter({
   lift: liftRouter,
   primaryLifts: primaryLiftsRouter,
   compLift: compLiftsRouter,
+  compDate: compDateRouter,
 })
 
 // export type definition of API

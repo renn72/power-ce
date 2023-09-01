@@ -14,6 +14,7 @@ import OneRMCard from '~/components/oneRMCard'
 import { Button, } from '@/components/ui/button'
 
 import ProgramView from './programView'
+import CompDate from '~/components/compDate'
 
 const UserDisclosure = ({
   userId, isOneRM,
@@ -88,6 +89,7 @@ const UserPage = (
         userFirstName={userFirstName}
         userLastName={userLastName}
       />
+      <CompDate userId={userId} />
       <UserDisclosure userId={userId} isOneRM={true} />
       <UserDisclosure userId={userId} isOneRM={false} />
     </div>
@@ -196,7 +198,6 @@ const Users: NextPage = () => {
   }
 
   if (usersLoading || userProgramsLoading || blocksLoading) return <div><LoadingPage /></div>
-
 
   return (
     <>
