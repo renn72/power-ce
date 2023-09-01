@@ -105,7 +105,7 @@ const PrimaryLifts: NextPage = () => {
           }
         </div>
         <Button
-          className='w-24'
+          className='w-24 hidden'
           onClick={onGenerate}
         >
           Generate
