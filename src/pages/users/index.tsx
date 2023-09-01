@@ -74,6 +74,7 @@ const UserPage = (
       userLastName: string | null
     }
 ) => {
+  api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId, })
 
   return (
     <div
