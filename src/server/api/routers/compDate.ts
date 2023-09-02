@@ -13,54 +13,48 @@ export const compDateRouter = createTRPCRouter({
     const compDates = await ctx.prisma.compDate.findMany()
     return compDates
   }),
+  getAllUser: privateProcedure
+    .input(z.object({ userId: z.string(), }))
+    .query(async ({
+      ctx, input,
+    }) => {
+      const compDates = await ctx.prisma.compDate.findMany({
+        where: { userId: input.userId, },
+        orderBy: { createdAt: 'desc', },
+      })
+      return compDates
+    }),
   create: privateProcedure
     .input(z.object({
-      weight: z.number(), lift: z.string(), userId: z.string(),
+      name: z.string(), date: z.string(), userId: z.string(),
     }))
     .mutation(async ({
       ctx, input,
     }) => {
-      const onerm = await ctx.prisma.oneRepMax.upsert({
-        where: {
-          userId_lift: {
-            userId: input.userId,
-            lift: input.lift,
-          },
-        },
-        update: { weight: input.weight, },
-        create: {
-          userId: input.userId, weight: input.weight, lift: input.lift,
+      const compDate = await ctx.prisma.compDate.create({
+        data: {
+          name: input.name,
+          date: input.date,
+          userId: input.userId,
         },
       })
-
-      console.log('onerm', onerm)
-
-      return onerm
+      return compDate
     }),
 
   delete: privateProcedure
     .input(z.object({
-      userId: z.string(), lift: z.string(),
+      name: z.string(), date: z.string(), userId: z.string(),
     }))
     .mutation(async ({
       ctx, input,
     }) => {
-      const onerm = await ctx.prisma.oneRepMax.delete(
-        {
-          where: {
-            userId_lift: {
-              userId: input.userId,
-              lift: input.lift,
-            },
-          },
-        }
-      )
-      return onerm
+      const compDate = await ctx.prisma.compDate.deleteMany({
+        where: {
+          name: input.name,
+          date: input.date,
+          userId: input.userId,
+        },
+      })
+      return compDate
     }),
-  deleteAll: privateProcedure
-    .mutation(async ({ ctx, }) => {
-      const onerm = await ctx.prisma.oneRepMax.deleteMany({})
-      return onerm
-    }),
-
 })

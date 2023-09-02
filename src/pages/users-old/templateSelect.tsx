@@ -90,10 +90,8 @@ const TemplateSelect = (
     <div className='md:p-2 flex flex-col w-full md:flex-row sm:gap-2 justify-start md:items-center'>
       <div className='flex w-full sm:gap-2 justify-start md:items-center'>
         <div
-          className='text-xl font-bold md:w-44 pr-2 rounded-lg text-yellow-500'>
+          className='text-xl font-bold md:w-44 pr-2 rounded-lg text-yellow-500 flex gap-2 items-center'>
           {capitaliseString(userFirstName)} {capitaliseString(userLastName)}
-        </div>
-        <div className='flex justify-center w-12'>
           {isSet && (<CheckCircleIcon className='h-8 w-8 text-green-600' />)}
         </div>
       </div>

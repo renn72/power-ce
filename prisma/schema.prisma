@@ -21,6 +21,8 @@ model CompDate {
   name String
   date String
 
+  isDeleted Boolean @default(false)
+
   flield1 String?
   flield2 String?
   flield3 String?
