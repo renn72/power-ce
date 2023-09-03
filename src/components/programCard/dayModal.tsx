@@ -25,6 +25,7 @@ import { useUser, } from '@clerk/nextjs'
 import getWeight from '~/utils/getWeight'
 import { Input, } from '@/components/ui/input'
 
+import { NumericFormat } from 'react-number-format';
 
 const SetsModal = ({ exercise, onUpdateRpe, onSetDone, isComplete }: { exercise: StoreExercise, }) => {
 
@@ -535,15 +536,11 @@ const ExerciseModal = ({
                             +
                           </div>
                           <div className='w-44 text-center '>
-                            <Input
-                              type='number'
-                              className='text-center text-2xl md:text-2xl font-semibold border-gray-400 border rounded-lg p-6'
+                            <NumericFormat
+                              className='text-center text-2xl md:text-2xl font-semibold border-gray-400 border rounded-lg p-6 bg-black w-full'
                               value={weights}
                               placeholder='weight'
-                              step={0.01}
-                              precision={2}
-                              min={0.00}
-                              max={999.99}
+                              decimalScale={2}
                               onChange={(e) => setWeights(+e.target.value)}
                             />
                           </div>
