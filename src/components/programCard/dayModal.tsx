@@ -137,7 +137,7 @@ const ExerciseModal = ({
   const [
     weights,
     setWeights,
-  ] = useState<number >()
+  ] = useState<number>()
 
   const [
     e1rm,
@@ -531,7 +531,7 @@ const ExerciseModal = ({
                     {exercise.sets && exercise.reps && (
                       <div className='flex flex-col gap-4 md:gap-6 mt-8'>
                         <div className='flex gap-4 md:gap-6 w-full justify-center items-center text-2xl font-bold'>
-                          <div className='cursor-pointer rounded-full w-8 h-8 text-center' onClick={() => setWeights(+weights + 2.5)}>
+                          <div className='cursor-pointer rounded-full w-8 h-8 text-center' onClick={() => { if (weights) setWeights(+weights + 2.5) }}>
                             +
                           </div>
                           <div className='w-44 text-center '>
@@ -541,10 +541,13 @@ const ExerciseModal = ({
                               value={weights}
                               placeholder='weight'
                               step={0.01}
+                              precision={2}
+                              min={0.00}
+                              max={999.99}
                               onChange={(e) => setWeights(+e.target.value)}
                             />
                           </div>
-                          <div className='cursor-pointer rounded-full w-8 h-8 text-center' onClick={() => setWeights(+weights - 2.5)}>
+                          <div className='cursor-pointer rounded-full w-8 h-8 text-center' onClick={() => { if (weights) setWeights(+weights - 2.5) }}>
                             -
                           </div>
                         </div>
