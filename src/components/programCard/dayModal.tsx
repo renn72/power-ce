@@ -540,6 +540,7 @@ const ExerciseModal = ({
                               className='text-center text-2xl md:text-2xl font-semibold border-gray-400 border rounded-lg p-6'
                               value={weights}
                               placeholder='weight'
+                              step={0.01}
                               onChange={(e) => setWeights(+e.target.value)}
                             />
                           </div>
