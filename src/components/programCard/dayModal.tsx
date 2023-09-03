@@ -137,7 +137,7 @@ const ExerciseModal = ({
   const [
     weights,
     setWeights,
-  ] = useState<number | string>('')
+  ] = useState<number >()
 
   const [
     e1rm,
