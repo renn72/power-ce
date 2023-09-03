@@ -87,18 +87,16 @@ const TemplateSelect = (
   // if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
 
   return (
-    <div className='md:p-2 flex flex-col w-full md:flex-row sm:gap-2 justify-start md:items-center'>
-      <div className='flex w-full sm:gap-2 justify-start md:items-center'>
+    <div className='m-2 flex flex-col md:flex-row gap-6 '>
+      <div className='text-lg w-64 font-semibold flex gap-2 items-center justify-between'>
         <div
-          className='text-xl font-bold md:w-44 pr-2 rounded-lg text-yellow-500'>
+          className='text-xl font-bold text-yellow-500'>
           {capitaliseString(userFirstName)} {capitaliseString(userLastName)}
         </div>
-        <div className='flex justify-center w-12'>
           {isSet && (<CheckCircleIcon className='h-8 w-8 text-green-600' />)}
-        </div>
       </div>
 
-      <div className='flex w-full sm:gap-2 justify-start md:items-center'>
+      <div className='flex sm:gap-2 justify-start md:items-center'>
         <div className='text-sm md:text-base font-bold flex flex-col justify-center'>
           <Listbox value={template} onChange={(e) => onSetLocalTemplate(e)}>
             <div className='relative z-1'>

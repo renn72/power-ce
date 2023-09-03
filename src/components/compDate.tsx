@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/popover'
 import { Input, } from '@/components/ui/input'
 
-import Countdown from 'react-countdown';
+import Countdown from 'react-countdown'
 
 const CompDate = ({ userId, }: { userId: string }) => {
   const { user, } = useUser()
@@ -99,67 +99,63 @@ const CompDate = ({ userId, }: { userId: string }) => {
 
   return (
     <>
-          {date && compName
-            && (
-              <div className='flex ml-2 items-baseline'>
-                <Countdown
-                  className='text-xl font-bold'
-                  date={date}
-                />
-              </div>
-            )
-          }
-      <div className='flex flex-col lg:flex-row gap-6 m-2'>
-        <div className='text-lg font-semibold col-span-3 lg:col-span-1 flex gap-2 items-center'>
-          Next Comp
-          {isSet && (<CheckCircleIcon className='h-8 w-8 text-green-600' />)}
-        </div>
-        <div className=''>
-          <Input
-            className='w-72 text-sm md:text-sm font-semibold'
-            placeholder='Comp Name'
-            value={compName}
-            onChange={(e) => setCompName(e.target.value)}
-          />
-        </div>
-
-        <Popover >
-          <PopoverTrigger asChild>
-            <Button
-              className={cn(
-                'w-[230px] col-span-2 justify-start text-left border-0 border-b border-gray-400 text-gray-200 rounded-none',
-                !date && 'text-gray-600'
-              )}
-            >
-              <CalendarIcon className='mr-2 h-4 w-4' />
-              {date ? format(date, 'PPP') : <span>Pick a date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className='w-auto p-3 z-10 bg-black text-gray-200'>
-            <Calendar
-              mode='single'
-              selected={date}
-              onSelect={(e) => {
-                const a = add(e, { hours: 8, })
-                setDate(a)
-              }}
-              initialFocus
+      <div className='flex flex-col gap-2'>
+        <div className='flex flex-col lg:flex-row gap-2 md:gap-6 m-2'>
+          <div className='text-lg w-64 font-semibold flex gap-2 items-center justify-between'>
+            <div>
+              Next Comp
+            </div>
+            {isSet && (<CheckCircleIcon className='h-8 w-8 text-green-600' />)}
+          </div>
+          <div className=''>
+            <Input
+              className='w-72 text-sm md:text-sm font-semibold'
+              placeholder='Comp Name'
+              value={compName}
+              onChange={(e) => setCompName(e.target.value)}
             />
-          </PopoverContent>
-        </Popover>
-        <Button
-          className='w-28'
-          onClick={onSave}
-        >
-          Save
-        </Button>
-        <Button
-          className='w-28'
-          onClick={onClear}
-        >
-          Clear
-        </Button>
+          </div>
 
+          <Popover >
+            <PopoverTrigger asChild>
+              <Button
+                className={cn(
+                  'w-[230px] col-span-2 justify-start text-left border-0 border-b border-gray-400 text-gray-200 rounded-none',
+                  !date && 'text-gray-600'
+                )}
+              >
+                <CalendarIcon className='mr-2 h-4 w-4' />
+                {date ? format(date, 'PPP') : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className='w-auto p-3 z-10 bg-black text-gray-200'>
+              <Calendar
+                mode='single'
+                selected={date}
+                onSelect={(e) => {
+                  const a = add(e, { hours: 8, })
+                  setDate(a)
+                }}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+          <div className='flex gap-2'>
+            <Button
+              className='w-28'
+              onClick={onSave}
+            >
+              Save
+            </Button>
+            <Button
+              className='w-28'
+              onClick={onClear}
+            >
+              Clear
+            </Button>
+
+          </div>
+        </div>
       </div>
     </>
   )

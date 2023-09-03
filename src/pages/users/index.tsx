@@ -1,4 +1,6 @@
-import React, { useState, } from 'react'
+import React, {
+  useState, useEffect,
+} from 'react'
 import { type NextPage, } from 'next'
 import { useUser, } from '@clerk/nextjs'
 import { toast, } from 'react-hot-toast'
@@ -17,6 +19,9 @@ import { Button, } from '@/components/ui/button'
 import ProgramView from './programView'
 import CompDate from '~/components/compDate'
 import UserSelect from './userSelect'
+
+import Countdown from 'react-countdown'
+import CountDown from '~/components/countDown'
 
 const UserDisclosure = ({
   userId, isOneRM,
@@ -81,8 +86,9 @@ const UserPage = (
 
   return (
     <div
-      className='flex flex-col w-full gap-2 justify-start'
+      className='flex flex-col w-full justify-start gap-8'
     >
+      <CountDown userId={userId} />
       <TemplateSelect
         onSelectTemplate={onSelectTemplate}
         onSetTemplate={onSetTemplate}
