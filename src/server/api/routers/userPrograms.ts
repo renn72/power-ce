@@ -77,7 +77,7 @@ export const userProgramsRouter = createTRPCRouter({
 
       const program = await ctx.prisma.block.create({
         data: {
-          name: block.name + '-' + getRandomInt(99).toString(),
+          name: block.name,
           isProgram: true,
           userIdOfProgram: input.userId,
           isProgramActive: true,
