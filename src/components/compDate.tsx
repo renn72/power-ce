@@ -23,6 +23,8 @@ import {
 } from '@/components/ui/popover'
 import { Input, } from '@/components/ui/input'
 
+import Countdown from 'react-countdown';
+
 const CompDate = ({ userId, }: { userId: string }) => {
   const { user, } = useUser()
   const [
@@ -97,14 +99,24 @@ const CompDate = ({ userId, }: { userId: string }) => {
 
   return (
     <>
-      <div className='grid grid-cols-3 lg:grid-cols-6 gap-6 items-center m-2'>
+          {date && compName
+            && (
+              <div className='flex ml-2 items-baseline'>
+                <Countdown
+                  className='text-xl font-bold'
+                  date={date}
+                />
+              </div>
+            )
+          }
+      <div className='flex flex-col lg:flex-row gap-6 m-2'>
         <div className='text-lg font-semibold col-span-3 lg:col-span-1 flex gap-2 items-center'>
           Next Comp
           {isSet && (<CheckCircleIcon className='h-8 w-8 text-green-600' />)}
         </div>
         <div className=''>
           <Input
-            className='w-32 text-sm md:text-sm font-semibold'
+            className='w-72 text-sm md:text-sm font-semibold'
             placeholder='Comp Name'
             value={compName}
             onChange={(e) => setCompName(e.target.value)}

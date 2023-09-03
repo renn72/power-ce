@@ -12,6 +12,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
 
+import Countdown from 'react-countdown';
 
 const Home: NextPage = () => {
   const [
@@ -49,15 +50,12 @@ const Home: NextPage = () => {
           {/* <OneRMCard /> */}
           {compDate && compName
             && (
-              <div className='flex'>
-                <div className='text-xl font-bold'>Next Comp</div>
-                <div className='ml-4'>
-                  <div>
-                    {compName}
-                    {' '}
-                    {dayjs().to(compDate)}
-                  </div>
-                </div>
+              <div className='flex gap-4 items-baseline'>
+                <h2 className='text-lg font-bold text-gray-300'>{compName}</h2>
+                <Countdown
+                  className='text-xl font-bold'
+                  date={compDate}
+                />
               </div>
             )
           }
