@@ -1,12 +1,12 @@
-import { clerkClient } from "@clerk/nextjs/server";
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { clerkClient, } from '@clerk/nextjs/server'
+import { TRPCError, } from '@trpc/server'
+import { z, } from 'zod'
 
 import {
   createTRPCRouter,
   privateProcedure,
   publicProcedure,
-} from "~/server/api/trpc";
+} from '~/server/api/trpc'
 
 export const usersRouter = createTRPCRouter({
   getAll: publicProcedure.query(async () => {
@@ -18,17 +18,21 @@ export const usersRouter = createTRPCRouter({
     }
     users.users = res
       .filter((user) => user.emailAddresses
-        .filter((email) => email.emailAddress !== 'ren@warner.systems' && email.emailAddress !== 'mitchlee021@gmail.com').length > 0
-      )
+        .filter((email) => email.emailAddress !== 'ren@warner.systems' && email.emailAddress !== 'mitchlee021@gmail.com').length > 0)
     users.admins = res
       .filter((user) => user.emailAddresses
-        .filter((email) => email.emailAddress === 'ren@warner.systems' || email.emailAddress === 'mitchlee021@gmail.com').length > 0
-      )
-    console.log(users);
+        .filter((email) => email.emailAddress === 'ren@warner.systems' || email.emailAddress === 'mitchlee021@gmail.com').length > 0)
+    console.log(users)
 
     return users
   }),
-  getUserTemplate: privateProcedure.query(async ({ ctx }) => {
+  getAllUsers: publicProcedure.query(async () => {
+    const res = await clerkClient.users.getUserList()
+
+    return res
+  }),
+
+  getUserTemplate: privateProcedure.query(async ({ ctx, }) => {
     const res = await ctx.prisma.userProgram.findMany()
 
     return res

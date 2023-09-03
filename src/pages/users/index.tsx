@@ -1,3 +1,4 @@
+import React, { useState, } from 'react'
 import { type NextPage, } from 'next'
 import { useUser, } from '@clerk/nextjs'
 import { toast, } from 'react-hot-toast'
@@ -14,6 +15,8 @@ import OneRMCard from '~/components/oneRMCard'
 import { Button, } from '@/components/ui/button'
 
 import ProgramView from './programView'
+import CompDate from '~/components/compDate'
+import UserSelect from './userSelect'
 
 const UserDisclosure = ({
   userId, isOneRM,
@@ -88,6 +91,7 @@ const UserPage = (
         userFirstName={userFirstName}
         userLastName={userLastName}
       />
+      <CompDate userId={userId} />
       <UserDisclosure userId={userId} isOneRM={true} />
       <UserDisclosure userId={userId} isOneRM={false} />
     </div>
@@ -97,15 +101,19 @@ const UserPage = (
 const Users: NextPage = () => {
   // Check for admin role
   const { user, } = useUser()
+  const [
+    userId,
+    setUserId,
+  ] = useState<string>(() => user?.id || '')
   if (!user) return <div>Login</div>
-  if (user.organizationMemberships[0]?.role !== 'admin') return <div>Not auth</div>
 
   const ctx = api.useContext()
 
   const { isLoading: userProgramsLoading, } = api.userPrograms.getAll.useQuery()
+
   const {
     data: allUsers, isLoading: usersLoading,
-  } = api.users.getAll.useQuery()
+  } = api.users.getAllUsers.useQuery()
   const {
     data: blocksData, isLoading: blocksLoading,
   } = api.blocks.getAll.useQuery()
@@ -180,61 +188,40 @@ const Users: NextPage = () => {
 
   const onGenerate = () => {
     console.log('gen')
-    allUsers?.admins?.forEach((user) => {
+    allUsers?.forEach((user) => {
       primaryLifts?.forEach((lift) => {
         const weight = (Math.floor(Math.random() * 15) + 5) * 10
         onUpdateOneRM(user.id, lift.name, weight)
       })
     })
-    allUsers?.users?.forEach((user) => {
-      primaryLifts?.forEach((lift) => {
-        const weight = (Math.floor(Math.random() * 15) + 5) * 10
-        onUpdateOneRM(user.id, lift.name, weight)
-      })
-    })
+  }
 
+  const getFirstName = () => {
+    const res = allUsers?.find((u) => u.id == userId)?.firstName
+    return res ? res : ''
+  }
+  const getLastName = () => {
+    const res = allUsers?.find((u) => u.id == userId)?.lastName
+    return res ? res : ''
   }
 
   if (usersLoading || userProgramsLoading || blocksLoading) return <div><LoadingPage /></div>
-
 
   return (
     <>
       <div className='h-full flex flex-col items-center'>
         <main >
           <div className=' max-w-[2000px] min-w-[95vw] 2xl:min-w-[80vw] md:mt-6 py-6 sm:px-2 flex flex-col gap-8 justify-center items-center'>
-            <div className='flex flex-col gap-4 w-full'>
-              <div className='text-2xl font-bold'>Trainers</div>
-              <div className='flex flex-col w-full gap-8'>
-                {allUsers?.admins?.map((user) => (
-                  <UserPage
-                    key={user.id}
-                    userId={user?.id}
-                    userFirstName={user.firstName}
-                    userLastName={user.lastName}
-                    onSetTemplate={onSetTemplate}
-                    onClearTemplate={onClearTemplate}
-                    onSelectTemplate={onSelectTemplate}
-                  />
-                ))}
-              </div>
-            </div>
-            <div className='flex flex-col gap-4 mt-8 w-full'>
-              <div className='text-2xl font-bold text-gray-200'>Users</div>
-              <div className='flex flex-col gap-4'>
-                {allUsers?.users?.map((user) => (
-                  <UserPage
-                    key={user.id}
-                    userId={user?.id}
-                    userFirstName={user.firstName}
-                    userLastName={user.lastName}
-                    onSetTemplate={onSetTemplate}
-                    onClearTemplate={onClearTemplate}
-                    onSelectTemplate={onSelectTemplate}
-                  />
-                ))}
-              </div>
-            </div>
+            <UserSelect onSelectUser={setUserId} />
+            <UserPage
+              key={userId}
+              userId={userId}
+              userFirstName={getFirstName()}
+              userLastName={getLastName()}
+              onSetTemplate={onSetTemplate}
+              onClearTemplate={onClearTemplate}
+              onSelectTemplate={onSelectTemplate}
+            />
           </div>
         </main>
       </div>

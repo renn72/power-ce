@@ -17,10 +17,10 @@ const nav = [
     name: 'Dashboard', href: '/',
   },
   {
-    name: 'Users-new', href: '/users', superAdmin: true,
+    name: 'Users-new', href: '/users', admin: true,
   },
   {
-    name: 'Users', href: '/users-old', admin: true,
+    name: 'Users-old', href: '/users-old', admin: true,
   },
   {
     name: 'Primary Lifts', href: '/primary-lifts', admin: true,
