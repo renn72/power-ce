@@ -27,7 +27,6 @@ const FormDay = ({
 
   const exerciseField = useFieldArray({
     control,
-    shouldUnregister: true,
     name: `week.${weekIdx}.day.${dayIdx}.exercise`,
   })
 

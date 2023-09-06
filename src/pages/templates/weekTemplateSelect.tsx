@@ -14,11 +14,9 @@ const WeekTemplateSelect = ({
 }: { onSelectWeekTemplate: (week: string) => void, selectedWeekTemplate: string }) => {
 
   const { data: weeksData, } = api.blocks.getAllWeekTemplates.useQuery()
-  const weeksTitle = weeksData?.map((week) => week.name)
 
   const onSelect = (e: string) => {
-    const template = weeksData?.filter((week) => week.name === e)[0]
-    if (template?.name) onSelectWeekTemplate(template.name)
+    onSelectWeekTemplate(e)
   }
 
   return (
@@ -26,7 +24,7 @@ const WeekTemplateSelect = ({
       <Listbox value={selectedWeekTemplate} onChange={(e) => onSelect(e)}>
         <div className='relative z-10'>
           <Listbox.Button className='relative w-full border-b border-gray-600 cursor-default max-h-min h-10 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none '>
-            <span className='block truncate'>{selectedWeekTemplate}</span>
+            <span className='block truncate'>{weeksData?.find((w) => w.id == selectedWeekTemplate)?.name}</span>
             <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
               <ChevronUpDownIcon
                 className='h-6 w-6 text-gray-400'
@@ -41,20 +39,20 @@ const WeekTemplateSelect = ({
             leaveTo='opacity-0'
           >
             <Listbox.Options className='absolute z-20 mt-1 max-h-160 w-full border border-gray-600 overflow-auto bg-black py-1 '>
-              {weeksTitle?.map((template, Idx) => (
+              {weeksData?.map((template, Idx) => (
                 <Listbox.Option
                   key={Idx}
                   className={({ active, }) => `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-yellow-400 text-gray-900' : 'text-gray-200'
                     }`
                   }
-                  value={template}
+                  value={template.id}
                 >
                   {({ selected, }) => (
                     <>
                       <span
                         className={`block truncate `}
                       >
-                        {template}
+                        {template.name}
                       </span>
                       {selected
                         ? (

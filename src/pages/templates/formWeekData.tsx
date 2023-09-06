@@ -104,7 +104,8 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
   }
 
   const onLoadWeekTemplate = (weekIdx: number) => {
-    const weekTemplate = weeksData?.filter((week) => week.name === selectedWeekTemplate)[0]
+    console.log('weeksdata', weeksData)
+    const weekTemplate = weeksData?.find((week) => week.id === selectedWeekTemplate)
     console.log('onLoadWeekTemplate', weekTemplate)
 
     const currentTemplate = getValues()
@@ -120,7 +121,11 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
 
     }
 
+    console.log('update', update)
+
     reset(update)
+
+    console.log('values', getValues())
 
     setSelectedWeekTemplate('')
     toast.success('Loaded')
