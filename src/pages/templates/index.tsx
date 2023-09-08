@@ -2,31 +2,12 @@ import { type NextPage, } from 'next'
 import React from 'react'
 import { useUser, } from '@clerk/nextjs'
 
-import { useAtom, } from 'jotai'
-
 import Form from './form'
-
-import {
-  squatAtom, deadliftAtom, benchAtom,
-} from '~/store/store'
 
 import { api, } from '~/utils/api'
 import { LoadingPage, } from '~/components/loading'
-import { Input, } from '@/components/ui/input'
 
 const Templates: NextPage = () => {
-  const [
-    squat,
-    setSquat,
-  ] = useAtom(squatAtom)
-  const [
-    deadlift,
-    setDeadlift,
-  ] = useAtom(deadliftAtom)
-  const [
-    bench,
-    setBench,
-  ] = useAtom(benchAtom)
 
   const {
     data: blocksData, isLoading: blocksLoading,

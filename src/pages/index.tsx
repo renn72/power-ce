@@ -22,6 +22,7 @@ const Home: NextPage = () => {
 
   const { isLoading: programsLoading, } = api.blocks.getAllUserPrograms.useQuery()
 
+
   if (userProgramsLoading && programsLoading) return <div><LoadingPage /></div>
 
   return (
