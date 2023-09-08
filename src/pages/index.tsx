@@ -1,7 +1,4 @@
 import { type NextPage, } from 'next'
-import React, {
-  useState, useEffect,
-} from 'react'
 
 import { useUser, } from '@clerk/nextjs'
 import { api, } from '~/utils/api'
