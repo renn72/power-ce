@@ -354,7 +354,8 @@ const ExerciseModal = ({
 
   const onSetDone = (set: Set) => {
     console.log('set', set)
-    const e = +(+weights / (e1rm[exercise?.reps - 1] / 100))?.toFixed(0)
+    const wi = weights ? +weights : 0
+    const e = +(+wi / (e1rm[exercise?.reps - 1] / 100))?.toFixed(0)
     console.log('e', e)
     console.log('exercise', exercise)
     updateSet({
