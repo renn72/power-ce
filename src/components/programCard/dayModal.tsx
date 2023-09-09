@@ -3,6 +3,8 @@ import { type Set } from '@prisma/client'
 import { type Day, type Exercise as StoreExercise, type Set as SetStore } from '~/store/types'
 import { api } from '~/utils/api'
 
+import Decimal from 'decimal.js'
+
 import { AnimatePresence, motion } from 'framer-motion'
 import { Transition, RadioGroup, Disclosure } from '@headlessui/react'
 import {
@@ -134,7 +136,7 @@ const ExerciseModal = ({
 
     if (index) {
       const rm = day?.exercise[index - 1]?.set.filter((s) => s.isComplete)
-      const rmWeight = rm?.map((s) => s.estiamtedOnerm)
+      const rmWeight = rm?.map((s) => s.estiamtedOnerm) || []
       const w = rmWeight[rmWeight.length - 1]
 
       if (w) return getWeight(+w, onerm * energyAdjust)
@@ -154,59 +156,6 @@ const ExerciseModal = ({
   const [e1rm, setE1rm] = useState<number[]>([0])
 
   const utils = api.useContext()
-
-  const { mutate: updateRpe } = api.programs.updateSetRpe.useMutation({
-    onMutate: async (newRpe) => {
-      console.log('id', newRpe)
-      await utils.blocks.getAllUserPrograms.cancel()
-      const previousPrograms = utils.blocks.getAllUserPrograms.getData()
-      utils.blocks.getAllUserPrograms.setData(undefined, (prev) => {
-        console.log('prev', prev)
-        return prev
-      })
-
-      utils.blocks.getAllUserPrograms.setData(undefined, (prev) => prev?.map((program) => {
-          return {
-            ...program,
-            week: program.week.map((week) => {
-              return {
-                ...week,
-                day: week.day.map((day) => {
-                  return {
-                    ...day,
-                    exercise: day.exercise.map((exercise) => {
-                      return {
-                        ...exercise,
-                        set: exercise.set.map((set) => {
-                          if (set.id === newRpe.id) {
-                            return {
-                              ...set,
-                              rpe: newRpe.rpe,
-                            }
-                          }
-                          return set
-                        }),
-                      }
-                    }),
-                  }
-                }),
-              }
-            }),
-          }
-        }))
-      return previousPrograms
-    },
-    onError: (err, newRpe, context) => {
-      console.log('err', err)
-      utils.blocks.getAllUserPrograms.setData(
-        undefined,
-        context?.previousPrograms
-      )
-    },
-    onSettled: () => {
-      void utils.blocks.getAllUserPrograms.invalidate()
-    },
-  })
 
   const { mutate: updateExerciseComplete }
     = api.programs.completeExercise.useMutation({
@@ -321,9 +270,9 @@ const ExerciseModal = ({
                             return {
                               ...set,
                               isComplete: newSet.isComplete,
-                              rpe: newSet.rpe,
-                              weight: newSet.weight,
-                              estiamtedOnerm: newSet.estiamtedOnerm,
+                              rpe: new Decimal(newSet.rpe),
+                              weight: new Decimal(newSet.weight),
+                              estiamtedOnerm: new Decimal(newSet.estiamtedOnerm),
                               rep: newSet.rep,
                             }
                           }
@@ -354,8 +303,12 @@ const ExerciseModal = ({
 
   const onSetDone = (set: Set) => {
     console.log('set', set)
-    const wi = weights ? +weights : 0
-    const e = +(+wi / (e1rm[exercise?.reps - 1] / 100))?.toFixed(0)
+    let e = 0
+    if (weights && exercise?.reps) {
+      const wi = weights ? +weights : 0
+      const e1 = e1rm[+exercise?.reps - 1]
+      if (e1) e = +(+wi / ( e1 / 100))?.toFixed(0)
+    }
     console.log('e', e)
     console.log('exercise', exercise)
     updateSet({
