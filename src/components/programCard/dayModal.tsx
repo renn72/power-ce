@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { type Set } from '@prisma/client'
-import { type Day, type Exercise as StoreExercise } from '~/store/types'
+import { type Day, type Exercise as StoreExercise, type Set as SetStore } from '~/store/types'
 import { api } from '~/utils/api'
 
 import { AnimatePresence, motion } from 'framer-motion'
@@ -25,7 +25,10 @@ const SetsModal = ({
   onSetDone,
   isComplete,
 }: {
-  exercise: StoreExercise
+  exercise: StoreExercise,
+  onUpdateRpe: (args0 : SetStore, args1 : boolean) => void,
+  onSetDone: (args0 : SetStore) => void,
+  isComplete: boolean,
 }) => {
   return (
     <AnimatePresence>
@@ -358,7 +361,7 @@ const ExerciseModal = ({
       id: set.id,
       isComplete: !set.isComplete,
       rpe: +rpe,
-      weight: +weights,
+      weight: weights ? +weights :  0,
       estiamtedOnerm: !set.isComplete ? (e ? e : 0) : 0, //e1rm,
       rep: set?.rep,
     })
