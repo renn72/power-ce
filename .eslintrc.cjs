@@ -5,17 +5,16 @@ const path = require('path')
 const config = {
   overrides: [
     {
-      extends: ['plugin:@typescript-eslint/recommended-requiring-type-checking',],
-      files: [
-        '*.ts',
-        '*.tsx',
+      extends: [
+        'plugin:@typescript-eslint/recommended-requiring-type-checking',
       ],
-      parserOptions: { project: path.join(__dirname, 'tsconfig.json'), },
+      files: ['*.ts', '*.tsx'],
+      parserOptions: { project: path.join(__dirname, 'tsconfig.json') },
     },
   ],
   parser: '@typescript-eslint/parser',
-  parserOptions: { project: path.join(__dirname, 'tsconfig.json'), },
-  plugins: ['@typescript-eslint',],
+  parserOptions: { project: path.join(__dirname, 'tsconfig.json') },
+  plugins: ['@typescript-eslint'],
   extends: [
     'next/core-web-vitals',
     'plugin:@typescript-eslint/recommended',
@@ -25,7 +24,7 @@ const config = {
   rules: {
     '@typescript-eslint/no-misused-promises': [
       2,
-      { 'checksVoidReturn': { 'attributes': false, }, },
+      { checksVoidReturn: { attributes: false } },
     ],
     '@typescript-eslint/consistent-type-imports': [
       'warn',
@@ -34,18 +33,12 @@ const config = {
         fixStyle: 'inline-type-imports',
       },
     ],
-    '@typescript-eslint/no-unused-vars': [
-      'warn',
-      { argsIgnorePattern: '^_', },
-    ],
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     'react/react-in-jsx-scope': 'off',
     'react/no-unused-vars': 'off',
     'react/prop-types': 'off', // Using TypeScript
     'no-unused-vars': 'off',
-    'array-bracket-newline': [
-      'error',
-      { 'multiline': true, },
-    ],
+    'array-bracket-newline': ['error', { multiline: true }],
     // 'array-bracket-spacing': [
     //   'warn',
     //   'always',
@@ -53,151 +46,94 @@ const config = {
     'array-element-newline': [
       'warn',
       {
-        'multiline': true, 'minItems': 2,
+        multiline: true,
+        minItems: 4,
       },
     ],
-    'arrow-parens': [
-      'warn',
-      'always',
-    ],
+    'arrow-parens': ['warn', 'always'],
     'arrow-spacing': [
       'warn',
       {
-        'before': true, 'after': true,
+        before: true,
+        after: true,
       },
     ],
-    'block-spacing': [
-      'warn',
-      'always',
-    ],
-    'brace-style': [
-      'warn',
-      '1tbs',
-      { 'allowSingleLine': true, },
-    ],
-    'camelcase': [
-      'warn',
-      { 'properties': 'never', },
-    ],
-    'comma-dangle': [
-      'warn',
-      'always',
-    ],
+    'block-spacing': ['warn', 'always'],
+    'brace-style': ['warn', '1tbs', { allowSingleLine: true }],
+    camelcase: ['warn', { properties: 'never' }],
     'comma-spacing': [
       'warn',
       {
-        'before': false, 'after': true,
+        before: false,
+        after: true,
       },
     ],
-    'comma-style': [
-      'warn',
-      'last',
-    ],
-    'computed-property-spacing': [
-      'warn',
-      'never',
-    ],
-    'curly': [
-      'warn',
-      'multi-line',
-      'consistent',
-    ],
-    'dot-location': [
-      'warn',
-      'property',
-    ],
-    'eol-last': [
-      'warn',
-      'always',
-    ],
-    'func-call-spacing': [
-      'warn',
-      'never',
-    ],
-    'function-call-argument-newline': [
-      'warn',
-      'consistent',
-    ],
-    'function-paren-newline': [
-      'warn',
-      'multiline-arguments',
-    ],
-    'implicit-arrow-linebreak': [
-      'warn',
-      'beside',
-    ],
-    'jsx-quotes': [
-      'warn',
-      'prefer-single',
-    ],
+    'comma-style': ['warn', 'last'],
+    'computed-property-spacing': ['warn', 'never'],
+    curly: ['warn', 'multi-line', 'consistent'],
+    'dot-location': ['warn', 'property'],
+    'eol-last': ['warn', 'always'],
+    'func-call-spacing': ['warn', 'never'],
+    'function-call-argument-newline': ['warn', 'consistent'],
+    'function-paren-newline': ['warn', 'multiline-arguments'],
+    'implicit-arrow-linebreak': ['warn', 'beside'],
+    'jsx-quotes': ['warn', 'prefer-single'],
     'key-spacing': [
       'warn',
       {
-        'beforeColon': false, 'afterColon': true,
+        beforeColon: false,
+        afterColon: true,
       },
     ],
     'keyword-spacing': [
       'warn',
       {
-        'before': true, 'after': true,
+        before: true,
+        after: true,
       },
     ],
 
-    'multiline-ternary': [
-      'warn',
-      'always-multiline',
-    ],
+    'multiline-ternary': ['warn', 'always-multiline'],
     'no-multiple-empty-lines': [
       'warn',
       {
-        'max': 1, 'maxEOF': 0,
+        max: 1,
+        maxEOF: 0,
       },
     ],
-    'no-trailing-spaces': [
-      'warn',
-      { 'ignoreComments': true, },
-    ],
-    'object-curly-newline': [
-      'warn',
-      {
-        'ObjectExpression': {
-          'multiline': true,
-          'minProperties': 2,
-        },
-        'ObjectPattern': {
-          'multiline': true,
-          'minProperties': 2,
-        },
-        'ImportDeclaration': {
-          'multiline': true,
-          'minProperties': 2,
-        },
-        'ExportDeclaration': {
-          'multiline': true,
-          'minProperties': 2,
-        },
-      },
-    ],
-    'object-property-newline': [
-      'warn',
-      { 'allowAllPropertiesOnSameLine': true, },
-    ],
-    'operator-linebreak': [
-      'warn',
-      'before',
-    ],
-    'quotes': [
+    'no-trailing-spaces': ['warn', { ignoreComments: true }],
+    // 'object-curly-newline': [
+    //   'warn',
+    //   {
+    //     ObjectExpression: {
+    //       multiline: true,
+    //       minProperties: 4,
+    //     },
+    //     ObjectPattern: {
+    //       multiline: true,
+    //       minProperties: 4,
+    //     },
+    //     ImportDeclaration: {
+    //       multiline: true,
+    //       minProperties: 4,
+    //     },
+    //     ExportDeclaration: {
+    //       multiline: true,
+    //       minProperties: 4,
+    //     },
+    //   },
+    // ],
+    'object-property-newline': ['warn', { allowAllPropertiesOnSameLine: true }],
+    'operator-linebreak': ['warn', 'before'],
+    quotes: [
       'warn',
       'single',
       {
-        'avoidEscape': true, 'allowTemplateLiterals': true,
+        avoidEscape: true,
+        allowTemplateLiterals: true,
       },
     ],
-    'semi': [
-      'warn',
-      'never',
-    ],
-
+    semi: ['warn', 'never'],
   },
 }
 
