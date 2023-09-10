@@ -270,9 +270,9 @@ const ExerciseModal = ({
                             return {
                               ...set,
                               isComplete: newSet.isComplete,
-                              rpe: new Decimal(newSet.rpe),
-                              weight: new Decimal(newSet.weight),
-                              estiamtedOnerm: new Decimal(newSet.estiamtedOnerm),
+                              rpe: newSet.rpe,
+                              weight: newSet.weight,
+                              estiamtedOnerm: newSet.estiamtedOnerm,
                               rep: newSet.rep,
                             }
                           }
