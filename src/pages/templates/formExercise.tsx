@@ -40,11 +40,7 @@ const GetWeight = ({
 }: { week: number, day: number, exercise: number, lifts: { lift: string, weight: string }[] }) => {
   const formMethods = useFormContext<Block>()
 
-  const watch = formMethods.watch([
-    `week.${week}.day.${day}.exercise.${exercise}.onerm`,
-    `week.${week}.day.${day}.exercise.${exercise}.lift`,
-    `week.${week}.day.${day}.exercise.${exercise}.onermTop`,
-  ])
+  const watch = formMethods.watch([`week.${week}.day.${day}.exercise.${exercise}.onerm`, `week.${week}.day.${day}.exercise.${exercise}.lift`, `week.${week}.day.${day}.exercise.${exercise}.onermTop`,])
 
   const weight = lifts?.filter((lift) => lift.lift === watch[1])[0]?.weight
 
@@ -186,65 +182,66 @@ const FormExercise = ({
             placeholder='rep unit'
           />
         </div>
-        <div className='my-1 grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-10 items-center'>
-          <Controller
-            control={control}
-            name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`}
-            defaultValue={null}
-            render={({
-              field: {
-                onChange, value,
-              },
-            }) => (
-              <div className=''>
-                <RadioGroup value={value} onChange={onChange}>
-                  <div className='flex items-center justify-start gap-1 md:gap-2'>
-                    {plans.map((plan) => (
-                      <RadioGroup.Option
-                        key={plan.name}
-                        value={plan.value}
-                        className={({
-                          active, checked,
-                        }) => `${checked ? 'bg-gray-600 bg-opacity-75 text-gray-200' : 'bg-black text-gray-400'}
-                                relative flex cursor-pointer rounded-lg px-2 md:px-2 shadow-md focus:outline-none w-52 h-10`
-                        }
-                      >
-                        {({
-                          active, checked,
-                        }) => (
-                          <>
-                            <div className='flex w-full items-center justify-between'>
-                              <div className='flex items-center'>
-                                <div className='text-base tracking-tighter'>
-                                  <RadioGroup.Label
-                                    as='p'
-                                    className={`font-medium  ${checked ? 'text-yellow-500' : 'text-gray-400'
-                                      }`}
-                                  >
-                                    {plan.name}
-                                  </RadioGroup.Label>
-                                </div>
-                              </div>
-                              {checked && (
-                                <div className='shrink-0 text-white'>
-                                  <CheckCircleIcon className='h-6 w-6' />
-                                </div>
+        <div className='my-1 flex flex-col lg:flex-row gap-2 md:gap-6 items-center justify-between w-full'>
+          <div className='flex gap-4 md:gap-6 items-center w-full'>
+            <Controller
+              control={control}
+              name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`}
+              defaultValue={null}
+              render={({
+                field: {
+                  onChange, value,
+                },
+              }) => (
+                  <div className=''>
+                    <RadioGroup value={value} onChange={onChange}>
+                      <div className='flex items-center justify-start gap-1 md:gap-2'>
+                        {plans.map((plan) => (
+                          <RadioGroup.Option
+                            key={plan.name}
+                            value={plan.value}
+                            className={({
+                              active, checked,
+                            }) => `${checked ? 'bg-gray-600 bg-opacity-75 text-gray-200' : 'bg-black text-gray-400'}
+                                                relative flex cursor-pointer rounded-lg px-2 md:px-6 shadow-md focus:outline-none h-10`
+                            }
+                          >
+                            {({
+                              active, checked,
+                            }) => (
+                                <>
+                                  <div className='flex w-full items-center justify-between'>
+                                    <div className='flex items-center'>
+                                      <div className='text-base tracking-tighter'>
+                                        <RadioGroup.Label
+                                          as='p'
+                                          className={`font-medium  ${checked ? 'text-yellow-500' : 'text-gray-400'}`}
+                                        >
+                                          {plan.name}
+                                        </RadioGroup.Label>
+                                      </div>
+                                    </div>
+                                    {checked && (
+                                      <div className='ml-4 shrink-0 text-white'>
+                                        <CheckCircleIcon className='h-6 w-6' />
+                                      </div>
+                                    )}
+                                  </div>
+                                </>
                               )}
-                            </div>
-                          </>
-                        )}
-                      </RadioGroup.Option>
-                    ))}
+                          </RadioGroup.Option>
+                        ))}
+                      </div>
+                    </RadioGroup>
                   </div>
-                </RadioGroup>
-              </div>
 
-            )}
-          />
-          <XCircleIcon
-            className='h-6 w-6 text-gray-400 cursor-pointer hover:text-red-600'
-            onClick={() => setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`, '')}
-          />
+                )}
+            />
+            <XCircleIcon
+              className='h-6 w-6 text-gray-400 cursor-pointer hover:text-red-600'
+              onClick={() => setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`, '')}
+            />
+          </div>
           {weightType === 'onerm'
             && (
               <div className='flex gap-0 md:gap-10'>
