@@ -6,22 +6,15 @@ import {
   Fragment, useEffect,
 } from 'react'
 
-import { useAtom, } from 'jotai'
 import { useUser, } from '@clerk/nextjs'
 import { api, } from '~/utils/api'
 
 import LiftPicker from './liftPicker'
-import {
-  Input, InputNumber,
-} from '@/components/ui/input'
+import { Input, } from '@/components/ui/input'
 
 import {
   Listbox, Transition, RadioGroup,
 } from '@headlessui/react'
-
-import {
-  squatAtom, deadliftAtom, benchAtom,
-} from '~/store/store'
 
 import {
   ChevronUpDownIcon, CheckIcon, XCircleIcon, CheckCircleIcon, XMarkIcon,
@@ -30,36 +23,9 @@ import {
 import getWeight from '~/utils/getWeight'
 
 import { type Block, } from '~/store/types'
-import { Checkbox, } from '@/components/ui/checkbox'
 
 import { NumericFormat, } from 'react-number-format'
 import { Label, } from '@/components/ui/label'
-
-const GetWeight = ({
-  week, day, exercise, lifts,
-}: { week: number, day: number, exercise: number, lifts: { lift: string, weight: string }[] }) => {
-  const formMethods = useFormContext<Block>()
-
-  const watch = formMethods.watch([`week.${week}.day.${day}.exercise.${exercise}.onerm`, `week.${week}.day.${day}.exercise.${exercise}.lift`, `week.${week}.day.${day}.exercise.${exercise}.onermTop`,])
-
-  const weight = lifts?.filter((lift) => lift.lift === watch[1])[0]?.weight
-
-  if (!weight) return null
-  if (!watch[0]) return null
-
-  const res = getWeight(+watch[0], +weight)
-
-  if (!watch[2]) return (<div>{res}kg</div>)
-
-  const res2 = getWeight(+watch[2], +weight)
-
-  return (
-    <div>
-      {res}kg - {res2}kg
-    </div>
-  )
-
-}
 
 const plans = [
   {
@@ -82,7 +48,7 @@ const FormExercise = ({
   { weekIdx: number, dayIdx: number, exerciseIdx: number, onRemoveExercise : (args0 : number)  => void }) => {
   const formMethods = useFormContext()
   const {
-    register, control, getValues, watch, setValue,
+    register, control, watch, setValue,
   } = formMethods
 
   const exerciseField = useFieldArray({
@@ -90,20 +56,9 @@ const FormExercise = ({
     name: `week.${weekIdx}.day.${dayIdx}.exercise`,
   })
 
-  const { user, } = useUser()
-
-  const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery({ userId: user?.id || '', })
-  const userLifts = userCoreOneRM?.map((lift) => {
-    return {
-      lift: lift.lift, weight: lift.weight,
-    }
-  })
-
   const weightType = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`) as string
   const liftType = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.lift`) as string
   const name = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`) as string
-
-  // const w = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.targetRpe`)
 
   useEffect(() => {
     if (liftType != 'unlinked' && liftType !== '' && name == '') formMethods.setValue(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`, (liftType?.slice(0, 1).toUpperCase() + liftType?.slice(1)) || '')
