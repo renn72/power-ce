@@ -451,8 +451,6 @@ const ProgramView = ({ userId, }: { userId: string }) => {
     setIsOpen(true)
   }
 
-  console.log('active program', program)
-
   const blocksTitle = blocksData?.map((block) => block.name)
   return (
     <>

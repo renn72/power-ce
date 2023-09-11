@@ -92,8 +92,6 @@ const config = {
         after: true,
       },
     ],
-
-    'multiline-ternary': ['warn', 'always-multiline'],
     'no-multiple-empty-lines': [
       'warn',
       {

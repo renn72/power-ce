@@ -94,7 +94,7 @@ const ProgramDay = ({
       <div
         className='flex flex-col gap-4'
       >
-        <Disclosure defaultOpen={!day.isComplete} >
+        <Disclosure defaultOpen={false} >
           {({ open, }) => (
             <div className='flex flex-col md:gap-8'>
               <div className='flex flex-col sm:flex-row md:gap-6'>

@@ -1,37 +1,45 @@
-import { type NextPage, } from 'next'
-import { useUser, } from '@clerk/nextjs'
-import { toast, } from 'react-hot-toast'
-import { api, } from '~/utils/api'
+import { type NextPage } from 'next'
+import { useUser } from '@clerk/nextjs'
+import { toast } from 'react-hot-toast'
+import { api } from '~/utils/api'
 
-import {
-  Disclosure, Transition,
-} from '@headlessui/react'
+import { Disclosure, Transition } from '@headlessui/react'
 
-import { ChevronUpIcon, } from '@heroicons/react/20/solid'
+import { ChevronUpIcon } from '@heroicons/react/20/solid'
 import TemplateSelect from './templateSelect'
-import { LoadingPage, } from '~/components/loading'
+import { LoadingPage } from '~/components/loading'
 import OneRMCard from '~/components/oneRMCard'
-import { Button, } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 
 import ProgramView from './programView'
 import CompDate from '~/components/compDate'
 
 const UserDisclosure = ({
-  userId, isOneRM,
-}: { userId: string, isOneRM: boolean }) => (
-  <Disclosure defaultOpen={false} >
-    {({ open, }) => (
+  userId,
+  isOneRM,
+}: {
+  userId: string
+  isOneRM: boolean
+}) => (
+  <Disclosure defaultOpen={false}>
+    {({ open }) => (
       <div className='flex flex-col md:gap-8'>
         <div className='flex flex-col sm:flex-row md:gap-6'>
-          <Disclosure.Button className={`${open ? 'border-b border-yellow-500' : 'hover:border-white border-b border-black'} flex items-center gap-2 px-2 py-2 text-lg font-medium `}>
+          <Disclosure.Button
+            className={`${
+              open
+                ? 'border-b border-yellow-500'
+                : 'border-b border-black hover:border-white'
+            } flex items-center gap-2 px-2 py-2 text-lg font-medium `}
+          >
             <span>{isOneRM ? 'One Rep Maxes' : 'Program'}</span>
             <ChevronUpIcon
-              className={`${open ? 'rotate-180 transform' : ''
-                } h-8 w-8 text-gray-400`}
+              className={`${
+                open ? 'rotate-180 transform' : ''
+              } h-8 w-8 text-gray-400`}
             />
           </Disclosure.Button>
-          <div className='flex gap-2'>
-          </div>
+          <div className='flex gap-2'></div>
         </div>
 
         <Transition
@@ -42,45 +50,41 @@ const UserDisclosure = ({
           leaveTo='transform scale-70 opacity-0'
         >
           <Disclosure.Panel className=''>
-            {
-              isOneRM
-                ? (
-                  <OneRMCard userId={userId} />
-                )
-                : (
-                  <ProgramView userId={userId} />
-                )
-            }
+            {isOneRM ? (
+              <OneRMCard userId={userId} />
+            ) : (
+              <ProgramView userId={userId} />
+            )}
           </Disclosure.Panel>
         </Transition>
       </div>
     )}
   </Disclosure>
 )
-const UserPage = (
-  {
-    onSelectTemplate,
-    onSetTemplate,
-    onClearTemplate,
-    userId,
-    userFirstName,
-    userLastName,
-  }:
-    {
-      onSelectTemplate: (arg0: string, arg1: string) => void,
-      onSetTemplate: (arg0: string, arg1: string) => void,
-      onClearTemplate: (arg0: string,) => void,
-      userId: string,
-      userFirstName: string | null,
-      userLastName: string | null
-    }
-) => {
-  api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId, })
+const UserPage = ({
+  onSelectTemplate,
+  onSetTemplate,
+  onClearTemplate,
+  userId,
+  userFirstName,
+  userLastName,
+}: {
+  onSelectTemplate: (arg0: string, arg1: string) => void
+  onSetTemplate: (arg0: string, arg1: string) => void
+  onClearTemplate: (arg0: string) => void
+  userId: string
+  userFirstName: string | null
+  userLastName: string | null
+}) => {
+  api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
+  const { data: userPrograms } = api.userPrograms.getAll.useQuery()
+  const activePro = userPrograms?.filter(
+    (p) => p.userId == userId && p.isProgramActive,
+  )
+  console.log('pro', activePro)
 
   return (
-    <div
-      className='flex flex-col w-full gap-2 justify-start'
-    >
+    <div className='flex w-full flex-col justify-start gap-2'>
       <TemplateSelect
         onSelectTemplate={onSelectTemplate}
         onSetTemplate={onSetTemplate}
@@ -90,59 +94,67 @@ const UserPage = (
         userLastName={userLastName}
       />
       <CompDate userId={userId} />
-      <UserDisclosure userId={userId} isOneRM={true} />
-      <UserDisclosure userId={userId} isOneRM={false} />
+      <UserDisclosure
+        userId={userId}
+        isOneRM={true}
+      />
+      {activePro?.length && activePro.length > 0 ? (
+        <UserDisclosure
+          userId={userId}
+          isOneRM={false}
+        />
+      ) : null}
     </div>
   )
 }
 
 const Users: NextPage = () => {
   // Check for admin role
-  const { user, } = useUser()
+  const { user } = useUser()
   if (!user) return <div>Login</div>
-  if (user.organizationMemberships[0]?.role !== 'admin') return <div>Not auth</div>
+  if (user.organizationMemberships[0]?.role !== 'admin')
+    return <div>Not auth</div>
 
   const ctx = api.useContext()
 
-  const { isLoading: userProgramsLoading, } = api.userPrograms.getAll.useQuery()
-  const {
-    data: allUsers, isLoading: usersLoading,
-  } = api.users.getAll.useQuery()
-  const {
-    data: blocksData, isLoading: blocksLoading,
-  } = api.blocks.getAll.useQuery()
-  const { data: programsData, } = api.blocks.getAllPrograms.useQuery()
-  const { mutate: userProgramCreateMutate, } = api.userPrograms.create.useMutation({
-    onSuccess: () => {
-      toast.success('Saved')
-      void ctx.blocks.getAll.invalidate()
-      void ctx.blocks.getAllPrograms.invalidate()
-      void ctx.userPrograms.getAll.invalidate()
-    },
-    onError: (e) => {
-      console.log('error', e)
-      toast.error('Error')
-    },
-  })
-  const { mutate: userProgramRemoveMutate, } = api.userPrograms.remove.useMutation({
-    onSuccess: () => {
-      console.log('success')
-      toast.success('Removed')
-      void ctx.blocks.getAll.invalidate()
-      void ctx.blocks.getAllPrograms.invalidate()
-      void ctx.userPrograms.getAll.invalidate()
-    },
-    onError: (e) => {
-      console.log('error', e)
-      toast.error('Error')
-    },
-  })
+  const { isLoading: userProgramsLoading } = api.userPrograms.getAll.useQuery()
+  const { data: allUsers, isLoading: usersLoading } =
+    api.users.getAll.useQuery()
+  const { data: blocksData, isLoading: blocksLoading } =
+    api.blocks.getAll.useQuery()
+  const { data: programsData } = api.blocks.getAllPrograms.useQuery()
+  const { mutate: userProgramCreateMutate } =
+    api.userPrograms.create.useMutation({
+      onSuccess: () => {
+        toast.success('Saved')
+        void ctx.blocks.getAll.invalidate()
+        void ctx.blocks.getAllPrograms.invalidate()
+        void ctx.userPrograms.getAll.invalidate()
+      },
+      onError: (e) => {
+        console.log('error', e)
+        toast.error('Error')
+      },
+    })
+  const { mutate: userProgramRemoveMutate } =
+    api.userPrograms.remove.useMutation({
+      onSuccess: () => {
+        console.log('success')
+        toast.success('Removed')
+        void ctx.blocks.getAll.invalidate()
+        void ctx.blocks.getAllPrograms.invalidate()
+        void ctx.userPrograms.getAll.invalidate()
+      },
+      onError: (e) => {
+        console.log('error', e)
+        toast.error('Error')
+      },
+    })
 
-  const {
-    data: primaryLifts, isLoading: primaryLiftsLoading,
-  } = api.primaryLifts.getAll.useQuery()
+  const { data: primaryLifts, isLoading: primaryLiftsLoading } =
+    api.primaryLifts.getAll.useQuery()
 
-  const { mutate: createUserCoreOneRM, } = api.oneRepMax.create.useMutation({
+  const { mutate: createUserCoreOneRM } = api.oneRepMax.create.useMutation({
     onSettled: async () => {
       await ctx.oneRepMax.getUserCoreLifts.invalidate()
     },
@@ -159,7 +171,7 @@ const Users: NextPage = () => {
 
   const onClearTemplate = (userId: string) => {
     console.log('userId', userId)
-    userProgramRemoveMutate({ userId: userId, })
+    userProgramRemoveMutate({ userId: userId })
   }
 
   const onSetTemplate = (template: string, userId: string) => {
@@ -176,7 +188,9 @@ const Users: NextPage = () => {
 
   const onUpdateOneRM = (userId: string, lift: string, weight: number) => {
     createUserCoreOneRM({
-      userId: userId, lift: lift.toLowerCase(), weight: +weight,
+      userId: userId,
+      lift: lift.toLowerCase(),
+      weight: +weight,
     })
   }
 
@@ -194,19 +208,23 @@ const Users: NextPage = () => {
         onUpdateOneRM(user.id, lift.name, weight)
       })
     })
-
   }
 
-  if (usersLoading || userProgramsLoading || blocksLoading) return <div><LoadingPage /></div>
+  if (usersLoading || userProgramsLoading || blocksLoading)
+    return (
+      <div>
+        <LoadingPage />
+      </div>
+    )
 
   return (
     <>
-      <div className='h-full flex flex-col items-center'>
-        <main >
-          <div className=' max-w-[2000px] min-w-[95vw] 2xl:min-w-[80vw] md:mt-6 py-6 sm:px-2 flex flex-col gap-8 justify-center items-center'>
-            <div className='flex flex-col gap-4 w-full'>
+      <div className='flex h-full flex-col items-center'>
+        <main>
+          <div className=' flex min-w-[95vw] max-w-[2000px] flex-col items-center justify-center gap-8 py-6 sm:px-2 md:mt-6 2xl:min-w-[80vw]'>
+            <div className='flex w-full flex-col gap-4'>
               <div className='text-2xl font-bold'>Trainers</div>
-              <div className='flex flex-col w-full gap-8'>
+              <div className='flex w-full flex-col gap-8'>
                 {allUsers?.admins?.map((user) => (
                   <UserPage
                     key={user.id}
@@ -220,7 +238,7 @@ const Users: NextPage = () => {
                 ))}
               </div>
             </div>
-            <div className='flex flex-col gap-4 mt-8 w-full'>
+            <div className='mt-8 flex w-full flex-col gap-4'>
               <div className='text-2xl font-bold text-gray-200'>Users</div>
               <div className='flex flex-col gap-4'>
                 {allUsers?.users?.map((user) => (
