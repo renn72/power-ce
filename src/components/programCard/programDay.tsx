@@ -1,40 +1,31 @@
-import {
-  useState, Fragment,
-} from 'react'
-import { type Day, } from '~/store/types'
-import { api, } from '~/utils/api'
+import { useState, Fragment } from 'react'
+import { type Day } from '~/store/types'
+import { api } from '~/utils/api'
 
-import {
-  Dialog, Transition, RadioGroup,
-  Disclosure,
-} from '@headlessui/react'
+import { Dialog, Transition, RadioGroup, Disclosure } from '@headlessui/react'
 
-import {
-  ChevronUpIcon, StarIcon, TicketIcon,
-} from '@heroicons/react/20/solid'
-import { StarIcon as StarIconHollow, } from '@heroicons/react/24/outline'
+import { ChevronUpIcon, StarIcon, TicketIcon } from '@heroicons/react/20/solid'
+import { StarIcon as StarIconHollow } from '@heroicons/react/24/outline'
 
-import { useUser, } from '@clerk/nextjs'
+import { useUser } from '@clerk/nextjs'
 import DayModal from './dayModal'
 
 import getWeight from '~/utils/getWeight'
 
-const ProgramDay = ({
-  day, dayIdx,
-}: { day: Day, dayIdx: number }) => {
-  const [
-    isOpen,
-    setIsOpen,
-  ] = useState(false)
-  const [
-    selectedEngery,
-    setSelectedEngery,
-  ] = useState(day.energyRating || 'A')
+const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedEngery, setSelectedEngery] = useState(day.energyRating || 'A')
 
-  const { user, } = useUser()
-  const { data: userCoreOneRM, } = api.oneRepMax.getUserCoreLifts.useQuery({ userId: user?.id || '', })
+  const { user } = useUser()
+  const { data: userCoreOneRM } = api.oneRepMax.getUserCoreLifts.useQuery({
+    userId: user?.id || '',
+  })
 
-  const checkWeight = (lift: string | null, onerm: number | null, index: number | null) => {
+  const checkWeight = (
+    lift: string | null,
+    onerm: number | null,
+    index: number | null,
+  ) => {
     if (!lift || !onerm) return ''
     let energyAdjust = 1
     if (selectedEngery === 'B') energyAdjust = 0.98
@@ -42,7 +33,7 @@ const ProgramDay = ({
     if (selectedEngery === 'D') energyAdjust = 0.94
 
     if (lift == 'weight') {
-      return getWeight(+onerm, 100 * energyAdjust,)
+      return getWeight(+onerm, 100 * energyAdjust)
     }
 
     if (index) {
@@ -50,14 +41,16 @@ const ProgramDay = ({
       const rmWeight = rm?.map((s) => s.estiamtedOnerm)
       const w = rmWeight[rmWeight.length - 1]
 
-      if (w) return getWeight(+w, onerm * energyAdjust,)
+      if (w) return getWeight(+w, onerm * energyAdjust)
     }
 
-    const w = userCoreOneRM?.find((coreLift) => coreLift?.lift === lift.toLowerCase())?.weight
+    const w = userCoreOneRM?.find(
+      (coreLift) => coreLift?.lift === lift.toLowerCase(),
+    )?.weight
 
     if (!w) return ''
 
-    return getWeight(+w, onerm * energyAdjust,)
+    return getWeight(+w, onerm * energyAdjust)
   }
 
   const closeModal = () => {
@@ -70,7 +63,7 @@ const ProgramDay = ({
 
   const ctx = api.useContext()
 
-  const { mutate: updateDayEnergy, } = api.programs.updateDayEnergy.useMutation({
+  const { mutate: updateDayEnergy } = api.programs.updateDayEnergy.useMutation({
     onSuccess: () => {
       console.log('success')
       void ctx.blocks.getAllUserPrograms.invalidate()
@@ -91,27 +84,33 @@ const ProgramDay = ({
 
   return (
     <>
-      <div
-        className='flex flex-col gap-4'
-      >
-        <Disclosure defaultOpen={false} >
-          {({ open, }) => (
+      <div className='flex flex-col gap-4'>
+        <Disclosure defaultOpen={false}>
+          {({ open }) => (
             <div className='flex flex-col md:gap-8'>
               <div className='flex flex-col sm:flex-row md:gap-6'>
-                <Disclosure.Button className={`${open ? 'border-b border-yellow-500' : 'hover:border-white border-b border-black'} w-full flex items-center gap-2 text-lg font-medium pb-4`}>
-                  <h2
-                    className='text-xl font-bold'
-                  >
-                    Day {dayIdx + 1}
-                  </h2>
+                <Disclosure.Button
+                  className={`${
+                    open
+                      ? 'border-b border-yellow-500'
+                      : 'border-b border-black hover:border-white'
+                  } flex w-full items-center gap-2 pb-4 text-lg font-medium`}
+                >
+                  <h2 className='text-xl font-bold'>Day {dayIdx + 1}</h2>
                   <ChevronUpIcon
-                    className={`${open ? 'rotate-180 transform text-white/80' : 'text-white/30'
-                      } h-8 w-8 text-gray-400`}
+                    className={`${
+                      open
+                        ? 'rotate-180 transform text-white/80'
+                        : 'text-white/30'
+                    } h-8 w-8 text-gray-400`}
                   />
-                  {day?.isComplete ? (<StarIcon className='h-6 w-6 text-yellow-500' />) : (<StarIconHollow className='h-6 w-6 text-gray-600' />)}
+                  {day?.isComplete ? (
+                    <StarIcon className='h-6 w-6 text-yellow-500' />
+                  ) : (
+                    <StarIconHollow className='h-6 w-6 text-gray-600' />
+                  )}
                 </Disclosure.Button>
-                <div className='flex gap-2'>
-                </div>
+                <div className='flex gap-2'></div>
               </div>
 
               <Transition
@@ -124,121 +123,137 @@ const ProgramDay = ({
                 <Disclosure.Panel className=''>
                   <div
                     onClick={() => openModal(day.id)}
-                    className='flex flex-col divide-y divide-dashed divide-gray-600'>
-                    {
-                      day.exercise.map((exercise, exerciseIndex) => (
-                        <div key={exercise.id}
-                          className='flex flex-col gap-1 py-2 hover:bg-gray-900 cursor-pointer'
-                        >
-                          <div className='flex items-baseline justify-between gap-1 md:gap-2 w-full'>
-                            <h3
-                              className='capitalize text-yellow-500'
-                            >
-                              {exercise.name}
-                            </h3>
-                            <div>
-                              {
-                                exercise.isComplete ? <StarIcon className='h-4 w-4 text-yellow-500' /> : <StarIconHollow className='h-4 w-4 text-gray-600' />
-                              }
-                            </div>
-                          </div>
+                    className='flex flex-col divide-y divide-dashed divide-gray-600 hover:bg-gray-900 cursor-pointer'
+                  >
+                    {day.exercise.map((exercise, ) => (
+                      <div
+                        key={exercise.id}
+                        className='flex cursor-pointer flex-col gap-1 py-2'
+                      >
+                        <div className='flex w-full items-baseline justify-between gap-1 md:gap-2'>
+                          <h3 className='capitalize text-yellow-500'>
+                            {exercise.name}
+                          </h3>
                           <div>
-                            <div
-                              className='flex gap-4 '>
+                            {exercise.isComplete ? (
+                              <StarIcon className='h-4 w-4 text-yellow-500' />
+                            ) : (
+                              <StarIconHollow className='h-4 w-4 text-gray-600' />
+                            )}
+                          </div>
+                        </div>
+                        <div>
+                          <div className='flex lg:flex-col gap-6 '>
+                            <div className='flex gap-2 '>
                               <h3>{exercise.sets}</h3>
                               <h3>X</h3>
                               <h3>{exercise.reps}</h3>
-                              <h3>{exercise.repUnit ? exercise.repUnit : 'reps'}</h3>
+                              <h3>
+                                {exercise.repUnit ? exercise.repUnit : 'reps'}
+                              </h3>
                             </div>
                             <div>
-                              {
-                                exercise.weightType === 'onerm'
-                                && (
-                                  <div className=''>
-                                    {exercise.estimatedOnermIndex
-                                      ? (
-                                        <div>
-                                          {
-                                            +day.exercise[exercise.estimatedOnermIndex - 1]?.set[0]?.weight > 0
-                                            && (
-                                              <div className='flex'>
-                                                {exercise.onerm && (<h4>{checkWeight(exercise.lift, +exercise?.onerm, exercise.estimatedOnermIndex)}</h4>)}
-                                                {exercise.onermTop && (<h4>-</h4>)}
-                                                {exercise.onermTop && (<h4>{checkWeight(exercise.lift, +exercise?.onermTop, exercise.estimatedOnermIndex)}</h4>)}
-                                                <h4>kg</h4>
-                                              </div>
-                                            )
-                                          }
-                                        </div>
-                                      )
-                                      : (
+                              {exercise.weightType === 'onerm' && (
+                                <div className=''>
+                                  {exercise.estimatedOnermIndex ? (
+                                    <div>
+                                      {+day.exercise[
+                                        exercise.estimatedOnermIndex - 1
+                                      ]?.set[0]?.weight > 0 && (
                                         <div className='flex'>
-                                          {exercise.onerm && (<h4>{checkWeight(exercise.lift, +exercise?.onerm, null)}</h4>)}
-                                          {exercise.onermTop && (<h4>-</h4>)}
-                                          {exercise.onermTop && (<h4>{checkWeight(exercise.lift, +exercise?.onermTop, null)}</h4>)}
+                                          {exercise.onerm && (
+                                            <h4>
+                                              {checkWeight(
+                                                exercise.lift,
+                                                +exercise?.onerm,
+                                                exercise.estimatedOnermIndex,
+                                              )}
+                                            </h4>
+                                          )}
+                                          {exercise.onermTop && <h4>-</h4>}
+                                          {exercise.onermTop && (
+                                            <h4>
+                                              {checkWeight(
+                                                exercise.lift,
+                                                +exercise?.onermTop,
+                                                exercise.estimatedOnermIndex,
+                                              )}
+                                            </h4>
+                                          )}
                                           <h4>kg</h4>
                                         </div>
-                                      )
-                                    }
-                                  </div>
-
-                                )
-
-                              }
-                              {
-                                exercise.weightType === 'rpe'
-                                && (
-                                  <div className='flex gap-2 items-baseline'>
-                                    <h4>
-                                      RPE Target
-                                    </h4>
-                                    <h4>-</h4>
-                                    <h4 className='text-xl font-semibold flex justify-center items-baseline'>
-                                      {exercise?.targetRpe && +exercise?.targetRpe}
-                                    </h4>
-                                  </div>
-
-                                )
-
-                              }
-                              {
-                                exercise.weightType === 'weight'
-                                && (
-                                  <div className='flex items-baseline'>
-                                    <h4>
-                                      {exercise?.weightBottom && checkWeight('weight', +exercise?.weightBottom, null)}
-                                    </h4>
-                                    <h4>
-                                      {exercise?.weightTop && '-'}
-                                    </h4>
-                                    <h4>
-                                      {exercise?.weightTop && checkWeight('weight', +exercise?.weightTop, null)}kg
-                                    </h4>
-                                  </div>
-
-                                )
-
-                              }
+                                      )}
+                                    </div>
+                                  ) : (
+                                    <div className='flex'>
+                                      {exercise.onerm && (
+                                        <h4>
+                                          {checkWeight(
+                                            exercise.lift,
+                                            +exercise?.onerm,
+                                            null,
+                                          )}
+                                        </h4>
+                                      )}
+                                      {exercise.onermTop && <h4>-</h4>}
+                                      {exercise.onermTop && (
+                                        <h4>
+                                          {checkWeight(
+                                            exercise.lift,
+                                            +exercise?.onermTop,
+                                            null,
+                                          )}
+                                        </h4>
+                                      )}
+                                      <h4>kg</h4>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                              {exercise.weightType === 'rpe' && (
+                                <div className='flex items-baseline gap-2'>
+                                  <h4>RPE Target</h4>
+                                  <h4>-</h4>
+                                  <h4 className='flex items-baseline justify-center text-xl font-semibold'>
+                                    {exercise?.targetRpe &&
+                                      +exercise?.targetRpe}
+                                  </h4>
+                                </div>
+                              )}
+                              {exercise.weightType === 'weight' && (
+                                <div className='flex items-baseline'>
+                                  <h4>
+                                    {exercise?.weightBottom &&
+                                      checkWeight(
+                                        'weight',
+                                        +exercise?.weightBottom,
+                                        null,
+                                      )}
+                                  </h4>
+                                  <h4>{exercise?.weightTop && '-'}</h4>
+                                  <h4>
+                                    {exercise?.weightTop &&
+                                      checkWeight(
+                                        'weight',
+                                        +exercise?.weightTop,
+                                        null,
+                                      )}
+                                    kg
+                                  </h4>
+                                </div>
+                              )}
                             </div>
-                            <div>
-                              {
-                                exercise.notes && (
-                                  <div className='text-sm text-gray-400'>
-                                    {exercise.notes}
-                                  </div>
-                                )
-                              }
-                            </div>
-                            <h3
-                              className='text-gray-600 text-xxs'
-                            >
-                              {/* {exercise.weightType} */}
-                            </h3>
-
+                          </div>
+                          <div>
+                            {exercise.notes && false && (
+                              <div className='text-sm text-gray-400'>
+                                {exercise.notes}
+                              </div>
+                            )}
                           </div>
                         </div>
-                      ))
-                    }
+                      </div>
+                    ))}
                   </div>
                 </Disclosure.Panel>
               </Transition>
@@ -247,8 +262,16 @@ const ProgramDay = ({
         </Disclosure>
       </div>
 
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as='div' className='z-10' onClose={closeModal}>
+      <Transition
+        appear
+        show={isOpen}
+        as={Fragment}
+      >
+        <Dialog
+          as='div'
+          className='z-10'
+          onClose={closeModal}
+        >
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -272,51 +295,60 @@ const ProgramDay = ({
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className='w-full md:min-h-[600px] text-gray-200 bg-black max-w-3xl transform overflow-hidden rounded-md p-2 md:p-4 text-left align-middle transition-all'>
+                <Dialog.Panel className='w-full max-w-3xl transform overflow-hidden rounded-md bg-black p-2 text-left align-middle text-gray-200 transition-all md:min-h-[600px] md:p-4'>
                   <Dialog.Title
                     as='h3'
-                    className='text-base md:text-lg font-medium leading-6 flex justify-between items-center'
+                    className='flex items-center justify-between text-base font-medium leading-6 md:text-lg'
                   >
-                    <div className='flex flex-col justify-between items-center w-full gap-6 md:gap-12 mb-4'>
-                      <div className='flex justify-between items-center w-full gap-2 md:gap-12'>
-                        <div className='font-bold text-xl'>
+                    <div className='mb-4 flex w-full flex-col items-center justify-between gap-6 md:gap-12'>
+                      <div className='flex w-full items-center justify-between gap-2 md:gap-12'>
+                        <div className='text-xl font-bold'>
                           Day {dayIdx + 1}
                         </div>
-                        <button className='px-2 py-1 text-2xl font-bold' onClick={() => closeModal()}>X</button>
+                        <button
+                          className='px-2 py-1 text-2xl font-bold'
+                          onClick={() => closeModal()}
+                        >
+                          X
+                        </button>
                       </div>
-                      <RadioGroup value={selectedEngery} onChange={onSetEnergy} className='w-full'>
-                        <div className={`flex gap-2 items-center justify-around text-xl w-full`}>
-                          <RadioGroup.Label className='tracking-tighter'>Energy Level</RadioGroup.Label>
-                          {[
-                            'A',
-                            'B',
-                            'C',
-                            'D',
-                          ].map((energy) => (
+                      <RadioGroup
+                        value={selectedEngery}
+                        onChange={onSetEnergy}
+                        className='w-full'
+                      >
+                        <div
+                          className={`flex w-full items-center justify-around gap-2 text-xl`}
+                        >
+                          <RadioGroup.Label className='tracking-tighter'>
+                            Energy Level
+                          </RadioGroup.Label>
+                          {['A', 'B', 'C', 'D'].map((energy) => (
                             <RadioGroup.Option
                               key={energy}
                               value={energy}
-                              className={({
-                                active, checked,
-                              }) => `${active
-                                ? ''
-                                : ''
+                              className={({ active, checked }) => `${
+                                active ? '' : ''
                               }
-                              ${checked ? 'bg-yellow-500 text-black font-extrabold' : 'bg-gray-900 text-gray-700'}
-                                  relative flex cursor-pointer rounded-lg h-8 w-8 shadow-md focus:outline-none`
+                              ${
+                                checked
+                                  ? 'bg-yellow-500 font-extrabold text-black'
+                                  : 'bg-gray-900 text-gray-700'
                               }
+                                  relative flex h-8 w-8 cursor-pointer rounded-lg shadow-md focus:outline-none`}
                             >
-                              {({
-                                active, checked,
-                              }) => (
+                              {({ active, checked }) => (
                                 <>
                                   <div className='flex w-full items-center justify-center'>
                                     <div className='flex items-center'>
                                       <div className=''>
                                         <RadioGroup.Label
                                           as='p'
-                                          className={`${checked ? 'text-black' : 'text-gray-400'
-                                            }`}
+                                          className={`${
+                                            checked
+                                              ? 'text-black'
+                                              : 'text-gray-400'
+                                          }`}
                                         >
                                           {energy}
                                         </RadioGroup.Label>
@@ -332,7 +364,10 @@ const ProgramDay = ({
                     </div>
                   </Dialog.Title>
                   <div className='mt-2 flex justify-center'>
-                    <DayModal day={day} selectedEngery={selectedEngery} />
+                    <DayModal
+                      day={day}
+                      selectedEngery={selectedEngery}
+                    />
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
