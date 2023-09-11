@@ -545,9 +545,9 @@ const ExerciseModal = ({
                           </div>
                           <div className='w-44 text-center '>
                             <NumericFormat
-                              className='w-full rounded-lg border border-gray-400 bg-black p-6 text-center text-2xl font-semibold md:text-2xl'
+                              className='w-full rounded-lg border border-gray-400 bg-black p-6 text-center text-2xl font-semibold md:text-2xl  placeholder-gray-600'
                               value={weights}
-                              placeholder='weight'
+                              placeholder='kg'
                               decimalScale={2}
                               onChange={(e) => setWeights(+e.target.value)}
                             />
