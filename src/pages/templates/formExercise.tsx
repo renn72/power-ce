@@ -6,9 +6,6 @@ import {
   Fragment, useEffect,
 } from 'react'
 
-import { useUser, } from '@clerk/nextjs'
-import { api, } from '~/utils/api'
-
 import LiftPicker from './liftPicker'
 import { Input, } from '@/components/ui/input'
 
@@ -20,10 +17,6 @@ import {
   ChevronUpDownIcon, CheckIcon, XCircleIcon, CheckCircleIcon, XMarkIcon,
 } from '@heroicons/react/24/outline'
 
-import getWeight from '~/utils/getWeight'
-
-import { type Block, } from '~/store/types'
-
 import { NumericFormat, } from 'react-number-format'
 import { Label, } from '@/components/ui/label'
 
@@ -31,6 +24,10 @@ const plans = [
   {
     name: 'OneRM %',
     value: 'onerm',
+  },
+  {
+    name: 'Percent',
+    value: 'percent',
   },
   {
     name: 'Weight',
@@ -214,6 +211,28 @@ const FormExercise = ({
                     type='number'
                     {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onermTop`, { valueAsNumber: true, })}
                     placeholder='1rm percent top'
+                  />
+                  <span className='absolute top-2 right-8 text-gray-400'>%</span>
+                </div>
+              </div>
+            )}
+          {weightType === 'percent'
+            && (
+              <div className='flex gap-0 md:gap-10'>
+                <div className='relative'>
+                  <Input
+                    type='number'
+                    {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onerm`, { valueAsNumber: true, })}
+                    placeholder='percent'
+                  />
+                  <span className='absolute top-2 right-8 text-gray-400'>%</span>
+                </div>
+                <span className='shrink flex items-center'>-</span>
+                <div className='relative'>
+                  <Input
+                    type='number'
+                    {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.onermTop`, { valueAsNumber: true, })}
+                    placeholder='percent top'
                   />
                   <span className='absolute top-2 right-8 text-gray-400'>%</span>
                 </div>
