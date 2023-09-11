@@ -53,6 +53,24 @@ const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
     return getWeight(+w, onerm * energyAdjust)
   }
 
+  const checkPercentWeight = (
+    estimatedOnermIndex: number | null,
+    percent: number | null,
+  ) => {
+    if (!estimatedOnermIndex || !percent) return ''
+
+    if (!day?.exercise[estimatedOnermIndex - 1]?.set[0]?.weight) return ''
+
+    let energyAdjust = 1
+    if (selectedEngery === 'B') energyAdjust = 0.98
+    if (selectedEngery === 'C') energyAdjust = 0.96
+    if (selectedEngery === 'D') energyAdjust = 0.94
+
+    const weight = day?.exercise[estimatedOnermIndex - 1]?.set[0]?.weight
+    if (!weight) return ''
+    return `${+weight * percent / 100 * energyAdjust}`
+  }
+
   const closeModal = () => {
     setIsOpen(false)
   }
@@ -143,7 +161,7 @@ const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
                           </div>
                         </div>
                         <div>
-                          <div className='flex gap-6 lg:flex-col items-baseline '>
+                          <div className='flex items-baseline gap-6 lg:flex-col '>
                             <div className='flex gap-2 '>
                               <h3>{exercise.sets}</h3>
                               <h3>X</h3>
@@ -153,6 +171,38 @@ const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
                               </h3>
                             </div>
                             <div>
+                              {exercise.weightType === 'percent' && (
+                                <div className=''>
+                                  {exercise.estimatedOnermIndex ? (
+                                    <div>
+                                      {+day?.exercise[
+                                        exercise?.estimatedOnermIndex - 1
+                                      ]?.set[0]?.weight > 0 && (
+                                        <div className='flex'>
+                                          {exercise.onerm && (
+                                            <h4>
+                                              {checkPercentWeight(
+                                                exercise.estimatedOnermIndex,
+                                                +exercise?.onerm,
+                                              )}
+                                            </h4>
+                                          )}
+                                          {exercise.onermTop && <h4>-</h4>}
+                                          {exercise.onermTop && (
+                                            <h4>
+                                              {checkPercentWeight(
+                                                exercise.estimatedOnermIndex,
+                                                +exercise?.onermTop,
+                                              )}
+                                            </h4>
+                                          )}
+                                          <h4>kg</h4>
+                                        </div>
+                                      )}
+                                    </div>
+                                  ) : null}
+                                </div>
+                              )}
                               {exercise.weightType === 'onerm' && (
                                 <div className=''>
                                   {exercise.estimatedOnermIndex ? (

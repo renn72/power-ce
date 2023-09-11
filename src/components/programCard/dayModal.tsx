@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react'
 import { type Set } from '@prisma/client'
-import { type Day, type Exercise as StoreExercise, type Set as SetStore } from '~/store/types'
+import {
+  type Day,
+  type Exercise as StoreExercise,
+  type Set as SetStore,
+} from '~/store/types'
 import { api } from '~/utils/api'
 
 // import Decimal from 'decimal.js'
@@ -27,10 +31,10 @@ const SetsModal = ({
   onSetDone,
   isComplete,
 }: {
-  exercise: StoreExercise,
-  onUpdateRpe: (args0 : SetStore, args1 : boolean) => void,
-  onSetDone: (args0 : SetStore) => void,
-  isComplete: boolean,
+  exercise: StoreExercise
+  onUpdateRpe: (args0: SetStore, args1: boolean) => void
+  onSetDone: (args0: SetStore) => void
+  isComplete: boolean
 }) => {
   return (
     <AnimatePresence>
@@ -122,7 +126,7 @@ const ExerciseModal = ({
   const checkWeight = (
     lift: string | null,
     onerm: number | null,
-    index: number | null
+    index: number | null,
   ) => {
     if (!lift || !onerm) return ''
     let energyAdjust = 1
@@ -143,7 +147,7 @@ const ExerciseModal = ({
     }
 
     const w = userCoreOneRM?.find(
-      (coreLift) => coreLift?.lift === lift.toLowerCase()
+      (coreLift) => coreLift?.lift === lift.toLowerCase(),
     )?.weight
 
     if (!w) return ''
@@ -151,14 +155,49 @@ const ExerciseModal = ({
     return getWeight(+w, onerm * energyAdjust)
   }
 
-  const [weights, setWeights] = useState<number>()
+  const checkPercentWeight = (
+    estimatedOnermIndex: number | null,
+    percent: number | null,
+  ) => {
+    if (!estimatedOnermIndex || !percent) return ''
+
+    if (!day?.exercise[estimatedOnermIndex - 1]?.set[0]?.weight) return ''
+
+    let energyAdjust = 1
+    if (selectedEnergy === 'B') energyAdjust = 0.98
+    if (selectedEnergy === 'C') energyAdjust = 0.96
+    if (selectedEnergy === 'D') energyAdjust = 0.94
+
+    const weight = day?.exercise[estimatedOnermIndex - 1]?.set[0]?.weight
+    if (!weight) return ''
+    return `${((+weight * percent) / 100) * energyAdjust}`
+  }
+
+  console.log('exercise', exercise)
+
+  const [weights, setWeights] = useState<number | null>(() => {
+    if (exercise.weightType == 'onerm' && exercise?.onerm) {
+      const res = checkWeight(
+        exercise.lift,
+        +exercise?.onerm,
+        exercise.estimatedOnermIndex,
+      )
+      console.log('res', res)
+      return res ? +res : 0
+    }
+    if (exercise.weightType == 'weight' && exercise?.weightBottom) {
+      return +exercise?.weightBottom
+    }
+
+    return null
+  })
 
   const [e1rm, setE1rm] = useState<number[]>([0])
 
   const utils = api.useContext()
 
-  const { mutate: updateExerciseComplete }
-    = api.programs.completeExercise.useMutation({
+  const { mutate: updateExerciseComplete } =
+    api.programs.completeExercise.useMutation({
       onMutate: async (newExercise) => {
         console.log('id', newExercise)
         await utils.blocks.getAllUserPrograms.cancel()
@@ -168,7 +207,8 @@ const ExerciseModal = ({
           return prev
         })
 
-        utils.blocks.getAllUserPrograms.setData(undefined, (prev) => prev?.map((program) => {
+        utils.blocks.getAllUserPrograms.setData(undefined, (prev) =>
+          prev?.map((program) => {
             return {
               ...program,
               week: program.week.map((week) => {
@@ -191,14 +231,15 @@ const ExerciseModal = ({
                 }
               }),
             }
-          }))
+          }),
+        )
         return { previousPrograms }
       },
       onError: (err, newExercise, context) => {
         console.log('err', err)
         utils.blocks.getAllUserPrograms.setData(
           undefined,
-          context?.previousPrograms
+          context?.previousPrograms,
         )
       },
     })
@@ -213,7 +254,8 @@ const ExerciseModal = ({
         return prev
       })
 
-      utils.blocks.getAllUserPrograms.setData(undefined, (prev) => prev?.map((program) => {
+      utils.blocks.getAllUserPrograms.setData(undefined, (prev) =>
+        prev?.map((program) => {
           return {
             ...program,
             week: program.week.map((week) => {
@@ -231,14 +273,15 @@ const ExerciseModal = ({
               }
             }),
           }
-        }))
+        }),
+      )
       return { previousPrograms }
     },
     onError: (err, newExercise, context) => {
       console.log('err', err)
       utils.blocks.getAllUserPrograms.setData(
         undefined,
-        context?.previousPrograms
+        context?.previousPrograms,
       )
     },
   })
@@ -253,7 +296,8 @@ const ExerciseModal = ({
         return prev
       })
 
-      utils.blocks.getAllUserPrograms.setData(undefined, (prev) => prev?.map((program) => {
+      utils.blocks.getAllUserPrograms.setData(undefined, (prev) =>
+        prev?.map((program) => {
           return {
             ...program,
             week: program.week.map((week) => {
@@ -285,7 +329,8 @@ const ExerciseModal = ({
               }
             }),
           }
-        }))
+        }),
+      )
 
       return { previousPrograms }
     },
@@ -293,7 +338,7 @@ const ExerciseModal = ({
       console.log(err)
       utils.blocks.getAllUserPrograms.setData(
         undefined,
-        context?.previousPrograms
+        context?.previousPrograms,
       )
     },
     onSettled: () => {
@@ -302,20 +347,17 @@ const ExerciseModal = ({
   })
 
   const onSetDone = (set: Set) => {
-    console.log('set', set)
     let e = 0
     if (weights && exercise?.reps) {
       const wi = weights ? +weights : 0
       const e1 = e1rm[+exercise?.reps - 1]
-      if (e1) e = +(+wi / ( e1 / 100))?.toFixed(0)
+      if (e1) e = +(+wi / (e1 / 100))?.toFixed(0)
     }
-    console.log('e', e)
-    console.log('exercise', exercise)
     updateSet({
       id: set.id,
       isComplete: !set.isComplete,
       rpe: +rpe,
-      weight: weights ? +weights :  0,
+      weight: weights ? +weights : 0,
       estiamtedOnerm: !set.isComplete ? (e ? e : 0) : 0, //e1rm,
       rep: set?.rep,
     })
@@ -326,8 +368,12 @@ const ExerciseModal = ({
       return curr.isComplete ? acc : false
     }, true)
 
-    if (!exercise.isComplete && isDone) { updateExerciseComplete({ id: exercise.id, isComplete: true }) }
-    if (exercise.isComplete && !isDone) { updateExerciseComplete({ id: exercise.id, isComplete: false }) }
+    if (!exercise.isComplete && isDone) {
+      updateExerciseComplete({ id: exercise.id, isComplete: true })
+    }
+    if (exercise.isComplete && !isDone) {
+      updateExerciseComplete({ id: exercise.id, isComplete: false })
+    }
 
     const isDayDone = day.exercise.reduce((acc, curr) => {
       if (curr.id == exercise.id && exercise.isComplete) return false
@@ -335,13 +381,13 @@ const ExerciseModal = ({
       return curr.isComplete ? acc : false
     }, true)
 
-    console.log('isdaydone', isDayDone)
-    console.log('day', day)
+    if (!day.isComplete && isDayDone) {
+      updateDayComplete({ id: day.id, isComplete: true })
+    }
 
-    if (!day.isComplete && isDayDone) { updateDayComplete({ id: day.id, isComplete: true }) }
-    console.log('daycomp', day.isComplete)
-    console.log('isdaydone', isDayDone)
-    if (day.isComplete && !isDayDone) { updateDayComplete({ id: day.id, isComplete: false }) }
+    if (day.isComplete && !isDayDone) {
+      updateDayComplete({ id: day.id, isComplete: false })
+    }
   }
 
   useEffect(() => {
@@ -350,10 +396,7 @@ const ExerciseModal = ({
   }, [weights, rpe])
 
   const onUpdateRpe = (set: Set, increase: boolean) => {
-    console.log('id', set)
-    console.log('increase', increase)
     const newRep = increase ? +set.rep + 1 : +set.rep - 1
-    console.log('newrep', newRep)
     if (newRep < 1) return
 
     updateSet({
@@ -374,9 +417,9 @@ const ExerciseModal = ({
         {({ open }) => (
           <div className='flex flex-col justify-start gap-2 '>
             <div className='flex flex-col gap-0'>
-              <Disclosure.Button className={`mt-2 w-full text-lg md:text-xl`}>
-                <div className='flex flex-col gap-2'>
-                  <div className='flex flex-col gap-2 '>
+              <Disclosure.Button className={`mt-1 w-full text-lg md:text-xl`}>
+                <div className='flex flex-col gap-1'>
+                  <div className='flex flex-col gap-1 '>
                     <div className='flex items-end gap-2 md:gap-8'>
                       <ChevronUpIcon
                         className={`${
@@ -387,11 +430,9 @@ const ExerciseModal = ({
                         <div className='text-yellow-500 first-letter:text-2xl first-letter:font-bold first-letter:uppercase '>
                           {exercise.name}
                         </div>
-                        {exercise?.isComplete
-? (
+                        {exercise?.isComplete ? (
                           <StarIcon className='h-6 w-6 text-yellow-500' />
-                        )
-: (
+                        ) : (
                           <StarIconHollow className='h-6 w-6 text-gray-600' />
                         )}
                       </div>
@@ -404,10 +445,41 @@ const ExerciseModal = ({
                         <h3>{exercise.repUnit ? exercise.repUnit : ''}</h3>
                       </div>
                       <div>
+                        {exercise.weightType === 'percent' && (
+                          <div className=''>
+                            {exercise.estimatedOnermIndex ? (
+                              <div>
+                                {+day?.exercise[
+                                  exercise?.estimatedOnermIndex - 1
+                                ]?.set[0]?.weight > 0 && (
+                                  <div className='flex'>
+                                    {exercise.onerm && (
+                                      <h4>
+                                        {checkPercentWeight(
+                                          exercise.estimatedOnermIndex,
+                                          +exercise?.onerm,
+                                        )}
+                                      </h4>
+                                    )}
+                                    {exercise.onermTop && <h4>-</h4>}
+                                    {exercise.onermTop && (
+                                      <h4>
+                                        {checkPercentWeight(
+                                          exercise.estimatedOnermIndex,
+                                          +exercise?.onermTop,
+                                        )}
+                                      </h4>
+                                    )}
+                                    <h4>kg</h4>
+                                  </div>
+                                )}
+                              </div>
+                            ) : null}
+                          </div>
+                        )}
                         {exercise.weightType === 'onerm' && (
                           <div className=''>
-                            {exercise.estimatedOnermIndex
-? (
+                            {exercise.estimatedOnermIndex ? (
                               <div>
                                 {+day.exercise[exercise.estimatedOnermIndex - 1]
                                   ?.set[0]?.weight > 0 && (
@@ -417,7 +489,7 @@ const ExerciseModal = ({
                                         {checkWeight(
                                           exercise.lift,
                                           +exercise?.onerm,
-                                          exercise.estimatedOnermIndex
+                                          exercise.estimatedOnermIndex,
                                         )}
                                       </h4>
                                     )}
@@ -427,7 +499,7 @@ const ExerciseModal = ({
                                         {checkWeight(
                                           exercise.lift,
                                           +exercise?.onermTop,
-                                          exercise.estimatedOnermIndex
+                                          exercise.estimatedOnermIndex,
                                         )}
                                       </h4>
                                     )}
@@ -435,15 +507,14 @@ const ExerciseModal = ({
                                   </div>
                                 )}
                               </div>
-                            )
-: (
+                            ) : (
                               <div className='flex'>
                                 {exercise.onerm && (
                                   <h4>
                                     {checkWeight(
                                       exercise.lift,
                                       +exercise?.onerm,
-                                      null
+                                      null,
                                     )}
                                   </h4>
                                 )}
@@ -453,7 +524,7 @@ const ExerciseModal = ({
                                     {checkWeight(
                                       exercise.lift,
                                       +exercise?.onermTop,
-                                      null
+                                      null,
                                     )}
                                   </h4>
                                 )}
@@ -474,13 +545,13 @@ const ExerciseModal = ({
                         {exercise.weightType === 'weight' && (
                           <div className='flex items-baseline'>
                             <h4>
-                              {exercise?.weightBottom
-                                && checkWeight('weight', +exercise?.weightBottom)}
+                              {exercise?.weightBottom &&
+                                checkWeight('weight', +exercise?.weightBottom)}
                             </h4>
                             <h4>{exercise?.weightTop && '-'}</h4>
                             <h4>
-                              {exercise?.weightTop
-                                && checkWeight('weight', +exercise?.weightTop)}
+                              {exercise?.weightTop &&
+                                checkWeight('weight', +exercise?.weightTop)}
                               kg
                             </h4>
                           </div>
@@ -496,12 +567,12 @@ const ExerciseModal = ({
                           : `delay-[45ms] absolute flex w-full flex-row justify-start gap-1 text-sm font-extralight opacity-100 transition-all ease-out`
                       }
                     >
-                      {exercise?.notes
-                        && exercise?.notes?.length > 0
-                        && exercise?.notes?.slice(0, 35).trim()}
-                      {exercise?.notes
-                        && exercise?.notes?.length > 0
-                        && exercise?.notes?.length > 35 && (
+                      {exercise?.notes &&
+                        exercise?.notes?.length > 0 &&
+                        exercise?.notes?.slice(0, 35).trim()}
+                      {exercise?.notes &&
+                        exercise?.notes?.length > 0 &&
+                        exercise?.notes?.length > 35 && (
                           <span className={open ? `opacity-0` : ``}>...</span>
                         )}
                     </div>
@@ -543,14 +614,17 @@ const ExerciseModal = ({
                           >
                             +
                           </div>
-                          <div className='w-44 text-center '>
+                          <div className='w-44 text-center flex relative items-center '>
                             <NumericFormat
-                              className='w-full rounded-lg border border-gray-400 bg-black p-6 text-center text-2xl font-semibold md:text-2xl  placeholder-gray-600'
+                              className='w-full rounded-lg border border-gray-400 bg-black p-6 text-center text-2xl font-semibold placeholder-gray-600  md:text-2xl'
                               value={weights}
                               placeholder='kg'
                               decimalScale={2}
                               onChange={(e) => setWeights(+e.target.value)}
                             />
+                            {weights && weights !== 0 ? (
+                              <span className='text-base text-gray-400 absolute right-5'>kg</span>
+                            ) : null}
                           </div>
                           <div
                             className='h-8 w-8 cursor-pointer rounded-full text-center'
@@ -568,7 +642,10 @@ const ExerciseModal = ({
                           }, 0)}{' '}
                           / {exercise.sets}
                         </div>
-                        <RadioGroup value={rpe} onChange={setRpe}>
+                        <RadioGroup
+                          value={rpe}
+                          onChange={setRpe}
+                        >
                           <div
                             className={`mx-1 grid grid-cols-9 items-center justify-between gap-1 md:mx-6  md:grid-cols-10 md:p-2`}
                           >
@@ -620,24 +697,24 @@ const ExerciseModal = ({
                           </div>
                         </RadioGroup>
 
-                        {exercise.lift
-                          && exercise.lift !== 'unlinked'
-                          && (
+                        {exercise.lift &&
+                          exercise.lift !== 'unlinked' &&
+                          (
                             +weights / +(e1rm[+exercise?.reps - 1] / 100)
                           )?.toFixed(0) && (
                             <div className='mx-1 flex gap-2 px-2 md:mx-6'>
                               <div>E1RM</div>
-                              {weights
-                                && weights !== 0
-                                && e1rm[+exercise.reps - 1] && (
+                              {weights &&
+                                weights !== 0 &&
+                                e1rm[+exercise.reps - 1] ? (
                                   <div>
                                     {(
-                                      +weights
-                                      / (e1rm[+exercise.reps - 1] / 100)
+                                      +weights /
+                                      (e1rm[+exercise.reps - 1] / 100)
                                     )?.toFixed(0)}
                                     kg
                                   </div>
-                                )}
+                                ) : null}
                             </div>
                           )}
                         <SetsModal
@@ -674,14 +751,15 @@ const DayModal = ({
 }) => {
   return (
     <>
-      {day.isRestDay
-? (
+      {day.isRestDay ? (
         <div>Rest Day</div>
-      )
-: (
-        <div className='flex w-full flex-col gap-10 divide-y divide-dashed divide-gray-600 md:p-2'>
+      ) : (
+        <div className='flex w-full flex-col gap-6 divide-y divide-dashed divide-gray-600 md:p-2'>
           {day.exercise.map((exercise) => (
-            <div key={exercise.id} className=''>
+            <div
+              key={exercise.id}
+              className=''
+            >
               <ExerciseModal
                 exercise={exercise}
                 selectedEnergy={selectedEngery}
