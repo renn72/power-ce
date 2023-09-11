@@ -90,6 +90,9 @@ const UserPage = ({
 
   return (
     <div className='flex w-full flex-col justify-start gap-2'>
+      <div className='p-2'>
+        <CountDown userId={userId} />
+      </div>
       <TemplateSelect
         onSelectTemplate={onSelectTemplate}
         onSetTemplate={onSetTemplate}
