@@ -124,7 +124,6 @@ const config = {
     //   },
     // ],
     'object-property-newline': ['warn', { allowAllPropertiesOnSameLine: true }],
-    'operator-linebreak': ['warn', 'before'],
     quotes: [
       'warn',
       'single',

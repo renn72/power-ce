@@ -3,7 +3,7 @@ import { type Set } from '@prisma/client'
 import { type Day, type Exercise as StoreExercise, type Set as SetStore } from '~/store/types'
 import { api } from '~/utils/api'
 
-import Decimal from 'decimal.js'
+// import Decimal from 'decimal.js'
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { Transition, RadioGroup, Disclosure } from '@headlessui/react'
@@ -652,120 +652,6 @@ const ExerciseModal = ({
                           onSetDone={onSetDone}
                           isComplete={true}
                         />
-                        {/* <div ref={parent} className='flex gap-2 px-1 items-center h-56'> */}
-                        {/*   { */}
-                        {/*     exercise?.set?.filter((s) => s.isComplete == false).map((set,) => ( */}
-                        {/*       <div */}
-                        {/*         key={set.id} */}
-                        {/*         className='flex flex-col items-center justify-center gap-1' */}
-                        {/*       > */}
-                        {/*         <div className='h-10'> */}
-                        {/*           { */}
-                        {/*             !set.isComplete && ( */}
-                        {/*               <ChevronUpIcon */}
-                        {/*                 onClick={() => onUpdateRpe(set, true)} */}
-                        {/*                 className='h-10 w-10 text-gray-400 cursor-pointer' */}
-                        {/*               /> */}
-                        {/*             ) */}
-                        {/*           } */}
-                        {/*         </div> */}
-                        {/*         <div */}
-                        {/*           className='flex flex-col gap-1' */}
-                        {/*           onClick={() => onSetDone(set)} */}
-                        {/*         > */}
-                        {/*           <div className={set.isComplete ? `bg-black text-2xl font-bold rounded-full text-yellow-500 h-12 min-w-[1rem] flex items-center justify-center cursor-pointer` : `text-xl rounded-full h-12 min-w-[3rem] flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}> */}
-                        {/*             {set.rep} */}
-                        {/*           </div> */}
-                        {/*         </div> */}
-                        {/*         <div className='h-10'> */}
-                        {/*           { */}
-                        {/*             !set.isComplete && ( */}
-                        {/*               <ChevronDownIcon */}
-                        {/*                 onClick={() => onUpdateRpe(set, false)} */}
-                        {/*                 className='h-10 w-10 text-gray-400 cursor-pointer' */}
-                        {/*               /> */}
-                        {/*             ) */}
-                        {/*           } */}
-                        {/*         </div> */}
-                        {/*         <div className='h-8'> */}
-                        {/*           {set.isComplete && ( */}
-                        {/*             <div className='flex flex-col items-center text-xs tracking-tighter text-gray-400'> */}
-                        {/*               <div> */}
-                        {/*                 RPE:{set.rpe} */}
-                        {/*               </div> */}
-                        {/*               <div className={set.weight == 0 && exercise.lift != 'unlinked' ? 'text-red-500' : ''}> */}
-                        {/*                 W:{set.weight} */}
-                        {/*               </div> */}
-                        {/*               {set?.estiamtedOnerm && ( */}
-                        {/*                 <div className={set?.estiamtedOnerm == 0 ? 'hidden' : ''}> */}
-                        {/*                   E:{set?.estiamtedOnerm} */}
-                        {/*                 </div> */}
-                        {/*               )} */}
-                        {/*             </div> */}
-                        {/*           ) */}
-                        {/*           } */}
-                        {/*         </div> */}
-                        {/*       </div> */}
-                        {/*     )) */}
-                        {/*   } */}
-                        {/* </div> */}
-                        {/* <div ref={parent2} className='flex gap-2 px-1 items-center h-56'> */}
-                        {/*   { */}
-                        {/*     exercise?.set?.filter((s) => s.isComplete == true).map((set,) => ( */}
-                        {/*       <div */}
-                        {/*         key={set.id} */}
-                        {/*         className='flex flex-col items-center justify-center gap-1' */}
-                        {/*       > */}
-                        {/*         <div className='h-10'> */}
-                        {/*           { */}
-                        {/*             !set.isComplete && ( */}
-                        {/*               <ChevronUpIcon */}
-                        {/*                 onClick={() => onUpdateRpe(set, true)} */}
-                        {/*                 className='h-10 w-10 text-gray-400 cursor-pointer' */}
-                        {/*               /> */}
-                        {/*             ) */}
-                        {/*           } */}
-                        {/*         </div> */}
-                        {/*         <div */}
-                        {/*           className='flex flex-col gap-1' */}
-                        {/*           onClick={() => onSetDone(set)} */}
-                        {/*         > */}
-                        {/*           <div className={set.isComplete ? `bg-black text-2xl font-bold rounded-full text-yellow-500 h-12 min-w-[1rem] flex items-center justify-center cursor-pointer` : `text-xl rounded-full h-12 min-w-[3rem] flex items-center justify-center bg-gray-800 cursor-pointer hover:scale-105`}> */}
-                        {/*             {set.rep} */}
-                        {/*           </div> */}
-                        {/*         </div> */}
-                        {/*         <div className='h-10'> */}
-                        {/*           { */}
-                        {/*             !set.isComplete && ( */}
-                        {/*               <ChevronDownIcon */}
-                        {/*                 onClick={() => onUpdateRpe(set, false)} */}
-                        {/*                 className='h-10 w-10 text-gray-400 cursor-pointer' */}
-                        {/*               /> */}
-                        {/*             ) */}
-                        {/*           } */}
-                        {/*         </div> */}
-                        {/*         <div className='h-8'> */}
-                        {/*           {set.isComplete && ( */}
-                        {/*             <div className='flex flex-col items-center text-xs tracking-tighter text-gray-400'> */}
-                        {/*               <div> */}
-                        {/*                 RPE:{set.rpe} */}
-                        {/*               </div> */}
-                        {/*               <div className={set.weight == 0 && exercise.lift != 'unlinked' ? 'text-red-500' : ''}> */}
-                        {/*                 W:{set.weight} */}
-                        {/*               </div> */}
-                        {/*               {set?.estiamtedOnerm && ( */}
-                        {/*                 <div className={set?.estiamtedOnerm == 0 ? 'hidden' : ''}> */}
-                        {/*                   E:{set?.estiamtedOnerm} */}
-                        {/*                 </div> */}
-                        {/*               )} */}
-                        {/*             </div> */}
-                        {/*           ) */}
-                        {/*           } */}
-                        {/*         </div> */}
-                        {/*       </div> */}
-                        {/*     )) */}
-                        {/*   } */}
-                        {/* </div> */}
                       </div>
                     )}
                   </div>
