@@ -4,7 +4,7 @@ import { api } from '~/utils/api'
 
 import { Dialog, Transition, RadioGroup, Disclosure } from '@headlessui/react'
 
-import { ChevronUpIcon, StarIcon, TicketIcon } from '@heroicons/react/20/solid'
+import { ChevronUpIcon, StarIcon } from '@heroicons/react/20/solid'
 import { StarIcon as StarIconHollow } from '@heroicons/react/24/outline'
 
 import { useUser } from '@clerk/nextjs'
@@ -123,9 +123,9 @@ const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
                 <Disclosure.Panel className=''>
                   <div
                     onClick={() => openModal(day.id)}
-                    className='flex flex-col divide-y divide-dashed divide-gray-600 hover:bg-gray-900 cursor-pointer'
+                    className='flex cursor-pointer flex-col divide-y divide-dashed divide-gray-600 hover:bg-gray-900'
                   >
-                    {day.exercise.map((exercise, ) => (
+                    {day.exercise.map((exercise) => (
                       <div
                         key={exercise.id}
                         className='flex cursor-pointer flex-col gap-1 py-2'
@@ -143,7 +143,7 @@ const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
                           </div>
                         </div>
                         <div>
-                          <div className='flex lg:flex-col gap-6 '>
+                          <div className='flex gap-6 lg:flex-col items-baseline '>
                             <div className='flex gap-2 '>
                               <h3>{exercise.sets}</h3>
                               <h3>X</h3>
@@ -157,8 +157,8 @@ const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
                                 <div className=''>
                                   {exercise.estimatedOnermIndex ? (
                                     <div>
-                                      {+day.exercise[
-                                        exercise.estimatedOnermIndex - 1
+                                      {+day?.exercise[
+                                        exercise?.estimatedOnermIndex - 1
                                       ]?.set[0]?.weight > 0 && (
                                         <div className='flex'>
                                           {exercise.onerm && (
