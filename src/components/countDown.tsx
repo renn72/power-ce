@@ -21,7 +21,6 @@ const CountDown = (
     setCompName,
   ] = useState<string>('')
   const { data: compDateUser, } = api.compDate.getAllUser.useQuery({ userId: userId, })
-  api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId, })
 
   useEffect(() => {
     if (compDateUser && compDateUser.length > 0 && compDateUser[0]) {
