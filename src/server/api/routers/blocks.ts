@@ -1,6 +1,6 @@
-import { clerkClient, } from '@clerk/nextjs/server'
-import { TRPCError, } from '@trpc/server'
-import { z, } from 'zod'
+import { clerkClient } from '@clerk/nextjs/server'
+import { TRPCError } from '@trpc/server'
+import { z } from 'zod'
 
 import {
   createTRPCRouter,
@@ -8,11 +8,9 @@ import {
   publicProcedure,
 } from '~/server/api/trpc'
 
-import type {
-  Block, Post, Exercise, Day, Week,
-} from '@prisma/client'
+import type { Block, Post, Exercise, Day, Week } from '@prisma/client'
 
-import { filterUserForClient, } from '~/server/helpers/filterUserForClient'
+import { filterUserForClient } from '~/server/helpers/filterUserForClient'
 
 const exerciseSchema = z.object({
   name: z.string().min(0).max(280).optional().nullable(),
@@ -48,61 +46,82 @@ const blockSchema = z.object({
 })
 
 export const blocksRouter = createTRPCRouter({
-  getAll: publicProcedure.query(async ({ ctx, }) => {
+  getAll: publicProcedure.query(async ({ ctx }) => {
     const blocks = await ctx.prisma.block.findMany({
-      orderBy: { createdAt: 'desc', },
+      orderBy: { createdAt: 'desc' },
       where: {
-        isProgram: false, isDeleted: false,
+        isProgram: false,
+        isDeleted: false,
       },
-      include: { week: { include: { day: { include: { exercise: true, }, }, }, }, },
+      include: { week: { include: { day: { include: { exercise: true } } } } },
     })
     return blocks
   }),
-  getAllPrograms: publicProcedure.query(async ({ ctx, }) => {
+  getAllPrograms: publicProcedure.query(async ({ ctx }) => {
     const blocks = await ctx.prisma.block.findMany({
-      orderBy: { createdAt: 'desc', },
+      orderBy: { createdAt: 'desc' },
       where: {
-        isProgram: true, isDeleted: false,
+        isProgram: true,
+        isDeleted: false,
       },
-      include: { week: { include: { day: { include: { exercise: { include: { set: true, }, }, }, }, }, }, },
-    })
-    return blocks
-  }),
-  getAllAdmin: publicProcedure.query(async ({ ctx, }) => {
-    const blocks = await ctx.prisma.block.findMany({
-      orderBy: { createdAt: 'desc', },
-      include: { week: { include: { day: { include: { exercise: { include: { set: true, }, }, }, }, }, }, },
-    })
-    return blocks
-  }),
-  getAllUserPrograms: publicProcedure.query(async ({ ctx, }) => {
-    const userId = ctx.userId
-    const blocks = await ctx.prisma.block.findMany({
-      orderBy: { createdAt: 'desc', },
-      where: {
-        userIdOfProgram: userId, isDeleted: false,
+      include: {
+        week: {
+          include: {
+            day: { include: { exercise: { include: { set: true } } } },
+          },
+        },
       },
-      include: { week: { include: { day: { include: { exercise: { include: { set: true, }, }, }, }, }, }, },
     })
     return blocks
   }),
+  getAllAdmin: publicProcedure.query(async ({ ctx }) => {
+    const blocks = await ctx.prisma.block.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        week: {
+          include: {
+            day: { include: { exercise: { include: { set: true } } } },
+          },
+        },
+      },
+    })
+    return blocks
+  }),
+  getAllUserPrograms: publicProcedure
+    .input(z.object({ userId: z.string().optional() }))
+    .query(async ({ ctx, input }) => {
+      const userId = input.userId ? input.userId : ctx.userId
+      const blocks = await ctx.prisma.block.findMany({
+        orderBy: { createdAt: 'desc' },
+        where: {
+          userIdOfProgram: userId,
+          isDeleted: false,
+        },
+        include: {
+          week: {
+            include: {
+              day: { include: { exercise: { include: { set: true } } } },
+            },
+          },
+        },
+      })
+      return blocks
+    }),
   getOne: publicProcedure
-    .input(z.object({ id: z.string(), }))
-    .query(async ({
-      ctx, input,
-    }) => {
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
       const block = await ctx.prisma.block.findUnique({
-        where: { id: input.id, },
-        include: { week: { include: { day: { include: { exercise: true, }, }, }, }, },
+        where: { id: input.id },
+        include: {
+          week: { include: { day: { include: { exercise: true } } } },
+        },
       })
       return block
     }),
 
   create: privateProcedure
     .input(blockSchema)
-    .mutation(async ({
-      ctx, input,
-    }) => {
+    .mutation(async ({ ctx, input }) => {
       // const authorId = ctx.userId;
 
       console.log('ctx', ctx.userId)
@@ -119,8 +138,7 @@ export const blocksRouter = createTRPCRouter({
               day: {
                 create: week.day.map((day) => ({
                   isRestDay: day.isRestDay,
-                  exercise:
-                  {
+                  exercise: {
                     createMany: {
                       data: day.exercise.map((exercise) => ({
                         name: exercise.name,
@@ -152,20 +170,18 @@ export const blocksRouter = createTRPCRouter({
       return block
     }),
 
-  getAllWeekTemplates: publicProcedure.query(async ({ ctx, }) => {
+  getAllWeekTemplates: publicProcedure.query(async ({ ctx }) => {
     const weeks = await ctx.prisma.week.findMany({
-      orderBy: { createdAt: 'desc', },
-      where: { isTemplate: true, },
-      include: { day: { include: { exercise: true, }, }, },
+      orderBy: { createdAt: 'desc' },
+      where: { isTemplate: true },
+      include: { day: { include: { exercise: true } } },
     })
     return weeks
   }),
 
   createWeek: privateProcedure
     .input(weekSchema)
-    .mutation(async ({
-      ctx, input,
-    }) => {
+    .mutation(async ({ ctx, input }) => {
       const week = await ctx.prisma.week.create({
         data: {
           name: input.name,
@@ -173,8 +189,7 @@ export const blocksRouter = createTRPCRouter({
           day: {
             create: input.day.map((day) => ({
               isRestDay: day.isRestDay,
-              exercise:
-              {
+              exercise: {
                 createMany: {
                   data: day.exercise.map((exercise) => ({
                     name: exercise.name,
@@ -206,18 +221,19 @@ export const blocksRouter = createTRPCRouter({
 
   update: privateProcedure
     .input(blockSchema)
-    .mutation(async ({
-      ctx, input,
-    }) => {
+    .mutation(async ({ ctx, input }) => {
       // const authorId = ctx.userId;
 
       console.log('ctx', ctx.userId)
       console.log('input', JSON.stringify(input, null, 2))
 
-      console.log('input', JSON.stringify(input.week[0].day[0].exercise[0], null, 2))
+      console.log(
+        'input',
+        JSON.stringify(input.week[0].day[0].exercise[0], null, 2),
+      )
 
       const updateAction = await ctx.prisma.$transaction([
-        ctx.prisma.block.delete({ where: { id: input.id, }, }),
+        ctx.prisma.block.delete({ where: { id: input.id } }),
         ctx.prisma.block.create({
           data: {
             name: input.name,
@@ -227,8 +243,7 @@ export const blocksRouter = createTRPCRouter({
                 day: {
                   create: week.day.map((day) => ({
                     isRestDay: day.isRestDay,
-                    exercise:
-                    {
+                    exercise: {
                       createMany: {
                         data: day.exercise.map((exercise) => ({
                           name: exercise.name,
@@ -259,41 +274,36 @@ export const blocksRouter = createTRPCRouter({
       ])
 
       return updateAction
-
     }),
   hardDelete: privateProcedure
-    .input(z.object({ id: z.string(), }))
-    .mutation(async ({
-      ctx, input,
-    }) => {
-      const block = await ctx.prisma.block.delete({ where: { id: input.id, }, })
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const block = await ctx.prisma.block.delete({ where: { id: input.id } })
       return block
     }),
   softDelete: privateProcedure
-    .input(z.object({ id: z.string(), }))
-    .mutation(async ({
-      ctx, input,
-    }) => {
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
       const block = await ctx.prisma.block.update({
-        where: { id: input.id, }, data: { isDeleted: true, },
+        where: { id: input.id },
+        data: { isDeleted: true },
       })
       // console.log('block', block)
       if (block.isProgram) {
         await ctx.prisma.userProgram.updateMany({
-          where: { programId: input.id, }, data: { isDeleted: true, },
+          where: { programId: input.id },
+          data: { isDeleted: true },
         })
       }
       return block
     }),
   softUnDelete: privateProcedure
-    .input(z.object({ id: z.string(), }))
-    .mutation(async ({
-      ctx, input,
-    }) => {
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
       const block = await ctx.prisma.block.update({
-        where: { id: input.id, }, data: { isDeleted: false, },
+        where: { id: input.id },
+        data: { isDeleted: false },
       })
       return block
     }),
-
 })

@@ -232,7 +232,7 @@ const Users: NextPage = () => {
           <div className=' flex min-w-[95vw] max-w-[2000px] flex-col items-center justify-center gap-8 py-6 sm:px-2 md:mt-6 2xl:min-w-[80vw]'>
             <UserSelect onSelectUser={setUserId} />
             {userId === 'all' ? (
-              <div className='flex flex-col gap-6 w-full'>
+              <div className='flex flex-col gap-16 w-full'>
                 {allUsers?.map((user) => (
                   <UserPage
                     key={user.id}
