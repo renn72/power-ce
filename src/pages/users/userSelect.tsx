@@ -1,4 +1,4 @@
-import { useState, Fragment, } from 'react'
+import { useState, Fragment } from 'react'
 
 import { api } from '~/utils/api'
 
@@ -35,10 +35,13 @@ const UserSelect = ({
     }
   }
 
-  if (!users?.find((u) => u.id === 'all')) {
-    users?.unshift({ id: 'all', firstName: 'All', lastName: 'Users' })
-  }
+  const allUsers = users?.map((u) => {
+    return { id: u.id, firstName: u.firstName || '', lastName: u.lastName || '' }
+  })
 
+  if (!allUsers?.find((u) => u.id === 'all')) {
+    allUsers?.unshift({ id: 'all', firstName: 'All', lastName: 'Users' })
+  }
 
   if (usersLoading) return <div>loading</div>
 
@@ -69,7 +72,7 @@ const UserSelect = ({
                 leaveTo='opacity-0'
               >
                 <Listbox.Options className='max-h-120 absolute z-10 mt-1 w-full overflow-auto border border-gray-600 bg-black py-1 shadow-lg '>
-                  {users?.map((u) => (
+                  {allUsers?.map((u) => (
                     <Listbox.Option
                       key={u.id}
                       className={({ active }) =>

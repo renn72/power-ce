@@ -1,4 +1,4 @@
-import React, { useState, } from 'react'
+import React, { useState } from 'react'
 import { type NextPage } from 'next'
 import { useUser } from '@clerk/nextjs'
 import { toast } from 'react-hot-toast'
@@ -209,12 +209,12 @@ const Users: NextPage = () => {
     })
   }
 
-  const getFirstName = () => {
-    const res = allUsers?.find((u) => u.id == userId)?.firstName
+  const getFirstName = (id: string) => {
+    const res = allUsers?.find((u) => u.id == id)?.firstName
     return res ? res : ''
   }
-  const getLastName = () => {
-    const res = allUsers?.find((u) => u.id == userId)?.lastName
+  const getLastName = (id: string) => {
+    const res = allUsers?.find((u) => u.id == id)?.lastName
     return res ? res : ''
   }
 
@@ -231,15 +231,31 @@ const Users: NextPage = () => {
         <main>
           <div className=' flex min-w-[95vw] max-w-[2000px] flex-col items-center justify-center gap-8 py-6 sm:px-2 md:mt-6 2xl:min-w-[80vw]'>
             <UserSelect onSelectUser={setUserId} />
-            <UserPage
-              key={userId}
-              userId={userId}
-              userFirstName={getFirstName()}
-              userLastName={getLastName()}
-              onSetTemplate={onSetTemplate}
-              onClearTemplate={onClearTemplate}
-              onSelectTemplate={onSelectTemplate}
-            />
+            {userId === 'all' ? (
+              <div className='flex flex-col gap-6 w-full'>
+                {allUsers?.map((user) => (
+                  <UserPage
+                    key={user.id}
+                    userId={user.id}
+                    userFirstName={getFirstName(user.id)}
+                    userLastName={getLastName(user.id)}
+                    onSetTemplate={onSetTemplate}
+                    onClearTemplate={onClearTemplate}
+                    onSelectTemplate={onSelectTemplate}
+                  />
+                ))}
+              </div>
+            ) : (
+              <UserPage
+                key={userId}
+                userId={userId}
+                userFirstName={getFirstName(userId)}
+                userLastName={getLastName(userId)}
+                onSetTemplate={onSetTemplate}
+                onClearTemplate={onClearTemplate}
+                onSelectTemplate={onSelectTemplate}
+              />
+            )}
           </div>
         </main>
       </div>
