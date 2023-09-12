@@ -81,8 +81,11 @@ const UserPage = ({
 }) => {
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
   const { data: userPrograms } = api.userPrograms.getAll.useQuery()
-  const activePro = userPrograms?.filter(
-    (p) => p.userId == userId && p.isProgramActive,
+  const { data: allUserPrograms } = api.blocks.getAllUserPrograms.useQuery({
+    userId: userId,
+  })
+  const activePro = allUserPrograms?.filter(
+    (p) => p.isProgramActive,
   )
 
   return (
@@ -227,12 +230,11 @@ const Users: NextPage = () => {
 
   return (
     <>
-      <div className='flex h-full flex-col items-center'>
-        <main>
-          <div className=' flex min-w-[95vw] max-w-[2000px] flex-col items-center justify-center gap-8 py-6 sm:px-2 md:mt-6 2xl:min-w-[80vw]'>
+        <main className='flex h-full flex-col'>
+          <div className=' flex w-full flex-col items-center justify-center gap-8 py-6 sm:px-2 md:mt-6 '>
             <UserSelect onSelectUser={setUserId} />
             {userId === 'all' ? (
-              <div className='flex flex-col gap-16 w-full'>
+              <div className='flex w-full flex-col gap-16'>
                 {allUsers?.map((user) => (
                   <UserPage
                     key={user.id}
@@ -258,7 +260,6 @@ const Users: NextPage = () => {
             )}
           </div>
         </main>
-      </div>
     </>
   )
 }
