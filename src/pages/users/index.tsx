@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, } from 'react'
 import { type NextPage } from 'next'
 import { useUser } from '@clerk/nextjs'
 import { toast } from 'react-hot-toast'
@@ -10,13 +10,11 @@ import { ChevronUpIcon } from '@heroicons/react/20/solid'
 import TemplateSelect from './templateSelect'
 import { LoadingPage } from '~/components/loading'
 import OneRMCard from '~/components/oneRMCard'
-import { Button } from '@/components/ui/button'
 
 import ProgramView from './programView'
 import CompDate from '~/components/compDate'
 import UserSelect from './userSelect'
 
-import Countdown from 'react-countdown'
 import CountDown from '~/components/countDown'
 
 const UserDisclosure = ({
@@ -86,7 +84,6 @@ const UserPage = ({
   const activePro = userPrograms?.filter(
     (p) => p.userId == userId && p.isProgramActive,
   )
-  console.log('pro', activePro)
 
   return (
     <div className='flex w-full flex-col justify-start gap-2'>
