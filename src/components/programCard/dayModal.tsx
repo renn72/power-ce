@@ -609,14 +609,10 @@ const ExerciseModal = ({
                           <div
                             className='h-8 w-8 cursor-pointer rounded-full text-center'
                             onClick={() => {
-                              if (weights) {
-                                setWeights(+weights + 2.5)
-                              } else {
-                                setWeights(2.5)
-                              }
+                              if (weights && weights > 0) setWeights(+weights - 2.5)
                             }}
                           >
-                            +
+                            -
                           </div>
                           <div className='relative flex w-44 items-center text-center '>
                             <NumericFormat
@@ -635,10 +631,14 @@ const ExerciseModal = ({
                           <div
                             className='h-8 w-8 cursor-pointer rounded-full text-center'
                             onClick={() => {
-                              if (weights && weights > 0) setWeights(+weights - 2.5)
+                              if (weights) {
+                                setWeights(+weights + 2.5)
+                              } else {
+                                setWeights(2.5)
+                              }
                             }}
                           >
-                            -
+                            +
                           </div>
                         </div>
 
