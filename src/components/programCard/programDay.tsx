@@ -146,7 +146,7 @@ const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
                     {day.exercise.map((exercise) => (
                       <div
                         key={exercise.id}
-                        className='flex cursor-pointer flex-col gap-1 py-2'
+                        className='flex cursor-pointer flex-col gap-0 py-1'
                       >
                         <div className='flex w-full items-baseline justify-between gap-1 md:gap-2'>
                           <h3 className='capitalize text-yellow-500'>

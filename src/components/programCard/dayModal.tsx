@@ -418,8 +418,8 @@ const ExerciseModal = ({
           <div className='flex flex-col justify-start gap-2 '>
             <div className='flex flex-col gap-0'>
               <Disclosure.Button className={`mt-1 w-full text-lg md:text-xl`}>
-                <div className='flex flex-col gap-1'>
-                  <div className='flex flex-col gap-1 '>
+                <div className='flex flex-col gap-0'>
+                  <div className='flex flex-col '>
                     <div className='flex items-end gap-2 md:gap-8'>
                       <ChevronUpIcon
                         className={`${
@@ -588,7 +588,7 @@ const ExerciseModal = ({
                 leaveTo='transform opacity-0'
               >
                 <Disclosure.Panel>
-                  <div className='flex flex-col gap-4'>
+                  <div className='flex flex-col gap-2'>
                     <div className='ml-10 text-sm font-extralight md:ml-16'>
                       {exercise?.notes}
                     </div>
@@ -604,7 +604,7 @@ const ExerciseModal = ({
                       )}
                     </div>
                     {exercise.sets && exercise.reps && (
-                      <div className='mt-8 flex flex-col gap-4 md:gap-6'>
+                      <div className='flex flex-col gap-2 md:gap-6'>
                         <div className='flex w-full items-center justify-center gap-4 text-2xl font-bold md:gap-6'>
                           <div
                             className='h-8 w-8 cursor-pointer rounded-full text-center'
@@ -754,7 +754,7 @@ const DayModal = ({
       {day.isRestDay ? (
         <div>Rest Day</div>
       ) : (
-        <div className='flex w-full flex-col gap-6 divide-y divide-dashed divide-gray-600 md:p-2'>
+        <div className='flex w-full flex-col gap-6 divide-y divide-dashed divide-gray-600 md:p-2 pb-16'>
           {day.exercise.map((exercise) => (
             <div
               key={exercise.id}
