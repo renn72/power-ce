@@ -609,12 +609,16 @@ const ExerciseModal = ({
                           <div
                             className='h-8 w-8 cursor-pointer rounded-full text-center'
                             onClick={() => {
-                              if (weights) setWeights(+weights + 2.5)
+                              if (weights) {
+                                setWeights(+weights + 2.5)
+                              } else {
+                                setWeights(2.5)
+                              }
                             }}
                           >
                             +
                           </div>
-                          <div className='w-44 text-center flex relative items-center '>
+                          <div className='relative flex w-44 items-center text-center '>
                             <NumericFormat
                               className='w-full rounded-lg border border-gray-400 bg-black p-6 text-center text-2xl font-semibold placeholder-gray-600  md:text-2xl'
                               value={weights}
@@ -623,13 +627,15 @@ const ExerciseModal = ({
                               onChange={(e) => setWeights(+e.target.value)}
                             />
                             {weights && weights !== 0 ? (
-                              <span className='text-base text-gray-400 absolute right-5'>kg</span>
+                              <span className='absolute right-5 text-base text-gray-400'>
+                                kg
+                              </span>
                             ) : null}
                           </div>
                           <div
                             className='h-8 w-8 cursor-pointer rounded-full text-center'
                             onClick={() => {
-                              if (weights) setWeights(+weights - 2.5)
+                              if (weights && weights > 0) setWeights(+weights - 2.5)
                             }}
                           >
                             -
@@ -705,16 +711,16 @@ const ExerciseModal = ({
                             <div className='mx-1 flex gap-2 px-2 md:mx-6'>
                               <div>E1RM</div>
                               {weights &&
-                                weights !== 0 &&
-                                e1rm[+exercise.reps - 1] ? (
-                                  <div>
-                                    {(
-                                      +weights /
-                                      (e1rm[+exercise.reps - 1] / 100)
-                                    )?.toFixed(0)}
-                                    kg
-                                  </div>
-                                ) : null}
+                              weights !== 0 &&
+                              e1rm[+exercise.reps - 1] ? (
+                                <div>
+                                  {(
+                                    +weights /
+                                    (e1rm[+exercise.reps - 1] / 100)
+                                  )?.toFixed(0)}
+                                  kg
+                                </div>
+                              ) : null}
                             </div>
                           )}
                         <SetsModal
@@ -754,7 +760,7 @@ const DayModal = ({
       {day.isRestDay ? (
         <div>Rest Day</div>
       ) : (
-        <div className='flex w-full flex-col gap-6 divide-y divide-dashed divide-gray-600 md:p-2 pb-16'>
+        <div className='flex w-full flex-col gap-6 divide-y divide-dashed divide-gray-600 pb-16 md:p-2'>
           {day.exercise.map((exercise) => (
             <div
               key={exercise.id}
