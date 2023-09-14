@@ -80,13 +80,10 @@ const UserPage = ({
   userLastName: string | null
 }) => {
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
-  const { data: userPrograms } = api.userPrograms.getAll.useQuery()
   const { data: allUserPrograms } = api.blocks.getAllUserPrograms.useQuery({
     userId: userId,
   })
-  const activePro = allUserPrograms?.filter(
-    (p) => p.isProgramActive,
-  )
+  const activePro = allUserPrograms?.filter((p) => p.isProgramActive)
 
   return (
     <div className='flex w-full flex-col justify-start gap-2'>
@@ -117,20 +114,18 @@ const UserPage = ({
 }
 
 const Users: NextPage = () => {
-  // Check for admin role
   const { user } = useUser()
   const [userId, setUserId] = useState<string>(() => user?.id || '')
   if (!user) return <div>Login</div>
 
   const ctx = api.useContext()
 
-  const { isLoading: userProgramsLoading } = api.userPrograms.getAll.useQuery()
-
   const { data: allUsers, isLoading: usersLoading } =
     api.users.getAllUsers.useQuery()
+
   const { data: blocksData, isLoading: blocksLoading } =
     api.blocks.getAll.useQuery()
-  const { data: programsData } = api.blocks.getAllPrograms.useQuery()
+
   const { mutate: userProgramCreateMutate } =
     api.userPrograms.create.useMutation({
       onSuccess: () => {
@@ -159,19 +154,6 @@ const Users: NextPage = () => {
       },
     })
 
-  const { data: primaryLifts, isLoading: primaryLiftsLoading } =
-    api.primaryLifts.getAll.useQuery()
-
-  const { mutate: createUserCoreOneRM } = api.oneRepMax.create.useMutation({
-    onSettled: async () => {
-      await ctx.oneRepMax.getUserCoreLifts.invalidate()
-    },
-    onError: (e) => {
-      console.log('error', e)
-      toast.error('Error')
-    },
-  })
-
   const onSelectTemplate = (template: string, userId: string) => {
     console.log('template', template)
     console.log('userId', userId)
@@ -194,24 +176,6 @@ const Users: NextPage = () => {
     })
   }
 
-  const onUpdateOneRM = (userId: string, lift: string, weight: number) => {
-    createUserCoreOneRM({
-      userId: userId,
-      lift: lift.toLowerCase(),
-      weight: +weight,
-    })
-  }
-
-  const onGenerate = () => {
-    console.log('gen')
-    allUsers?.forEach((user) => {
-      primaryLifts?.forEach((lift) => {
-        const weight = (Math.floor(Math.random() * 15) + 5) * 10
-        onUpdateOneRM(user.id, lift.name, weight)
-      })
-    })
-  }
-
   const getFirstName = (id: string) => {
     const res = allUsers?.find((u) => u.id == id)?.firstName
     return res ? res : ''
@@ -221,45 +185,46 @@ const Users: NextPage = () => {
     return res ? res : ''
   }
 
-  if (usersLoading || userProgramsLoading || blocksLoading)
+  if (usersLoading || blocksLoading) {
     return (
       <div>
         <LoadingPage />
       </div>
     )
+  }
 
   return (
     <>
-        <main className='flex h-full flex-col'>
-          <div className=' flex w-full flex-col items-center justify-center gap-8 py-6 sm:px-2 md:mt-6 '>
-            <UserSelect onSelectUser={setUserId} />
-            {userId === 'all' ? (
-              <div className='flex w-full flex-col gap-16'>
-                {allUsers?.map((user) => (
-                  <UserPage
-                    key={user.id}
-                    userId={user.id}
-                    userFirstName={getFirstName(user.id)}
-                    userLastName={getLastName(user.id)}
-                    onSetTemplate={onSetTemplate}
-                    onClearTemplate={onClearTemplate}
-                    onSelectTemplate={onSelectTemplate}
-                  />
-                ))}
-              </div>
-            ) : (
-              <UserPage
-                key={userId}
-                userId={userId}
-                userFirstName={getFirstName(userId)}
-                userLastName={getLastName(userId)}
-                onSetTemplate={onSetTemplate}
-                onClearTemplate={onClearTemplate}
-                onSelectTemplate={onSelectTemplate}
-              />
-            )}
-          </div>
-        </main>
+      <main className='flex h-full flex-col'>
+        <div className=' flex w-full flex-col items-center justify-center gap-8 py-6 sm:px-2 md:mt-6 '>
+          <UserSelect onSelectUser={setUserId} />
+          {userId === 'all' ? (
+            <div className='flex w-full flex-col gap-16'>
+              {allUsers?.map((user) => (
+                <UserPage
+                  key={user.id}
+                  userId={user.id}
+                  userFirstName={getFirstName(user.id)}
+                  userLastName={getLastName(user.id)}
+                  onSetTemplate={onSetTemplate}
+                  onClearTemplate={onClearTemplate}
+                  onSelectTemplate={onSelectTemplate}
+                />
+              ))}
+            </div>
+          ) : (
+            <UserPage
+              key={userId}
+              userId={userId}
+              userFirstName={getFirstName(userId)}
+              userLastName={getLastName(userId)}
+              onSetTemplate={onSetTemplate}
+              onClearTemplate={onClearTemplate}
+              onSelectTemplate={onSelectTemplate}
+            />
+          )}
+        </div>
+      </main>
     </>
   )
 }
