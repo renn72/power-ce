@@ -141,6 +141,8 @@ const Test = () => {
 
   console.log('all', all)
 
+  const me = 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a'
+
   return (
     <div>
       <div>
@@ -156,6 +158,9 @@ const Test = () => {
             <h3
               className='m-2 pl-2'
             >{template.isProgram ? 'program' : 'template'}</h3>
+            <h3
+              className='m-2 pl-2'
+            >{template.userIdOfProgram == me ? 'me' : 'not me'}</h3>
             <h3
               className='m-2 pl-2 w-24'
             >{template.isProgramActive && 'active'}</h3>
@@ -176,6 +181,7 @@ const Test = () => {
             >SoftX</h3>
           </div>
         ))}
+        <h1>Programs</h1>
         <div className='flex flex-col gap-6'>
           {allUserPrograms?.map((program) => (
             <div
@@ -186,6 +192,11 @@ const Test = () => {
                 className='m-1 pl-1'
               >
                 {all?.find((template) => template.id === program.programId)?.name}
+              </h2>
+              <h2
+                className='m-1 pl-1'
+              >
+                {all?.find((template) => template.id === program.programId)?.userIdOfProgram === me ? 'me' : 'not me'}
               </h2>
               <h3
                 className='m-2 pl-2'
