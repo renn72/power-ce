@@ -132,7 +132,6 @@ const Users: NextPage = () => {
         toast.success('Saved')
         void ctx.blocks.getAll.invalidate()
         void ctx.blocks.getAllPrograms.invalidate()
-        void ctx.userPrograms.getAll.invalidate()
       },
       onError: (e) => {
         console.log('error', e)
@@ -146,7 +145,6 @@ const Users: NextPage = () => {
         toast.success('Removed')
         void ctx.blocks.getAll.invalidate()
         void ctx.blocks.getAllPrograms.invalidate()
-        void ctx.userPrograms.getAll.invalidate()
       },
       onError: (e) => {
         console.log('error', e)
