@@ -29,7 +29,7 @@ const nav = [
     name: 'Templates', href: '/templates', admin: true,
   },
   {
-    name: 'Stats', href: '/stats',  superAdmin: true,
+    name: 'Stats', href: '/stats',  admin: true,
   },
   {
     name: 'Admin', href: '/test',  superAdmin: true,

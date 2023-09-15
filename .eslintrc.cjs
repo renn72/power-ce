@@ -70,7 +70,6 @@ const config = {
     'eol-last': ['warn', 'always'],
     'func-call-spacing': ['warn', 'never'],
     'function-call-argument-newline': ['warn', 'consistent'],
-    'function-paren-newline': ['warn', 'multiline-arguments'],
     'jsx-quotes': ['warn', 'prefer-single'],
     'key-spacing': [
       'warn',

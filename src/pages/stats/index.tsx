@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { api } from '~/utils/api'
 
@@ -6,6 +6,68 @@ import { useUser } from '@clerk/nextjs'
 
 import { LoadingPage } from '~/components/loading'
 import UserSelect from './userSelect'
+
+import { AxisOptions, Chart } from 'react-charts'
+
+import ResizableBox from './ResizableBox'
+import useDemoConfig from './useDemoConfig'
+
+const ChartComponent = ({ user }: { user: string }) => {
+  const { data: programs } = api.blocks.getAllPrograms.useQuery()
+
+  const { data, randomizeData } = useDemoConfig({
+    series: 10,
+    dataType: 'time',
+  })
+
+  const sets = programs
+    ?.filter(
+      (program) => program.userIdOfProgram === user && !program.isDeleted,
+    )
+    .map((program) =>
+      program.week.flatMap((week) =>
+        week.day.flatMap((day) =>
+          day.exercise.flatMap((exercise) => exercise.set),
+        ),
+      ),
+    )
+    .flat()
+    .filter((set) => set.isComplete)
+
+  const primaryAxis = useMemo<
+    AxisOptions<(typeof data)[number]['data'][number]>
+  >(
+    () => ({
+      getValue: (datum) => datum.primary as unknown as Date,
+    }),
+    [],
+  )
+
+  const secondaryAxes = useMemo<
+    AxisOptions<(typeof data)[number]['data'][number]>[]
+  >(
+    () => [
+      {
+        getValue: (datum) => datum.secondary,
+      },
+    ],
+    [],
+  )
+
+  return (
+    <div>
+      <ResizableBox>
+        <Chart
+          options={{
+            data,
+            primaryAxis,
+            secondaryAxes,
+          }}
+        />
+      </ResizableBox>
+    </div>
+  )
+}
 
 const Stats = () => {
   const { user: currentUser } = useUser()
@@ -22,18 +84,6 @@ const Stats = () => {
 
   const { data: programs, isLoading: programsLoading } =
     api.blocks.getAllPrograms.useQuery()
-
-  const handleReadRemoteFile = () => {
-    const url = 'https://www.openpowerlifting.org/api/liftercsv/mitchlee1.csv'
-    Papa.parse(url, {
-      download: false,
-      // delimiter: ',',
-      header: true,
-      complete: function (results) {
-        console.log(results)
-      },
-    })
-  }
 
   const tryFetch = async () => {
     const res = await fetch(
@@ -53,8 +103,18 @@ const Stats = () => {
   )
 
   const sets = programs
-    ?.filter((program) => program.userIdOfProgram === user)
-    .map((program) => program.week.flatMap((week) => week.day.flatMap((day) => day.exercise.flatMap((exercise) => exercise.set))))
+    ?.filter(
+      (program) => program.userIdOfProgram === user && !program.isDeleted,
+    )
+    .map((program) =>
+      program.week.flatMap((week) =>
+        week.day.flatMap((day) =>
+          day.exercise.flatMap((exercise) => exercise.set),
+        ),
+      ),
+    )
+    .flat()
+    .filter((set) => set.isComplete)
   console.log('sets', sets)
 
   if (programsLoading) return <LoadingPage />
@@ -65,9 +125,9 @@ const Stats = () => {
       <UserSelect onSelectUser={onSelectUser} />
       <div className='hidden'>
         <Button onClick={() => getCsv()}>Get CSV</Button>
-        <Button onClick={() => handleReadRemoteFile()}>remote read</Button>
         <Button onClick={() => tryFetch()}>try fetch</Button>
       </div>
+      <ChartComponent user={user} />
     </div>
   )
 }
