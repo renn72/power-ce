@@ -71,8 +71,14 @@ const ChartComponent = ({ user }: { user: string }) => {
     labels: squats?.map((set) => set?.createdAt.toString().slice(0, 10)),
     datasets: [
       {
-        label: 'Squat',
-        data: squats?.map((set) => +set?.weight),
+        label: 'Squat 6reps',
+        data: squats?.filter((set) => set.rep == 6).map((set) => +set?.weight),
+        backgroundColor: 'rgb(205, 99, 132)',
+        borderColor: 'rgba(255, 99, 132, 0.2)',
+      },
+      {
+        label: 'Squat 8reps',
+        data: squats?.filter((set) => set.rep == 8).map((set) => +set?.weight),
         backgroundColor: 'rgb(205, 99, 132)',
         borderColor: 'rgba(255, 99, 132, 0.2)',
       },

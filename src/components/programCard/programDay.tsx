@@ -28,9 +28,21 @@ const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
   ) => {
     if (!lift || !onerm) return ''
     let energyAdjust = 1
-    if (selectedEngery === 'B') energyAdjust = 0.98
-    if (selectedEngery === 'C') energyAdjust = 0.96
-    if (selectedEngery === 'D') energyAdjust = 0.94
+    if (+onerm < 100) {
+      if (selectedEngery === 'B') energyAdjust = 0.95
+      if (selectedEngery === 'C') energyAdjust = 0.90
+      if (selectedEngery === 'D') energyAdjust = 0.85
+    }
+    if (+onerm >= 100 && +onerm < 200) {
+      if (selectedEngery === 'B') energyAdjust = 0.97
+      if (selectedEngery === 'C') energyAdjust = 0.94
+      if (selectedEngery === 'D') energyAdjust = 0.91
+    }
+    if (+onerm >= 200) {
+      if (selectedEngery === 'B') energyAdjust = 0.985
+      if (selectedEngery === 'C') energyAdjust = 0.97
+      if (selectedEngery === 'D') energyAdjust = 0.955
+    }
 
     if (lift == 'weight') {
       return getWeight(+onerm, 100 * energyAdjust)
@@ -68,7 +80,7 @@ const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
 
     const weight = day?.exercise[estimatedOnermIndex - 1]?.set[0]?.weight
     if (!weight) return ''
-    return `${+weight * percent / 100 * energyAdjust}`
+    return `${((+weight * percent) / 100) * energyAdjust}`
   }
 
   const closeModal = () => {
