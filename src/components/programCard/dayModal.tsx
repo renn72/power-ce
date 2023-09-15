@@ -130,9 +130,21 @@ const ExerciseModal = ({
   ) => {
     if (!lift || !onerm) return ''
     let energyAdjust = 1
-    if (selectedEnergy === 'B') energyAdjust = 0.98
-    if (selectedEnergy === 'C') energyAdjust = 0.96
-    if (selectedEnergy === 'D') energyAdjust = 0.94
+    if (+onerm < 100) {
+      if (selectedEnergy === 'B') energyAdjust = 0.95
+      if (selectedEnergy === 'C') energyAdjust = 0.90
+      if (selectedEnergy === 'D') energyAdjust = 0.85
+    }
+    if (+onerm >= 100 && +onerm < 200) {
+      if (selectedEnergy === 'B') energyAdjust = 0.97
+      if (selectedEnergy === 'C') energyAdjust = 0.94
+      if (selectedEnergy === 'D') energyAdjust = 0.91
+    }
+    if (+onerm >= 200) {
+      if (selectedEnergy === 'B') energyAdjust = 0.985
+      if (selectedEnergy === 'C') energyAdjust = 0.97
+      if (selectedEnergy === 'D') energyAdjust = 0.955
+    }
 
     if (lift == 'weight') {
       return getWeight(+onerm, 100 * energyAdjust)
