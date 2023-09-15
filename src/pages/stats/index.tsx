@@ -7,18 +7,9 @@ import { useUser } from '@clerk/nextjs'
 import { LoadingPage } from '~/components/loading'
 import UserSelect from './userSelect'
 
-import { AxisOptions, Chart } from 'react-charts'
-
-import ResizableBox from './ResizableBox'
-import useDemoConfig from './useDemoConfig'
 
 const ChartComponent = ({ user }: { user: string }) => {
   const { data: programs } = api.blocks.getAllPrograms.useQuery()
-
-  const { data, randomizeData } = useDemoConfig({
-    series: 10,
-    dataType: 'time',
-  })
 
   const sets = programs
     ?.filter(
@@ -34,37 +25,10 @@ const ChartComponent = ({ user }: { user: string }) => {
     .flat()
     .filter((set) => set.isComplete)
 
-  const primaryAxis = useMemo<
-    AxisOptions<(typeof data)[number]['data'][number]>
-  >(
-    () => ({
-      getValue: (datum) => datum.primary as unknown as Date,
-    }),
-    [],
-  )
-
-  const secondaryAxes = useMemo<
-    AxisOptions<(typeof data)[number]['data'][number]>[]
-  >(
-    () => [
-      {
-        getValue: (datum) => datum.secondary,
-      },
-    ],
-    [],
-  )
 
   return (
     <div>
-      <ResizableBox>
-        <Chart
-          options={{
-            data,
-            primaryAxis,
-            secondaryAxes,
-          }}
-        />
-      </ResizableBox>
+      try again
     </div>
   )
 }
