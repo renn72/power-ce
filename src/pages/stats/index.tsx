@@ -7,6 +7,42 @@ import { useUser } from '@clerk/nextjs'
 import { LoadingPage } from '~/components/loading'
 import UserSelect from './userSelect'
 
+import ResizableBox from './ResizableBox'
+
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js'
+import { Line } from 'react-chartjs-2'
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+)
+
+export const options = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top' as const,
+    },
+    title: {
+      display: true,
+      text: 'Chart.js Line Chart',
+    },
+  },
+}
 
 const ChartComponent = ({ user }: { user: string }) => {
   const { data: programs } = api.blocks.getAllPrograms.useQuery()
@@ -25,10 +61,38 @@ const ChartComponent = ({ user }: { user: string }) => {
     .flat()
     .filter((set) => set.isComplete)
 
+  const squats = sets?.filter((set) => set.lift === 'squat')
+
+  console.log('squats', squats)
+
+  if (!squats || squats.length < 1) return null
+
+  const data = {
+    labels: squats?.map((set) => set?.createdAt.toString().slice(0, 10)),
+    datasets: [
+      {
+        label: 'Squat',
+        data: squats?.map((set) => +set?.weight),
+        backgroundColor: 'rgb(205, 99, 132)',
+        borderColor: 'rgba(255, 99, 132, 0.2)',
+      },
+      {
+        label: 'Squat 1rm',
+        data: squats?.map((set) => +set?.estiamtedOnerm),
+        backgroundColor: 'rgb(205, 99, 132)',
+        borderColor: 'rgba(255, 99, 132, 0.2)',
+      },
+    ],
+  }
 
   return (
     <div>
-      try again
+      <ResizableBox>
+        <Line
+          data={data}
+          options={options}
+        />
+      </ResizableBox>
     </div>
   )
 }
@@ -91,7 +155,7 @@ const Stats = () => {
         <Button onClick={() => getCsv()}>Get CSV</Button>
         <Button onClick={() => tryFetch()}>try fetch</Button>
       </div>
-      <ChartComponent user={user} />
+      <ChartComponent user={'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v'} />
     </div>
   )
 }
