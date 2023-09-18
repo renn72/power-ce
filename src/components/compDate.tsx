@@ -120,7 +120,7 @@ const CompDate = ({ userId, }: { userId: string }) => {
             <PopoverTrigger asChild>
               <Button
                 className={cn(
-                  'w-[230px] col-span-2 justify-start text-left border-0 border-b border-gray-400 text-gray-200 rounded-none',
+                  'w-[230px] col-span-2 justify-start text-left border-0 border-b border-gray-600 text-gray-200 rounded-none hover:border-gray-200 hover:text-gray-600',
                   !date && 'text-gray-600'
                 )}
               >

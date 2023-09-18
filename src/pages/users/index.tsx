@@ -80,7 +80,7 @@ const UserPage = ({
   userLastName: string | null
 }) => {
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
-  const { data: allUserPrograms } = api.blocks.getAllUserPrograms.useQuery({
+  const { data: allUserPrograms } = api.blocks.getAllUserProgramsTitles.useQuery({
     userId: userId,
   })
   const activePro = allUserPrograms?.filter((p) => p.isProgramActive)
@@ -124,7 +124,7 @@ const Users: NextPage = () => {
     api.users.getAllUsers.useQuery()
 
   const { data: blocksData, isLoading: blocksLoading } =
-    api.blocks.getAll.useQuery()
+    api.blocks.getAllBlockTitles.useQuery()
 
   const { mutate: userProgramCreateMutate } =
     api.userPrograms.create.useMutation({

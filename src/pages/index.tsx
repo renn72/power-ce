@@ -17,7 +17,7 @@ const Home: NextPage = () => {
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: user?.id || '' })
 
   const { data: programs, isLoading: programsLoading } =
-    api.blocks.getAllUserPrograms.useQuery({ userId: user?.id || '' })
+    api.blocks.getAllUserProgramsTitles.useQuery({ userId: user?.id || '' })
 
 
   if (programsLoading) return <LoadingPage />

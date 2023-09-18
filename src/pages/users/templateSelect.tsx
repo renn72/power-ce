@@ -32,8 +32,10 @@ const TemplateSelect = ({
   const [isSet, setIsSet] = useState(false)
 
   const { data: blocksData, isLoading: blocksLoading } =
-    api.blocks.getAll.useQuery()
-  const { data: programsData } = api.blocks.getAllPrograms.useQuery()
+    api.blocks.getAllBlockTitles.useQuery()
+  const { data: currentProgram } = api.blocks.getUserActiveProgram.useQuery({userId: userId})
+
+  console.log('currentProgram', currentProgram)
 
   const onSetLocalTemplate = (template: string) => {
     setTemplate(template)
@@ -41,26 +43,21 @@ const TemplateSelect = ({
   }
 
   useEffect(() => {
-    const userProgram = programsData?.find(
-      (userProgram) =>
-        userProgram.userIdOfProgram === userId &&
-        userProgram.isProgramActive === true,
-    )
+    if (!currentProgram) return
+    const userProgram = currentProgram[0]
     console.log('userProgram', userProgram)
     if (!userProgram) {
       setIsSet(false)
       setTemplate('')
       return
     }
-    const templateName = programsData?.find(
-      (program) => program.id === userProgram.id,
-    )?.name
+    const templateName = userProgram?.name
     if (!templateName) return
     setIsSet(true)
     setTemplate(templateName)
-  }, [blocksData, userId, programsData])
+  }, [currentProgram])
 
-  const onSetTemplateWrapper = (template, userId) => {
+  const onSetTemplateWrapper = (template : string, userId : string) => {
     onSetTemplate(template, userId)
     setIsSet(false)
   }
