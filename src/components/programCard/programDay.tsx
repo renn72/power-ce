@@ -12,7 +12,19 @@ import DayModal from './dayModal'
 
 import getWeight from '~/utils/getWeight'
 
-const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
+const ProgramDay = ({
+  day,
+  dayIdx,
+  weekIdx,
+  openDay,
+  openWeek,
+}: {
+  day: Day
+  dayIdx: number
+  weekIdx: number
+  openDay: number | null
+  openWeek: number | null
+}) => {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedEngery, setSelectedEngery] = useState(day.energyRating || 'A')
 
@@ -30,7 +42,7 @@ const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
     let energyAdjust = 1
     if (+onerm < 100) {
       if (selectedEngery === 'B') energyAdjust = 0.95
-      if (selectedEngery === 'C') energyAdjust = 0.90
+      if (selectedEngery === 'C') energyAdjust = 0.9
       if (selectedEngery === 'D') energyAdjust = 0.85
     }
     if (+onerm >= 100 && +onerm < 200) {
@@ -41,7 +53,7 @@ const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
     if (+onerm >= 200) {
       if (selectedEngery === 'B') energyAdjust = 0.985
       if (selectedEngery === 'C') energyAdjust = 0.97
-      if (selectedEngery === 'D') energyAdjust = 0.955
+      if (selectedEngery === 'D') energyAdjust = 0.95
     }
 
     if (lift == 'weight') {
@@ -115,7 +127,9 @@ const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
   return (
     <>
       <div className='flex flex-col gap-4'>
-        <Disclosure defaultOpen={false}>
+        <Disclosure
+          defaultOpen={dayIdx === openDay && weekIdx === openWeek}
+        >
           {({ open }) => (
             <div className='flex flex-col md:gap-8'>
               <div className='flex flex-col sm:flex-row md:gap-6'>
@@ -124,7 +138,7 @@ const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
                     open
                       ? 'border-b border-yellow-500'
                       : 'border-b border-black hover:border-white'
-                  } flex w-full items-center gap-2 pb-4 text-lg font-medium`}
+                  } flex w-full items-center gap-2 text-lg font-medium`}
                 >
                   <h2 className='text-xl font-bold'>Day {dayIdx + 1}</h2>
                   <ChevronUpIcon
@@ -173,7 +187,7 @@ const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
                           </div>
                         </div>
                         <div>
-                          <div className='flex items-baseline gap-6 lg:flex-col '>
+                          <div className='flex items-baseline gap-6 lg:flex-col text-sm'>
                             <div className='flex gap-2 '>
                               <h3>{exercise.sets}</h3>
                               <h3>X</h3>
@@ -276,7 +290,7 @@ const ProgramDay = ({ day, dayIdx }: { day: Day; dayIdx: number }) => {
                                 <div className='flex items-baseline gap-2'>
                                   <h4>RPE Target</h4>
                                   <h4>-</h4>
-                                  <h4 className='flex items-baseline justify-center text-xl font-semibold'>
+                                  <h4 className='flex items-baseline justify-center font-semibold'>
                                     {exercise?.targetRpe &&
                                       +exercise?.targetRpe}
                                   </h4>

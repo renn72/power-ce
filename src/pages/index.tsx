@@ -29,11 +29,11 @@ const Home: NextPage = () => {
   return (
     <>
       <main className='flex h-full flex-col px-2 font-semibold'>
-        <div className='flex w-full max-w-screen-2xl  flex-col py-6 sm:px-6 md:mx-auto lg:px-8'>
+        <div className='flex w-full max-w-screen-2xl  flex-col py-2 sm:px-6 md:mx-auto lg:px-8'>
           <CountDown userId={user?.id || ''} />
-          <div className='mt-6 grid'>
+          <div className='grid'>
             <div className=''>
-              <h2 className='text-xl font-bold'>Active Program</h2>
+              <h2 className='text-xl font-bold'></h2>
               {userPrograms &&
                 userPrograms
                   .filter((userProgram) => userProgram.isProgramActive === true)

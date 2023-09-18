@@ -177,6 +177,14 @@ export const userProgramsRouter = createTRPCRouter({
         data: { isProgramActive: false, },
       })
 
+      await ctx.prisma.block.updateMany({
+        where: {
+          userIdOfProgram: input.userId,
+          isProgramActive: true,
+        },
+        data: { isProgramActive: false, },
+      })
+
       return res
     }),
   updateExercise: privateProcedure
