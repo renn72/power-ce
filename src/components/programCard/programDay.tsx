@@ -22,8 +22,8 @@ const ProgramDay = ({
   day: Day
   dayIdx: number
   weekIdx: number
-  openDay: number | null
-  openWeek: number | null
+  openDay: number
+  openWeek: number
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedEngery, setSelectedEngery] = useState(day.energyRating || 'A')
@@ -124,12 +124,13 @@ const ProgramDay = ({
     })
   }
 
+  if (dayIdx == 1 && weekIdx == 0) console.log('theday', dayIdx === openDay)
+  const isDayOpen = dayIdx === openDay && weekIdx === openWeek
+
   return (
     <>
       <div className='flex flex-col gap-4'>
-        <Disclosure
-          defaultOpen={dayIdx === openDay && weekIdx === openWeek}
-        >
+        <Disclosure defaultOpen={isDayOpen}>
           {({ open }) => (
             <div className='flex flex-col md:gap-8'>
               <div className='flex flex-col sm:flex-row md:gap-6'>
@@ -187,7 +188,7 @@ const ProgramDay = ({
                           </div>
                         </div>
                         <div>
-                          <div className='flex items-baseline gap-6 lg:flex-col text-sm'>
+                          <div className='flex items-baseline gap-6 text-sm lg:flex-col'>
                             <div className='flex gap-2 '>
                               <h3>{exercise.sets}</h3>
                               <h3>X</h3>

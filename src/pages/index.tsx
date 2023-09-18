@@ -16,45 +16,25 @@ const Home: NextPage = () => {
 
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: user?.id || '' })
 
-  const { data: userPrograms, isLoading: userProgramsLoading } =
-    api.userPrograms.getAllUser.useQuery()
+  const { data: programs, isLoading: programsLoading } =
+    api.blocks.getAllUserPrograms.useQuery({ userId: user?.id || '' })
 
-  console.log('userPrograms', userPrograms)
 
-  const { isLoading: programsLoading } =
-    api.blocks.getAllUserPrograms.useQuery()
-
-  if (userProgramsLoading || programsLoading) return <LoadingPage />
+  if (programsLoading) return <LoadingPage />
 
   return (
     <>
       <main className='flex h-full flex-col px-2 font-semibold'>
         <div className='flex w-full max-w-screen-2xl  flex-col py-2 sm:px-6 md:mx-auto lg:px-8'>
           <CountDown userId={user?.id || ''} />
-          <div className='grid'>
-            <div className=''>
-              <h2 className='text-xl font-bold'></h2>
-              {userPrograms &&
-                userPrograms
-                  .filter((userProgram) => userProgram.isProgramActive === true)
-                  .map((userProgram) => (
-                    <div key={userProgram.id}>
-                      <ProgramCard userProgram={userProgram} />
-                    </div>
-                  ))}
+            <div className='flex flex-col gap-4'>
+              {programs &&
+                programs.map((program) => (
+                  <div key={program.id}>
+                    <ProgramCard programId={program.id} />
+                  </div>
+                ))}
             </div>
-            <div className='mt-10'>
-              <h2 className='text-xl font-bold'>Old Programs</h2>
-              {userPrograms &&
-                userPrograms
-                  .filter((userProgram) => !userProgram.isProgramActive)
-                  .map((userProgram) => (
-                    <div key={userProgram.id}>
-                      <ProgramCard userProgram={userProgram} />
-                    </div>
-                  ))}
-            </div>
-          </div>
         </div>
       </main>
     </>

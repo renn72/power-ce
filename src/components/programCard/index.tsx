@@ -1,57 +1,45 @@
 import { useEffect, useState } from 'react'
-import { type UserProgram } from '@prisma/client'
 import { api } from '~/utils/api'
 
 import ProgramDay from './programDay'
 import { useUser } from '@clerk/nextjs'
 
-const ProgramCard = ({ userProgram }: { userProgram: UserProgram }) => {
+const ProgramCard = ({ programId }: { programId: string }) => {
   const { user } = useUser()
-  const { data: programs } = api.blocks.getAllUserPrograms.useQuery({userId: user?.id || ''})
   api.oneRepMax.getUserCoreLifts.useQuery({
     userId: user?.id || '',
   })
+  const { data: programs } = api.blocks.getAllUserPrograms.useQuery({
+    userId: user?.id || '',
+  })
 
-  const program = programs?.find(
-    (program) => program.isProgramActive
-  )
-  console.log('program', program)
+  const program = programs?.find((program) => program.id === programId)
 
-  const [openDay, setOpenDay] = useState<number | null>(null)
-  const [openWeek, setOpenWeek] = useState<number | null>(null)
-
-  useEffect(() => {
-    let _day = -1 
-    let _week = -1
-    program?.week.forEach((week, weekIdx) => {
-      week.day.forEach((day, dayIdx) => {
-          if (!day.isComplete && _day === -1 && _week === -1) {
-            _day = dayIdx
-            _week = weekIdx
-          }
-      })
+  const defaultOpen = program?.week.reduce((acc, week, weekIdx) => {
+    week.day.forEach((day, dayIdx) => {
+      if ((day.isComplete ? false : true) && acc.day === -1 && acc.week === -1) {
+        acc.day = dayIdx
+        acc.week = weekIdx
+      }
     })
 
-    if (_day !== -1 && _week !== -1) {
-      setOpenDay(_day)
-      setOpenWeek(_week)
-    }
-  }, [program])
+    return acc
+  }, { day: -1, week: -1 })
 
-  console.log('openDay', openDay)
-  console.log('openWeek', openWeek)
+  console.log('defaultOpen', defaultOpen)
 
-  if (!program) return <div>Program not found</div>
+  if (program?.isProgramActive) {
+    console.log('program', program)
+  }
+
   return (
     <>
-      {userProgram.isProgramActive ? (
+      {program?.isProgramActive ? (
         <>
-          <div className='flex flex-col gap-4 text-base sm:text-lg md:px-2'>
+          <div className='flex flex-col gap-6 text-base sm:text-lg md:px-2'>
             {program.week.map((week, weekIndex) => (
               <div key={week.id}>
-                <h1 className='text-2xl font-bold'>
-                  Week {weekIndex + 1}
-                </h1>
+                <h1 className='text-2xl font-bold'>Week {weekIndex + 1}</h1>
                 <div className='grid grid-cols-1 md:grid-cols-7 md:px-2'>
                   {week.day.map((day, dayIndex) => (
                     <div
@@ -72,8 +60,8 @@ const ProgramCard = ({ userProgram }: { userProgram: UserProgram }) => {
                           day={day}
                           dayIdx={dayIndex}
                           weekIdx={weekIndex}
-                          openDay={openDay}
-                          openWeek={openWeek}
+                          openDay={defaultOpen?.day}
+                          openWeek={defaultOpen?.week}
                         />
                       )}
                     </div>
@@ -84,10 +72,7 @@ const ProgramCard = ({ userProgram }: { userProgram: UserProgram }) => {
           </div>
         </>
       ) : (
-        <div>
-          Program: {userProgram.isProgramActive ? 'Active, ' : 'Inactive, '}
-          Name: {program?.name}
-        </div>
+        <div>Name: {program?.name}</div>
       )}
     </>
   )
