@@ -130,8 +130,8 @@ const Users: NextPage = () => {
     api.userPrograms.create.useMutation({
       onSuccess: () => {
         toast.success('Saved')
-        void ctx.blocks.getAll.invalidate()
-        void ctx.blocks.getAllPrograms.invalidate()
+        void ctx.blocks.getUserActiveProgram.invalidate()
+        void ctx.blocks.getAllUserProgramsTitles.invalidate()
       },
       onError: (e) => {
         console.log('error', e)
@@ -143,8 +143,8 @@ const Users: NextPage = () => {
       onSuccess: () => {
         console.log('success')
         toast.success('Removed')
-        void ctx.blocks.getAll.invalidate()
-        void ctx.blocks.getAllPrograms.invalidate()
+        void ctx.blocks.getUserActiveProgram.invalidate()
+        void ctx.blocks.getAllUserProgramsTitles.invalidate()
       },
       onError: (e) => {
         console.log('error', e)
