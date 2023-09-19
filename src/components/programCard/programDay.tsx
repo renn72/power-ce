@@ -139,6 +139,7 @@ const ProgramDay = ({
   }
 
   const isDayOpen = dayIdx === openDay && weekIdx === openWeek
+  console.log('day', dayIdx, openDay, weekIdx, openWeek, isDayOpen)
 
   return (
     <>

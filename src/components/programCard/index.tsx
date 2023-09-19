@@ -67,8 +67,8 @@ const ProgramCard = ({ programId }: { programId: string }) => {
                           dayIdx={dayIndex}
                           weekIdx={weekIndex}
                           programId={programId}
-                          openDay={defaultOpen?.day || -1}
-                          openWeek={defaultOpen?.week || -1}
+                          openDay={defaultOpen.day}
+                          openWeek={defaultOpen.week}
                         />
                       )}
                     </div>
