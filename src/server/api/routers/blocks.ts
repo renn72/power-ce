@@ -111,6 +111,27 @@ export const blocksRouter = createTRPCRouter({
       })
       return blocks
     }),
+  getUserActiveProgramFull: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const userId = input.userId
+      const blocks = await ctx.prisma.block.findMany({
+        orderBy: { createdAt: 'desc' },
+        where: {
+          userIdOfProgram: userId,
+          isProgramActive: true,
+          isDeleted: false,
+        },
+        include: {
+          week: {
+            include: {
+              day: { include: { exercise: { include: { set: true } } } },
+            },
+          },
+        },
+      })
+      return blocks
+    }),
   getAllUserPrograms: publicProcedure
     .input(z.object({ userId: z.string().optional() }).optional())
     .query(async ({ ctx, input }) => {

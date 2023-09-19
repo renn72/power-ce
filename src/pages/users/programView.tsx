@@ -26,6 +26,7 @@ import { NumericFormat } from 'react-number-format'
 import { Label } from '@/components/ui/label'
 
 import { type Exercise } from '@prisma/client'
+import { LoadingPage } from '~/components/loading'
 
 const plans = [
   {
@@ -399,7 +400,8 @@ const ExerciseDialog = ({
 }
 
 const ProgramView = ({ userId }: { userId: string }) => {
-  const { data: programsData } = api.blocks.getAllPrograms.useQuery()
+  const { data: programsData, isLoading: programLoading } =
+    api.blocks.getUserActiveProgramFull.useQuery({ userId: userId })
   const { data: userCoreOneRM } = api.oneRepMax.getUserCoreLifts.useQuery({
     userId: userId,
   })
@@ -407,9 +409,9 @@ const ProgramView = ({ userId }: { userId: string }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [exerciseId, setExerciseId] = useState('')
 
-  const program = programsData?.find(
-    (program) => program.userIdOfProgram === userId && program.isProgramActive,
-  )
+  if (!programsData || !programsData.length || programsData.length < 1) return null
+
+  const program = programsData[0]
 
   if (!program) return null
 
@@ -444,7 +446,7 @@ const ProgramView = ({ userId }: { userId: string }) => {
     setIsOpen(true)
   }
 
-  console.log('active program', program)
+  if (programLoading) return <LoadingPage />
 
   return (
     <>

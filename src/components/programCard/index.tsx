@@ -26,8 +26,6 @@ const ProgramCard = ({ programId }: { programId: string }) => {
     return acc
   }, { day: -1, week: -1 })
 
-  console.log('defaultOpen', defaultOpen)
-
   if (program?.isProgramActive) {
     console.log('program', program)
   }

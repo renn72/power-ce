@@ -35,8 +35,6 @@ const TemplateSelect = ({
     api.blocks.getAllBlockTitles.useQuery()
   const { data: currentProgram } = api.blocks.getUserActiveProgram.useQuery({userId: userId})
 
-  console.log('currentProgram', currentProgram)
-
   const onSetLocalTemplate = (template: string) => {
     setTemplate(template)
     onSelectTemplate(template, userId)
