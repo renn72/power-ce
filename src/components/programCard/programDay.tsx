@@ -1,5 +1,5 @@
 import { useState, Fragment } from 'react'
-import { type Day } from '~/store/types'
+import { Prisma } from '@prisma/client'
 import { api } from '~/utils/api'
 
 import { Dialog, Transition, RadioGroup, Disclosure } from '@headlessui/react'
@@ -12,18 +12,33 @@ import DayModal from './dayModal'
 
 import getWeight from '~/utils/getWeight'
 
+const dayWithExercise = Prisma.validator<Prisma.DayArgs>()({
+  include: {
+    exercise: {
+      include: {
+        set: true,
+      },
+    },
+  },
+})
+
+type Day = Prisma.DayGetPayload<typeof dayWithExercise>
+
 const ProgramDay = ({
   day,
   dayIdx,
   weekIdx,
   openDay,
   openWeek,
+  programId,
+
 }: {
   day: Day
   dayIdx: number
   weekIdx: number
   openDay: number
   openWeek: number
+  programId: string
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedEngery, setSelectedEngery] = useState(day.energyRating || 'A')
@@ -63,6 +78,7 @@ const ProgramDay = ({
     if (index) {
       const rm = day?.exercise[index - 1]?.set.filter((s) => s.isComplete)
       const rmWeight = rm?.map((s) => s.estiamtedOnerm)
+      if (!rmWeight) return ''
       const w = rmWeight[rmWeight.length - 1]
 
       if (w) return getWeight(+w, onerm * energyAdjust)
@@ -99,7 +115,7 @@ const ProgramDay = ({
     setIsOpen(false)
   }
 
-  const openModal = (id: string) => {
+  const openModal = () => {
     setIsOpen(true)
   }
 
@@ -107,16 +123,14 @@ const ProgramDay = ({
 
   const { mutate: updateDayEnergy } = api.programs.updateDayEnergy.useMutation({
     onSuccess: () => {
-      console.log('success')
-      void ctx.blocks.getAllUserPrograms.invalidate()
+      void ctx.blocks.get.invalidate()
     },
     onError: (e) => {
-      console.log('error', e)
+      console.log(e)
     },
   })
 
   const onSetEnergy = (e: string) => {
-    console.log(e)
     setSelectedEngery(e)
     updateDayEnergy({
       id: day.id,
@@ -124,7 +138,6 @@ const ProgramDay = ({
     })
   }
 
-  if (dayIdx == 1 && weekIdx == 0) console.log('theday', dayIdx === openDay)
   const isDayOpen = dayIdx === openDay && weekIdx === openWeek
 
   return (
@@ -167,7 +180,7 @@ const ProgramDay = ({
               >
                 <Disclosure.Panel className=''>
                   <div
-                    onClick={() => openModal(day.id)}
+                    onClick={() => openModal()}
                     className='flex cursor-pointer flex-col divide-y divide-dashed divide-gray-600 hover:bg-gray-900'
                   >
                     {day.exercise.map((exercise) => (
@@ -202,9 +215,9 @@ const ProgramDay = ({
                                 <div className=''>
                                   {exercise.estimatedOnermIndex ? (
                                     <div>
-                                      {+day?.exercise[
+                                      {Number(day?.exercise[
                                         exercise?.estimatedOnermIndex - 1
-                                      ]?.set[0]?.weight > 0 && (
+                                      ]?.set[0]?.weight) > 0 ? (
                                         <div className='flex'>
                                           {exercise.onerm && (
                                             <h4>
@@ -225,7 +238,7 @@ const ProgramDay = ({
                                           )}
                                           <h4>kg</h4>
                                         </div>
-                                      )}
+                                      ) : null}
                                     </div>
                                   ) : null}
                                 </div>
@@ -234,9 +247,9 @@ const ProgramDay = ({
                                 <div className=''>
                                   {exercise.estimatedOnermIndex ? (
                                     <div>
-                                      {+day?.exercise[
+                                      {Number(day?.exercise[
                                         exercise?.estimatedOnermIndex - 1
-                                      ]?.set[0]?.weight > 0 && (
+                                      ]?.set[0]?.weight) > 0 && (
                                         <div className='flex'>
                                           {exercise.onerm && (
                                             <h4>
@@ -414,7 +427,7 @@ const ProgramDay = ({
                               }
                                   relative flex h-8 w-8 cursor-pointer rounded-lg shadow-md focus:outline-none`}
                             >
-                              {({ active, checked }) => (
+                              {({ checked }) => (
                                 <>
                                   <div className='flex w-full items-center justify-center'>
                                     <div className='flex items-center'>
@@ -442,6 +455,7 @@ const ProgramDay = ({
                   </Dialog.Title>
                   <div className='mt-2 flex justify-center'>
                     <DayModal
+                      programId={programId}
                       day={day}
                       selectedEngery={selectedEngery}
                     />

@@ -9,6 +9,7 @@ import { liftRouter, } from './routers/lift'
 import { primaryLiftsRouter, } from './routers/primaryLifts'
 import { compLiftsRouter, } from './routers/compLifts'
 import { compDateRouter, } from './routers/compDate'
+import { daysRouter } from './routers/days'
 
 /**
  * This is the primary router for your server.
@@ -26,6 +27,7 @@ export const appRouter = createTRPCRouter({
   primaryLifts: primaryLiftsRouter,
   compLift: compLiftsRouter,
   compDate: compDateRouter,
+  days: daysRouter,
 })
 
 // export type definition of API

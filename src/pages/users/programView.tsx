@@ -28,6 +28,16 @@ import { Label } from '@/components/ui/label'
 import { type Exercise } from '@prisma/client'
 import { LoadingPage } from '~/components/loading'
 
+import { Prisma } from '@prisma/client'
+
+const exerciseWithSet = Prisma.validator<Prisma.ExerciseArgs>()({
+  include: {
+    set: true,
+  },
+})
+
+type ExerciseWithSet = Prisma.ExerciseGetPayload<typeof exerciseWithSet>
+
 const plans = [
   {
     name: '1rm%',
@@ -46,18 +56,23 @@ const plans = [
 const ExerciseDialog = ({
   exerciseId,
   closeModal,
+  userId,
 }: {
   exerciseId: string
   closeModal: () => void
+  userId: string
 }) => {
+
   const ctx = api.useContext()
-  const { data: programsData } = api.blocks.getAllPrograms.useQuery()
+  const { data: programData, } =
+    api.blocks.getUserActiveProgramFull.useQuery({ userId: userId })
+
   const { mutate: updateExercise } =
     api.userPrograms.updateExercise.useMutation({
       onSuccess: () => {
         console.log('success')
         toast.success('Saved')
-        void ctx.blocks.getAllPrograms.invalidate()
+        void ctx.blocks.getUserActiveProgramFull.invalidate()
         closeModal()
       },
       onError: (e) => {
@@ -66,15 +81,25 @@ const ExerciseDialog = ({
       },
     })
 
-  const exercise: Exercise = programsData?.reduce((acc, program) => {
-    return program.week.reduce((acc, week) => {
-      return week.day.reduce((acc, day) => {
-        return (
-          day.exercise.find((exercise) => exercise.id === exerciseId) || acc
-        )
-      }, acc)
-    }, acc)
-  }, null)
+  console.log('id', exerciseId)
+
+  const exercise: ExerciseWithSet = programData?.find((program) =>
+    program.week.find((week) =>
+      week.day.find((day) =>
+        day.exercise.find((exercise) => exercise.id === exerciseId),
+      ),
+    ),
+  )?.week
+    .find((week) =>
+      week.day.find((day) =>
+        day.exercise.find((exercise) => exercise.id === exerciseId),
+      ),
+    )
+    ?.day.find((day) =>
+      day.exercise.find((exercise) => exercise.id === exerciseId),
+    )
+    ?.exercise.find((exercise) => exercise.id === exerciseId)
+    
   console.log('exercise', exercise)
 
   const formMethods = useForm()
@@ -104,7 +129,6 @@ const ExerciseDialog = ({
     updateExercise({ exercise: data })
   }
   const onError = (errors) => {
-    toast.error(JSON.stringify(errors, null, 2))
     console.log('errors', errors)
   }
 
@@ -773,6 +797,7 @@ const ProgramView = ({ userId }: { userId: string }) => {
                   <ExerciseDialog
                     exerciseId={exerciseId}
                     closeModal={closeModal}
+                    userId={userId}
                   />
                 </Dialog.Panel>
               </Transition.Child>

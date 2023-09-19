@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { api } from '~/utils/api'
 
 import ProgramDay from './programDay'
@@ -6,6 +5,7 @@ import { useUser } from '@clerk/nextjs'
 import { LoadingSpinner } from '../loading'
 
 const ProgramCard = ({ programId }: { programId: string }) => {
+
   const { user } = useUser()
   api.oneRepMax.getUserCoreLifts.useQuery({
     userId: user?.id || '',
@@ -14,16 +14,23 @@ const ProgramCard = ({ programId }: { programId: string }) => {
     id: programId,
   })
 
-  const defaultOpen = program?.week.reduce((acc, week, weekIdx) => {
-    week.day.forEach((day, dayIdx) => {
-      if ((day.isComplete ? false : true) && acc.day === -1 && acc.week === -1) {
-        acc.day = dayIdx
-        acc.week = weekIdx
-      }
-    })
+  const defaultOpen = program?.week.reduce(
+    (acc, week, weekIdx) => {
+      week.day.forEach((day, dayIdx) => {
+        if (
+          (day.isComplete ? false : true) &&
+          acc.day === -1 &&
+          acc.week === -1
+        ) {
+          acc.day = dayIdx
+          acc.week = weekIdx
+        }
+      })
 
-    return acc
-  }, { day: -1, week: -1 })
+      return acc
+    },
+    { day: -1, week: -1 },
+  )
 
   if (program?.isProgramActive) {
     console.log('program', program)
@@ -59,8 +66,9 @@ const ProgramCard = ({ programId }: { programId: string }) => {
                           day={day}
                           dayIdx={dayIndex}
                           weekIdx={weekIndex}
-                          openDay={defaultOpen?.day}
-                          openWeek={defaultOpen?.week}
+                          programId={programId}
+                          openDay={defaultOpen?.day || -1}
+                          openWeek={defaultOpen?.week || -1}
                         />
                       )}
                     </div>

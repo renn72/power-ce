@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react'
 import { type Set } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import {
-  type Day,
   type Exercise as StoreExercise,
   type Set as SetStore,
 } from '~/store/types'
 import { api } from '~/utils/api'
-
-// import Decimal from 'decimal.js'
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { Transition, RadioGroup, Disclosure } from '@headlessui/react'
@@ -24,6 +22,18 @@ import { useUser } from '@clerk/nextjs'
 import getWeight from '~/utils/getWeight'
 
 import { NumericFormat } from 'react-number-format'
+
+const dayWithExercise = Prisma.validator<Prisma.DayArgs>()({
+  include: {
+    exercise: {
+      include: {
+        set: true,
+      },
+    },
+  },
+})
+
+type Day = Prisma.DayGetPayload<typeof dayWithExercise>
 
 const SetsModal = ({
   exercise,
@@ -111,10 +121,12 @@ const ExerciseModal = ({
   exercise,
   selectedEnergy,
   day,
+  programId,
 }: {
   exercise: StoreExercise
   selectedEnergy: string
   day: Day
+  programId: string
 }) => {
   const [rpe, setRpe] = useState('8')
 
@@ -132,7 +144,7 @@ const ExerciseModal = ({
     let energyAdjust = 1
     if (+onerm < 100) {
       if (selectedEnergy === 'B') energyAdjust = 0.95
-      if (selectedEnergy === 'C') energyAdjust = 0.90
+      if (selectedEnergy === 'C') energyAdjust = 0.9
       if (selectedEnergy === 'D') energyAdjust = 0.85
     }
     if (+onerm >= 100 && +onerm < 200) {
@@ -185,8 +197,6 @@ const ExerciseModal = ({
     return `${((+weight * percent) / 100) * energyAdjust}`
   }
 
-  console.log('exercise', exercise)
-
   const [weights, setWeights] = useState<number | null>(() => {
     if (exercise.weightType == 'onerm' && exercise?.onerm) {
       const res = checkWeight(
@@ -212,46 +222,41 @@ const ExerciseModal = ({
     api.programs.completeExercise.useMutation({
       onMutate: async (newExercise) => {
         console.log('id', newExercise)
-        await utils.blocks.getAllUserPrograms.cancel()
-        const previousPrograms = utils.blocks.getAllUserPrograms.getData()
-        utils.blocks.getAllUserPrograms.setData(undefined, (prev) => {
-          console.log('prev', prev)
-          return prev
-        })
+        await utils.blocks.get.cancel({ id: programId })
+        const previousProgram = utils.blocks.get.getData({ id: programId })
 
-        utils.blocks.getAllUserPrograms.setData(undefined, (prev) =>
-          prev?.map((program) => {
-            return {
-              ...program,
-              week: program.week.map((week) => {
-                return {
-                  ...week,
-                  day: week.day.map((day) => {
-                    return {
-                      ...day,
-                      exercise: day.exercise.map((exercise) => {
-                        if (exercise.id === newExercise.id) {
-                          return {
-                            ...exercise,
-                            isComplete: newExercise.isComplete,
-                          }
+        utils.blocks.get.setData(
+          { id: programId },
+          {
+            ...previousProgram,
+            week: previousProgram?.week.map((week) => {
+              return {
+                ...week,
+                day: week.day.map((day) => {
+                  return {
+                    ...day,
+                    exercise: day.exercise.map((exercise) => {
+                      if (exercise.id === newExercise.id) {
+                        return {
+                          ...exercise,
+                          isComplete: newExercise.isComplete,
                         }
-                        return exercise
-                      }),
-                    }
-                  }),
-                }
-              }),
-            }
-          }),
+                      }
+                      return exercise
+                    }),
+                  }
+                }),
+              }
+            }),
+          },
         )
-        return { previousPrograms }
+        return { previousProgram }
       },
       onError: (err, newExercise, context) => {
         console.log('err', err)
-        utils.blocks.getAllUserPrograms.setData(
-          undefined,
-          context?.previousPrograms,
+        utils.blocks.get.setData(
+          { id: programId },
+          context?.previousProgram,
         )
       },
     })
@@ -259,102 +264,86 @@ const ExerciseModal = ({
   const { mutate: updateDayComplete } = api.programs.completeDay.useMutation({
     onMutate: async (newDay) => {
       console.log('id', newDay)
-      await utils.blocks.getAllUserPrograms.cancel()
-      const previousPrograms = utils.blocks.getAllUserPrograms.getData()
-      utils.blocks.getAllUserPrograms.setData(undefined, (prev) => {
-        console.log('prev', prev)
-        return prev
-      })
+      await utils.blocks.get.cancel({ id: programId })
+      const previousProgram = utils.blocks.get.getData({ id: programId })
 
-      utils.blocks.getAllUserPrograms.setData(undefined, (prev) =>
-        prev?.map((program) => {
-          return {
-            ...program,
-            week: program.week.map((week) => {
-              return {
-                ...week,
-                day: week.day.map((day) => {
-                  if (day.id === newDay.id) {
-                    return {
-                      ...day,
-                      isComplete: newDay.isComplete,
-                    }
+      utils.blocks.get.setData(
+        { id: programId },
+        {
+          ...previousProgram,
+          week: previousProgram?.week.map((week) => {
+            return {
+              ...week,
+              day: week.day.map((day) => {
+                if (day.id === newDay.id) {
+                  return {
+                    ...day,
+                    isComplete: newDay.isComplete,
                   }
-                  return day
-                }),
-              }
-            }),
-          }
-        }),
+                }
+                return day
+              }),
+            }
+          }),
+        },
       )
-      return { previousPrograms }
+      return { previousProgram }
     },
     onError: (err, newExercise, context) => {
       console.log('err', err)
-      utils.blocks.getAllUserPrograms.setData(
-        undefined,
-        context?.previousPrograms,
-      )
+      utils.blocks.get.setData({ id: programId }, context?.previousProgram)
     },
   })
 
   const { mutate: updateSet } = api.programs.updateSet.useMutation({
     onMutate: async (newSet) => {
       console.log('id', newSet)
-      await utils.blocks.getAllUserPrograms.cancel()
-      const previousPrograms = utils.blocks.getAllUserPrograms.getData()
-      utils.blocks.getAllUserPrograms.setData(undefined, (prev) => {
-        console.log('prev', prev)
-        return prev
-      })
+      await utils.blocks.get.cancel({ id: programId })
+      const previousProgram = utils.blocks.get.getData({ id: programId })
 
-      utils.blocks.getAllUserPrograms.setData(undefined, (prev) =>
-        prev?.map((program) => {
-          return {
-            ...program,
-            week: program.week.map((week) => {
-              return {
-                ...week,
-                day: week.day.map((day) => {
-                  return {
-                    ...day,
-                    exercise: day.exercise.map((exercise) => {
-                      return {
-                        ...exercise,
-                        set: exercise.set.map((set) => {
-                          if (set.id === newSet.id) {
-                            return {
-                              ...set,
-                              isComplete: newSet.isComplete,
-                              rpe: newSet.rpe,
-                              weight: newSet.weight,
-                              estiamtedOnerm: newSet.estiamtedOnerm,
-                              rep: newSet.rep,
-                            }
+      utils.blocks.get.setData(
+        { id: programId },
+        {
+          ...previousProgram,
+          week: previousProgram.week.map((week) => {
+            return {
+              ...week,
+              day: week.day.map((day) => {
+                return {
+                  ...day,
+                  exercise: day.exercise.map((exercise) => {
+                    return {
+                      ...exercise,
+                      set: exercise.set.map((set) => {
+                        if (set.id === newSet.id) {
+                          return {
+                            ...set,
+                            isComplete: newSet.isComplete,
+                            rpe: newSet.rpe,
+                            weight: newSet.weight,
+                            estiamtedOnerm: newSet.estiamtedOnerm,
+                            rep: newSet.rep,
                           }
-                          return set
-                        }),
-                      }
-                    }),
-                  }
-                }),
-              }
-            }),
-          }
-        }),
+                        }
+                        return set
+                      }),
+                    }
+                  }),
+                }
+              }),
+            }
+          }),
+        },
       )
 
-      return { previousPrograms }
+      return { previousProgram }
     },
     onError: (err, newSet, context) => {
       console.log(err)
-      utils.blocks.getAllUserPrograms.setData(
-        undefined,
-        context?.previousPrograms,
-      )
+      utils.blocks.get.setData({ id: programId }, context?.previousProgram)
     },
     onSettled: () => {
-      void utils.blocks.getAllUserPrograms.invalidate()
+      void utils.blocks.get.invalidate({ id: programId })
     },
   })
 
@@ -415,7 +404,7 @@ const ExerciseModal = ({
       id: set.id,
       isComplete: set.isComplete,
       rpe: +rpe,
-      weight: +weights,
+      weight: Number(weights),
       estiamtedOnerm: !set.isComplete
         ? +(+weights / (e1rm[exercise?.reps - 1] / 100)).toFixed(0)
         : 0, //e1rm,
@@ -621,7 +610,8 @@ const ExerciseModal = ({
                           <div
                             className='h-8 w-8 cursor-pointer rounded-full text-center'
                             onClick={() => {
-                              if (weights && weights > 0) setWeights(+weights - 2.5)
+                              if (weights && weights > 0)
+                                setWeights(+weights - 2.5)
                             }}
                           >
                             -
@@ -763,9 +753,11 @@ const ExerciseModal = ({
 const DayModal = ({
   day,
   selectedEngery,
+  programId,
 }: {
   day: Day
   selectedEngery: string
+  programId: string
 }) => {
   return (
     <>
@@ -779,6 +771,7 @@ const DayModal = ({
               className=''
             >
               <ExerciseModal
+                programId={programId}
                 exercise={exercise}
                 selectedEnergy={selectedEngery}
                 day={day}

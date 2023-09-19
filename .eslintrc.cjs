@@ -38,13 +38,6 @@ const config = {
     //   'warn',
     //   'always',
     // ],
-    'array-element-newline': [
-      'warn',
-      {
-        multiline: true,
-        minItems: 4,
-      },
-    ],
     'arrow-parens': ['warn', 'always'],
     'arrow-spacing': [
       'warn',
