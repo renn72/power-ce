@@ -5,7 +5,6 @@ import { useUser } from '@clerk/nextjs'
 import { LoadingSpinner } from '../loading'
 
 const ProgramCard = ({ programId }: { programId: string }) => {
-
   const { user } = useUser()
   api.oneRepMax.getUserCoreLifts.useQuery({
     userId: user?.id || '',
@@ -14,7 +13,9 @@ const ProgramCard = ({ programId }: { programId: string }) => {
     id: programId,
   })
 
-  const defaultOpen = program?.week.reduce(
+  if (!program) return null
+
+  const defaultOpen: { day: number; week: number } = program.week.reduce(
     (acc, week, weekIdx) => {
       week.day.forEach((day, dayIdx) => {
         if (
@@ -31,10 +32,6 @@ const ProgramCard = ({ programId }: { programId: string }) => {
     },
     { day: -1, week: -1 },
   )
-
-  if (program?.isProgramActive) {
-    console.log('program', program)
-  }
 
   if (programLoading) return <LoadingSpinner />
 
@@ -79,7 +76,7 @@ const ProgramCard = ({ programId }: { programId: string }) => {
           </div>
         </>
       ) : (
-        <div>Name: {program?.name}</div>
+        <div>{program.name}</div>
       )}
     </>
   )
