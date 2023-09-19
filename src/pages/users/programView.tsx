@@ -399,7 +399,6 @@ const ExerciseDialog = ({
 }
 
 const ProgramView = ({ userId }: { userId: string }) => {
-  api.blocks.getAll.useQuery()
   const { data: programsData } = api.blocks.getAllPrograms.useQuery()
   const { data: userCoreOneRM } = api.oneRepMax.getUserCoreLifts.useQuery({
     userId: userId,
