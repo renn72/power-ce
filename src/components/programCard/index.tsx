@@ -3,17 +3,16 @@ import { api } from '~/utils/api'
 
 import ProgramDay from './programDay'
 import { useUser } from '@clerk/nextjs'
+import { LoadingSpinner } from '../loading'
 
 const ProgramCard = ({ programId }: { programId: string }) => {
   const { user } = useUser()
   api.oneRepMax.getUserCoreLifts.useQuery({
     userId: user?.id || '',
   })
-  const { data: programs } = api.blocks.getAllUserPrograms.useQuery({
-    userId: user?.id || '',
+  const { data: program, isLoading: programLoading } = api.blocks.get.useQuery({
+    id: programId,
   })
-
-  const program = programs?.find((program) => program.id === programId)
 
   const defaultOpen = program?.week.reduce((acc, week, weekIdx) => {
     week.day.forEach((day, dayIdx) => {
@@ -29,6 +28,8 @@ const ProgramCard = ({ programId }: { programId: string }) => {
   if (program?.isProgramActive) {
     console.log('program', program)
   }
+
+  if (programLoading) return <LoadingSpinner />
 
   return (
     <>
