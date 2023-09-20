@@ -33,6 +33,7 @@ export const programsRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         isComplete: z.boolean(),
+        notes: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -43,7 +44,7 @@ export const programsRouter = createTRPCRouter({
 
       const programExercise = await ctx.prisma.exercise.update({
         where: { id: input.id },
-        data: { isComplete: input.isComplete, flield1: Date.now().toString() },
+        data: { isComplete: input.isComplete, flield1: Date.now().toString(), flield2: input.notes },
       })
       return programExercise
     }),

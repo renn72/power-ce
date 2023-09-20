@@ -62,10 +62,10 @@ const ExerciseDialog = ({
   closeModal: () => void
   userId: string
 }) => {
-
   const ctx = api.useContext()
-  const { data: programData, } =
-    api.blocks.getUserActiveProgramFull.useQuery({ userId: userId })
+  const { data: programData } = api.blocks.getUserActiveProgramFull.useQuery({
+    userId: userId,
+  })
 
   const { mutate: updateExercise } =
     api.userPrograms.updateExercise.useMutation({
@@ -83,14 +83,15 @@ const ExerciseDialog = ({
 
   console.log('id', exerciseId)
 
-  const exercise: ExerciseWithSet = programData?.find((program) =>
-    program.week.find((week) =>
-      week.day.find((day) =>
-        day.exercise.find((exercise) => exercise.id === exerciseId),
+  const exercise: ExerciseWithSet = programData
+    ?.find((program) =>
+      program.week.find((week) =>
+        week.day.find((day) =>
+          day.exercise.find((exercise) => exercise.id === exerciseId),
+        ),
       ),
-    ),
-  )?.week
-    .find((week) =>
+    )
+    ?.week.find((week) =>
       week.day.find((day) =>
         day.exercise.find((exercise) => exercise.id === exerciseId),
       ),
@@ -99,7 +100,7 @@ const ExerciseDialog = ({
       day.exercise.find((exercise) => exercise.id === exerciseId),
     )
     ?.exercise.find((exercise) => exercise.id === exerciseId)
-    
+
   console.log('exercise', exercise)
 
   const formMethods = useForm()
@@ -433,7 +434,8 @@ const ProgramView = ({ userId }: { userId: string }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [exerciseId, setExerciseId] = useState('')
 
-  if (!programsData || !programsData.length || programsData.length < 1) return null
+  if (!programsData || !programsData.length || programsData.length < 1)
+    return null
 
   const program = programsData[0]
 
@@ -468,6 +470,19 @@ const ProgramView = ({ userId }: { userId: string }) => {
   const openModal = (id: string) => {
     setExerciseId(id)
     setIsOpen(true)
+  }
+
+  const getDate = (date: string | null) => {
+    if (!date) return ''
+    console.log('date', date)
+    const d = new Date(+date)
+    const options = {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }
+    return d.toLocaleDateString('en-AU', options)
   }
 
   if (programLoading) return <LoadingPage />
@@ -637,6 +652,17 @@ const ProgramView = ({ userId }: { userId: string }) => {
                                 <h3 className='text-xxs text-gray-600'>
                                   {exercise.weightType}
                                 </h3>
+                                {exercise.flield2 && exercise.flield2 !== '' && (
+                                  <h4>
+                                    <div>Notes:</div>
+                                    <div className='mb-4 text-sm'>
+                                      {exercise.flield2}
+                                    </div>
+                                  </h4>
+                                )}
+                                <h4 className='text-xs font-light text-gray-400'>
+                                  {getDate(exercise.flield1)}
+                                </h4>
                               </div>
                             ) : (
                               <div
@@ -732,7 +758,7 @@ const ProgramView = ({ userId }: { userId: string }) => {
                                     </div>
                                   )}
                                 </div>
-                                <div>
+                                <div className=' overflow-hidden'>
                                   {exercise.htmlLink && (
                                     <a
                                       href={exercise.htmlLink}

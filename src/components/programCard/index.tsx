@@ -4,7 +4,7 @@ import ProgramDay from './programDay'
 import { useUser } from '@clerk/nextjs'
 import { LoadingSpinner } from '../loading'
 
-import { Dialog, Transition, RadioGroup, Disclosure } from '@headlessui/react'
+import { Transition, Disclosure } from '@headlessui/react'
 import { ChevronUpIcon } from '@heroicons/react/20/solid'
 
 const ProgramCard = ({
@@ -101,7 +101,12 @@ const ProgramCard = ({
                     <div className='flex gap-4'>
                       <h2>{program.name}</h2>
                       <h3>{program.createdAt.toLocaleDateString()}</h3>
-                      <h3>{allUsers.find(u => u.id === program.userIdOfProgram)?.firstName}</h3>
+                      <h3>
+                        {
+                          allUsers?.find((u) => u.id === program.userIdOfProgram)
+                            ?.firstName
+                        }
+                      </h3>
                       <h3>{program.isDeleted === true ? 'deleted' : ''}</h3>
                     </div>
                     <ChevronUpIcon
@@ -135,10 +140,16 @@ const ProgramCard = ({
                               {day.isRestDay ? (
                                 <div>Rest Day</div>
                               ) : (
-                                <div >
-                                  {day.isComplete === true
-                                    ? (<div className='font-bold text-green-500'>Complete</div>)
-                                    : (<div className='font-extralight'>Incomplete</div>)}
+                                <div>
+                                  {day.isComplete === true ? (
+                                    <div className='font-bold text-green-500'>
+                                      Complete
+                                    </div>
+                                  ) : (
+                                    <div className='font-extralight'>
+                                      Incomplete
+                                    </div>
+                                  )}
                                 </div>
                               )}
                             </div>

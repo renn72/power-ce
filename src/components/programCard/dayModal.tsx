@@ -22,6 +22,7 @@ import { useUser } from '@clerk/nextjs'
 import getWeight from '~/utils/getWeight'
 
 import { NumericFormat } from 'react-number-format'
+import { Input } from '@/components/ui/input'
 
 const dayWithExercise = Prisma.validator<Prisma.DayArgs>()({
   include: {
@@ -215,6 +216,7 @@ const ExerciseModal = ({
   })
 
   const [e1rm, setE1rm] = useState<number[]>([0])
+  const [notes, setNotes] = useState<string>('')
 
   const utils = api.useContext()
 
@@ -240,6 +242,7 @@ const ExerciseModal = ({
                         return {
                           ...exercise,
                           isComplete: newExercise.isComplete,
+                          flield2: newExercise.notes,
                         }
                       }
                       return exercise
@@ -254,10 +257,7 @@ const ExerciseModal = ({
       },
       onError: (err, newExercise, context) => {
         console.log('err', err)
-        utils.blocks.get.setData(
-          { id: programId },
-          context?.previousProgram,
-        )
+        utils.blocks.get.setData({ id: programId }, context?.previousProgram)
       },
     })
 
@@ -370,10 +370,18 @@ const ExerciseModal = ({
     }, true)
 
     if (!exercise.isComplete && isDone) {
-      updateExerciseComplete({ id: exercise.id, isComplete: true })
+      updateExerciseComplete({
+        id: exercise.id,
+        isComplete: true,
+        notes: notes,
+      })
     }
     if (exercise.isComplete && !isDone) {
-      updateExerciseComplete({ id: exercise.id, isComplete: false })
+      updateExerciseComplete({
+        id: exercise.id,
+        isComplete: false,
+        notes: notes,
+      })
     }
 
     const isDayDone = day.exercise.reduce((acc, curr) => {
@@ -736,6 +744,12 @@ const ExerciseModal = ({
                           onUpdateRpe={onUpdateRpe}
                           onSetDone={onSetDone}
                           isComplete={true}
+                        />
+                        <Input
+                          value={notes}
+                          onChange={(e) => setNotes(e.target.value)}
+                          placeholder='Notes'
+                          className='w-full'
                         />
                       </div>
                     )}
