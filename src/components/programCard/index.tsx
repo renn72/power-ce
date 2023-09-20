@@ -4,7 +4,7 @@ import ProgramDay from './programDay'
 import { useUser } from '@clerk/nextjs'
 import { LoadingSpinner } from '../loading'
 
-const ProgramCard = ({ programId }: { programId: string }) => {
+const ProgramCard = ({ programId, isAdmin = false }: { programId: string, isAdmin: boolean }) => {
   const { user } = useUser()
   api.oneRepMax.getUserCoreLifts.useQuery({
     userId: user?.id || '',

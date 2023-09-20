@@ -62,7 +62,15 @@ export const blocksRouter = createTRPCRouter({
       orderBy: { createdAt: 'desc' },
       where: {
         isProgram: false,
-        isDeleted: false,
+      },
+    })
+    return blocks
+  }),
+  getAllProgramTitles: publicProcedure.query(async ({ ctx }) => {
+    const blocks = await ctx.prisma.block.findMany({
+      orderBy: { createdAt: 'desc' },
+      where: {
+        isProgram: true,
       },
     })
     return blocks

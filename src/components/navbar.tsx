@@ -32,7 +32,10 @@ const nav = [
     name: 'Stats', href: '/stats',  admin: true,
   },
   {
-    name: 'Admin', href: '/test',  superAdmin: true,
+    name: 'DirtyAdmin', href: '/test',  superAdmin: true,
+  },
+  {
+    name: 'Admin', href: '/admin',  superAdmin: true,
   },
   // {
   //   name: 'Lift', href: '/lift',
