@@ -129,6 +129,7 @@ const ExerciseModal = ({
   day: Day
   programId: string
 }) => {
+  console.log('exercise', exercise)
   const [rpe, setRpe] = useState('8')
 
   const { user } = useUser()
@@ -216,7 +217,7 @@ const ExerciseModal = ({
   })
 
   const [e1rm, setE1rm] = useState<number[]>([0])
-  const [notes, setNotes] = useState<string>('')
+  const [notes, setNotes] = useState<string>(() => exercise?.flield2 || '')
 
   const utils = api.useContext()
 
