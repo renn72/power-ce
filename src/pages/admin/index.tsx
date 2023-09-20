@@ -1,4 +1,5 @@
 import React from 'react'
+import ProgramCard from '~/components/programCard'
 
 import { api } from '~/utils/api'
 
@@ -13,6 +14,8 @@ const Admin = () => {
 
   if (allTemplatesLoading || allProgramsLoading) return <div>Loading...</div>
 
+  if (!allTemplates || !allPrograms || !allUsers) return null
+
   return (
     <div>
       <h1>Admin</h1>
@@ -20,15 +23,13 @@ const Admin = () => {
         <h2>Templates</h2>
         <ul>
           {allTemplates?.map((template) => (
-            <li 
+            <li
               className='flex gap-4'
               key={template.id}
             >
               <div>{template.name}</div>
               <div>{template.isDeleted ? 'deleted' : ''}</div>
             </li>
-
-
           ))}
         </ul>
       </div>
@@ -36,14 +37,11 @@ const Admin = () => {
         <h2>Programs</h2>
         <ul>
           {allPrograms?.map((program) => (
-            <li 
+            <li
               className='flex gap-4'
               key={program.id}
             >
-              <div>{program.name}</div>
-              <div>{program.isProgramActive ? 'active' : 'not'}</div>
-              <div>{allUsers.find(u => u.id == program.userIdOfProgram)?.firstName}</div>
-              <div>{program.isDeleted ? 'deleted' : ''}</div>
+              <ProgramCard programId={program.id} isAdmin={true} />
             </li>
           ))}
         </ul>
