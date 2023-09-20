@@ -137,7 +137,7 @@ const ProgramCard = ({
                               ) : (
                                 <div >
                                   {day.isComplete === true
-                                    ? (<div className='font-bold'>Complete</div>)
+                                    ? (<div className='font-bold text-green-500'>Complete</div>)
                                     : (<div className='font-extralight'>Incomplete</div>)}
                                 </div>
                               )}
