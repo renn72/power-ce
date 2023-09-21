@@ -19,8 +19,9 @@ const ProgramView = ({
   isAdmin: boolean
   programId: string
 }) => {
-  const { data: program, isLoading: programLoading } =
-    api.blocks.get.useQuery({ id: programId})
+  const { data: program, isLoading: programLoading } = api.blocks.get.useQuery({
+    id: programId,
+  })
   const { data: userCoreOneRM } = api.oneRepMax.getUserCoreLifts.useQuery({
     userId: userId,
   })
@@ -81,7 +82,15 @@ const ProgramView = ({
           <div key={week.id}>
             <h1 className='mb-4 text-2xl font-bold'>Week {weekIndex + 1}</h1>
             <div
-              className={`grid grid-cols-1 md:px-2 lg:grid-cols-5 2xl:${'grid-cols-' + week.day.reduce((acc, d) => (d.isRestDay === true ? acc + 1 : acc + 2),0,).toString()} `}
+              className={`grid grid-cols-1 md:px-2 lg:grid-cols-5 2xl:${
+                'grid-cols-' +
+                week.day
+                  .reduce(
+                    (acc, d) => (d.isRestDay === true ? acc + 1 : acc + 2),
+                    0,
+                  )
+                  .toString()
+              } `}
             >
               {week.day.map((day, dayIndex) => (
                 <div
@@ -95,7 +104,9 @@ const ProgramView = ({
                       <h2 className='mb-4 text-xl font-bold'>
                         Day {dayIndex + 1}
                       </h2>
-                      <h2 className='text-gray-400 lg:w-44 font-normal'>Rest Day</h2>
+                      <h2 className='font-normal text-gray-400 lg:w-44'>
+                        Rest Day
+                      </h2>
                     </div>
                   ) : (
                     <div className='flex flex-col gap-4'>

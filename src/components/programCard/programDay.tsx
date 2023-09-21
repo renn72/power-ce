@@ -152,20 +152,20 @@ const ProgramDay = ({
                     open
                       ? 'border-b border-yellow-500'
                       : 'border-b border-black hover:border-white'
-                  } flex w-full items-center gap-2 text-lg font-medium`}
+                  } flex w-full items-center gap-8 justify-between text-lg font-medium`}
                 >
-                  <h2 className='text-xl font-bold'>Day {dayIdx + 1}</h2>
+                  <h2 className={`text-xl font-bold ${day.isComplete ? 'text-green-500' : ''}`}>Day {dayIdx + 1}</h2>
                   <ChevronUpIcon
                     className={`${
                       open
                         ? 'rotate-180 transform text-white/80'
                         : 'text-white/30'
-                    } h-8 w-8 text-gray-400`}
+                    } h-10 w-10 text-gray-400`}
                   />
                   {day?.isComplete ? (
-                    <StarIcon className='h-6 w-6 text-yellow-500' />
+                    <StarIcon className='h-8 w-8 text-yellow-500' />
                   ) : (
-                    <StarIconHollow className='h-6 w-6 text-gray-600' />
+                    <div className='w-8 flex justify-end'><StarIconHollow className='h-6 w-6 text-gray-600' /></div>
                   )}
                 </Disclosure.Button>
                 <div className='flex gap-2'></div>

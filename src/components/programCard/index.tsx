@@ -60,13 +60,14 @@ const ProgramCard = ({
                       className='p-1'
                     >
                       {day.isRestDay ? (
-                        <div className='flex h-full items-baseline gap-4'>
+                        <div className='flex h-full w-full items-baseline justify-between'>
                           <h2 className='text-xl font-bold'>
                             Day {dayIndex + 1}
                           </h2>
-                          <h2 className='h-full text-xl font-normal text-gray-500'>
+                          <h2 className='h-full text-lg font-normal text-gray-500'>
                             Rest Day
                           </h2>
+                          <h2 className='w-8'></h2>
                         </div>
                       ) : (
                         <ProgramDay
