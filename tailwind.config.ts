@@ -1,20 +1,37 @@
 /** @type {import('tailwindcss').Config} */
 
 module.exports = {
-  darkMode: ['class',],
+  darkMode: ['class'],
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
+  safelist: [
+    {
+      pattern: /2xl:grid-cols-/,
+    },
+  ],
   theme: {
     container: {
       center: true,
       padding: '2rem',
-      screens: { '2xl': '1600px', '3xl' : '1800px', },
+      screens: { '2xl': '1600px', '3xl': '1800px' },
     },
     extend: {
+      gridTemplateColumns: {
+        '16': 'repeat(16, minmax(0, 1fr))',
+        '15': 'repeat(15, minmax(0, 1fr))',
+        '14': 'repeat(14, minmax(0, 1fr))',
+        '13': 'repeat(13, minmax(0, 1fr))',
+        '12': 'repeat(12, minmax(0, 1fr))',
+        '11': 'repeat(11, minmax(0, 1fr))',
+        '10': 'repeat(10, minmax(0, 1fr))',
+        '9': 'repeat(9, minmax(0, 1fr))',
+        '8': 'repeat(8, minmax(0, 1fr))',
+        '7': 'repeat(7, minmax(0, 1fr))',
+      },
       colors: {
         tyellow: 'hsl(var(--t-yellow))',
         border: 'hsl(var(--border))',
@@ -58,12 +75,12 @@ module.exports = {
       },
       keyframes: {
         'accordion-down': {
-          from: { height: 0, },
-          to: { height: 'var(--radix-accordion-content-height)', },
+          from: { height: 0 },
+          to: { height: 'var(--radix-accordion-content-height)' },
         },
         'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)', },
-          to: { height: 0, },
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: 0 },
         },
       },
       animation: {
@@ -72,5 +89,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate'),],
+  plugins: [require('tailwindcss-animate')],
 }

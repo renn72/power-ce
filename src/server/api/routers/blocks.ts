@@ -109,7 +109,7 @@ export const blocksRouter = createTRPCRouter({
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
       const userId = input.userId
-      const blocks = await ctx.prisma.block.findMany({
+      const block = await ctx.prisma.block.findFirst({
         orderBy: { createdAt: 'desc' },
         where: {
           userIdOfProgram: userId,
@@ -117,7 +117,7 @@ export const blocksRouter = createTRPCRouter({
           isDeleted: false,
         },
       })
-      return blocks
+      return block
     }),
   get: publicProcedure
     .input(z.object({ id: z.string() }))

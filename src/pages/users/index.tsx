@@ -20,9 +20,11 @@ import CountDown from '~/components/countDown'
 const UserDisclosure = ({
   userId,
   isOneRM,
+  programId,
 }: {
   userId: string
   isOneRM: boolean
+  programId: string
 }) => (
   <Disclosure defaultOpen={false}>
     {({ open }) => (
@@ -56,7 +58,7 @@ const UserDisclosure = ({
             {isOneRM ? (
               <OneRMCard userId={userId} />
             ) : (
-              <ProgramView userId={userId} isAdmin={false} />
+              <ProgramView userId={userId} isAdmin={true} programId={programId} />
             )}
           </Disclosure.Panel>
         </Transition>
@@ -80,10 +82,9 @@ const UserPage = ({
   userLastName: string | null
 }) => {
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
-  const { data: allUserPrograms } = api.blocks.getAllUserProgramsTitles.useQuery({
+  const { data: activeProgram } = api.blocks.getUserActiveProgram.useQuery({
     userId: userId,
   })
-  const activePro = allUserPrograms?.filter((p) => p.isProgramActive)
 
   return (
     <div className='flex w-full flex-col justify-start gap-2'>
@@ -102,11 +103,13 @@ const UserPage = ({
       <UserDisclosure
         userId={userId}
         isOneRM={true}
+        programId={''}
       />
-      {activePro?.length && activePro.length > 0 ? (
+      {activeProgram ? (
         <UserDisclosure
           userId={userId}
           isOneRM={false}
+          programId={activeProgram.id}
         />
       ) : null}
     </div>
