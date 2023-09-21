@@ -76,17 +76,17 @@ const ChartComponent = ({ user }: { user: string }) => {
         backgroundColor: 'rgb(205, 99, 132)',
         borderColor: 'rgba(255, 99, 132, 0.2)',
       },
-      {
-        label: 'Squat 8reps',
-        data: squats?.filter((set) => set.rep == 8).map((set) => +set?.weight),
-        backgroundColor: 'rgb(205, 99, 132)',
-        borderColor: 'rgba(255, 99, 132, 0.2)',
-      },
+      // {
+      //   label: 'Squat 8reps',
+      //   data: squats?.filter((set) => set.rep == 8).map((set) => +set?.weight),
+      //   backgroundColor: 'rgb(205, 99, 132)',
+      //   borderColor: 'rgba(255, 99, 132, 0.2)',
+      // },
       {
         label: 'Squat 1rm',
-        data: squats?.map((set) => +set?.estiamtedOnerm),
-        backgroundColor: 'rgb(205, 99, 132)',
-        borderColor: 'rgba(255, 99, 132, 0.2)',
+        data: squats?.filter((set) => set.rep == 6).map((set) => +set?.estiamtedOnerm),
+        backgroundColor: 'rgb(50, 205, 50, 0.8)',
+        borderColor: 'rgba(50, 205, 50, 0.2)',
       },
     ],
   }
