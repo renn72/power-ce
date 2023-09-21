@@ -11,7 +11,7 @@ import TemplateSelect from './templateSelect'
 import { LoadingPage } from '~/components/loading'
 import OneRMCard from '~/components/oneRMCard'
 
-import ProgramView from './programView'
+import ProgramView from '~/components/programView'
 import CompDate from '~/components/compDate'
 import UserSelect from './userSelect'
 
@@ -56,7 +56,7 @@ const UserDisclosure = ({
             {isOneRM ? (
               <OneRMCard userId={userId} />
             ) : (
-              <ProgramView userId={userId} />
+              <ProgramView userId={userId} isAdmin={false} />
             )}
           </Disclosure.Panel>
         </Transition>

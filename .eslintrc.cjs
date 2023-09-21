@@ -5,7 +5,9 @@ const path = require('path')
 const config = {
   overrides: [
     {
-      extends: [ 'plugin:@typescript-eslint/recommended-requiring-type-checking', ],
+      extends: [
+        'plugin:@typescript-eslint/recommended-requiring-type-checking',
+      ],
       files: ['*.ts', '*.tsx'],
       parserOptions: { project: path.join(__dirname, 'tsconfig.json') },
     },
@@ -20,7 +22,14 @@ const config = {
     'plugin:react/recommended',
   ],
   rules: {
-    '@typescript-eslint/no-misused-promises': [ 2, { checksVoidReturn: { attributes: false } }, ],
+    '@typescript-eslint/ban-ts-comment': [
+      'error',
+      { 'ts-ignore': 'allow-with-description' },
+    ],
+    '@typescript-eslint/no-misused-promises': [
+      2,
+      { checksVoidReturn: { attributes: false } },
+    ],
     '@typescript-eslint/consistent-type-imports': [
       'warn',
       {
