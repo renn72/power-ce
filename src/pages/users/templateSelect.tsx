@@ -42,14 +42,12 @@ const TemplateSelect = ({
 
   useEffect(() => {
     if (!currentProgram) return
-    const userProgram = currentProgram[0]
-    console.log('userProgram', userProgram)
-    if (!userProgram) {
+    if (!currentProgram) {
       setIsSet(false)
       setTemplate('')
       return
     }
-    const templateName = userProgram?.name
+    const templateName = currentProgram?.name
     if (!templateName) return
     setIsSet(true)
     setTemplate(templateName)
