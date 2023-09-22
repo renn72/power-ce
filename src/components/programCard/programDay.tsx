@@ -346,7 +346,7 @@ const ProgramDay = ({
                               )}
                             </div>
                           </div>
-                          <div onClick={(e) => e.stopPropagation()}>
+                          <div className='mr-4' onClick={(e) => e.stopPropagation()}>
                             {exercise.htmlLink && (
                               <a
                                 href={exercise.htmlLink}

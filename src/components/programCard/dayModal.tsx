@@ -576,7 +576,7 @@ const ExerciseModal = ({
                             href={exercise.htmlLink}
                             rel='noreferrer'
                             target='_blank'
-                            className='absolute right-1 bottom-0'
+                            className='absolute right-3 bottom-0'
                           >
                             <PlaySquare
                               size={30}
