@@ -196,15 +196,15 @@ const ProgramDay = ({
                         key={exercise.id}
                         className='flex cursor-pointer relative flex-col gap-0 py-1'
                       >
-                        <div className='flex w-full items-baseline justify-between gap-1 md:gap-2'>
-                          <h3 className='capitalize text-yellow-500'>
+                        <div className='flex w-full items-center justify-between gap-1 md:gap-2'>
+                          <h3 className='capitalize text-yellow-500 text-lg leading-6'>
                             {exercise.name}
                           </h3>
-                          <div>
+                          <div className='mr-2'>
                             {exercise.isComplete ? (
-                              <StarIcon className='h-4 w-4 text-yellow-500' />
+                              <StarIcon className='h-5 w-5 text-yellow-500' />
                             ) : (
-                              <StarIconHollow className='h-4 w-4 text-gray-600' />
+                              <StarIconHollow className='h-5 w-5 text-gray-600' />
                             )}
                           </div>
                         </div>
@@ -346,16 +346,16 @@ const ProgramDay = ({
                               )}
                             </div>
                           </div>
-                          <div className='mr-4' onClick={(e) => e.stopPropagation()}>
+                          <div className='' onClick={(e) => e.stopPropagation()}>
                             {exercise.htmlLink && (
                               <a
                                 href={exercise.htmlLink}
                                 target='_blank'
                                 rel='noreferrer'
-                                className='text-sm text-gray-400 flex justify-end absolute right-0 bottom-0'
+                                className='text-sm text-gray-400 flex justify-end absolute right-1 bottom-0'
                               >
                                 <PlaySquare
-                                  size={28}
+                                  size={26}
                                   fill='#EAB308'
                                   color='black'
                                 />
