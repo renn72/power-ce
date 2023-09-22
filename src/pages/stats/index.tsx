@@ -32,6 +32,12 @@ ChartJS.register(
 )
 
 export const options = {
+  scales: {
+    y: {
+      min: 100,
+      max: 400,
+    },
+  },
   responsive: true,
   plugins: {
     legend: {
@@ -68,7 +74,7 @@ const ChartComponent = ({ user }: { user: string }) => {
   if (!squats || squats.length < 1) return null
 
   const data = {
-    labels: squats?.map((set) => set?.createdAt.toString().slice(0, 10)),
+    labels: squats?.map((set) => set?.createdAt.toString().slice(0, 8)),
     datasets: [
       {
         label: 'Squat 6reps',
@@ -84,7 +90,9 @@ const ChartComponent = ({ user }: { user: string }) => {
       // },
       {
         label: 'Squat 1rm',
-        data: squats?.filter((set) => set.rep == 6).map((set) => +set?.estiamtedOnerm),
+        data: squats
+          ?.filter((set) => set.rep == 6)
+          .map((set) => +set?.estiamtedOnerm),
         backgroundColor: 'rgb(50, 205, 50, 0.8)',
         borderColor: 'rgba(50, 205, 50, 0.2)',
       },
@@ -92,13 +100,11 @@ const ChartComponent = ({ user }: { user: string }) => {
   }
 
   return (
-    <div>
-      <ResizableBox>
-        <Line
-          data={data}
-          options={options}
-        />
-      </ResizableBox>
+    <div className='h-full w-full'>
+      <Line
+        data={data}
+        options={options}
+      />
     </div>
   )
 }

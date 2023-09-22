@@ -11,6 +11,7 @@ import { useUser } from '@clerk/nextjs'
 import DayModal from './dayModal'
 
 import getWeight from '~/utils/getWeight'
+import { PlaySquare, Youtube, YoutubeIcon } from 'lucide-react'
 
 const dayWithExercise = Prisma.validator<Prisma.DayArgs>()({
   include: {
@@ -31,7 +32,6 @@ const ProgramDay = ({
   openDay,
   openWeek,
   programId,
-
 }: {
   day: Day
   dayIdx: number
@@ -152,9 +152,15 @@ const ProgramDay = ({
                     open
                       ? 'border-b border-yellow-500'
                       : 'border-b border-black hover:border-white'
-                  } flex w-full items-center gap-8 justify-between text-lg font-medium`}
+                  } flex w-full items-center justify-between gap-8 text-lg font-medium`}
                 >
-                  <h2 className={`text-xl font-bold ${day.isComplete ? 'text-green-500' : ''}`}>Day {dayIdx + 1}</h2>
+                  <h2
+                    className={`text-xl font-bold ${
+                      day.isComplete ? 'text-green-500' : ''
+                    }`}
+                  >
+                    Day {dayIdx + 1}
+                  </h2>
                   <ChevronUpIcon
                     className={`${
                       open
@@ -165,7 +171,9 @@ const ProgramDay = ({
                   {day?.isComplete ? (
                     <StarIcon className='h-8 w-8 text-yellow-500' />
                   ) : (
-                    <div className='w-8 flex justify-end'><StarIconHollow className='h-6 w-6 text-gray-600' /></div>
+                    <div className='flex w-8 justify-end'>
+                      <StarIconHollow className='h-6 w-6 text-gray-600' />
+                    </div>
                   )}
                 </Disclosure.Button>
                 <div className='flex gap-2'></div>
@@ -186,7 +194,7 @@ const ProgramDay = ({
                     {day.exercise.map((exercise) => (
                       <div
                         key={exercise.id}
-                        className='flex cursor-pointer flex-col gap-0 py-1'
+                        className='flex cursor-pointer relative flex-col gap-0 py-1'
                       >
                         <div className='flex w-full items-baseline justify-between gap-1 md:gap-2'>
                           <h3 className='capitalize text-yellow-500'>
@@ -201,7 +209,7 @@ const ProgramDay = ({
                           </div>
                         </div>
                         <div>
-                          <div className='flex items-baseline gap-6 text-sm lg:flex-col'>
+                          <div className='flex relative items-baseline gap-6 text-sm lg:flex-col'>
                             <div className='flex gap-2 '>
                               <h3>{exercise.sets}</h3>
                               <h3>X</h3>
@@ -210,14 +218,16 @@ const ProgramDay = ({
                                 {exercise.repUnit ? exercise.repUnit : 'reps'}
                               </h3>
                             </div>
-                            <div>
+                            <div className='relative'>
                               {exercise.weightType === 'percent' && (
                                 <div className=''>
                                   {exercise.estimatedOnermIndex ? (
                                     <div>
-                                      {Number(day?.exercise[
-                                        exercise?.estimatedOnermIndex - 1
-                                      ]?.set[0]?.weight) > 0 ? (
+                                      {Number(
+                                        day?.exercise[
+                                          exercise?.estimatedOnermIndex - 1
+                                        ]?.set[0]?.weight,
+                                      ) > 0 ? (
                                         <div className='flex'>
                                           {exercise.onerm && (
                                             <h4>
@@ -247,9 +257,11 @@ const ProgramDay = ({
                                 <div className=''>
                                   {exercise.estimatedOnermIndex ? (
                                     <div>
-                                      {Number(day?.exercise[
-                                        exercise?.estimatedOnermIndex - 1
-                                      ]?.set[0]?.weight) > 0 && (
+                                      {Number(
+                                        day?.exercise[
+                                          exercise?.estimatedOnermIndex - 1
+                                        ]?.set[0]?.weight,
+                                      ) > 0 && (
                                         <div className='flex'>
                                           {exercise.onerm && (
                                             <h4>
@@ -333,6 +345,22 @@ const ProgramDay = ({
                                 </div>
                               )}
                             </div>
+                          </div>
+                          <div onClick={(e) => e.stopPropagation()}>
+                            {exercise.htmlLink && (
+                              <a
+                                href={exercise.htmlLink}
+                                target='_blank'
+                                rel='noreferrer'
+                                className='text-sm text-gray-400 flex justify-end absolute right-0 bottom-0'
+                              >
+                                <PlaySquare
+                                  size={28}
+                                  fill='#EAB308'
+                                  color='black'
+                                />
+                              </a>
+                            )}
                           </div>
                           <div>
                             {exercise.notes && false && (

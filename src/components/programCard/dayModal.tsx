@@ -23,6 +23,7 @@ import getWeight from '~/utils/getWeight'
 
 import { NumericFormat } from 'react-number-format'
 import { Input } from '@/components/ui/input'
+import { PlaySquare } from 'lucide-react'
 
 const dayWithExercise = Prisma.validator<Prisma.DayArgs>()({
   include: {
@@ -447,7 +448,7 @@ const ExerciseModal = ({
                         )}
                       </div>
                     </div>
-                    <div className='ml-10 flex items-end gap-2 md:ml-16 md:gap-8'>
+                    <div className='ml-10 flex items-end gap-3 md:ml-16 md:gap-8 relative'>
                       <div className='flex gap-1 '>
                         <h3>{exercise.sets}</h3>
                         <h3>X</h3>
@@ -547,7 +548,7 @@ const ExerciseModal = ({
                           <div className='flex items-baseline gap-2'>
                             <h4>RPE Target</h4>
                             <h4>-</h4>
-                            <h4 className='flex items-baseline justify-center text-xl font-semibold'>
+                            <h4 className='flex items-baseline justify-center font-semibold'>
                               {exercise?.targetRpe && +exercise?.targetRpe}
                             </h4>
                           </div>
@@ -565,6 +566,24 @@ const ExerciseModal = ({
                               kg
                             </h4>
                           </div>
+                        )}
+                      </div>
+                      <div 
+                        onClick={(e) => e.stopPropagation()}
+                        className=''>
+                        {exercise.htmlLink && (
+                          <a
+                            href={exercise.htmlLink}
+                            rel='noreferrer'
+                            target='_blank'
+                            className='absolute right-1 bottom-0'
+                          >
+                            <PlaySquare
+                              size={30}
+                              fill='#EAB308'
+                              color='black'
+                            />
+                          </a>
                         )}
                       </div>
                     </div>
@@ -601,17 +620,6 @@ const ExerciseModal = ({
                   <div className='flex flex-col gap-2'>
                     <div className='ml-10 text-sm font-extralight md:ml-16'>
                       {exercise?.notes}
-                    </div>
-                    <div className='ml-10 w-full text-base underline md:ml-16'>
-                      {exercise.htmlLink && (
-                        <a
-                          href={exercise.htmlLink}
-                          rel='noreferrer'
-                          target='_blank'
-                        >
-                          {exercise.htmlLink}
-                        </a>
-                      )}
                     </div>
                     {exercise.sets && exercise.reps && (
                       <div className='flex flex-col gap-2 md:gap-6'>
