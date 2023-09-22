@@ -11,7 +11,7 @@ import { useUser } from '@clerk/nextjs'
 import DayModal from './dayModal'
 
 import getWeight from '~/utils/getWeight'
-import { PlaySquare, Youtube, YoutubeIcon } from 'lucide-react'
+import { PlaySquare, } from 'lucide-react'
 
 const dayWithExercise = Prisma.validator<Prisma.DayArgs>()({
   include: {
