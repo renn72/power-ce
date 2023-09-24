@@ -41,58 +41,88 @@ const Admin = () => {
     <div>
       <h1>Admin</h1>
       <div className='mb-12'>
-        <h2>Templates</h2>
-        <ul>
-          {allTemplates?.map((template) => (
-            <li
-              className='flex gap-4'
-              key={template.id}
-            >
-              <div>{template.name}</div>
-              <div>{template.isDeleted ? 'deleted' : ''}</div>
-            </li>
-          ))}
-        </ul>
+        <h2 className='text-3xl font-bold mb-8'>Templates</h2>
+        <div className='flex flex-col gap-4'>
+          {allTemplates
+            ?.filter((t) => t.isDeleted !== true)
+            .map((template) => (
+              <div
+                className='flex gap-4 text-xl items-baseline'
+                key={template.id}
+              >
+                <div className='w-72 overflow-hidden'>{template.name}</div>
+                <Button
+                  className='text-red-500'
+                  onClick={() => {
+                    deleteSoftTemplate({ id: template.id })
+                  }}
+                >
+                  Delete
+                </Button>
+              </div>
+            ))}
+        </div>
+      </div>
+      <div className='mb-12'>
+        <h2 className='text-3xl font-bold mb-8'>Deleted Templates</h2>
+        <div className='flex flex-col gap-4'>
+          {allTemplates
+            ?.filter((t) => t.isDeleted === true)
+            .map((template) => (
+              <div
+                className='flex gap-4 text-xl items-baseline'
+                key={template.id}
+              >
+                <div className='w-72 overflow-hidden'>{template.name}</div>
+                <Button
+                  className='text-green-500'
+                  onClick={() => {
+                    undeleteSoftTemplate({ id: template.id })
+                  }}
+                >
+                  UnDelete
+                </Button>
+              </div>
+            ))}
+        </div>
       </div>
       <div>
         <h2>Programs</h2>
         <div className='flex flex-col gap-8 '>
           {allUsers?.map((user) => (
             <div
-              className='flex flex-col gap-4 '
+              className='flex flex-col gap-4'
               key={user.id}
             >
               <div className='text-xl font-bold'>
                 {user.firstName} {user.lastName}
               </div>
               {allPrograms
-                ?.filter((p) => p.userIdOfProgram === user.id)
+                ?.filter(
+                  (p) => p.userIdOfProgram === user.id && p.isDeleted !== true,
+                )
                 .map((program) => (
                   <div
-                    className={`flex gap-4 ${
-                      program.isDeleted ? 'hidden' : ''
-                    }`}
+                    className='flex gap-4 text-xl items-baseline'
                     key={program.id}
                   >
-                    {program.isDeleted === true ? null : (
-                      <div className='flex gap-4'>
-                        <ProgramCard
-                          programId={program.id}
-                          isAdmin={true}
-                        />
-                        <div className='text-green-600'>
-                          {program.isProgramActive ? 'Active' : null}
-                        </div>
-                        <Button
-                          className='text-red-500'
-                          onClick={() => {
-                            deleteSoftTemplate({ id: program.id })
-                          }}
-                        >
-                          Delete
-                        </Button>
+                    <div className='flex gap-4 items-baseline'>
+                      <ProgramCard
+                        programId={program.id}
+                        isAdmin={true}
+                      />
+                      <div className='text-green-600'>
+                        {program.isProgramActive ? 'Active' : null}
                       </div>
-                    )}
+                      <Button
+                        className='text-red-500'
+                        onClick={() => {
+                          deleteSoftTemplate({ id: program.id })
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </div>
                 ))}
             </div>
