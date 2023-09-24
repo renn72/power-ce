@@ -34,6 +34,7 @@ const daySchema = z.object({
   exercise: z.array(exerciseSchema),
 })
 const weekSchema = z.object({
+  id: z.string().optional(),
   name: z.string().min(0).max(280),
   isTemplate: z.boolean(),
   day: z.array(daySchema),
@@ -126,13 +127,13 @@ export const blocksRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
-      include: {
-        week: {
-          include: {
-            day: { include: { exercise: { include: { set: true } } } },
+        include: {
+          week: {
+            include: {
+              day: { include: { exercise: { include: { set: true } } } },
+            },
           },
         },
-      },
       })
       return block
     }),
@@ -299,6 +300,55 @@ export const blocksRouter = createTRPCRouter({
         },
       })
 
+      return week
+    }),
+  updateWeek: privateProcedure
+    .input(weekSchema)
+    .mutation(async ({ ctx, input }) => {
+      const updateAction = await ctx.prisma.$transaction([
+        ctx.prisma.week.delete({ where: { id: input.id } }),
+        ctx.prisma.week.create({
+          data: {
+            name: input.name,
+            isTemplate: input.isTemplate,
+            day: {
+              create: input.day.map((day) => ({
+                isRestDay: day.isRestDay,
+                exercise: {
+                  createMany: {
+                    data: day.exercise.map((exercise) => ({
+                      name: exercise.name,
+                      lift: exercise.lift,
+                      sets: exercise.sets,
+                      reps: exercise.reps,
+                      onerm: exercise.onerm,
+                      onermTop: exercise.onermTop,
+                      weightTop: exercise.weightTop,
+                      weightBottom: exercise.weightBottom,
+                      targetRpe: exercise.targetRpe,
+                      notes: exercise?.notes,
+                      isEstimatedOnerm: exercise.isEstimatedOnerm,
+                      actualSets: exercise.sets,
+                      estimatedOnermIndex: exercise.estimatedOnermIndex,
+                      weightType: exercise.weightType,
+                      repUnit: exercise.repUnit,
+                      htmlLink: exercise.htmlLink,
+                    })),
+                  },
+                },
+              })),
+            },
+          },
+        }),
+      ])
+
+      return updateAction
+    }),
+
+  deleteWeek: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const week = await ctx.prisma.week.delete({ where: { id: input.id } })
       return week
     }),
 

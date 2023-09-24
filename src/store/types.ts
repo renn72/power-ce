@@ -77,6 +77,7 @@ export type DayData = {
 };
 
 export type WeekData = {
+  id: string | null,
   name: string,
   isTemplate: boolean,
   day: DayData[],

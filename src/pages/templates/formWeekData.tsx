@@ -1,10 +1,6 @@
 import { useState, } from 'react'
 import { useFormContext, } from 'react-hook-form'
 import { ErrorMessage, } from '@hookform/error-message'
-import {
-  Disclosure, Transition,
-} from '@headlessui/react'
-import { ChevronUpIcon, } from '@heroicons/react/20/solid'
 
 import { toast, } from 'react-hot-toast'
 import { api, } from '~/utils/api'
@@ -15,6 +11,9 @@ import WeekTemplateSelect from './weekTemplateSelect'
 
 import { type WeekData, } from '~/store/types'
 import { type Block, } from '~/store/types'
+import { atom, useAtom } from 'jotai'
+
+const loadedTemplateAtom = atom<string>('')
 
 const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
   const formMethods = useFormContext<Block>()
@@ -27,25 +26,32 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
     setSelectedWeekTemplate,
   ] = useState('')
 
+  const [loadedTemplate, setLoadedTemplate] = useAtom(loadedTemplateAtom)
+
   const ctx = api.useContext()
   const { data: weeksData, } = api.blocks.getAllWeekTemplates.useQuery()
 
   const { mutate: weekCreateMutate, } = api.blocks.createWeek.useMutation({
     onSuccess: () => {
-      console.log('success')
       toast.success('Saved')
       void ctx.blocks.getAllWeekTemplates.invalidate()
     },
     onError: (e) => {
-      console.log('error', e)
+      toast.error('Error')
+    },
+  })
+  const { mutate: weekUpdateMutate, } = api.blocks.updateWeek.useMutation({
+    onSuccess: () => {
+      toast.success('Saved')
+      void ctx.blocks.getAllWeekTemplates.invalidate()
+    },
+    onError: (e) => {
       toast.error('Error')
     },
   })
 
   const onSaveWeekAsTemplate = (weekIdx: number) => {
-    console.log('onSaveWeekAsTemplate', weekIdx)
     const name = getValues(`week.${weekIdx}.name`)
-    console.log('name', name)
 
     // handle error
     if (name === '') {
@@ -62,7 +68,6 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
     }
 
     const week = getValues(`week.${weekIdx}`)
-    console.log('week', week)
 
     const weekData: WeekData = {
       name: week.name,
@@ -98,15 +103,53 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
     weekCreateMutate(weekData)
   }
 
+  const onUpdateWeekAsTemplate = (weekIdx: number) => {
+
+    const week = getValues(`week.${weekIdx}`)
+
+    const weekData: WeekData = {
+      id: loadedTemplate,
+      name: week.name,
+      isTemplate: true,
+      day: week.day.map(
+        (day) => ({
+          id: loadedTemplate,
+          isRestDay: day.isRestDay,
+          isComplete: false,
+          exercise: day.exercise.map(
+            (exercise) => ({
+              name: exercise.name ? exercise.name : '',
+              lift: exercise.lift ? exercise.lift : '',
+              onerm: exercise.onerm ? +exercise.onerm : null,
+              onermTop: exercise.onermTop ? +exercise.onermTop : null,
+              weightTop: exercise.weightTop ? +exercise.weightTop : null,
+              weightBottom: exercise.weightBottom ? +exercise.weightBottom : null,
+              targetRpe: exercise.targetRpe ? +exercise.targetRpe : null,
+              sets: exercise.sets ? +exercise.sets : null,
+              reps: exercise.reps ? +exercise.reps : null,
+              notes: exercise.notes,
+              isEstimatedOnerm: exercise.isEstimatedOnerm || false,
+              estimatedOnermIndex: exercise.estimatedOnermIndex,
+              weightType: exercise.weightType,
+              repUnit: exercise.repUnit,
+              htmlLink: exercise.htmlLink,
+              isComplete: false
+
+            })
+          ),
+        })
+      ),
+    }
+    weekUpdateMutate(weekData)
+  }
+
   const onSelectWeekTemplate = (week: string) => {
-    console.log('onSelectWeekTemplate', weekIdx, '-', week)
     setSelectedWeekTemplate(week)
+    console.log('selected', week)
   }
 
   const onLoadWeekTemplate = (weekIdx: number) => {
-    console.log('weeksdata', weeksData)
     const weekTemplate = weeksData?.find((week) => week.id === selectedWeekTemplate)
-    console.log('onLoadWeekTemplate', weekTemplate)
 
     const currentTemplate = getValues()
 
@@ -121,13 +164,10 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
 
     }
 
-    console.log('update', update)
+    setLoadedTemplate(selectedWeekTemplate)
+    // setSelectedWeekTemplate('')
 
     reset(update)
-
-    console.log('values', getValues())
-
-    setSelectedWeekTemplate('')
     toast.success('Loaded')
   }
 
@@ -158,6 +198,13 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
               onClick={() => onSaveWeekAsTemplate(weekIdx)}
             >
               Save
+            </Button>
+            <Button
+              type='button'
+              className='text-xs sm:text-sm'
+              onClick={() => onUpdateWeekAsTemplate(weekIdx)}
+            >
+              Update
             </Button>
           </div>
           <div className='flex gap-2'>
