@@ -36,7 +36,7 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
       toast.success('Saved')
       void ctx.blocks.getAllWeekTemplates.invalidate()
     },
-    onError: (e) => {
+    onError: () => {
       toast.error('Error')
     },
   })
@@ -45,7 +45,7 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
       toast.success('Saved')
       void ctx.blocks.getAllWeekTemplates.invalidate()
     },
-    onError: (e) => {
+    onError: () => {
       toast.error('Error')
     },
   })
