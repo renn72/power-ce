@@ -2,8 +2,6 @@ import { useFieldArray, useFormContext, Controller } from 'react-hook-form'
 
 import {
   PlusCircleIcon,
-  MinusCircleIcon,
-  CogIcon,
 } from '@heroicons/react/24/outline'
 
 import { Button } from '@/components/ui/button'

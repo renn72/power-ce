@@ -3,6 +3,8 @@ import { useAtom, } from 'jotai'
 
 import { api, } from '~/utils/api'
 
+import { useUser } from '@clerk/nextjs'
+
 import {
   Listbox, Transition,
 } from '@headlessui/react'
@@ -10,13 +12,16 @@ import {
   ChevronUpDownIcon, CheckIcon,
 } from '@heroicons/react/24/outline'
 
-import { selectedTemplateAtom, } from './form'
+import { isSuperAdminAtom, selectedTemplateAtom, } from './form'
 
 const TemplateSelect = ({ onSelectTemplate, }: { onSelectTemplate: (arg0: string) => void }) => {
+  const [isSuperAdmin,] = useAtom(isSuperAdminAtom)
+  const { user, } = useUser()
   const [selectedTemplate,] = useAtom(selectedTemplateAtom)
 
   const { data: blocksData, } = api.blocks.getAll.useQuery()
-  const blocksTitle = blocksData?.map((block) => block.name)
+  console.log({ blocksData, })
+  const blocksTitle = blocksData?.filter((b) => b.trainerId === user?.id || isSuperAdmin ).map((block) => block.name)
 
   return (
     <div className='w-40 sm:w-72 flex flex-col text-gray-200 justify-center text-lg'>

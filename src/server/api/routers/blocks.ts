@@ -206,7 +206,7 @@ export const blocksRouter = createTRPCRouter({
   create: privateProcedure
     .input(blockSchema)
     .mutation(async ({ ctx, input }) => {
-      // const authorId = ctx.userId;
+      const authorId = ctx.userId
 
       console.log('ctx', ctx.userId)
       console.log('input', JSON.stringify(input, null, 2))
@@ -215,6 +215,7 @@ export const blocksRouter = createTRPCRouter({
         data: {
           name: input.name,
           isProgram: input.isProgram,
+          trainerId: authorId,
           week: {
             create: input.week.map((week) => ({
               name: week.name,
@@ -266,10 +267,12 @@ export const blocksRouter = createTRPCRouter({
   createWeek: privateProcedure
     .input(weekSchema)
     .mutation(async ({ ctx, input }) => {
+      const authorId = ctx.userId
       const week = await ctx.prisma.week.create({
         data: {
           name: input.name,
           isTemplate: input.isTemplate,
+          trainerId: authorId,
           day: {
             create: input.day.map((day) => ({
               isRestDay: day.isRestDay,
@@ -305,12 +308,14 @@ export const blocksRouter = createTRPCRouter({
   updateWeek: privateProcedure
     .input(weekSchema)
     .mutation(async ({ ctx, input }) => {
+      const authorId = ctx.userId
       const updateAction = await ctx.prisma.$transaction([
         ctx.prisma.week.delete({ where: { id: input.id } }),
         ctx.prisma.week.create({
           data: {
             name: input.name,
             isTemplate: input.isTemplate,
+            trainerId: authorId,
             day: {
               create: input.day.map((day) => ({
                 isRestDay: day.isRestDay,
@@ -355,15 +360,10 @@ export const blocksRouter = createTRPCRouter({
   update: privateProcedure
     .input(blockSchema)
     .mutation(async ({ ctx, input }) => {
-      // const authorId = ctx.userId;
+      const authorId = ctx.userId
 
       console.log('ctx', ctx.userId)
       console.log('input', JSON.stringify(input, null, 2))
-
-      console.log(
-        'input',
-        JSON.stringify(input.week[0].day[0].exercise[0], null, 2),
-      )
 
       const updateAction = await ctx.prisma.$transaction([
         ctx.prisma.block.delete({ where: { id: input.id } }),
@@ -371,6 +371,7 @@ export const blocksRouter = createTRPCRouter({
           data: {
             name: input.name,
             isProgram: false,
+            trainerId: authorId,
             week: {
               create: input.week.map((week) => ({
                 day: {

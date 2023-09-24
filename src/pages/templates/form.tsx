@@ -14,7 +14,9 @@ import { Input } from '@/components/ui/input'
 
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 
-import { Tab } from '@headlessui/react'
+import { useUser } from '@clerk/nextjs'
+
+import { Switch, Tab } from '@headlessui/react'
 
 import FormWeekData from './formWeekData'
 import TemplateSelect from './templateSelect'
@@ -25,10 +27,13 @@ import { type BlockData } from '~/store/types'
 
 import { classNames } from '~/utils/utils'
 import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
+import { Toggle } from '@/components/ui/toggle'
 
 export const selectedTemplateAtom = atom('')
+export const isSuperAdminAtom = atom(false)
 
 const Form = () => {
+  const { user } = useUser()
   const formMethods = useForm({ defaultValues })
   const {
     register,
@@ -40,8 +45,9 @@ const Form = () => {
   } = formMethods
 
   const [isUpdate, setIsUpdate] = useState(false)
-
   const [blockId, setBlockId] = useState('')
+  const [isSuperAdmin, setIsSuperAdmin] = useAtom(isSuperAdminAtom)
+  const isMe = user?.id === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a'
 
   const [selectedTemplate, setSelectedTemplate] = useAtom(selectedTemplateAtom)
 
@@ -283,6 +289,23 @@ const Form = () => {
 
   return (
     <>
+      {isMe ? (
+        <div className='flex items-center gap-1'>
+          Super
+          <Switch
+            checked={isSuperAdmin}
+            onChange={setIsSuperAdmin}
+            className={`${isSuperAdmin ? 'bg-gray-200' : 'bg-gray-600'}
+          relative inline-flex h-[24px] w-[64px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75  sm:h-[28px] sm:w-[74px]`}
+          >
+            <span
+              aria-hidden='true'
+              className={`${isSuperAdmin ? 'translate-x-9' : 'translate-x-0'}
+            pointer-events-none inline-block h-[20px] w-[24px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out sm:h-[24px] sm:w-[34px]`}
+            />
+          </Switch>
+        </div>
+      ) : null}
       <div className='text-xxs flex h-full w-full flex-col items-center justify-center md:text-base'>
         <FormProvider {...formMethods}>
           <form
@@ -355,7 +378,7 @@ const Form = () => {
                     <Tab.List className='flex justify-start gap-8 text-xl'>
                       <MinusCircleIcon
                         type='button'
-                        className='w-10 h-10 text-gray-500 hover:text-gray-200'
+                        className='h-10 w-10 text-gray-500 hover:text-gray-200'
                         onClick={() => onRemoveWeek()}
                       />
                       {weekField.fields.map((item, index) => {
@@ -377,7 +400,7 @@ const Form = () => {
                         )
                       })}
                       <PlusCircleIcon
-                        className='w-10 h-10 text-gray-500 hover:text-gray-200'
+                        className='h-10 w-10 text-gray-500 hover:text-gray-200'
                         onClick={() => onAddWeek()}
                       />
                     </Tab.List>

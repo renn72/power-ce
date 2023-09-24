@@ -81,6 +81,7 @@ export const userProgramsRouter = createTRPCRouter({
           isProgram: true,
           userIdOfProgram: input.userId,
           isProgramActive: true,
+          trainerId: block.trainerId,
           week: {
             create: block.week.map((week) => ({
               day: {
