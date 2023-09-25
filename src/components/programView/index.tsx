@@ -9,6 +9,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { LoadingPage } from '~/components/loading'
 
 import ExerciseDialog from './exerciseDialog'
+import { GitCommit, PlaySquare, Zap } from 'lucide-react'
 
 const ProgramView = ({
   userId,
@@ -80,7 +81,7 @@ const ProgramView = ({
       <div className='mt-8 flex flex-col gap-8 text-base sm:text-lg md:px-2'>
         {program.week.map((week, weekIndex) => (
           <div key={week.id}>
-            <h1 className='mb-4 text-2xl font-bold'>Week {weekIndex + 1}</h1>
+            <h1 className='mb-2 text-2xl font-bold'>Week {weekIndex + 1}</h1>
             <div
               className={`grid grid-cols-1 md:px-2 lg:grid-cols-5 2xl:${
                 'grid-cols-' +
@@ -101,20 +102,20 @@ const ProgramView = ({
                 >
                   {day.isRestDay ? (
                     <div>
-                      <h2 className='mb-4 text-xl font-bold'>
+                      <h2 className='mb-2 text-xl font-bold'>
                         Day {dayIndex + 1}
                       </h2>
-                      <h2 className='font-normal text-gray-400 lg:w-44'>
+                      <h2 className='pt-2 font-normal text-gray-400 lg:w-44'>
                         Rest Day
                       </h2>
                     </div>
                   ) : (
-                    <div className='flex flex-col gap-4'>
-                      <div className={`mb-4 flex gap-4 `}>
+                    <div className='flex flex-col gap-2 text-base'>
+                      <div className={`flex justify-between gap-8 `}>
                         <h2
-                          className={`flex text-xl ${
+                          className={`flex text-2xl ${
                             day.isComplete
-                              ? 'font-extrabold text-green-500'
+                              ? 'font-bold text-green-500'
                               : 'font-bold '
                           }`}
                         >
@@ -124,8 +125,11 @@ const ProgramView = ({
                           <StarIcon className='h-6 w-6 text-yellow-500' />
                         )}
                         {day.isComplete && (
-                          <span className='text-xl font-semibold'>
-                            E: {day.energyRating}
+                          <span className='flex items-center gap-1 text-2xl font-semibold text-yellow-500'>
+                            <Zap className='h-5 w-5' />
+                            <span className='font-extrabold'>
+                              {day.energyRating}
+                            </span>
                           </span>
                         )}
                       </div>
@@ -135,91 +139,96 @@ const ProgramView = ({
                             {exercise.isComplete || !isAdmin ? (
                               <div className='flex flex-col gap-1 py-2 hover:rounded-md hover:bg-gray-900'>
                                 <div>
-                                  <div className='flex gap-2'>
-                                    <h3 className='capitalize text-yellow-500'>
+                                  <div className='flex justify-between text-lg'>
+                                    <h3 className='font-semibold capitalize text-yellow-500'>
                                       {exercise.name}
                                     </h3>
-                                    <StarIcon className='h-6 w-6 text-yellow-500' />
+                                    <StarIcon className='h-5 w-5 text-yellow-500' />
                                   </div>
                                   <h3 className='text-xxs capitalize leading-none text-gray-600'>
                                     {exercise.lift}
                                   </h3>
                                 </div>
-                                <div className='flex gap-4 '>
-                                  <h3>{exercise.sets}</h3>
-                                  <h3>X</h3>
-                                  <h3>{exercise.reps}</h3>
-                                  <h3>
-                                    {exercise.repUnit
-                                      ? exercise.repUnit
-                                      : 'reps'}
-                                  </h3>
-                                </div>
-                                <div>
-                                  {exercise.weightType === 'onerm' && (
-                                    <div>
-                                      {isOneRm(exercise.lift) ? (
-                                        <div className='flex'>
-                                          <h4>
-                                            {exercise.onerm ? (
-                                              checkWeight(
-                                                exercise.lift,
-                                                exercise?.onerm,
-                                              )
-                                            ) : (
-                                              <div className='text-red-500'>
-                                                Missing %
-                                              </div>
-                                            )}
-                                          </h4>
-                                          <h4>{exercise.onermTop && '-'}</h4>
-                                          <h4>
-                                            {exercise.onermTop &&
-                                              checkWeight(
-                                                exercise.lift,
-                                                exercise.onermTop,
+                                <div className='mr-5 flex justify-between text-lg tracking-tight'>
+                                  <div className='flex gap-4 '>
+                                    <h3>{exercise.sets}</h3>
+                                    <h3>X</h3>
+                                    <h3>{exercise.reps}</h3>
+                                    <h3>
+                                      {exercise.repUnit
+                                        ? exercise.repUnit
+                                        : 'reps'}
+                                    </h3>
+                                  </div>
+                                  <div>
+                                    {exercise.weightType === 'onerm' && (
+                                      <div>
+                                        {isOneRm(exercise.lift) ? (
+                                          <div className='flex'>
+                                            <h4>
+                                              {exercise.onerm ? (
+                                                checkWeight(
+                                                  exercise.lift,
+                                                  exercise?.onerm,
+                                                )
+                                              ) : (
+                                                <div className='text-red-500'>
+                                                  Missing %
+                                                </div>
                                               )}
-                                            kg
-                                          </h4>
-                                        </div>
-                                      ) : (
-                                        <div className='text-red-500'>
-                                          Missing 1rm
-                                        </div>
-                                      )}
-                                    </div>
-                                  )}
-                                  {exercise.weightType === 'rpe' && (
-                                    <div className='flex items-baseline gap-2'>
-                                      <h4>RPE Target</h4>
-                                      <h4>-</h4>
-                                      <h4 className='flex items-baseline justify-center text-xl font-semibold'>
-                                        {exercise?.targetRpe &&
-                                          +exercise?.targetRpe}
-                                      </h4>
-                                    </div>
-                                  )}
-                                  {exercise.weightType === 'weight' && (
-                                    <div className='flex items-baseline'>
-                                      <h4>
-                                        {exercise?.weightBottom ? (
-                                          +exercise?.weightBottom
+                                            </h4>
+                                            <h4>{exercise.onermTop && '-'}</h4>
+                                            <h4>
+                                              {exercise.onermTop &&
+                                                checkWeight(
+                                                  exercise.lift,
+                                                  exercise.onermTop,
+                                                )}
+                                              kg
+                                            </h4>
+                                          </div>
                                         ) : (
                                           <div className='text-red-500'>
-                                            Missing W
+                                            Missing 1rm
                                           </div>
                                         )}
-                                      </h4>
-                                      <h4>{exercise?.weightTop && '-'}</h4>
-                                      <h4>
-                                        {exercise?.weightTop &&
-                                          +exercise?.weightTop}
-                                        kg
-                                      </h4>
-                                    </div>
-                                  )}
+                                      </div>
+                                    )}
+                                    {exercise.weightType === 'rpe' && (
+                                      <div className='flex items-baseline gap-2'>
+                                        <h4>RPE Target:</h4>
+                                        <h4 className='flex items-baseline justify-center'>
+                                          {exercise?.targetRpe &&
+                                            +exercise?.targetRpe}
+                                        </h4>
+                                      </div>
+                                    )}
+                                    {exercise.weightType === 'weight' && (
+                                      <div className='flex items-baseline'>
+                                        <h4>
+                                          {exercise?.weightBottom ? (
+                                            +exercise?.weightBottom
+                                          ) : (
+                                            <div className='text-red-500'>
+                                              Missing W
+                                            </div>
+                                          )}
+                                        </h4>
+                                        <h4>{exercise?.weightTop && '-'}</h4>
+                                        <h4>
+                                          {exercise?.weightTop &&
+                                            +exercise?.weightTop}
+                                          kg
+                                        </h4>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
-                                <div className='mt-6 flex flex-col gap-4 text-base'>
+                                <GitCommit
+                                  size={20}
+                                  className='flex w-full justify-center text-yellow-500'
+                                />
+                                <div className='flex flex-col gap-1 text-base'>
                                   {exercise?.set.map((s) => (
                                     <div
                                       key={s.id}
@@ -238,7 +247,7 @@ const ProgramView = ({
                                       {s.estiamtedOnerm &&
                                         Number(s.estiamtedOnerm) != 0 && (
                                           <h4 className='col-span-2'>
-                                            1rm {+s.estiamtedOnerm}kg
+                                            E1rm {+s.estiamtedOnerm}kg
                                           </h4>
                                         )}
                                     </div>
@@ -251,9 +260,6 @@ const ProgramView = ({
                                     </div>
                                   )}
                                 </div>
-                                <h3 className='text-xxs text-gray-600'>
-                                  {exercise.weightType}
-                                </h3>
                                 {exercise.flield2 &&
                                   exercise.flield2 !== '' && (
                                     <h4>
@@ -273,86 +279,87 @@ const ProgramView = ({
                                 onClick={() => openModal(exercise.id)}
                               >
                                 <div>
-                                  <h3 className='capitalize text-yellow-500'>
+                                  <h3 className='text-lg capitalize text-yellow-500'>
                                     {exercise.name}
                                   </h3>
                                   <h3 className='text-xxs capitalize leading-none text-gray-600'>
                                     {exercise.lift}
                                   </h3>
                                 </div>
-                                <div className='flex gap-4 '>
-                                  <h3>{exercise.sets}</h3>
-                                  <h3>X</h3>
-                                  <h3>{exercise.reps}</h3>
-                                  <h3>
-                                    {exercise.repUnit
-                                      ? exercise.repUnit
-                                      : 'reps'}
-                                  </h3>
-                                </div>
-                                <div>
-                                  {exercise.weightType === 'onerm' && (
-                                    <div>
-                                      {isOneRm(exercise.lift) ? (
-                                        <div className='flex'>
-                                          <h4>
-                                            {exercise.onerm ? (
-                                              checkWeight(
-                                                exercise.lift,
-                                                exercise?.onerm,
-                                              )
-                                            ) : (
-                                              <div className='text-red-500'>
-                                                Missing %
-                                              </div>
-                                            )}
-                                          </h4>
-                                          <h4>{exercise.onermTop && '-'}</h4>
-                                          <h4>
-                                            {exercise.onermTop &&
-                                              checkWeight(
-                                                exercise.lift,
-                                                exercise.onermTop,
+                                <div className='flex justify-between  gap-4'>
+                                  <div className='flex gap-4'>
+                                    <h3>{exercise.sets}</h3>
+                                    <h3>X</h3>
+                                    <h3>{exercise.reps}</h3>
+                                    <h3>
+                                      {exercise.repUnit
+                                        ? exercise.repUnit
+                                        : 'reps'}
+                                    </h3>
+                                  </div>
+                                  <div>
+                                    {exercise.weightType === 'onerm' && (
+                                      <div>
+                                        {isOneRm(exercise.lift) ? (
+                                          <div className='flex'>
+                                            <h4>
+                                              {exercise.onerm ? (
+                                                checkWeight(
+                                                  exercise.lift,
+                                                  exercise?.onerm,
+                                                )
+                                              ) : (
+                                                <div className='text-red-500'>
+                                                  Missing %
+                                                </div>
                                               )}
-                                            kg
-                                          </h4>
-                                        </div>
-                                      ) : (
-                                        <div className='text-red-500'>
-                                          Missing 1rm
-                                        </div>
-                                      )}
-                                    </div>
-                                  )}
-                                  {exercise.weightType === 'rpe' && (
-                                    <div className='flex items-baseline gap-2'>
-                                      <h4>RPE Target</h4>
-                                      <h4>-</h4>
-                                      <h4 className='flex items-baseline justify-center text-xl font-semibold'>
-                                        {exercise?.targetRpe &&
-                                          +exercise?.targetRpe}
-                                      </h4>
-                                    </div>
-                                  )}
-                                  {exercise.weightType === 'weight' && (
-                                    <div className='flex items-baseline'>
-                                      <h4>
-                                        {exercise?.weightBottom ? (
-                                          +exercise?.weightBottom
+                                            </h4>
+                                            <h4>{exercise.onermTop && '-'}</h4>
+                                            <h4>
+                                              {exercise.onermTop &&
+                                                checkWeight(
+                                                  exercise.lift,
+                                                  exercise.onermTop,
+                                                )}
+                                              kg
+                                            </h4>
+                                          </div>
                                         ) : (
                                           <div className='text-red-500'>
-                                            Missing W
+                                            Missing 1rm
                                           </div>
                                         )}
-                                      </h4>
-                                      <h4>{exercise?.weightTop && '-'}</h4>
-                                      <h4>
-                                        {exercise?.weightTop &&
-                                          +exercise?.weightTop}
-                                        kg
-                                      </h4>
-                                    </div>
-                                  )}
+                                      </div>
+                                    )}
+                                    {exercise.weightType === 'rpe' && (
+                                      <div className='flex items-baseline gap-2'>
+                                        <h4>RPE Target:</h4>
+                                        <h4 className='flex items-baseline justify-center'>
+                                          {exercise?.targetRpe &&
+                                            +exercise?.targetRpe}
+                                        </h4>
+                                      </div>
+                                    )}
+                                    {exercise.weightType === 'weight' && (
+                                      <div className='flex items-baseline'>
+                                        <h4>
+                                          {exercise?.weightBottom ? (
+                                            +exercise?.weightBottom
+                                          ) : (
+                                            <div className='text-red-500'>
+                                              Missing W
+                                            </div>
+                                          )}
+                                        </h4>
+                                        <h4>{exercise?.weightTop && '-'}</h4>
+                                        <h4>
+                                          {exercise?.weightTop &&
+                                            +exercise?.weightTop}
+                                          kg
+                                        </h4>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                                 <div>
                                   {exercise.notes && (
@@ -361,21 +368,30 @@ const ProgramView = ({
                                     </div>
                                   )}
                                 </div>
-                                <div className=' overflow-hidden'>
-                                  {exercise.htmlLink && (
-                                    <a
-                                      href={exercise.htmlLink}
-                                      target='_blank'
-                                      className='text-sm text-gray-200'
-                                      rel='noreferrer'
-                                    >
-                                      {exercise.htmlLink}
-                                    </a>
-                                  )}
+                                <div className='flex justify-between'>
+                                  <h3 className='text-xxs text-gray-600'>
+                                    {exercise.weightType}
+                                  </h3>
+                                  <div
+                                    className=''
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    {exercise.htmlLink && (
+                                      <a
+                                        href={exercise.htmlLink}
+                                        target='_blank'
+                                        rel='noreferrer'
+                                        className=''
+                                      >
+                                        <PlaySquare
+                                          size={26}
+                                          fill='#EAB308'
+                                          color='black'
+                                        />
+                                      </a>
+                                    )}
+                                  </div>
                                 </div>
-                                <h3 className='text-xxs text-gray-600'>
-                                  {exercise.weightType}
-                                </h3>
                               </div>
                             )}
                           </div>
