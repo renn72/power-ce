@@ -16,6 +16,7 @@ import CompDate from '~/components/compDate'
 import UserSelect from './userSelect'
 
 import CountDown from '~/components/countDown'
+import TrainerSelect from './trainerSelect'
 
 const UserDisclosure = ({
   userId,
@@ -99,6 +100,7 @@ const UserPage = ({
         userFirstName={userFirstName}
         userLastName={userLastName}
       />
+      <TrainerSelect userId={userId} />
       <CompDate userId={userId} />
       <UserDisclosure
         userId={userId}
