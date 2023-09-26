@@ -25,12 +25,7 @@ const TrainerSelect = ({ userId }: { userId: string }) => {
   const { data: clientTrainer } = api.users.getTrainer.useQuery({
     userId: userId,
   })
-  const [trainer, setTrainer] = useState<string>(() => {
-    if (clientTrainer?.trainerId) {
-      setIsSet(true)
-    }
-    return clientTrainer?.trainerId || ''
-  })
+  const [trainer, setTrainer] = useState<string>('')
 
   const ctx = api.useContext()
 
@@ -60,6 +55,13 @@ const TrainerSelect = ({ userId }: { userId: string }) => {
   const onClearTrainer = () => {
     clearClientTrainer({ userId: userId })
   }
+
+  useEffect(() => {
+    if (clientTrainer?.trainerId) {
+      setIsSet(true)
+    }
+    setTrainer(clientTrainer?.trainerId || '')
+  }, [clientTrainer])
 
   return (
     <div className='m-2 flex gap-6'>

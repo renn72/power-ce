@@ -93,6 +93,29 @@ export const blocksRouter = createTRPCRouter({
     })
     return blocks
   }),
+  getUserSets: privateProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const userId = input.userId
+      const sets = await ctx.prisma.set.findMany({
+        where: {
+          userId: userId,
+        },
+      })
+      return sets
+    }),
+  getUserActiveSets: privateProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const userId = input.userId
+      const sets = await ctx.prisma.set.findMany({
+        where: {
+          userId: userId,
+          isComplete: true,
+        },
+      })
+      return sets
+    }),
   getAllAdmin: publicProcedure.query(async ({ ctx }) => {
     const blocks = await ctx.prisma.block.findMany({
       orderBy: { createdAt: 'desc' },

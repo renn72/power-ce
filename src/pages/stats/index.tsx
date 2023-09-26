@@ -109,6 +109,8 @@ const ChartComponent = ({ user }: { user: string }) => {
   )
 }
 
+const me = 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a'
+
 const Stats = () => {
   const { user: currentUser } = useUser()
 
@@ -116,58 +118,54 @@ const Stats = () => {
 
   console.log('user', user)
 
-  const { mutate: getCsv } = api.compLift.getCsv.useMutation({
-    onSuccess: (r) => {
-      console.log('csv', r)
-    },
-  })
+  const { data: sets, isLoading: setsLoading } =
+    api.blocks.getUserActiveSets.useQuery({
+      userId: user,
+    })
 
-  const { data: programs, isLoading: programsLoading } =
-    api.blocks.getAllPrograms.useQuery()
+  const { data: allLifts, isLoading: allLiftsLoading } =
+    api.primaryLifts.getAll.useQuery()
 
-  const tryFetch = async () => {
-    const res = await fetch(
-      'https://www.openpowerlifting.org/api/liftercsv/mitchlee1.csv',
-    )
-    const data = await res.text()
-    console.log('data', data)
-  }
+  const { data: userOneRepMax, isLoading: userOneRepMaxLoading } =
+    api.oneRepMax.getUserCoreLifts.useQuery({
+      userId: user,
+    })
+
+  // const tryFetch = async () => {
+  //   const res = await fetch(
+  //     'https://www.openpowerlifting.org/api/liftercsv/mitchlee1.csv',
+  //   )
+  //   const data = await res.text()
+  //   console.log('data', data)
+  // }
 
   const onSelectUser = (userId: string) => {
     setUser(userId)
   }
 
-  console.log(
-    'programs',
-    programs?.filter((program) => program.userIdOfProgram === user),
-  )
-
-  const sets = programs
-    ?.filter(
-      (program) => program.userIdOfProgram === user && !program.isDeleted,
-    )
-    .map((program) =>
-      program.week.flatMap((week) =>
-        week.day.flatMap((day) =>
-          day.exercise.flatMap((exercise) => exercise.set),
-        ),
-      ),
-    )
-    .flat()
-    .filter((set) => set.isComplete)
   console.log('sets', sets)
+  console.log('allLifts', allLifts)
 
-  if (programsLoading) return <LoadingPage />
+  const userLifts = userOneRepMax?.map((lift) => lift.lift)
+  console.log('userOneRepMax', userOneRepMax)
+
+  if (setsLoading || allLiftsLoading || userOneRepMaxLoading) return <LoadingPage />
+
+  if (!sets || !allLifts || !userOneRepMax) return null
 
   return (
     <div>
-      <h1>Stats</h1>
-      <UserSelect onSelectUser={onSelectUser} />
-      <div className='hidden'>
-        <Button onClick={() => getCsv()}>Get CSV</Button>
-        <Button onClick={() => tryFetch()}>try fetch</Button>
+      <div>
+        <h1>Stats</h1>
+        {currentUser?.id === me && <UserSelect onSelectUser={onSelectUser} />}
       </div>
-      <ChartComponent user={'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v'} />
+      <div>
+        {allLifts.filter((l) => userLifts?.includes(l.name)).map((lift) => (
+          <div key={lift.id}>
+            <h1>{lift.name}</h1>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
