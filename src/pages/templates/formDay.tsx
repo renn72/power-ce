@@ -42,6 +42,7 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
       weightType: '',
       repUnit: '',
       htmlLink: '',
+      isSS: false,
     })
   }
 

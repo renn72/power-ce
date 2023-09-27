@@ -27,7 +27,6 @@ import { type BlockData } from '~/store/types'
 
 import { classNames } from '~/utils/utils'
 import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
-import { Toggle } from '@/components/ui/toggle'
 
 export const selectedTemplateAtom = atom('')
 export const isSuperAdminAtom = atom(false)
@@ -109,7 +108,7 @@ const Form = () => {
           isRestDay: day.isRestDay,
           isComplete: false,
           exercise: day.exercise.map((exercise) => ({
-            name: exercise.name,
+            name: exercise.isSS ? 'superset' : exercise.name,
             lift: exercise.lift,
             onerm: exercise.onerm ? +exercise.onerm : null,
             onermTop: exercise.onermTop ? +exercise.onermTop : null,
@@ -125,6 +124,18 @@ const Form = () => {
             repUnit: exercise.repUnit,
             htmlLink: exercise.htmlLink,
             isComplete: false,
+            isSS: exercise.isSS,
+            ss: exercise.ss.map((s) => ({
+              name: s.name,
+              onerm: s.onerm ? +s.onerm : null,
+              onermTop: s.onermTop ? +s.onermTop : null,
+              weightTop: s.weightTop ? +s.weightTop : null,
+              weightBottom: s.weightBottom ? +s.weightBottom : null,
+              targetRpe: s.targetRpe ? +s.targetRpe : null,
+              reps: s.reps ? +s.reps : null,
+              weightType: s.weightType,
+              repUnit: s.repUnit,
+            }))
           })),
         })),
       })),

@@ -20,7 +20,6 @@ const TemplateSelect = ({ onSelectTemplate, }: { onSelectTemplate: (arg0: string
   const [selectedTemplate,] = useAtom(selectedTemplateAtom)
 
   const { data: blocksData, } = api.blocks.getAll.useQuery()
-  console.log({ blocksData, })
   const blocksTitle = blocksData?.filter((b) => b.trainerId === user?.id || isSuperAdmin ).map((block) => block.name)
 
   return (

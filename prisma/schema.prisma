@@ -128,6 +128,59 @@ model Set {
   @@index([exerciseId])
 }
 
+model SuperSet {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  name String? @db.VarChar(255)
+  lift String? @db.VarChar(55)
+  sets Int?
+  reps Int?
+
+  userId String?
+  trainerId String?
+
+  repUnit String? @db.VarChar(55)
+
+  weightType String? @db.VarChar(55)
+
+  onerm    Int?
+  onermTop Int?
+
+  weightTop    Decimal?
+  weightBottom Decimal?
+
+  targetRpe Decimal?
+
+  setWieght    Decimal?
+  setTopWeight Decimal?
+
+  isEstimatedOnerm    Boolean? @default(false)
+  estimatedOnermIndex Int?
+
+  actualSets Int?
+  actualReps Int?
+  isComplete Boolean @default(false)
+
+  rpe    Decimal?
+  weight Decimal?
+
+  exerciseId String
+
+  exercise Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  notes    String? @db.Text
+  htmlLink String?
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+  flield4 String?
+  flield5 String?
+
+  @@index([exerciseId])
+}
+
 model Exercise {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -169,6 +222,8 @@ model Exercise {
   dayId String
 
   day Day @relation(fields: [dayId], references: [id], onDelete: Cascade)
+
+  ss SuperSet[]
 
   notes    String? @db.Text
   htmlLink String?

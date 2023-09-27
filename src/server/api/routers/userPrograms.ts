@@ -1,12 +1,24 @@
-import { TRPCError, } from '@trpc/server'
-import { z, } from 'zod'
+import { TRPCError } from '@trpc/server'
+import { z } from 'zod'
 
-import {
-  createTRPCRouter,
-  privateProcedure,
-} from '~/server/api/trpc'
+import { createTRPCRouter, privateProcedure } from '~/server/api/trpc'
 
-import { getRandomInt, } from '~/utils/utils'
+import { getRandomInt } from '~/utils/utils'
+
+const ssSchema = z.object({
+  name: z.string().min(0).max(280).optional().nullable(),
+  lift: z.string().min(0).max(55).optional().nullable(),
+  sets: z.number().min(0).max(55).optional().nullable(),
+  reps: z.number().min(0).max(99999).optional().nullable(),
+  onerm: z.number().min(0).max(99999).optional().nullable(),
+  onermTop: z.number().min(0).max(99999).optional().nullable(),
+  weightTop: z.number().min(0).max(99999).optional().nullable(),
+  weightBottom: z.number().min(0).max(99999).optional().nullable(),
+  targetRpe: z.number().min(0).max(100).optional().nullable(),
+  notes: z.string().min(0).max(280).optional().nullable(),
+  weightType: z.string().min(0).max(280).optional().nullable(),
+  repUnit: z.string().min(0).max(55).optional().nullable(),
+})
 
 const exerciseSchema = z.object({
   id: z.string(),
@@ -26,6 +38,8 @@ const exerciseSchema = z.object({
   repUnit: z.string().min(0).max(55).optional().nullable(),
   htmlLink: z.string().min(0).max(280).optional().nullable(),
   userId: z.string().optional(),
+  isSS: z.boolean(),
+  ss: z.array(ssSchema).optional().nullable(),
 })
 
 const programSchema = z.object({
@@ -37,33 +51,40 @@ const programSchema = z.object({
 })
 
 export const userProgramsRouter = createTRPCRouter({
-  getAllUser: privateProcedure.query(async ({ ctx, }) => {
+  getAllUser: privateProcedure.query(async ({ ctx }) => {
     const userId = ctx.userId
     const res = await ctx.prisma.userProgram.findMany({
       where: {
-        userId: userId, isDeleted: false,
+        userId: userId,
+        isDeleted: false,
       },
     })
     return res
   }),
-  getAll: privateProcedure.query(async ({ ctx, }) => {
+  getAll: privateProcedure.query(async ({ ctx }) => {
     const res = await ctx.prisma.userProgram.findMany({})
     return res
   }),
-  getAllActive: privateProcedure.query(async ({ ctx, }) => {
-    const res = await ctx.prisma.userProgram.findMany({ where: { isProgramActive: true, }, })
+  getAllActive: privateProcedure.query(async ({ ctx }) => {
+    const res = await ctx.prisma.userProgram.findMany({
+      where: { isProgramActive: true },
+    })
     return res
   }),
   create: privateProcedure
     .input(programSchema)
-    .mutation(async ({
-      ctx, input,
-    }) => {
+    .mutation(async ({ ctx, input }) => {
       console.log('start')
 
       const block = await ctx.prisma.block.findUnique({
-        where: { id: input.templateId, },
-        include: { week: { include: { day: { include: { exercise: true, }, }, }, }, },
+        where: { id: input.templateId },
+        include: {
+          week: {
+            include: {
+              day: { include: { exercise: { include: { ss: true } } } },
+            },
+          },
+        },
       })
 
       if (!block) {
@@ -106,17 +127,31 @@ export const userProgramsRouter = createTRPCRouter({
                       actualSets: exercise.sets,
                       repUnit: exercise.repUnit,
                       htmlLink: exercise.htmlLink,
+                      ss: {
+                        create: exercise?.ss?.map((s) => ({
+                          name: s.name,
+                          lift: s.lift,
+                          reps: s.reps,
+                          onerm: s.onerm,
+                          onermTop: s.onermTop,
+                          weightTop: s.weightTop,
+                          weightBottom: s.weightBottom,
+                          targetRpe: s.targetRpe,
+                          weightType: s.weightType,
+                        })),
+                      },
                       set: {
                         createMany: {
-                          data:
-                            Array.from({ length: exercise.sets ? +exercise.sets : 0, }, (_,) => ({
+                          data: Array.from(
+                            { length: exercise.sets ? +exercise.sets : 0 },
+                            (_) => ({
                               rep: exercise.reps,
                               isComplete: false,
                               userId: input.userId,
                               name: exercise.name,
                               lift: exercise.lift,
-
-                            }),),
+                            }),
+                          ),
                         },
                       },
                     })),
@@ -142,40 +177,33 @@ export const userProgramsRouter = createTRPCRouter({
 
       const resUpdate = ctx.prisma.userProgram.updateMany({
         where: {
-          NOT: { programId: program.id, },
+          NOT: { programId: program.id },
           userId: input.userId,
         },
-        data: { isProgramActive: false, },
+        data: { isProgramActive: false },
       })
 
       const proUpdate = ctx.prisma.block.updateMany({
         where: {
-          NOT: { id: program.id, },
+          NOT: { id: program.id },
           userIdOfProgram: input.userId,
         },
-        data: { isProgramActive: false, },
+        data: { isProgramActive: false },
       })
 
-      await ctx.prisma.$transaction([
-        userProgram,
-        resUpdate,
-        proUpdate,
-      ])
+      await ctx.prisma.$transaction([userProgram, resUpdate, proUpdate])
 
       return program
-
     }),
   remove: privateProcedure
-    .input(z.object({ userId: z.string(), }))
-    .mutation(async ({
-      ctx, input,
-    }) => {
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
       const res = await ctx.prisma.userProgram.updateMany({
         where: {
           userId: input.userId,
           isProgramActive: true,
         },
-        data: { isProgramActive: false, },
+        data: { isProgramActive: false },
       })
 
       await ctx.prisma.block.updateMany({
@@ -183,21 +211,19 @@ export const userProgramsRouter = createTRPCRouter({
           userIdOfProgram: input.userId,
           isProgramActive: true,
         },
-        data: { isProgramActive: false, },
+        data: { isProgramActive: false },
       })
 
       return res
     }),
   updateExercise: privateProcedure
-    .input(z.object({ exercise: exerciseSchema, }))
-    .mutation(async ({
-      ctx, input,
-    }) => {
+    .input(z.object({ exercise: exerciseSchema }))
+    .mutation(async ({ ctx, input }) => {
       const exercise = input.exercise
       const userId = exercise.userId || ''
-      await ctx.prisma.set.deleteMany({ where: { exerciseId: exercise.id, }, })
+      await ctx.prisma.set.deleteMany({ where: { exerciseId: exercise.id } })
       const res = await ctx.prisma.exercise.update({
-        where: { id: exercise.id, },
+        where: { id: exercise.id },
         data: {
           name: exercise.name,
           lift: exercise.lift,
@@ -211,19 +237,24 @@ export const userProgramsRouter = createTRPCRouter({
           estimatedOnermIndex: exercise.estimatedOnermIndex,
           weightType: exercise.weightType,
           notes: exercise.notes,
-          isEstimatedOnerm: exercise.isEstimatedOnerm ? exercise.isEstimatedOnerm : false,
+          isEstimatedOnerm: exercise.isEstimatedOnerm
+            ? exercise.isEstimatedOnerm
+            : false,
           isComplete: false,
           actualSets: exercise.sets,
           repUnit: exercise.repUnit,
           htmlLink: exercise.htmlLink,
           set: {
-            create: Array.from({ length: exercise.sets ? +exercise.sets : 0, }, (_,) => ({
-              rep: exercise.reps ? +exercise.reps : 1,
-              isComplete: false,
-              userId: userId,
-              name: exercise.name,
-              lift: exercise.lift,
-            }),),
+            create: Array.from(
+              { length: exercise.sets ? +exercise.sets : 0 },
+              (_) => ({
+                rep: exercise.reps ? +exercise.reps : 1,
+                isComplete: false,
+                userId: userId,
+                name: exercise.name,
+                lift: exercise.lift,
+              }),
+            ),
           },
         },
       })
@@ -231,13 +262,12 @@ export const userProgramsRouter = createTRPCRouter({
       return res
     }),
   deleteHard: privateProcedure
-    .input(z.object({ id: z.string(), }))
-    .mutation(async ({
-      ctx, input,
-    }) => {
-      const res = await ctx.prisma.userProgram.delete({ where: { id: input.id, }, })
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.userProgram.delete({
+        where: { id: input.id },
+      })
 
       return res
     }),
-
 })

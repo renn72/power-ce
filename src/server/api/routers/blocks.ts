@@ -12,6 +12,21 @@ import type { Block, Post, Exercise, Day, Week } from '@prisma/client'
 
 import { filterUserForClient } from '~/server/helpers/filterUserForClient'
 
+const ssSchema = z.object({
+  name: z.string().min(0).max(280).optional().nullable(),
+  lift: z.string().min(0).max(55).optional().nullable(),
+  sets: z.number().min(0).max(55).optional().nullable(),
+  reps: z.number().min(0).max(99999).optional().nullable(),
+  onerm: z.number().min(0).max(99999).optional().nullable(),
+  onermTop: z.number().min(0).max(99999).optional().nullable(),
+  weightTop: z.number().min(0).max(99999).optional().nullable(),
+  weightBottom: z.number().min(0).max(99999).optional().nullable(),
+  targetRpe: z.number().min(0).max(100).optional().nullable(),
+  notes: z.string().min(0).max(280).optional().nullable(),
+  weightType: z.string().min(0).max(280).optional().nullable(),
+  repUnit: z.string().min(0).max(55).optional().nullable(),
+})
+
 const exerciseSchema = z.object({
   name: z.string().min(0).max(280).optional().nullable(),
   lift: z.string().min(0).max(55).optional().nullable(),
@@ -28,6 +43,8 @@ const exerciseSchema = z.object({
   weightType: z.string().min(0).max(280).optional().nullable(),
   repUnit: z.string().min(0).max(55).optional().nullable(),
   htmlLink: z.string().min(0).max(280).optional().nullable(),
+  isSS: z.boolean(),
+  ss: z.array(ssSchema).optional().nullable(),
 })
 const daySchema = z.object({
   isRestDay: z.boolean(),
@@ -54,7 +71,13 @@ export const blocksRouter = createTRPCRouter({
         isProgram: false,
         isDeleted: false,
       },
-      include: { week: { include: { day: { include: { exercise: true } } } } },
+      include: {
+        week: {
+          include: {
+            day: { include: { exercise: { include: { ss: true } } } },
+          },
+        },
+      },
     })
     return blocks
   }),
@@ -86,7 +109,9 @@ export const blocksRouter = createTRPCRouter({
       include: {
         week: {
           include: {
-            day: { include: { exercise: { include: { set: true } } } },
+            day: {
+              include: { exercise: { include: { set: true, ss: true } } },
+            },
           },
         },
       },
@@ -122,7 +147,9 @@ export const blocksRouter = createTRPCRouter({
       include: {
         week: {
           include: {
-            day: { include: { exercise: { include: { set: true } } } },
+            day: {
+              include: { exercise: { include: { set: true, ss: true } } },
+            },
           },
         },
       },
@@ -153,7 +180,9 @@ export const blocksRouter = createTRPCRouter({
         include: {
           week: {
             include: {
-              day: { include: { exercise: { include: { set: true } } } },
+              day: {
+                include: { exercise: { include: { set: true, ss: true } } },
+              },
             },
           },
         },
@@ -174,7 +203,9 @@ export const blocksRouter = createTRPCRouter({
         include: {
           week: {
             include: {
-              day: { include: { exercise: { include: { set: true } } } },
+              day: {
+                include: { exercise: { include: { set: true, ss: true } } },
+              },
             },
           },
         },
@@ -194,7 +225,9 @@ export const blocksRouter = createTRPCRouter({
         include: {
           week: {
             include: {
-              day: { include: { exercise: { include: { set: true } } } },
+              day: {
+                include: { exercise: { include: { set: true, ss: true } } },
+              },
             },
           },
         },
@@ -220,7 +253,11 @@ export const blocksRouter = createTRPCRouter({
       const block = await ctx.prisma.block.findUnique({
         where: { id: input.id },
         include: {
-          week: { include: { day: { include: { exercise: true } } } },
+          week: {
+            include: {
+              day: { include: { exercise: { include: { ss: true } } } },
+            },
+          },
         },
       })
       return block
@@ -247,26 +284,37 @@ export const blocksRouter = createTRPCRouter({
                 create: week.day.map((day) => ({
                   isRestDay: day.isRestDay,
                   exercise: {
-                    createMany: {
-                      data: day.exercise.map((exercise) => ({
-                        name: exercise.name,
-                        lift: exercise.lift,
-                        sets: exercise.sets,
-                        reps: exercise.reps,
-                        onerm: exercise.onerm,
-                        onermTop: exercise.onermTop,
-                        weightTop: exercise.weightTop,
-                        weightBottom: exercise.weightBottom,
-                        targetRpe: exercise.targetRpe,
-                        notes: exercise?.notes,
-                        isEstimatedOnerm: exercise.isEstimatedOnerm,
-                        actualSets: exercise.sets,
-                        estimatedOnermIndex: exercise.estimatedOnermIndex,
-                        weightType: exercise.weightType,
-                        repUnit: exercise.repUnit,
-                        htmlLink: exercise.htmlLink,
-                      })),
-                    },
+                    create: day.exercise.map((exercise) => ({
+                      name: exercise.name,
+                      lift: exercise.lift,
+                      sets: exercise.sets,
+                      reps: exercise.reps,
+                      onerm: exercise.onerm,
+                      onermTop: exercise.onermTop,
+                      weightTop: exercise.weightTop,
+                      weightBottom: exercise.weightBottom,
+                      targetRpe: exercise.targetRpe,
+                      notes: exercise?.notes,
+                      isEstimatedOnerm: exercise.isEstimatedOnerm,
+                      actualSets: exercise.sets,
+                      estimatedOnermIndex: exercise.estimatedOnermIndex,
+                      weightType: exercise.weightType,
+                      repUnit: exercise.repUnit,
+                      htmlLink: exercise.htmlLink,
+                      ss: {
+                            create: exercise?.ss?.map((s) => ({
+                              name: s.name,
+                              lift: s.lift,
+                              reps: s.reps,
+                              onerm: s.onerm,
+                              onermTop: s.onermTop,
+                              weightTop: s.weightTop,
+                              weightBottom: s.weightBottom,
+                              targetRpe: s.targetRpe,
+                              weightType: s.weightType,
+                            })),
+                          }
+                    })),
                   },
                 })),
               },
@@ -282,7 +330,7 @@ export const blocksRouter = createTRPCRouter({
     const weeks = await ctx.prisma.week.findMany({
       orderBy: { createdAt: 'desc' },
       where: { isTemplate: true },
-      include: { day: { include: { exercise: true } } },
+      include: { day: { include: { exercise: { include: { ss: true } } } } },
     })
     return weeks
   }),
@@ -318,6 +366,21 @@ export const blocksRouter = createTRPCRouter({
                     weightType: exercise.weightType,
                     repUnit: exercise.repUnit,
                     htmlLink: exercise.htmlLink,
+                    ss: exercise.isSS
+                      ? {
+                          create: exercise?.ss?.map((s) => ({
+                            name: s.name,
+                            lift: s.lift,
+                            reps: s.reps,
+                            onerm: s.onerm,
+                            onermTop: s.onermTop,
+                            weightTop: s.weightTop,
+                            weightBottom: s.weightBottom,
+                            targetRpe: s.targetRpe,
+                            weightType: s.weightType,
+                          })),
+                        }
+                      : undefined,
                   })),
                 },
               },
@@ -361,6 +424,21 @@ export const blocksRouter = createTRPCRouter({
                       weightType: exercise.weightType,
                       repUnit: exercise.repUnit,
                       htmlLink: exercise.htmlLink,
+                      ss: exercise.isSS
+                        ? {
+                            create: exercise?.ss?.map((s) => ({
+                              name: s.name,
+                              lift: s.lift,
+                              reps: s.reps,
+                              onerm: s.onerm,
+                              onermTop: s.onermTop,
+                              weightTop: s.weightTop,
+                              weightBottom: s.weightBottom,
+                              targetRpe: s.targetRpe,
+                              weightType: s.weightType,
+                            })),
+                          }
+                        : undefined,
                     })),
                   },
                 },
@@ -401,26 +479,39 @@ export const blocksRouter = createTRPCRouter({
                   create: week.day.map((day) => ({
                     isRestDay: day.isRestDay,
                     exercise: {
-                      createMany: {
-                        data: day.exercise.map((exercise) => ({
-                          name: exercise.name,
-                          lift: exercise.lift,
-                          sets: exercise.sets,
-                          reps: exercise.reps,
-                          onerm: exercise.onerm,
-                          onermTop: exercise.onermTop,
-                          weightTop: exercise.weightTop,
-                          weightBottom: exercise.weightBottom,
-                          targetRpe: exercise.targetRpe,
-                          notes: exercise?.notes,
-                          isEstimatedOnerm: exercise.isEstimatedOnerm,
-                          actualSets: exercise.sets,
-                          estimatedOnermIndex: exercise.estimatedOnermIndex,
-                          weightType: exercise.weightType,
-                          repUnit: exercise.repUnit,
-                          htmlLink: exercise.htmlLink,
-                        })),
-                      },
+                      create: day.exercise.map((exercise) => ({
+                        name: exercise.name,
+                        lift: exercise.lift,
+                        sets: exercise.sets,
+                        reps: exercise.reps,
+                        onerm: exercise.onerm,
+                        onermTop: exercise.onermTop,
+                        weightTop: exercise.weightTop,
+                        weightBottom: exercise.weightBottom,
+                        targetRpe: exercise.targetRpe,
+                        notes: exercise?.notes,
+                        isEstimatedOnerm: exercise.isEstimatedOnerm,
+                        actualSets: exercise.sets,
+                        estimatedOnermIndex: exercise.estimatedOnermIndex,
+                        weightType: exercise.weightType,
+                        repUnit: exercise.repUnit,
+                        htmlLink: exercise.htmlLink,
+                        ss: exercise.isSS
+                          ? {
+                              create: exercise?.ss?.map((s) => ({
+                                name: s.name,
+                                lift: s.lift,
+                                reps: s.reps,
+                                onerm: s.onerm,
+                                onermTop: s.onermTop,
+                                weightTop: s.weightTop,
+                                weightBottom: s.weightBottom,
+                                targetRpe: s.targetRpe,
+                                weightType: s.weightType,
+                              })),
+                            }
+                          : undefined,
+                      })),
                     },
                   })),
                 },
