@@ -11,13 +11,14 @@ import { useUser } from '@clerk/nextjs'
 import DayModal from './dayModal'
 
 import getWeight from '~/utils/getWeight'
-import { PlaySquare, } from 'lucide-react'
+import { PlaySquare } from 'lucide-react'
 
 const dayWithExercise = Prisma.validator<Prisma.DayArgs>()({
   include: {
     exercise: {
       include: {
         set: true,
+        ss: true
       },
     },
   },
@@ -194,10 +195,10 @@ const ProgramDay = ({
                     {day.exercise.map((exercise) => (
                       <div
                         key={exercise.id}
-                        className='flex cursor-pointer relative flex-col gap-0 py-1'
+                        className='relative flex cursor-pointer flex-col gap-0 py-1'
                       >
                         <div className='flex w-full items-center justify-between gap-1 md:gap-2'>
-                          <h3 className='capitalize text-yellow-500 text-lg leading-6'>
+                          <h3 className='text-lg capitalize leading-6 text-yellow-500'>
                             {exercise.name}
                           </h3>
                           <div className='mr-2'>
@@ -209,150 +210,174 @@ const ProgramDay = ({
                           </div>
                         </div>
                         <div>
-                          <div className='flex relative items-baseline gap-6 text-sm lg:flex-col'>
-                            <div className='flex gap-2 '>
-                              <h3>{exercise.sets}</h3>
-                              <h3>X</h3>
-                              <h3>{exercise.reps}</h3>
-                              <h3>
-                                {exercise.repUnit ? exercise.repUnit : 'reps'}
-                              </h3>
+                          {exercise.ss && exercise.ss.length > 0 ? (
+                            <div className='relative flex flex-col items-baseline gap-1 text-sm'>
+                              <h4 className='text-xs text-gray-600'>
+                                Superset
+                              </h4>
+                              <h3>{exercise.sets} X</h3>
+                              <div className='pl-3 flex flex-col'>
+                                {exercise.ss.map((s) => (
+                                  <div
+                                    key={s.id}
+                                    className='flex gap-2 '
+                                  >
+                                    <h3>{s.reps}</h3>
+                                    <h3>-</h3>
+                                    <h3>{s.name}</h3>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                            <div className='relative'>
-                              {exercise.weightType === 'percent' && (
-                                <div className=''>
-                                  {exercise.estimatedOnermIndex ? (
-                                    <div>
-                                      {Number(
-                                        day?.exercise[
-                                          exercise?.estimatedOnermIndex - 1
-                                        ]?.set[0]?.weight,
-                                      ) > 0 ? (
-                                        <div className='flex'>
-                                          {exercise.onerm && (
-                                            <h4>
-                                              {checkPercentWeight(
-                                                exercise.estimatedOnermIndex,
-                                                +exercise?.onerm,
-                                              )}
-                                            </h4>
-                                          )}
-                                          {exercise.onermTop && <h4>-</h4>}
-                                          {exercise.onermTop && (
-                                            <h4>
-                                              {checkPercentWeight(
-                                                exercise.estimatedOnermIndex,
-                                                +exercise?.onermTop,
-                                              )}
-                                            </h4>
-                                          )}
-                                          <h4>kg</h4>
-                                        </div>
-                                      ) : null}
-                                    </div>
-                                  ) : null}
-                                </div>
-                              )}
-                              {exercise.weightType === 'onerm' && (
-                                <div className=''>
-                                  {exercise.estimatedOnermIndex ? (
-                                    <div>
-                                      {Number(
-                                        day?.exercise[
-                                          exercise?.estimatedOnermIndex - 1
-                                        ]?.set[0]?.weight,
-                                      ) > 0 && (
-                                        <div className='flex'>
-                                          {exercise.onerm && (
-                                            <h4>
-                                              {checkWeight(
-                                                exercise.lift,
-                                                +exercise?.onerm,
-                                                exercise.estimatedOnermIndex,
-                                              )}
-                                            </h4>
-                                          )}
-                                          {exercise.onermTop && <h4>-</h4>}
-                                          {exercise.onermTop && (
-                                            <h4>
-                                              {checkWeight(
-                                                exercise.lift,
-                                                +exercise?.onermTop,
-                                                exercise.estimatedOnermIndex,
-                                              )}
-                                            </h4>
-                                          )}
-                                          <h4>kg</h4>
-                                        </div>
-                                      )}
-                                    </div>
-                                  ) : (
-                                    <div className='flex'>
-                                      {exercise.onerm && (
-                                        <h4>
-                                          {checkWeight(
-                                            exercise.lift,
-                                            +exercise?.onerm,
-                                            null,
-                                          )}
-                                        </h4>
-                                      )}
-                                      {exercise.onermTop && <h4>-</h4>}
-                                      {exercise.onermTop && (
-                                        <h4>
-                                          {checkWeight(
-                                            exercise.lift,
-                                            +exercise?.onermTop,
-                                            null,
-                                          )}
-                                        </h4>
-                                      )}
-                                      <h4>kg</h4>
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                              {exercise.weightType === 'rpe' && (
-                                <div className='flex items-baseline gap-2'>
-                                  <h4>RPE Target</h4>
-                                  <h4>-</h4>
-                                  <h4 className='flex items-baseline justify-center font-semibold'>
-                                    {exercise?.targetRpe &&
-                                      +exercise?.targetRpe}
-                                  </h4>
-                                </div>
-                              )}
-                              {exercise.weightType === 'weight' && (
-                                <div className='flex items-baseline'>
-                                  <h4>
-                                    {exercise?.weightBottom &&
-                                      checkWeight(
-                                        'weight',
-                                        +exercise?.weightBottom,
-                                        null,
-                                      )}
-                                  </h4>
-                                  <h4>{exercise?.weightTop && '-'}</h4>
-                                  <h4>
-                                    {exercise?.weightTop &&
-                                      checkWeight(
-                                        'weight',
-                                        +exercise?.weightTop,
-                                        null,
-                                      )}
-                                    kg
-                                  </h4>
-                                </div>
-                              )}
+                          ) : (
+                            <div className='relative flex items-baseline gap-6 text-sm lg:flex-col'>
+                              <div className='flex gap-2 '>
+                                <h3>{exercise.sets}</h3>
+                                <h3>X</h3>
+                                <h3>{exercise.reps}</h3>
+                                <h3>
+                                  {exercise.repUnit ? exercise.repUnit : 'reps'}
+                                </h3>
+                              </div>
+                              <div className='relative'>
+                                {exercise.weightType === 'percent' && (
+                                  <div className=''>
+                                    {exercise.estimatedOnermIndex ? (
+                                      <div>
+                                        {Number(
+                                          day?.exercise[
+                                            exercise?.estimatedOnermIndex - 1
+                                          ]?.set[0]?.weight,
+                                        ) > 0 ? (
+                                          <div className='flex'>
+                                            {exercise.onerm && (
+                                              <h4>
+                                                {checkPercentWeight(
+                                                  exercise.estimatedOnermIndex,
+                                                  +exercise?.onerm,
+                                                )}
+                                              </h4>
+                                            )}
+                                            {exercise.onermTop && <h4>-</h4>}
+                                            {exercise.onermTop && (
+                                              <h4>
+                                                {checkPercentWeight(
+                                                  exercise.estimatedOnermIndex,
+                                                  +exercise?.onermTop,
+                                                )}
+                                              </h4>
+                                            )}
+                                            <h4>kg</h4>
+                                          </div>
+                                        ) : null}
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                )}
+                                {exercise.weightType === 'onerm' && (
+                                  <div className=''>
+                                    {exercise.estimatedOnermIndex ? (
+                                      <div>
+                                        {Number(
+                                          day?.exercise[
+                                            exercise?.estimatedOnermIndex - 1
+                                          ]?.set[0]?.weight,
+                                        ) > 0 && (
+                                          <div className='flex'>
+                                            {exercise.onerm && (
+                                              <h4>
+                                                {checkWeight(
+                                                  exercise.lift,
+                                                  +exercise?.onerm,
+                                                  exercise.estimatedOnermIndex,
+                                                )}
+                                              </h4>
+                                            )}
+                                            {exercise.onermTop && <h4>-</h4>}
+                                            {exercise.onermTop && (
+                                              <h4>
+                                                {checkWeight(
+                                                  exercise.lift,
+                                                  +exercise?.onermTop,
+                                                  exercise.estimatedOnermIndex,
+                                                )}
+                                              </h4>
+                                            )}
+                                            <h4>kg</h4>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <div className='flex'>
+                                        {exercise.onerm && (
+                                          <h4>
+                                            {checkWeight(
+                                              exercise.lift,
+                                              +exercise?.onerm,
+                                              null,
+                                            )}
+                                          </h4>
+                                        )}
+                                        {exercise.onermTop && <h4>-</h4>}
+                                        {exercise.onermTop && (
+                                          <h4>
+                                            {checkWeight(
+                                              exercise.lift,
+                                              +exercise?.onermTop,
+                                              null,
+                                            )}
+                                          </h4>
+                                        )}
+                                        <h4>kg</h4>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                                {exercise.weightType === 'rpe' && (
+                                  <div className='flex items-baseline gap-2'>
+                                    <h4>RPE Target</h4>
+                                    <h4>-</h4>
+                                    <h4 className='flex items-baseline justify-center font-semibold'>
+                                      {exercise?.targetRpe &&
+                                        +exercise?.targetRpe}
+                                    </h4>
+                                  </div>
+                                )}
+                                {exercise.weightType === 'weight' && (
+                                  <div className='flex items-baseline'>
+                                    <h4>
+                                      {exercise?.weightBottom &&
+                                        checkWeight(
+                                          'weight',
+                                          +exercise?.weightBottom,
+                                          null,
+                                        )}
+                                    </h4>
+                                    <h4>{exercise?.weightTop && '-'}</h4>
+                                    <h4>
+                                      {exercise?.weightTop &&
+                                        checkWeight(
+                                          'weight',
+                                          +exercise?.weightTop,
+                                          null,
+                                        )}
+                                      kg
+                                    </h4>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                          <div className='' onClick={(e) => e.stopPropagation()}>
+                          )}
+                          <div
+                            className=''
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             {exercise.htmlLink && (
                               <a
                                 href={exercise.htmlLink}
                                 target='_blank'
                                 rel='noreferrer'
-                                className='text-sm text-gray-400 flex justify-end absolute right-1 bottom-0'
+                                className='absolute bottom-0 right-1 flex justify-end text-sm text-gray-400'
                               >
                                 <PlaySquare
                                   size={26}

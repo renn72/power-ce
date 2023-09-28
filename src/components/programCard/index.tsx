@@ -110,7 +110,6 @@ const ProgramCard = ({
                             ?.firstName
                         }
                       </h3>
-                      <h3>{program.isDeleted === true ? 'deleted' : ''}</h3>
                     </div>
                     <ChevronUpIcon
                       className={`${
