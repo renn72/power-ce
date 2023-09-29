@@ -10,6 +10,27 @@ export type Set = {
   userId: string | null,
 }
 
+export type SS = {
+  id: string,
+  lift: string,
+  name: string,
+  onerm: string | number | null,
+  onermTop: string | number | null,
+  weightTop: string | number | null,
+  weightBottom: string | number | null,
+  isEstimatedOnerm: boolean | null,
+  sets: string | number | null,
+  reps: string | number | null,
+  targetRpe: string | number | null,
+  notes: string | null,
+  set: Set[],
+  estimatedOnermIndex: number | null,
+  weightType: string | null,
+  repUnit: string | null,
+  isComplete: boolean,
+  htmlLink: string | null,
+}
+
 export type Exercise = {
   id: string,
   lift: string,
@@ -24,6 +45,7 @@ export type Exercise = {
   targetRpe: string | number | null,
   notes: string | null,
   set: Set[],
+  ss: SS[],
   estimatedOnermIndex: number | null,
   weightType: string | null,
   repUnit: string | null,
