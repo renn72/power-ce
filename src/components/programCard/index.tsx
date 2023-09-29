@@ -23,7 +23,6 @@ const ProgramCard = ({
     id: programId,
   })
 
-  console.log('program', program)
 
   if (!program) return null
 
