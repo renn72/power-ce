@@ -131,8 +131,6 @@ const ExerciseModal = ({
   selectedEnergy,
   day,
   programId,
-  activeDisclosurePanel,
-  handleClick,
 }: {
   exercise: StoreExercise
   idx: number
@@ -445,7 +443,6 @@ const ExerciseModal = ({
       // block: 'start',
       // inline: 'nearest',
     })
-    handleClick(idx)
     if (!isSS) return
     setTimeout(() => {
       if (!wrapper.current) return
@@ -460,7 +457,7 @@ const ExerciseModal = ({
   return (
     <div ref={disDiv}>
       <Disclosure>
-        {({ open,  }) => (
+        {({ open }) => (
           <>
             <div className='flex flex-col justify-start gap-2 '>
               <div className='flex flex-col gap-0'>
@@ -729,184 +726,176 @@ const ExerciseModal = ({
                   leaveTo='transform opacity-0'
                 >
                   <Disclosure.Panel>
-                    {({ close }) =>
-                      activeDisclosurePanel === idx ? (
-                        <div className='flex flex-col gap-2'>
-                          <div className='ml-10 text-sm font-light text-gray-400 md:ml-16'>
-                            {exercise?.notes}
-                          </div>
-                          {isSS ? (
-                            <div ref={wrapper}>
-                              <Fireworks
-                                ref={ref}
-                                options={{ opacity: 0.5 }}
-                                style={{
-                                  top: 0,
-                                  left: 0,
-                                  width: '100%',
-                                  height: '100%',
-                                  position: 'fixed',
-                                  background: '#000',
-                                  display: 'block',
-                                  zIndex: 9999,
+                    <div className='flex flex-col gap-2'>
+                      <div className='ml-10 text-sm font-light text-gray-400 md:ml-16'>
+                        {exercise?.notes}
+                      </div>
+                      {isSS ? (
+                        <div ref={wrapper}>
+                          <Fireworks
+                            ref={ref}
+                            options={{ opacity: 0.5 }}
+                            style={{
+                              top: 0,
+                              left: 0,
+                              width: '100%',
+                              height: '100%',
+                              position: 'fixed',
+                              background: '#000',
+                              display: 'block',
+                              zIndex: 9999,
+                            }}
+                          />
+                        </div>
+                      ) : null}
+                      {exercise.sets && exercise.reps && (
+                        <div className='flex flex-col gap-2 md:gap-6'>
+                          {isSS ? null : (
+                            <div className='flex w-full items-center justify-center gap-4 text-2xl font-bold md:gap-6'>
+                              <div
+                                className='h-8 w-8 cursor-pointer rounded-full text-center'
+                                onClick={() => {
+                                  if (weights && weights > 0) {
+                                    setWeights(+weights - 2.5)
+                                  }
                                 }}
-                              />
-                            </div>
-                          ) : null}
-                          {exercise.sets && exercise.reps && (
-                            <div className='flex flex-col gap-2 md:gap-6'>
-                              {isSS ? null : (
-                                <div className='flex w-full items-center justify-center gap-4 text-2xl font-bold md:gap-6'>
-                                  <div
-                                    className='h-8 w-8 cursor-pointer rounded-full text-center'
-                                    onClick={() => {
-                                      if (weights && weights > 0) {
-                                        setWeights(+weights - 2.5)
-                                      }
-                                    }}
-                                  >
-                                    -
-                                  </div>
-                                  <div className='relative flex w-44 items-center text-center '>
-                                    <NumericFormat
-                                      className='w-full rounded-lg border border-gray-400 bg-black p-6 text-center text-2xl font-semibold placeholder-gray-600  md:text-2xl'
-                                      value={weights}
-                                      placeholder='kg'
-                                      decimalScale={2}
-                                      onChange={(e) =>
-                                        setWeights(+e.target.value)
-                                      }
-                                    />
-                                    {weights && weights !== 0 ? (
-                                      <span className='absolute right-5 text-base text-gray-400'>
-                                        kg
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                  <div
-                                    className='h-8 w-8 cursor-pointer rounded-full text-center'
-                                    onClick={() => {
-                                      if (weights) {
-                                        setWeights(+weights + 2.5)
-                                      } else {
-                                        setWeights(2.5)
-                                      }
-                                    }}
-                                  >
-                                    +
-                                  </div>
-                                </div>
-                              )}
-
-                              <div className='flex w-full justify-center gap-4 text-xl font-medium md:gap-6'>
-                                {exercise.set.reduce((acc, curr) => {
-                                  return acc + (curr.isComplete ? 1 : 0)
-                                }, 0)}{' '}
-                                / {exercise.sets}
-                              </div>
-                              <RadioGroup
-                                value={rpe}
-                                onChange={setRpe}
                               >
-                                <div
-                                  className={`mx-1 grid grid-cols-9 items-center justify-between gap-1 md:mx-6  md:grid-cols-10 md:p-2`}
-                                >
-                                  <RadioGroup.Label className='col-span-9 text-center text-xl font-medium md:col-span-1 md:text-left'>
-                                    RPE
-                                  </RadioGroup.Label>
-                                  {[
-                                    '6',
-                                    '6.5',
-                                    '7',
-                                    '7.5',
-                                    '8',
-                                    '8.5',
-                                    '9',
-                                    '9.5',
-                                    '10',
-                                  ].map((energy) => (
-                                    <RadioGroup.Option
-                                      key={energy}
-                                      value={energy}
-                                      className={({ active, checked }) => `${
-                                        active ? '' : ''
-                                      }
+                                -
+                              </div>
+                              <div className='relative flex w-44 items-center text-center '>
+                                <NumericFormat
+                                  className='w-full rounded-lg border border-gray-400 bg-black p-6 text-center text-2xl font-semibold placeholder-gray-600  md:text-2xl'
+                                  value={weights}
+                                  placeholder='kg'
+                                  decimalScale={2}
+                                  onChange={(e) => setWeights(+e.target.value)}
+                                />
+                                {weights && weights !== 0 ? (
+                                  <span className='absolute right-5 text-base text-gray-400'>
+                                    kg
+                                  </span>
+                                ) : null}
+                              </div>
+                              <div
+                                className='h-8 w-8 cursor-pointer rounded-full text-center'
+                                onClick={() => {
+                                  if (weights) {
+                                    setWeights(+weights + 2.5)
+                                  } else {
+                                    setWeights(2.5)
+                                  }
+                                }}
+                              >
+                                +
+                              </div>
+                            </div>
+                          )}
+
+                          <div className='flex w-full justify-center gap-4 text-xl font-medium md:gap-6'>
+                            {exercise.set.reduce((acc, curr) => {
+                              return acc + (curr.isComplete ? 1 : 0)
+                            }, 0)}{' '}
+                            / {exercise.sets}
+                          </div>
+                          <RadioGroup
+                            value={rpe}
+                            onChange={setRpe}
+                          >
+                            <div
+                              className={`mx-1 grid grid-cols-9 items-center justify-between gap-1 md:mx-6  md:grid-cols-10 md:p-2`}
+                            >
+                              <RadioGroup.Label className='col-span-9 text-center text-xl font-medium md:col-span-1 md:text-left'>
+                                RPE
+                              </RadioGroup.Label>
+                              {[
+                                '6',
+                                '6.5',
+                                '7',
+                                '7.5',
+                                '8',
+                                '8.5',
+                                '9',
+                                '9.5',
+                                '10',
+                              ].map((energy) => (
+                                <RadioGroup.Option
+                                  key={energy}
+                                  value={energy}
+                                  className={({ active, checked }) => `${
+                                    active ? '' : ''
+                                  }
                                             ${
                                               checked
                                                 ? 'bg-yellow-500 font-bold text-white'
                                                 : 'bg-gray-800 text-gray-200'
                                             }
                                                 relative flex h-8 w-8 cursor-pointer items-center justify-center rounded-full shadow-md focus:outline-none `}
-                                    >
-                                      {({ checked }) => (
-                                        <>
-                                          <div className='flex w-full items-center justify-center text-xs'>
-                                            <RadioGroup.Label
-                                              as='p'
-                                              className={`font-semibold tracking-tighter first-letter:text-lg md:mt-[3px] ${
-                                                checked
-                                                  ? 'text-gray-900'
-                                                  : 'text-gray-300'
-                                              } ${
-                                                energy === '10' ? 'text-lg' : ''
-                                              }`}
-                                            >
-                                              {energy}
-                                            </RadioGroup.Label>
-                                          </div>
-                                        </>
-                                      )}
-                                    </RadioGroup.Option>
-                                  ))}
-                                </div>
-                              </RadioGroup>
-
-                              {exercise.lift &&
-                                exercise.lift !== 'unlinked' &&
-                                (
-                                  Number(weights) /
-                                  Number(e1rm[+exercise?.reps - 1] || 0 / 100)
-                                )?.toFixed(0) && (
-                                  <div className='mx-1 flex gap-2 px-2 md:mx-6'>
-                                    <div>E1RM</div>
-                                    {weights &&
-                                    weights !== 0 &&
-                                    e1rm[+exercise.reps - 1] ? (
-                                      <div>
-                                        {(
-                                          +weights /
-                                          (e1rm[+exercise.reps - 1] || 0 / 100)
-                                        )?.toFixed(0)}
-                                        kg
+                                >
+                                  {({ checked }) => (
+                                    <>
+                                      <div className='flex w-full items-center justify-center text-xs'>
+                                        <RadioGroup.Label
+                                          as='p'
+                                          className={`font-semibold tracking-tighter first-letter:text-lg md:mt-[3px] ${
+                                            checked
+                                              ? 'text-gray-900'
+                                              : 'text-gray-300'
+                                          } ${
+                                            energy === '10' ? 'text-lg' : ''
+                                          }`}
+                                        >
+                                          {energy}
+                                        </RadioGroup.Label>
                                       </div>
-                                    ) : null}
-                                  </div>
-                                )}
-                              <SetsModal
-                                exercise={exercise}
-                                onUpdateRpe={onUpdateRpe}
-                                onSetDone={onSetDone}
-                                isComplete={false}
-                              />
-                              <SetsModal
-                                exercise={exercise}
-                                onUpdateRpe={onUpdateRpe}
-                                onSetDone={onSetDone}
-                                isComplete={true}
-                              />
-                              <Input
-                                value={notes}
-                                onChange={(e) => setNotes(e.target.value)}
-                                placeholder='Notes'
-                                className='w-full'
-                              />
+                                    </>
+                                  )}
+                                </RadioGroup.Option>
+                              ))}
                             </div>
-                          )}
+                          </RadioGroup>
+
+                          {exercise.lift &&
+                            exercise.lift !== 'unlinked' &&
+                            (
+                              Number(weights) /
+                              Number(e1rm[+exercise?.reps - 1] || 0 / 100)
+                            )?.toFixed(0) && (
+                              <div className='mx-1 flex gap-2 px-2 md:mx-6'>
+                                <div>E1RM</div>
+                                {weights &&
+                                weights !== 0 &&
+                                e1rm[+exercise.reps - 1] ? (
+                                  <div>
+                                    {(
+                                      +weights /
+                                      (e1rm[+exercise.reps - 1] || 0 / 100)
+                                    )?.toFixed(0)}
+                                    kg
+                                  </div>
+                                ) : null}
+                              </div>
+                            )}
+                          <SetsModal
+                            exercise={exercise}
+                            onUpdateRpe={onUpdateRpe}
+                            onSetDone={onSetDone}
+                            isComplete={false}
+                          />
+                          <SetsModal
+                            exercise={exercise}
+                            onUpdateRpe={onUpdateRpe}
+                            onSetDone={onSetDone}
+                            isComplete={true}
+                          />
+                          <Input
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            placeholder='Notes'
+                            className='w-full'
+                          />
                         </div>
-                      ) : (
-                        close()
-                      )
-                    }
+                      )}
+                    </div>
                   </Disclosure.Panel>
                 </Transition>
               </div>
@@ -927,8 +916,6 @@ const DayModal = ({
   selectedEngery: string
   programId: string
 }) => {
-  const [activeDisclosurePanel, setActiveDisclosurePanel] = useState(null)
-
   return (
     <>
       {day.isRestDay ? (
@@ -946,8 +933,6 @@ const DayModal = ({
                 idx={idx}
                 selectedEnergy={selectedEngery}
                 day={day}
-                handleClick={setActiveDisclosurePanel}
-                activeDisclosurePanel={activeDisclosurePanel}
               />
             </div>
           ))}
