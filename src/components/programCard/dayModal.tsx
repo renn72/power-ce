@@ -448,7 +448,7 @@ const ExerciseModal = ({
       ref.current?.clear()
       wrapper.current.style.display = 'none'
       ref.current?.updateBoundaries({ x: 0, y: 0, width: 0, height: 0 })
-    }, 3000)
+    }, 4000)
   }
 
   return (
