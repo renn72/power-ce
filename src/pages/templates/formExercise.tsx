@@ -803,7 +803,7 @@ const FormExercise = ({
                 }`}
                 onClick={() => ssField.append({})}
               >
-                <PlusCircleIcon className={`h-6 w-6 hover:scale-110`} />
+                <PlusIcon className={`h-6 w-6 hover:scale-110`} />
               </Button>
             </div>
           </div>

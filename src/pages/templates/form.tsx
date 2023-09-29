@@ -327,21 +327,21 @@ const Form = () => {
               ref={parent}
               className='flex w-full flex-col items-center gap-1 sm:gap-8'
             >
-              <div className='flex min-h-[80vh] w-full max-w-[1600px] flex-col items-center gap-1 p-1 sm:gap-8 sm:p-4 '>
+              <div className='flex min-h-[80vh] w-full max-w-[1600px] flex-col items-center gap-2 p-1 sm:gap-8 sm:p-4 '>
                 {/* template select */}
-                <div className='flex w-full  items-center gap-2'>
+                <div className='flex w-full flex-col md:flex-row  items-center gap-2 '>
                   <TemplateSelect onSelectTemplate={onSelectTemplate} />
-                  <div className='flex items-center justify-start gap-2'>
+                  <div className='flex items-center justify-around md:justify-start gap-2 w-full md:w-fit'>
                     <Button
                       type='button'
-                      className='w-24 text-sm tracking-tighter sm:text-xl sm:tracking-normal md:w-36'
+                      className='text-sm tracking-tighter sm:text-xl sm:tracking-normal w-36'
                       onClick={() => onNewTemplate()}
                     >
                       New
                     </Button>
                     <Button
                       type='button'
-                      className='w-24 text-sm tracking-tighter sm:text-xl sm:tracking-normal md:w-36'
+                      className='text-sm tracking-tighter sm:text-xl sm:tracking-normal w-36'
                       onClick={() => onLoadTemplate()}
                     >
                       Load
@@ -350,7 +350,7 @@ const Form = () => {
                 </div>
 
                 {/* Title */}
-                <div className='flex  w-full gap-2'>
+                <div className='flex  w-full gap-2 mb-6'>
                   <div className='flex flex-col items-start justify-center gap-2'>
                     <div className='relative rounded-md shadow-lg'>
                       <Input

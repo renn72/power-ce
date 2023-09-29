@@ -23,9 +23,9 @@ const TemplateSelect = ({ onSelectTemplate, }: { onSelectTemplate: (arg0: string
   const blocksTitle = blocksData?.filter((b) => b.trainerId === user?.id || isSuperAdmin ).map((block) => block.name)
 
   return (
-    <div className='w-40 sm:w-72 flex flex-col text-gray-200 justify-center text-lg'>
+    <div className='w-full px-4 md:mx-0 sm:w-72 flex flex-col text-gray-200 justify-center text-lg'>
       <Listbox value={selectedTemplate} onChange={(e) => onSelectTemplate(e)}>
-        <div className='relative z-10'>
+        <div className='relative z-110'>
           <Listbox.Button className='relative w-full border-b border-gray-600 cursor-default max-h-min h-16 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none '>
             <span className='block truncate'>{selectedTemplate}</span>
             <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
