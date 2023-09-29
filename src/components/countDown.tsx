@@ -26,7 +26,7 @@ const CountDown = ({ userId }: { userId: string }) => {
         <div className='flex flex-col items-center md:flex-row md:items-baseline md:gap-4'>
           <h2 className='text-lg font-bold text-gray-300'>{compName}</h2>
           <Countdown
-            className='text-xl font-bold'
+            className='text-xl font-bold w-40 text-gray-400'
             date={compDate}
           />
         </div>

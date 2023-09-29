@@ -64,7 +64,7 @@ const TrainerSelect = ({ userId }: { userId: string }) => {
   }, [clientTrainer])
 
   return (
-    <div className='m-2 flex flex-col lg:flex-row gap-6'>
+    <div className='mx-2 flex flex-col md:flex-row gap-6'>
       <div className='flex w-64 items-center justify-between gap-2 text-lg font-semibold'>
         <div className='text-xl font-bold'>Trainer</div>
         {isSet && <CheckCircleIcon className='h-8 w-8 text-green-600' />}

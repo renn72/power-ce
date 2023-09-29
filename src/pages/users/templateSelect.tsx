@@ -64,7 +64,7 @@ const TemplateSelect = ({
   // if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
 
   return (
-    <div className='m-2 flex flex-col gap-6 md:flex-row '>
+    <div className='mx-2 flex flex-col gap-6 md:flex-row '>
       <div className='flex w-64 items-center justify-between gap-2 text-lg font-semibold'>
         <div className='text-xl font-bold text-yellow-500'>
           {capitaliseString(userFirstName)} {capitaliseString(userLastName)}

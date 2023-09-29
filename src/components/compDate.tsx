@@ -100,7 +100,7 @@ const CompDate = ({ userId, }: { userId: string }) => {
   return (
     <>
       <div className='flex flex-col gap-2'>
-        <div className='flex flex-col lg:flex-row gap-2 md:gap-6 m-2'>
+        <div className='flex flex-col lg:flex-row gap-2 md:gap-6 mx-2'>
           <div className='text-lg w-64 font-semibold flex gap-2 items-center justify-between'>
             <div>
               Next Comp

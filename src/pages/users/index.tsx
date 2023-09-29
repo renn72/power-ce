@@ -36,7 +36,7 @@ const UserDisclosure = ({
               open
                 ? 'border-b border-yellow-500'
                 : 'border-b border-black hover:border-white'
-            } flex items-center gap-2 px-2 py-2 text-lg font-medium `}
+            } flex items-center gap-2 px-2 py-0 text-lg font-medium `}
           >
             <span>{isOneRM ? 'One Rep Maxes' : 'Program'}</span>
             <ChevronUpIcon
@@ -88,8 +88,8 @@ const UserPage = ({
   })
 
   return (
-    <div className='flex w-full flex-col justify-start gap-2'>
-      <div className='p-2'>
+    <div className='flex w-full flex-col justify-start gap-0'>
+      <div className='flex justify-end w-full'>
         <CountDown userId={userId} />
       </div>
       <TemplateSelect
@@ -120,7 +120,7 @@ const UserPage = ({
 
 const Users: NextPage = () => {
   const { user } = useUser()
-  const [userId, setUserId] = useState<string>(() => user?.id || '')
+  const [userId, setUserId] = useState<string>('all')
   if (!user) return <div>Login</div>
 
   const ctx = api.useContext()

@@ -5,16 +5,13 @@ import { api } from '~/utils/api'
 import { Listbox, Transition } from '@headlessui/react'
 import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 
-import { useUser } from '@clerk/nextjs'
-
 const UserSelect = ({
   onSelectUser,
 }: {
   onSelectUser: (arg0: string) => void
 }) => {
-  const { user: currentUser } = useUser()
 
-  const [user, setUser] = useState<string>(() => currentUser?.id || '')
+  const [user, setUser] = useState<string>('all')
 
   const { data: users, isLoading: usersLoading } =
     api.users.getAllUsers.useQuery()
