@@ -35,7 +35,7 @@ const WeekTemplateSelect = ({
   }
 
   return (
-    <div className='w-46 flex flex-col justify-center sm:w-72'>
+    <div className='flex flex-col justify-center w-72 text-lg'>
       <Listbox
         value={selectedWeekTemplate}
         onChange={(e) => onSelect(e)}

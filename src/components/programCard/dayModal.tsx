@@ -85,7 +85,7 @@ const SetsModal = ({
                         : `flex h-12 min-w-[3rem] cursor-pointer items-center justify-center rounded-full bg-gray-800 text-xl hover:scale-105`
                     }
                   >
-                    {set.rep}
+                    {isSS ? 'SS' : set.rep}
                   </div>
                 </div>
                 {!set.isComplete && !isSS && (
