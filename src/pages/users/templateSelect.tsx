@@ -13,6 +13,8 @@ import {
 
 import { capitaliseString } from '~/utils/utils'
 
+import { useUser } from '@clerk/nextjs'
+
 const TemplateSelect = ({
   onSelectTemplate,
   onSetTemplate,
@@ -34,6 +36,8 @@ const TemplateSelect = ({
   const { data: blocksData, isLoading: blocksLoading } =
     api.blocks.getAllBlockTitles.useQuery()
   const { data: currentProgram } = api.blocks.getUserActiveProgram.useQuery({userId: userId})
+
+  const { user } = useUser()
 
   const onSetLocalTemplate = (template: string) => {
     setTemplate(template)
@@ -59,7 +63,7 @@ const TemplateSelect = ({
   }
 
   if (blocksLoading) return <div>loading</div>
-  const blocksTitle = blocksData?.map((block) => block.name)
+  const blocksTitle = blocksData?.filter((b) => b.trainerId === user.id)?.map((block) => block.name)
 
   // if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
 
