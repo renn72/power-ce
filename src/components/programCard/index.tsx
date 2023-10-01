@@ -1,7 +1,6 @@
 import { api } from '~/utils/api'
 
 import ProgramDay from './programDay'
-import { useUser } from '@clerk/nextjs'
 import { LoadingSpinner } from '../loading'
 
 import { Transition, Disclosure } from '@headlessui/react'
@@ -10,19 +9,19 @@ import { ChevronUpIcon } from '@heroicons/react/20/solid'
 const ProgramCard = ({
   programId,
   isAdmin = false,
+  userId,
 }: {
   programId: string
   isAdmin: boolean
+  userId: string
 }) => {
-  const { user } = useUser()
   api.oneRepMax.getUserCoreLifts.useQuery({
-    userId: user?.id || '',
+    userId: userId,
   })
   const { data: allUsers } = api.users.getAllUsers.useQuery()
   const { data: program, isLoading: programLoading } = api.blocks.get.useQuery({
     id: programId,
   })
-
 
   if (!program) return null
 
@@ -78,6 +77,7 @@ const ProgramCard = ({
                           programId={programId}
                           openDay={defaultOpen.day}
                           openWeek={defaultOpen.week}
+                          userId={userId}
                         />
                       )}
                     </div>
@@ -105,8 +105,9 @@ const ProgramCard = ({
                       <h3>{program.createdAt.toLocaleDateString()}</h3>
                       <h3>
                         {
-                          allUsers?.find((u) => u.id === program.userIdOfProgram)
-                            ?.firstName
+                          allUsers?.find(
+                            (u) => u.id === program.userIdOfProgram,
+                          )?.firstName
                         }
                       </h3>
                     </div>

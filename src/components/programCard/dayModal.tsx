@@ -25,7 +25,6 @@ import { NumericFormat } from 'react-number-format'
 import { Input } from '@/components/ui/input'
 import { PlaySquare, XIcon } from 'lucide-react'
 import Fireworks, { FireworksHandlers } from '@fireworks-js/react'
-import { HtmlProps } from 'next/dist/shared/lib/html-context'
 
 const dayWithExercise = Prisma.validator<Prisma.DayArgs>()({
   include: {
@@ -44,11 +43,13 @@ const SetsModal = ({
   onUpdateRpe,
   onSetDone,
   isComplete,
+  userId,
 }: {
   exercise: StoreExercise
   onUpdateRpe: (args0: SetStore, args1: boolean) => void
   onSetDone: (args0: SetStore) => void
   isComplete: boolean
+  userId: string
 }) => {
   const isSS = exercise.ss && exercise.ss.length > 0
 
@@ -131,18 +132,19 @@ const ExerciseModal = ({
   selectedEnergy,
   day,
   programId,
+  userId
 }: {
   exercise: StoreExercise
   idx: number
   selectedEnergy: string
   day: Day
   programId: string
+  userId: string
 }) => {
   const [rpe, setRpe] = useState('8')
 
-  const { user } = useUser()
   const { data: userCoreOneRM } = api.oneRepMax.getUserCoreLifts.useQuery({
-    userId: user?.id || '',
+    userId: userId,
   })
 
   const checkWeight = (
@@ -880,12 +882,14 @@ const ExerciseModal = ({
                             onUpdateRpe={onUpdateRpe}
                             onSetDone={onSetDone}
                             isComplete={false}
+                            userId={userId}
                           />
                           <SetsModal
                             exercise={exercise}
                             onUpdateRpe={onUpdateRpe}
                             onSetDone={onSetDone}
                             isComplete={true}
+                            userId={userId}
                           />
                           <Input
                             value={notes}
@@ -911,10 +915,12 @@ const DayModal = ({
   day,
   selectedEngery,
   programId,
+  userId,
 }: {
   day: Day
   selectedEngery: string
   programId: string
+  userId: string
 }) => {
   return (
     <>
@@ -933,6 +939,7 @@ const DayModal = ({
                 idx={idx}
                 selectedEnergy={selectedEngery}
                 day={day}
+                userId={userId}
               />
             </div>
           ))}

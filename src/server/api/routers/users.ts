@@ -9,6 +9,13 @@ import {
 } from '~/server/api/trpc'
 
 export const usersRouter = createTRPCRouter({
+  getSuperAdmin: privateProcedure.query(async () => {
+    const user = await clerkClient.users.getUser(
+      'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a',
+    )
+    return user
+  }),
+
   getAll: publicProcedure.query(async () => {
     const res = await clerkClient.users.getUserList()
     type Users = typeof res

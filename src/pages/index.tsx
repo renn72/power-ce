@@ -19,10 +19,13 @@ import ProgramView from '~/components/programView'
 const Home: NextPage = () => {
   const { user } = useUser()
 
-  api.oneRepMax.getUserCoreLifts.useQuery({ userId: user?.id || '' })
+  const userId = user?.id || ''
+  // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v'
+
+  api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
 
   const { data: programs, isLoading: programsLoading } =
-    api.blocks.getAllUserProgramsTitles.useQuery({ userId: user?.id || '' })
+    api.blocks.getAllUserProgramsTitles.useQuery({ userId: userId })
 
   if (programsLoading || !user) return <LoadingPage />
 
@@ -38,6 +41,7 @@ const Home: NextPage = () => {
                   {program.isProgramActive ? (
                     <ProgramCard
                       programId={program.id}
+                      userId={userId}
                       isAdmin={false}
                     />
                   ) : (
@@ -71,7 +75,7 @@ const Home: NextPage = () => {
                           >
                             <Disclosure.Panel className=''>
                               <ProgramView
-                                userId={user.id}
+                                userId={userId}
                                 programId={program.id}
                                 isAdmin={false}
                               />

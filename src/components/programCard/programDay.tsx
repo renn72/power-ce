@@ -7,7 +7,6 @@ import { Dialog, Transition, RadioGroup, Disclosure } from '@headlessui/react'
 import { ChevronUpIcon, StarIcon } from '@heroicons/react/20/solid'
 import { StarIcon as StarIconHollow } from '@heroicons/react/24/outline'
 
-import { useUser } from '@clerk/nextjs'
 import DayModal from './dayModal'
 
 import getWeight from '~/utils/getWeight'
@@ -33,6 +32,7 @@ const ProgramDay = ({
   openDay,
   openWeek,
   programId,
+  userId,
 }: {
   day: Day
   dayIdx: number
@@ -40,13 +40,13 @@ const ProgramDay = ({
   openDay: number
   openWeek: number
   programId: string
+  userId: string
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedEngery, setSelectedEngery] = useState(day.energyRating || 'A')
 
-  const { user } = useUser()
   const { data: userCoreOneRM } = api.oneRepMax.getUserCoreLifts.useQuery({
-    userId: user?.id || '',
+    userId: userId,
   })
 
   const checkWeight = (
@@ -511,6 +511,7 @@ const ProgramDay = ({
                       programId={programId}
                       day={day}
                       selectedEngery={selectedEngery}
+                      userId={userId}
                     />
                   </div>
                 </Dialog.Panel>
