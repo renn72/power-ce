@@ -50,7 +50,7 @@ const Form = () => {
 
   const [selectedTemplate, setSelectedTemplate] = useAtom(selectedTemplateAtom)
 
-  const { data: blocksData } = api.blocks.getAll.useQuery()
+  const { data: blocksData } = api.blocks.getAll.useQuery() // TODO: just load titles
   const blocksTitle = blocksData?.map((block) => block.name)
 
   const ctx = api.useContext()
@@ -135,7 +135,7 @@ const Form = () => {
               reps: s.reps ? +s.reps : null,
               weightType: s.weightType,
               repUnit: s.repUnit,
-            }))
+            })),
           })),
         })),
       })),
@@ -277,6 +277,22 @@ const Form = () => {
             weightType: exercise.weightType || undefined,
             repUnit: exercise.repUnit || undefined,
             htmlLink: exercise.htmlLink || undefined,
+            isSS: exercise.ss.length > 0 ? true : false,
+            ss: exercise.ss.map((s) => ({
+              name: s.name || '',
+              lift: s.lift || '',
+              onerm: s.onerm ? s.onerm.toString() : undefined,
+              onermTop: s.onermTop ? s.onermTop.toString() : undefined,
+              weightTop: s.weightTop ? s.weightTop.toString() : undefined,
+              weightBottom: s.weightBottom
+                ? s.weightBottom.toString()
+                : undefined,
+              sets: s.sets ? s.sets.toString() : undefined,
+              reps: s.reps ? s.reps.toString() : undefined,
+              targetRpe: s.targetRpe ? s.targetRpe.toString() : undefined,
+              weightType: s.weightType || undefined,
+              repUnit: s.repUnit || undefined,
+            })),
           })),
         })),
       })),
@@ -330,19 +346,19 @@ const Form = () => {
             >
               <div className='flex min-h-[80vh] w-full max-w-[1600px] flex-col items-center gap-2 p-1 sm:gap-8 sm:p-4 '>
                 {/* template select */}
-                <div className='flex w-full flex-col md:flex-row  items-center gap-2 '>
+                <div className='flex w-full flex-col items-center  gap-2 md:flex-row '>
                   <TemplateSelect onSelectTemplate={onSelectTemplate} />
-                  <div className='flex items-center justify-around md:justify-start gap-2 w-full md:w-fit'>
+                  <div className='flex w-full items-center justify-around gap-2 md:w-fit md:justify-start'>
                     <Button
                       type='button'
-                      className='text-sm tracking-tighter sm:text-xl sm:tracking-normal w-36'
+                      className='w-36 text-sm tracking-tighter sm:text-xl sm:tracking-normal'
                       onClick={() => onNewTemplate()}
                     >
                       New
                     </Button>
                     <Button
                       type='button'
-                      className='text-sm tracking-tighter sm:text-xl sm:tracking-normal w-36'
+                      className='w-36 text-sm tracking-tighter sm:text-xl sm:tracking-normal'
                       onClick={() => onLoadTemplate()}
                     >
                       Load
@@ -351,7 +367,7 @@ const Form = () => {
                 </div>
 
                 {/* Title */}
-                <div className='flex  w-full gap-2 mb-6'>
+                <div className='mb-6  flex w-full gap-2'>
                   <div className='flex flex-col items-start justify-center gap-2'>
                     <div className='relative rounded-md shadow-lg'>
                       <Input

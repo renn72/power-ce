@@ -95,7 +95,7 @@ const FormSS = ({
   return (
     <div className='flex flex-col justify-center'>
       <div className='flex gap-4 text-lg'>
-        {ssIdx}
+        {ssIdx + 1}
         <XMarkIcon
           className='h-6 w-6 cursor-pointer font-bold text-gray-400 hover:text-red-600'
           onClick={() => onRemoveSS(ssIdx)}
@@ -448,11 +448,13 @@ const FormExercise = ({
           control={control}
           name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.isSS`}
           defaultValue={false}
-          render={({ field: { onChange, value } }) => (
+          render={({ field: { onChange, value } } ) => (
             <div className='absolute left-16 top-2 flex items-baseline gap-2'>
+              {value ? 'true' : 'false'}
               <Checkbox
                 id='isSS'
                 value={value}
+                checked={value}
                 onCheckedChange={onChange}
               />
               <Label
