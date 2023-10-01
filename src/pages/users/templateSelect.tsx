@@ -40,11 +40,11 @@ const TemplateSelect = ({
   const currentProgram = currentPrograms?.[0]
 
   const countDown = () => {
-    const complete = currentProgram?.week.map((w) =>
+    if (!currentProgram) return
+    const complete : number[] = currentProgram.week.map((w) =>
       w.day.map((d) => {
         if (d.isComplete === true) return 2
-        const isAny = d.exercise.some((e) => e.isComplete === true)
-        if (isAny) return 1
+        if (d.exercise.some((e) => e.isComplete === true)) return 1
         return d.isRestDay ? 0 : -1
       }),
     )

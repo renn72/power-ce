@@ -124,7 +124,7 @@ const Form = () => {
             repUnit: exercise.repUnit,
             htmlLink: exercise.htmlLink,
             isComplete: false,
-            isSS: exercise.isSS,
+            isSS: exercise.isSS || false,
             ss: exercise.ss.map((s) => ({
               name: s.name,
               onerm: s.onerm ? +s.onerm : null,
@@ -176,6 +176,7 @@ const Form = () => {
             repUnit: exercise.repUnit,
             htmlLink: exercise.htmlLink,
             isComplete: false,
+            isSS: exercise.isSS || false,
           })),
         })),
       })),

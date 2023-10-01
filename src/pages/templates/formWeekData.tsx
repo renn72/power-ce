@@ -93,7 +93,8 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
               weightType: exercise.weightType,
               repUnit: exercise.repUnit,
               htmlLink: exercise.htmlLink,
-              isComplete: false
+              isComplete: false,
+              isSS: exercise.isSS || false,
 
             })
           ),
@@ -133,7 +134,8 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
               weightType: exercise.weightType,
               repUnit: exercise.repUnit,
               htmlLink: exercise.htmlLink,
-              isComplete: false
+              isComplete: false,
+              isSS: exercise.isSS || false,
 
             })
           ),
