@@ -77,7 +77,10 @@ const SetsModal = ({
                 )}
                 <div
                   className='flex flex-col gap-1'
-                  onClick={() => onSetDone(set)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onSetDone(set)
+                  }}
                 >
                   <div
                     className={
@@ -132,7 +135,7 @@ const ExerciseModal = ({
   selectedEnergy,
   day,
   programId,
-  userId
+  userId,
 }: {
   exercise: StoreExercise
   idx: number
@@ -439,21 +442,25 @@ const ExerciseModal = ({
   const wrapper = useRef<HTMLDivElement>(null)
   const disDiv = useRef<HTMLDivElement>(null)
 
+
   const toggle = (open: boolean) => {
+    console.log('toggle', open)
+
+
     disDiv.current?.scrollIntoView({
       behavior: 'smooth',
-      // block: 'start',
-      // inline: 'nearest',
     })
-    if (!isSS) return
-    setTimeout(() => {
-      if (!wrapper.current) return
-      console.log('stop')
-      ref.current?.stop()
-      ref.current?.clear()
-      wrapper.current.style.display = 'none'
-      ref.current?.updateBoundaries({ x: 0, y: 0, width: 0, height: 0 })
-    }, 3000)
+
+
+    // if (!isSS) return
+    // setTimeout(() => {
+    //   if (!wrapper.current) return
+    //   console.log('stop')
+    //   ref.current?.stop()
+    //   ref.current?.clear()
+    //   wrapper.current.style.display = 'none'
+    //   ref.current?.updateBoundaries({ x: 0, y: 0, width: 0, height: 0 })
+    // }, 3000)
   }
 
   return (
@@ -465,7 +472,6 @@ const ExerciseModal = ({
               <div className='flex flex-col gap-0'>
                 <Disclosure.Button
                   className={`mt-1 w-full text-lg md:text-xl`}
-                  onClick={toggle(open)}
                 >
                   <div className='flex flex-col gap-0'>
                     <div className='flex flex-col '>
@@ -477,7 +483,7 @@ const ExerciseModal = ({
                         />
                         <div className='mr-4 flex w-full items-center justify-between'>
                           <div className='text-yellow-500 first-letter:text-2xl first-letter:font-bold first-letter:uppercase '>
-                            {exercise.name}
+                            {isSS ? 'Super set' : exercise.name}
                           </div>
                           {exercise?.isComplete ? (
                             <StarIcon className='h-6 w-6 text-yellow-500' />
@@ -489,9 +495,6 @@ const ExerciseModal = ({
                       <div className='ml-9 flex items-end gap-3 md:ml-16 md:gap-8'>
                         {isSS ? (
                           <div className='w-full'>
-                            <div className='rainbow w-fit text-xl font-medium'>
-                              Super Set
-                            </div>
                             <div className='ml-1 w-full'>
                               {exercise.ss.map((s) => (
                                 <div
@@ -734,6 +737,7 @@ const ExerciseModal = ({
                       </div>
                       {isSS ? (
                         <div ref={wrapper}>
+                          {/*
                           <Fireworks
                             ref={ref}
                             options={{ opacity: 0.5 }}
@@ -748,6 +752,7 @@ const ExerciseModal = ({
                               zIndex: 9999,
                             }}
                           />
+                          */}
                         </div>
                       ) : null}
                       {exercise.sets && exercise.reps && (
@@ -756,7 +761,8 @@ const ExerciseModal = ({
                             <div className='flex w-full items-center justify-center gap-4 text-2xl font-bold md:gap-6'>
                               <div
                                 className='h-8 w-8 cursor-pointer rounded-full text-center'
-                                onClick={() => {
+                                onClick={(e) => {
+                                  e.stopPropagation()
                                   if (weights && weights > 0) {
                                     setWeights(+weights - 2.5)
                                   }
@@ -780,7 +786,8 @@ const ExerciseModal = ({
                               </div>
                               <div
                                 className='h-8 w-8 cursor-pointer rounded-full text-center'
-                                onClick={() => {
+                                onClick={(e) => {
+                                  e.stopPropagation()
                                   if (weights) {
                                     setWeights(+weights + 2.5)
                                   } else {

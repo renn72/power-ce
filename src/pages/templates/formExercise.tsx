@@ -762,14 +762,6 @@ const FormExercise = ({
           </div>
         ) : (
           <div className='mt-10 rounded-lg pb-6 shadow shadow-gray-800 lg:px-6 '>
-            <Input
-              className='capitalize text-yellow-500 mb-4 w-64'
-              {...register(
-                `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`,
-              )}
-              placeholder='name'
-
-            />
             <div className='col-span-2 mb-6 flex w-64 items-center md:col-span-1'>
               <Label
                 htmlFor='sets'
