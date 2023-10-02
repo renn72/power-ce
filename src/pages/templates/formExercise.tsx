@@ -104,11 +104,10 @@ const FormSS = ({
       <div className={`flex flex-col gap-4`}>
         <div className='grid grid-cols-2 gap-1 gap-x-4 md:grid-cols-5  md:gap-8'>
           <Input
-            className='text-yellow-500 capitalize'
+            className='capitalize text-yellow-500'
             {...register(
               `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.ss.${ssIdx}.name`,
-            )
-            }
+            )}
             placeholder='name'
           />
           <div className='flex items-center'>
@@ -172,7 +171,7 @@ const FormSS = ({
                                       className={`font-medium  ${
                                         checked
                                           ? 'text-yellow-500'
-                                          : 'text-gray-400 hover:text-gray-200 hover:scale-105'
+                                          : 'text-gray-400 hover:scale-105 hover:text-gray-200'
                                       }`}
                                     >
                                       {plan.name}
@@ -448,7 +447,7 @@ const FormExercise = ({
           control={control}
           name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.isSS`}
           defaultValue={false}
-          render={({ field: { onChange, value } } ) => (
+          render={({ field: { onChange, value } }) => (
             <div className='absolute left-16 top-2 flex items-baseline gap-2'>
               {value ? 'true' : 'false'}
               <Checkbox
@@ -489,7 +488,7 @@ const FormExercise = ({
                 />
               </div>
               <Input
-                className='text-yellow-500 capitalize'
+                className='capitalize text-yellow-500'
                 {...register(
                   `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`,
                 )}
@@ -553,7 +552,7 @@ const FormExercise = ({
                         value={value}
                         onChange={onChange}
                       >
-                        <div className='flex items-center justify-start gap-1 md:gap-2 py-6'>
+                        <div className='flex items-center justify-start gap-1 py-6 md:gap-2'>
                           {plans.map((plan) => (
                             <RadioGroup.Option
                               key={plan.name}
@@ -563,7 +562,7 @@ const FormExercise = ({
                                   ? 'bg-gray-600 bg-opacity-75 text-gray-200'
                                   : 'bg-black text-gray-400'
                               }
-                                relative flex h-10 cursor-pointer rounded-lg px-2 shadow-md focus:outline-none md:px-6 hover:text-gray-200 hover:scale-105`}
+                                relative flex h-10 cursor-pointer rounded-lg px-2 shadow-md hover:scale-105 hover:text-gray-200 focus:outline-none md:px-6`}
                             >
                               {({ checked }) => (
                                 <>
@@ -762,8 +761,16 @@ const FormExercise = ({
             </div>
           </div>
         ) : (
-          <div className='mt-10 shadow shadow-gray-800 rounded-lg lg:px-6 pb-6 '>
-            <div className='col-span-2 flex items-center md:col-span-1 mb-6 w-64'>
+          <div className='mt-10 rounded-lg pb-6 shadow shadow-gray-800 lg:px-6 '>
+            <Input
+              className='capitalize text-yellow-500 mb-4 w-64'
+              {...register(
+                `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`,
+              )}
+              placeholder='name'
+
+            />
+            <div className='col-span-2 mb-6 flex w-64 items-center md:col-span-1'>
               <Label
                 htmlFor='sets'
                 className='absolute text-gray-400'

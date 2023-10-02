@@ -108,7 +108,7 @@ const Form = () => {
           isRestDay: day.isRestDay,
           isComplete: false,
           exercise: day.exercise.map((exercise) => ({
-            name: exercise.isSS ? 'superset' : exercise.name,
+            name: exercise.name,
             lift: exercise.lift,
             onerm: exercise.onerm ? +exercise.onerm : null,
             onermTop: exercise.onermTop ? +exercise.onermTop : null,
@@ -177,12 +177,24 @@ const Form = () => {
             htmlLink: exercise.htmlLink,
             isComplete: false,
             isSS: exercise.isSS || false,
+            ss: exercise.ss.map((s) => ({
+              name: s.name,
+              onerm: s.onerm ? +s.onerm : null,
+              onermTop: s.onermTop ? +s.onermTop : null,
+              weightTop: s.weightTop ? +s.weightTop : null,
+              weightBottom: s.weightBottom ? +s.weightBottom : null,
+              targetRpe: s.targetRpe ? +s.targetRpe : null,
+              reps: s.reps ? +s.reps : null,
+              weightType: s.weightType,
+              repUnit: s.repUnit,
+            })),
           })),
         })),
       })),
     }
 
     console.log('block', JSON.stringify(block, null, 2))
+    console.log('data', JSON.stringify(data, null, 2))
 
     blockUpdateMutate(block)
   }

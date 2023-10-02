@@ -90,6 +90,7 @@ export type ExerciseData = {
   repUnit: string | null,
   isComplete: boolean,
   htmlLink: string | null,
+  isSS: boolean,
 }
 
 export type DayData = {
