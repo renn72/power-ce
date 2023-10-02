@@ -64,10 +64,10 @@ const TrainerSelect = ({ userId }: { userId: string }) => {
   }, [clientTrainer])
 
   return (
-    <div className='mx-2 flex flex-col md:flex-row gap-6'>
-      <div className='flex w-64 items-center justify-between gap-2 text-lg font-semibold'>
-        <div className='text-xl font-bold'>Trainer</div>
-        {isSet && <CheckCircleIcon className='h-8 w-8 text-green-600' />}
+    <div className='md:mx-2 mx-1 flex flex-row md:gap-6 justify-between md:justify-normal'>
+      <div className='flex md:w-64 items-end justify-between gap-2 text-lg font-semibold'>
+        <div className='text-xl font-bold tracking-tighter'>Trainer</div>
+        {isSet && false && <CheckCircleIcon className='h-8 w-8 text-green-600' />}
       </div>
       <div className='flex justify-start sm:gap-2 md:items-center'>
         <div className='flex flex-col justify-center text-sm font-bold md:text-base'>
@@ -76,7 +76,7 @@ const TrainerSelect = ({ userId }: { userId: string }) => {
             onChange={(e) => setTrainer(e)}
           >
             <div className='z-1 relative'>
-              <Listbox.Button className='relative h-10 w-60 cursor-default border-b border-gray-600 pl-3 pr-10 text-left shadow-md hover:border-white focus:outline-none '>
+              <Listbox.Button className='relative h-10 w-36 md:w-60 cursor-default border-b border-gray-600 pl-3 pr-10 text-left shadow-md hover:border-white focus:outline-none '>
                 <span className='block truncate'>
                   {trainers.find((t) => t.id === trainer)?.name}
                 </span>
@@ -126,11 +126,11 @@ const TrainerSelect = ({ userId }: { userId: string }) => {
         </div>
         <div className='ml-4 flex items-end justify-start gap-2'>
           <PencilSquareIcon
-            className='h-8 w-8 text-gray-400 hover:text-green-600'
+            className='w-6 h-8 md:w-8 text-gray-400 hover:text-green-600'
             onClick={() => onSetTraienrWrapper()}
           />
           <XCircleIcon
-            className='col-span-1 h-8 w-8 text-gray-400 hover:text-red-600'
+            className='col-span-1 w-6 h-8 md:w-8 text-gray-400 hover:text-red-600'
             onClick={() => onClearTrainer()}
           />
         </div>

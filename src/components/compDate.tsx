@@ -1,50 +1,38 @@
-import {
-  useState, useEffect,
-} from 'react'
-import { useUser, } from '@clerk/nextjs'
-import { toast, } from 'react-hot-toast'
-import { api, } from '~/utils/api'
+import { useState, useEffect } from 'react'
+import { useUser } from '@clerk/nextjs'
+import { toast } from 'react-hot-toast'
+import { api } from '~/utils/api'
 
 import * as React from 'react'
-import {
-  format, add,
-} from 'date-fns'
-import { Calendar as CalendarIcon, } from 'lucide-react'
+import { format, add } from 'date-fns'
+import { Calendar as CalendarIcon } from 'lucide-react'
 
-import { CheckCircleIcon, } from '@heroicons/react/24/outline'
+import { CheckCircleIcon } from '@heroicons/react/24/outline'
 
-import { cn, } from '@/lib/utils'
-import { Button, } from '@/components/ui/button'
-import { Calendar, } from '@/components/ui/calendar'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { Input, } from '@/components/ui/input'
+import { Input } from '@/components/ui/input'
 
 import Countdown from 'react-countdown'
 
-const CompDate = ({ userId, }: { userId: string }) => {
-  const { user, } = useUser()
-  const [
-    date,
-    setDate,
-  ] = useState<Date>()
-  const [
-    compName,
-    setCompName,
-  ] = useState<string>('')
-  const [
-    isSet,
-    setIsSet,
-  ] = useState<boolean>(false)
+const CompDate = ({ userId }: { userId: string }) => {
+  const { user } = useUser()
+  const [date, setDate] = useState<Date>()
+  const [compName, setCompName] = useState<string>('')
+  const [isSet, setIsSet] = useState<boolean>(false)
 
   const ctx = api.useContext()
 
-  const { data: compDates, } = api.compDate.getAll.useQuery()
-  const { data: compDateUser, } = api.compDate.getAllUser.useQuery({ userId: userId || '', })
-  const { mutate: mutateCompDate, } = api.compDate.create.useMutation({
+  const { data: compDateUser } = api.compDate.getAllUser.useQuery({
+    userId: userId || '',
+  })
+  const { mutate: mutateCompDate } = api.compDate.create.useMutation({
     onSuccess: () => {
       toast.success('Comp Date Created')
       void ctx.compDate.getAllUser.invalidate()
@@ -55,7 +43,7 @@ const CompDate = ({ userId, }: { userId: string }) => {
     },
   })
 
-  const { mutate: mutateCompDateDelete, } = api.compDate.delete.useMutation({
+  const { mutate: mutateCompDateDelete } = api.compDate.delete.useMutation({
     onSuccess: () => {
       toast.success('Deleted')
       void ctx.compDate.getAllUser.invalidate()
@@ -81,7 +69,6 @@ const CompDate = ({ userId, }: { userId: string }) => {
       userId: userId,
       name: compName,
       date: date?.toISOString() || '',
-
     })
   }
 
@@ -95,45 +82,44 @@ const CompDate = ({ userId, }: { userId: string }) => {
       setCompName('')
       setIsSet(false)
     }
-  }, [compDateUser,])
+  }, [compDateUser])
 
   return (
     <>
-      <div className='flex flex-col gap-2'>
-        <div className='flex flex-col lg:flex-row gap-2 md:gap-6 mx-2'>
-          <div className='text-lg w-64 font-semibold flex gap-2 items-center justify-between'>
-            <div>
-              Next Comp
-            </div>
-            {isSet && (<CheckCircleIcon className='h-8 w-8 text-green-600' />)}
+      <div className='mx-2 flex flex-col gap-2 md:gap-6 lg:flex-row'>
+        <div className='flex items-end justify-between gap-2 md:justify-normal md:gap-6'>
+          <div className='text-lg font-semibold md:w-64'>
+            <div>Next Comp</div>
           </div>
           <div className=''>
             <Input
-              className='w-72 text-sm md:text-sm font-semibold'
+              className='w-[13.2rem] text-sm font-semibold md:w-72 md:text-sm'
               placeholder='Comp Name'
               value={compName}
               onChange={(e) => setCompName(e.target.value)}
             />
           </div>
+        </div>
 
-          <Popover >
+        <div className='flex items-end justify-between gap-2 md:justify-normal md:gap-6'>
+          <Popover>
             <PopoverTrigger asChild>
               <Button
                 className={cn(
-                  'w-[230px] col-span-2 justify-start text-left border-0 border-b border-gray-600 text-gray-200 rounded-none hover:border-gray-200 hover:text-gray-600',
-                  !date && 'text-gray-600'
+                  'col-span-2 md:w-[230px] w-[190px] px-1 md:px-2 justify-start rounded-none border-0 border-b border-gray-600 text-left text-gray-200 hover:border-gray-200 ',
+                  !date && 'text-gray-600',
                 )}
               >
                 <CalendarIcon className='mr-2 h-4 w-4' />
                 {date ? format(date, 'PPP') : <span>Pick a date</span>}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className='w-auto p-3 z-10 bg-black text-gray-200'>
+            <PopoverContent className='z-10 w-auto bg-black py-3 md:px-3 text-gray-200'>
               <Calendar
                 mode='single'
                 selected={date}
                 onSelect={(e) => {
-                  const a = add(e, { hours: 8, })
+                  const a = add(e, { hours: 8 })
                   setDate(a)
                 }}
                 initialFocus
@@ -142,18 +128,17 @@ const CompDate = ({ userId, }: { userId: string }) => {
           </Popover>
           <div className='flex gap-2'>
             <Button
-              className='w-28'
+              className='w-16 md:w-28'
               onClick={onSave}
             >
               Save
             </Button>
             <Button
-              className='w-28'
+              className='w-16 md:w-28'
               onClick={onClear}
             >
               Clear
             </Button>
-
           </div>
         </div>
       </div>

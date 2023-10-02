@@ -35,6 +35,7 @@ const UserSelect = ({
   const allUsers = users?.map((u) => {
     return { id: u.id, firstName: u.firstName || '', lastName: u.lastName || '' }
   })
+  console.log(allUsers) 
 
   if (!allUsers?.find((u) => u.id === 'all')) {
     allUsers?.unshift({ id: 'all', firstName: 'All', lastName: 'Users' })

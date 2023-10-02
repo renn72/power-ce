@@ -17,7 +17,10 @@ export const usersRouter = createTRPCRouter({
   }),
 
   getAll: publicProcedure.query(async () => {
-    const res = await clerkClient.users.getUserList()
+    const res = await clerkClient.users.getUserList({
+      orderBy: '-created_at',
+      limit: 100,
+    })
     type Users = typeof res
     const users: { users: Users; admins: Users } = {
       users: [],
@@ -44,7 +47,10 @@ export const usersRouter = createTRPCRouter({
     return users
   }),
   getAllUsers: publicProcedure.query(async () => {
-    const res = await clerkClient.users.getUserList()
+    const res = await clerkClient.users.getUserList({
+      orderBy: '-created_at',
+      limit: 100,
+    })
 
     return res
   }),
