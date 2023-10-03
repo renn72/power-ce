@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 
 import {
   ChevronUpDownIcon,
@@ -6,6 +6,7 @@ import {
   XCircleIcon,
   CheckCircleIcon,
   XMarkIcon,
+  PlusIcon,
 } from '@heroicons/react/24/outline'
 
 import { api } from '~/utils/api'
@@ -13,7 +14,7 @@ import { api } from '~/utils/api'
 import { Dialog, Transition, Listbox, RadioGroup } from '@headlessui/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useForm } from 'react-hook-form'
+import { UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { Controller } from 'react-hook-form'
 import LiftPicker from '~/pages/templates/liftPicker'
@@ -29,6 +30,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 const exerciseWithSet = Prisma.validator<Prisma.ExerciseArgs>()({
   include: {
     set: true,
+    ss: true,
   },
 })
 
@@ -71,6 +73,272 @@ const ssPlans = [
   },
 ]
 
+const FormSS = ({
+  ssIdx,
+  onRemoveSS,
+  formMethods,
+}: {
+  ssIdx: number
+  onRemoveSS: (args0: number) => void
+  formMethods: UseFormReturn
+}) => {
+  const { register, control, watch, setValue } = formMethods
+
+  const [testWeight, setTestWeight] = useState<number | null>(null)
+
+  const weightType = watch(`exercise.ss.${ssIdx}.weightType`) as string
+  const onermB = watch(`exercise.ss.${ssIdx}.onerm`) as number
+  const onermT = watch(`exercise.ss.${ssIdx}.onermTop`) as number
+
+  return (
+    <div className='flex flex-col justify-center'>
+      <div className='flex gap-4 text-lg'>
+        {ssIdx + 1}
+        <XMarkIcon
+          className='h-6 w-6 cursor-pointer font-bold text-gray-400 hover:text-red-600'
+          onClick={() => onRemoveSS(ssIdx)}
+        />
+      </div>
+      <div className={`flex flex-col gap-4`}>
+        <div className='grid grid-cols-2 gap-1 gap-x-4 md:grid-cols-5  md:gap-8'>
+          <Input
+            className='capitalize text-yellow-500'
+            {...register(`exercise.ss.${ssIdx}.name`)}
+            placeholder='name'
+          />
+          <div className='flex items-center'>
+            <Label
+              htmlFor='reps'
+              className='absolute text-gray-400'
+            >
+              Reps:
+            </Label>
+            <Input
+              id='reps'
+              className='pl-12'
+              type='number'
+              {...register(`exercise.ss.${ssIdx}.reps`, {
+                valueAsNumber: true,
+              })}
+              placeholder='reps'
+              defaultValue={1}
+            />
+          </div>
+          <Input
+            className=''
+            {...register(`exercise.ss.${ssIdx}.repUnit`)}
+            placeholder='rep unit'
+          />
+        </div>
+        <div className='my-1 flex w-full flex-col items-center gap-2 md:gap-6 lg:flex-row'>
+          <div className='flex items-center gap-4 md:gap-6'>
+            <Controller
+              control={control}
+              name={`exercise.ss.${ssIdx}.weightType`}
+              defaultValue={null}
+              render={({ field: { onChange, value } }) => (
+                <div className=''>
+                  <RadioGroup
+                    value={value as string}
+                    onChange={onChange}
+                  >
+                    <div className='flex items-center justify-start gap-1 md:gap-2'>
+                      {ssPlans.map((plan) => (
+                        <RadioGroup.Option
+                          key={plan.name}
+                          value={plan.value}
+                          className={({ checked }) => `${
+                            checked
+                              ? 'bg-gray-600 bg-opacity-75 text-gray-200'
+                              : 'bg-black text-gray-400'
+                          }
+                          relative flex h-10 cursor-pointer rounded-lg px-2 shadow-md focus:outline-none md:px-6`}
+                        >
+                          {({ checked }) => (
+                            <>
+                              <div className='flex w-full items-center justify-between'>
+                                <div className='flex items-center'>
+                                  <div className='text-base tracking-tighter'>
+                                    <RadioGroup.Label
+                                      as='p'
+                                      className={`font-medium  ${
+                                        checked
+                                          ? 'text-yellow-500'
+                                          : 'text-gray-400 hover:scale-105 hover:text-gray-200'
+                                      }`}
+                                    >
+                                      {plan.name}
+                                    </RadioGroup.Label>
+                                  </div>
+                                </div>
+                                {checked && (
+                                  <div className='ml-4 shrink-0 text-white'>
+                                    <CheckCircleIcon className='h-6 w-6' />
+                                  </div>
+                                )}
+                              </div>
+                            </>
+                          )}
+                        </RadioGroup.Option>
+                      ))}
+                    </div>
+                  </RadioGroup>
+                </div>
+              )}
+            />
+            <XCircleIcon
+              className='h-6 w-6 cursor-pointer text-gray-400 hover:text-red-600'
+              onClick={() => setValue(`exercise.ss.${ssIdx}.weightType`, '')}
+            />
+          </div>
+          {weightType === 'onerm' && (
+            <div className='flex flex-col gap-2'>
+              <div className='flex gap-0 md:gap-10'>
+                <div className='relative'>
+                  <Input
+                    type='number'
+                    {...register(`exercise.ss.${ssIdx}.onerm`, {
+                      valueAsNumber: true,
+                    })}
+                    placeholder='1rm percent'
+                  />
+                  <span className='absolute right-8 top-2 text-gray-400'>
+                    %
+                  </span>
+                </div>
+                <span className='flex shrink items-center'>-</span>
+                <div className='relative'>
+                  <Input
+                    type='number'
+                    {...register(`exercise.ss.${ssIdx}.onermTop`, {
+                      valueAsNumber: true,
+                    })}
+                    placeholder='1rm percent top'
+                  />
+                  <span className='absolute right-8 top-2 text-gray-400'>
+                    %
+                  </span>
+                </div>
+              </div>
+              <div className='flex items-center gap-4'>
+                <Input
+                  type='number'
+                  className='w-32'
+                  value={testWeight || ''}
+                  onChange={(e) => setTestWeight(e.target.valueAsNumber)}
+                  placeholder='Test Weight'
+                />
+                {testWeight && (
+                  <div className='flex gap-2 text-base'>
+                    {onermB > 0 && (
+                      <div>{`${(testWeight / 100) * onermB}`}kg</div>
+                    )}
+                    {onermT > 0 && (
+                      <div>- {`${(testWeight / 100) * onermT}`}kg</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          {weightType === 'percent' && (
+            <div className='flex flex-col gap-2'>
+              <div className='flex gap-0 md:gap-10'>
+                <div className='relative'>
+                  <Input
+                    type='number'
+                    {...register(`exercise.ss.${ssIdx}.onerm`, {
+                      valueAsNumber: true,
+                    })}
+                    placeholder='percent'
+                  />
+                  <span className='absolute right-8 top-2 text-gray-400'>
+                    %
+                  </span>
+                </div>
+                <span className='flex shrink items-center'>-</span>
+                <div className='relative'>
+                  <Input
+                    type='number'
+                    {...register(`exercise.ss.${ssIdx}.onermTop`, {
+                      valueAsNumber: true,
+                    })}
+                    placeholder='percent top'
+                  />
+                  <span className='absolute right-8 top-2 text-gray-400'>
+                    %
+                  </span>
+                </div>
+              </div>
+              <div className='flex items-center gap-4'>
+                <Input
+                  type='number'
+                  className='w-32'
+                  value={testWeight || ''}
+                  onChange={(e) => setTestWeight(e.target.valueAsNumber)}
+                  placeholder='Test Weight'
+                />
+                {testWeight && (
+                  <div className='flex gap-2 text-base'>
+                    {onermB > 0 && (
+                      <div>{`${(testWeight / 100) * onermB}`}kg</div>
+                    )}
+                    {onermT > 0 && (
+                      <div>- {`${(testWeight / 100) * onermT}`}kg</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          {weightType === 'weight' && (
+            <div className='flex gap-0 md:gap-10'>
+              <div className='relative'>
+                <Input
+                  type='number'
+                  {...register(`exercise.ss.${ssIdx}.weightBottom`, {
+                    valueAsNumber: true,
+                  })}
+                  placeholder='weight bottom'
+                />
+                <span className='absolute right-8 top-2 text-gray-400'>kg</span>
+              </div>
+
+              <span className='flex shrink items-center'>-</span>
+              <div className='relative'>
+                <Input
+                  type='number'
+                  {...register(`exercise.ss.${ssIdx}.weightTop`, {
+                    valueAsNumber: true,
+                  })}
+                  placeholder='weight top'
+                />
+                <span className='absolute right-8 top-2 text-gray-400'>kg</span>
+              </div>
+            </div>
+          )}
+          {weightType === 'rpe' && (
+            <div className='grid grid-cols-2 gap-4 md:gap-10'>
+              <Controller
+                name={`exercise.ss.${ssIdx}.targetRpe`}
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <NumericFormat
+                    className=' flex h-10 w-full border-b border-gray-600 bg-black px-3 py-2 text-sm text-gray-200 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50'
+                    value={value as number}
+                    onChange={onChange}
+                    placeholder='rpe target'
+                  />
+                )}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const ExerciseDialog = ({
   exerciseId,
   closeModal,
@@ -85,6 +353,13 @@ const ExerciseDialog = ({
     userId: userId,
   })
 
+  const { data: exercise } = api.blocks.getExercise.useQuery({
+    id: exerciseId,
+  })
+  console.log('exercise', exercise)
+
+  const [testWeight, setTestWeight] = useState<number | null>(null)
+
   const { mutate: updateExercise } =
     api.userPrograms.updateExercise.useMutation({
       onSuccess: () => {
@@ -98,26 +373,27 @@ const ExerciseDialog = ({
       },
     })
 
-  const exercise = programData
-    ?.find((program) =>
-      program.week.find((week) =>
-        week.day.find((day) =>
-          day.exercise.find((exercise) => exercise.id === exerciseId),
-        ),
-      ),
-    )
-    ?.week.find((week) =>
-      week.day.find((day) =>
-        day.exercise.find((exercise) => exercise.id === exerciseId),
-      ),
-    )
-    ?.day.find((day) =>
-      day.exercise.find((exercise) => exercise.id === exerciseId),
-    )
-    ?.exercise.find((exercise) => exercise.id === exerciseId) as ExerciseWithSet
+  // const exercise = programData
+  //   ?.find((program) =>
+  //     program.week.find((week) =>
+  //       week.day.find((day) =>
+  //         day.exercise.find((exercise) => exercise.id === exerciseId),
+  //       ),
+  //     ),
+  //   )
+  //   ?.week.find((week) =>
+  //     week.day.find((day) =>
+  //       day.exercise.find((exercise) => exercise.id === exerciseId),
+  //     ),
+  //   )
+  //   ?.day.find((day) =>
+  //     day.exercise.find((exercise) => exercise.id === exerciseId),
+  //   )
+  //   ?.exercise.find((exercise) => exercise.id === exerciseId) as ExerciseWithSet
 
   const formMethods = useForm()
-  const { register, watch, control, handleSubmit } = formMethods
+  const { register, watch, control, handleSubmit, getValues, setValue } =
+    formMethods
 
   const onSubmit = (input: Exercise) => {
     const data = {
@@ -142,7 +418,40 @@ const ExerciseDialog = ({
     updateExercise({ exercise: data })
   }
 
-  const weightType = watch(`weightType`) as string
+  const ssField = useFieldArray({
+    control,
+    name: `exercise.ss`,
+  })
+
+  const ssArray = getValues(`exercise.ss`)
+
+  const onRemoveSS = (index: number) => {
+    ssField.remove(index)
+  }
+
+  const onInsertSS = (index: number) => {
+    ssField.insert(index + 1, {
+      name: '',
+      lift: 'unlinked',
+      reps: '',
+      onerm: '',
+      onermTop: '',
+      weightTop: '',
+      weightBottom: '',
+      targetRpe: '',
+      weightType: '',
+      repUnit: '',
+    })
+  }
+
+  const weightType = watch(`exercise.weightType`) as string
+  console.log('weightType', weightType)
+  const isSS = watch(`exercise.isSS`) as boolean
+  const liftType = watch(`exercise.lift`) as string
+  const name = watch(`exercise.name`) as string
+
+  const onermB = watch(`exercise.onerm`) as number
+  const onermT = watch(`exercise.onermTop`) as number
 
   if (!exercise) return null
 
@@ -160,7 +469,7 @@ const ExerciseDialog = ({
           <XMarkIcon className='h-8 w-8' />
         </button>
       </Dialog.Title>
-      <div className='my-8 flex justify-center'>
+      <div className='my-4 flex justify-center'>
         <form
           // TODO: fix this
           // @ts-ignore TS2322
@@ -168,208 +477,394 @@ const ExerciseDialog = ({
           className='flex w-full flex-col items-center justify-center '
         >
           <div className=''>
-            <div className='my-6 flex flex-col gap-8'>
-              <Controller
-                control={control}
-                name={`exercise.isSS`}
-                defaultValue={false}
-                render={({ field: { onChange, value } }) => (
-                  <div className='absolute left-16 top-2 flex items-baseline gap-2'>
-                    <Checkbox
-                      id='isSS'
-                      checked={value as boolean}
-                      onCheckedChange={onChange}
-                    />
-                    <label
-                      htmlFor='isSS'
-                      className=' text-lg'
-                    >
-                      SuperSet
-                    </label>
-                  </div>
-                )}
-              />
-              <div className='grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-10'>
-                <div className='flex flex-col justify-center'>
-                  <Controller
-                    control={control}
-                    name={`lift`}
-                    defaultValue={exercise.lift}
-                    render={({ field: { onChange, value } }) => (
-                      <LiftPicker
-                        onChange={onChange}
-                        // TODO: fix this
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                        value={value}
-                      />
-                    )}
-                  />
-                </div>
-                <Input
-                  className='text-yellow-500'
-                  {...register(`name`)}
-                  defaultValue={exercise.name || ''}
-                  placeholder='name'
-                />
-                <div className='flex items-center'>
-                  <Label
-                    htmlFor='sets'
-                    className='absolute text-gray-400'
-                  >
-                    Sets:
-                  </Label>
-                  <Input
-                    id='sets'
-                    type='number'
-                    className='pl-12'
-                    {...register(`sets`, { valueAsNumber: true })}
-                    placeholder='sets'
-                    defaultValue={exercise.sets || 1}
-                  />
-                </div>
-                <div className='flex items-center'>
-                  <Label
-                    htmlFor='reps'
-                    className='absolute text-gray-400'
-                  >
-                    Reps:
-                  </Label>
-                  <Input
-                    id='reps'
-                    className='pl-12'
-                    type='number'
-                    {...register(`reps`, { valueAsNumber: true })}
-                    placeholder='reps'
-                    defaultValue={exercise.reps || 1}
-                  />
-                </div>
-              </div>
-              <div className='my-1 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-10'>
+            <div className='mb-6 flex flex-col gap-8'>
+              <div
+                className={isSS === true ? 'text-gray-200' : 'text-gray-600'}
+              >
                 <Controller
                   control={control}
-                  name={`weightType`}
-                  defaultValue={exercise.weightType}
+                  name={`exercise.isSS`}
+                  defaultValue={exercise.isSS}
                   render={({ field: { onChange, value } }) => (
-                    <div className=''>
-                      <RadioGroup
-                        // TODO: fix this
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                        value={value}
-                        onChange={onChange}
+                    <div className='absolute left-36 top-[29px] flex items-center gap-2'>
+                      <Checkbox
+                        id='isSS'
+                        checked={value as boolean}
+                        onCheckedChange={onChange}
+                      />
+                      <label
+                        htmlFor='isSS'
+                        className=' text-md pt-[2px]'
                       >
-                        <div className='flex items-center justify-start gap-4 md:gap-10'>
-                          {plans.map((plan) => (
-                            <RadioGroup.Option
-                              key={plan.name}
-                              value={plan.value}
-                              className={({ checked }) => `${
-                                checked
-                                  ? 'bg-gray-600 bg-opacity-75 text-gray-200'
-                                  : 'bg-black text-gray-400'
-                              }
-                                relative flex h-10 w-52 cursor-pointer rounded-lg px-5 shadow-md focus:outline-none`}
-                            >
-                              {({ checked }) => (
-                                <>
-                                  <div className='flex w-full items-center justify-between'>
-                                    <div className='flex items-center'>
-                                      <div className='text-base tracking-tighter'>
-                                        <RadioGroup.Label
-                                          as='p'
-                                          className={`font-medium  ${
-                                            checked
-                                              ? 'text-gray-200'
-                                              : 'text-gray-400'
-                                          }`}
-                                        >
-                                          {plan.name}
-                                        </RadioGroup.Label>
-                                      </div>
-                                    </div>
-                                    {checked && (
-                                      <div className='shrink-0 text-white'>
-                                        <CheckCircleIcon className='h-6 w-6' />
-                                      </div>
-                                    )}
-                                  </div>
-                                </>
-                              )}
-                            </RadioGroup.Option>
-                          ))}
-                        </div>
-                      </RadioGroup>
+                        SuperSet
+                      </label>
                     </div>
                   )}
                 />
-                {weightType === 'onerm' && (
-                  <div className='grid grid-cols-2 gap-4 md:gap-10'>
-                    <Input
-                      type='number'
-                      {...register(`onerm`, { valueAsNumber: true })}
-                      placeholder='1rm percent'
-                      defaultValue={exercise.onerm || undefined}
-                    />
-                    <Input
-                      type='number'
-                      {...register(`onermTop`, { valueAsNumber: true })}
-                      placeholder='1rm percent top'
-                      defaultValue={exercise.onermTop || undefined}
-                    />
-                  </div>
-                )}
-                {weightType === 'weight' && (
-                  <div className='grid grid-cols-2 gap-4 md:gap-10'>
-                    <Input
-                      type='number'
-                      {...register(`weightBottom`, { valueAsNumber: true })}
-                      placeholder='weight bottom'
-                      defaultValue={Number(exercise.weightBottom) || undefined}
-                    />
-                    <Input
-                      type='number'
-                      {...register(`weightTop`, { valueAsNumber: true })}
-                      placeholder='weight top'
-                      defaultValue={Number(exercise.weightTop) || undefined}
-                    />
-                  </div>
-                )}
-                {weightType === 'rpe' && (
-                  <div className='grid grid-cols-2 gap-4 md:gap-10'>
-                    <Controller
-                      name={`targetRpe`}
-                      control={control}
-                      defaultValue={exercise.targetRpe || undefined}
-                      render={({ field: { onChange, value } }) => (
-                        <NumericFormat
-                          className=' flex h-10 w-full border-b border-gray-600 bg-black px-3 py-2 text-sm text-gray-200 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50'
-                          // TODO: fix this
-                          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                          value={value}
-                          onChange={onChange}
-                          placeholder='rpe target'
-                        />
-                      )}
-                    />
-                  </div>
-                )}
               </div>
-              <div className='flex items-center justify-between gap-4 md:gap-10'>
+            </div>
+            <div className='flex flex-col gap-4 mb-6'>
+              {!isSS ? (
+                <div className={`flex flex-col gap-4 ${isSS ? 'hidden' : ''}`}>
+                  <div className='grid grid-cols-2 gap-1 gap-x-4 md:grid-cols-5  md:gap-8'>
+                    <div className='flex flex-col justify-center'>
+                      <Controller
+                        control={control}
+                        name={`exercise.lift`}
+                        defaultValue={exercise.lift}
+                        render={({ field: { onChange, value } }) => (
+                          <LiftPicker
+                            onChange={onChange}
+                            value={value as string}
+                          />
+                        )}
+                      />
+                    </div>
+                    <Input
+                      className='capitalize text-yellow-500'
+                      {...register(`exercise.name`)}
+                      defaultValue={exercise.name}
+                      placeholder='name'
+                    />
+                    <div className='col-span-2 flex items-center md:col-span-1'>
+                      <Label
+                        htmlFor='sets'
+                        className='absolute text-gray-400'
+                      >
+                        Sets:
+                      </Label>
+                      <Input
+                        id='sets'
+                        type='number'
+                        className='pl-12'
+                        {...register(`exercise.sets`, { valueAsNumber: true })}
+                        placeholder='sets'
+                        defaultValue={exercise.sets}
+                      />
+                    </div>
+                    <div className='flex items-center'>
+                      <Label
+                        htmlFor='reps'
+                        className='absolute text-gray-400'
+                      >
+                        Reps:
+                      </Label>
+                      <Input
+                        id='reps'
+                        className='pl-12'
+                        type='number'
+                        {...register(`exercise.reps`, { valueAsNumber: true })}
+                        placeholder='reps'
+                        defaultValue={exercise.reps}
+                      />
+                    </div>
+                    <Input
+                      className=''
+                      {...register(`exercise.repUnit`)}
+                      placeholder='rep unit'
+                      defaultValue={exercise.repUnit}
+                    />
+                  </div>
+                  <div className='my-1 flex w-full flex-col items-center justify-between gap-2 md:gap-6 lg:flex-row'>
+                    <div className='flex w-full items-center gap-4 md:gap-6'>
+                      <Controller
+                        control={control}
+                        name={`exercise.weightType`}
+                        defaultValue={exercise.weightType}
+                        render={({ field: { onChange, value } }) => (
+                          <div className=''>
+                            <RadioGroup
+                              value={value as string}
+                              onChange={onChange}
+                            >
+                              <div className='flex items-center justify-start gap-1 py-6 md:gap-2'>
+                                {plans.map((plan) => (
+                                  <RadioGroup.Option
+                                    key={plan.name}
+                                    value={plan.value}
+                                    className={({ checked }) => `${
+                                      checked
+                                        ? 'bg-gray-600 bg-opacity-75 text-gray-200'
+                                        : 'bg-black text-gray-400'
+                                    }
+                                relative flex h-10 cursor-pointer rounded-lg px-2 shadow-md hover:scale-105 hover:text-gray-200 focus:outline-none md:px-6`}
+                                  >
+                                    {({ checked }) => (
+                                      <>
+                                        <div className='flex w-full items-center justify-between'>
+                                          <div className='flex items-center'>
+                                            <div className='text-base tracking-tighter'>
+                                              <RadioGroup.Label
+                                                as='p'
+                                                className={`font-medium  ${
+                                                  checked
+                                                    ? 'text-yellow-500'
+                                                    : 'text-gray-400 hover:text-gray-200'
+                                                }`}
+                                              >
+                                                {plan.name}
+                                              </RadioGroup.Label>
+                                            </div>
+                                          </div>
+                                          {checked && (
+                                            <div className='ml-4 shrink-0 text-white'>
+                                              <CheckCircleIcon className='h-6 w-6' />
+                                            </div>
+                                          )}
+                                        </div>
+                                      </>
+                                    )}
+                                  </RadioGroup.Option>
+                                ))}
+                              </div>
+                            </RadioGroup>
+                          </div>
+                        )}
+                      />
+                      <XCircleIcon
+                        className='h-6 w-6 cursor-pointer text-gray-400 hover:text-red-600'
+                        onClick={() => setValue(`exercise.weightType`, '')}
+                      />
+                    </div>
+                    {weightType === 'onerm' && (
+                      <div className='flex flex-col gap-2'>
+                        <div className='flex gap-0 md:gap-10'>
+                          <div className='relative'>
+                            <Input
+                              type='number'
+                              {...register(`exercise.onerm`, {
+                                valueAsNumber: true,
+                              })}
+                              defaultValue={exercise.onerm}
+                              placeholder='1rm percent'
+                            />
+                            <span className='absolute right-8 top-2 text-gray-400'>
+                              %
+                            </span>
+                          </div>
+                          <span className='flex shrink items-center'>-</span>
+                          <div className='relative'>
+                            <Input
+                              type='number'
+                              {...register(`exercise.onermTop`, {
+                                valueAsNumber: true,
+                              })}
+                              placeholder='1rm percent top'
+                              defaultValue={exercise.onermTop}
+                            />
+                            <span className='absolute right-8 top-2 text-gray-400'>
+                              %
+                            </span>
+                          </div>
+                        </div>
+                        <div className='flex items-center gap-4'>
+                          <Input
+                            type='number'
+                            className='w-32'
+                            value={testWeight || ''}
+                            onChange={(e) =>
+                              setTestWeight(e.target.valueAsNumber)
+                            }
+                            placeholder='Test Weight'
+                          />
+                          {testWeight && (
+                            <div className='flex gap-2 text-base'>
+                              {onermB > 0 && (
+                                <div>
+                                  {`${((testWeight / 100) * onermB).toFixed(
+                                    1,
+                                  )}`}
+                                  kg
+                                </div>
+                              )}
+                              {onermT > 0 && (
+                                <div>
+                                  -{' '}
+                                  {`${((testWeight / 100) * onermT).toFixed(
+                                    1,
+                                  )}`}
+                                  kg
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    {weightType === 'percent' && (
+                      <div className='flex flex-col gap-2'>
+                        <div className='flex gap-0 md:gap-10'>
+                          <div className='relative'>
+                            <Input
+                              type='number'
+                              {...register(`exercise.onerm`, {
+                                valueAsNumber: true,
+                              })}
+                              defaultValue={exercise.onerm}
+                              placeholder='percent'
+                            />
+                            <span className='absolute right-8 top-2 text-gray-400'>
+                              %
+                            </span>
+                          </div>
+                          <span className='flex shrink items-center'>-</span>
+                          <div className='relative'>
+                            <Input
+                              type='number'
+                              {...register(`exercise.onermTop`, {
+                                valueAsNumber: true,
+                              })}
+                              defaultValue={exercise.onermTop}
+                              placeholder='percent top'
+                            />
+                            <span className='absolute right-8 top-2 text-gray-400'>
+                              %
+                            </span>
+                          </div>
+                        </div>
+                        <div className='flex items-center gap-4'>
+                          <Input
+                            type='number'
+                            className='w-32'
+                            value={testWeight || ''}
+                            onChange={(e) =>
+                              setTestWeight(e.target.valueAsNumber)
+                            }
+                            placeholder='Test Weight'
+                          />
+                          {testWeight && (
+                            <div className='flex gap-2 text-base'>
+                              {onermB > 0 && (
+                                <div>
+                                  {`${((testWeight / 100) * onermB).toFixed(
+                                    1,
+                                  )}`}
+                                  kg
+                                </div>
+                              )}
+                              {onermT > 0 && (
+                                <div>
+                                  -{' '}
+                                  {`${((testWeight / 100) * onermT).toFixed(
+                                    1,
+                                  )}`}
+                                  kg
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    {weightType === 'weight' && (
+                      <div className='flex gap-0 md:gap-10'>
+                        <div className='relative'>
+                          <Input
+                            type='number'
+                            {...register(`exercise.weightBottom`, {
+                              valueAsNumber: true,
+                            })}
+                            placeholder='weight bottom'
+                            defaultValue={exercise.weightBottom}
+                          />
+                          <span className='absolute right-8 top-2 text-gray-400'>
+                            kg
+                          </span>
+                        </div>
+
+                        <span className='flex shrink items-center'>-</span>
+                        <div className='relative'>
+                          <Input
+                            type='number'
+                            {...register(`exercise.weightTop`, {
+                              valueAsNumber: true,
+                            })}
+                            placeholder='weight top'
+                            defaultValue={exercise.weightTop}
+                          />
+                          <span className='absolute right-8 top-2 text-gray-400'>
+                            kg
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    {weightType === 'rpe' && (
+                      <div className='grid grid-cols-2 gap-4 md:gap-10'>
+                        <Controller
+                          name={`exercise.targetRpe`}
+                          control={control}
+                          render={({ field: { onChange, value } }) => (
+                            <NumericFormat
+                              className=' flex h-10 w-full border-b border-gray-600 bg-black px-3 py-2 text-sm text-gray-200 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50'
+                              value={value as number}
+                              onChange={onChange}
+                              defaultValue={exercise.targetRpe}
+                              placeholder='rpe target'
+                            />
+                          )}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className='mt-10 rounded-lg pb-6 shadow shadow-gray-800 lg:px-6 '>
+                  <div className='col-span-2 mb-6 flex w-64 items-center md:col-span-1'>
+                    <Label
+                      htmlFor='sets'
+                      className='absolute text-gray-400'
+                    >
+                      Sets:
+                    </Label>
+                    <Input
+                      id='sets'
+                      type='number'
+                      className='pl-12'
+                      {...register(`exercise.sets`, { valueAsNumber: true })}
+                      placeholder='sets'
+                      defaultValue={1}
+                    />
+                  </div>
+                  {ssArray?.map((_, idx) => (
+                    <div key={idx}>
+                      <FormSS
+                        ssIdx={idx}
+                        onRemoveSS={onRemoveSS}
+                        formMethods={formMethods}
+                      />
+                      <PlusIcon
+                        className='mx-auto mt-8 h-6 w-6 text-gray-400 hover:scale-125 hover:text-gray-200'
+                        onClick={() => onInsertSS(idx)}
+                      />
+                    </div>
+                  ))}
+                  <div className='flex  w-full justify-center'>
+                    <Button
+                      type='button'
+                      className={`border-0 text-gray-200 ${
+                        ssArray?.length === 0 ? '' : 'hidden'
+                      }`}
+                      onClick={() => ssField.append({})}
+                    >
+                      <PlusIcon className={`h-6 w-6 hover:scale-110`} />
+                    </Button>
+                  </div>
+                </div>
+              )}
+              <div className='flex flex-col items-center justify-between gap-4 md:flex-row md:gap-10'>
                 <Input
                   type='text'
-                  {...register(`notes`)}
+                  {...register(`exercise.notes`)}
                   placeholder='notes'
-                  defaultValue={exercise.notes || ''}
                 />
 
                 <Controller
                   control={control}
-                  name={`estimatedOnermIndex`}
-                  defaultValue={exercise.estimatedOnermIndex}
+                  name={`exercise.estimatedOnermIndex`}
+                  defaultValue={null}
                   render={({ field: { onChange, value } }) => (
                     <div className='flex items-center gap-2'>
                       <Listbox
-                        // TODO: fix this
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                         value={value}
                         onChange={onChange}
                       >
@@ -398,7 +893,7 @@ const ExerciseDialog = ({
                             leaveTo='opacity-0'
                           >
                             <Listbox.Options className='max-h-160 absolute z-20 mt-1 w-full overflow-auto border border-gray-600 bg-black py-1 '>
-                              {[0, 1, 2, 3, 4, 5, 6].map((_, idx) => (
+                              {[1, 2, 3, 4, 5, 6]?.fields?.map((_, idx) => (
                                 <Listbox.Option
                                   key={idx}
                                   className={({ active }) =>
@@ -447,13 +942,13 @@ const ExerciseDialog = ({
               </div>
               <Input
                 type='text'
-                {...register(`htmlLink`)}
+                className='w-72'
+                {...register(`exercise.htmlLink`)}
                 placeholder='link'
-                defaultValue={exercise.htmlLink || ''}
               />
             </div>
+            <Button type='submit'>Update</Button>
           </div>
-          <Button type='submit'>Update</Button>
         </form>
       </div>
     </>

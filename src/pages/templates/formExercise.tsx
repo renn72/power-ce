@@ -646,10 +646,14 @@ const FormExercise = ({
                     {testWeight && (
                       <div className='flex gap-2 text-base'>
                         {onermB > 0 && (
-                          <div>{`${(testWeight / 100) * onermB}`}kg</div>
+                          <div>
+                            {`${((testWeight / 100) * onermB).toFixed(1)}`}kg
+                          </div>
                         )}
                         {onermT > 0 && (
-                          <div>- {`${(testWeight / 100) * onermT}`}kg</div>
+                          <div>
+                            - {`${((testWeight / 100) * onermT).toFixed(1)}`}kg
+                          </div>
                         )}
                       </div>
                     )}
@@ -698,10 +702,14 @@ const FormExercise = ({
                     {testWeight && (
                       <div className='flex gap-2 text-base'>
                         {onermB > 0 && (
-                          <div>{`${(testWeight / 100) * onermB}`}kg</div>
+                          <div>
+                            {`${((testWeight / 100) * onermB).toFixed(1)}`}kg
+                          </div>
                         )}
                         {onermT > 0 && (
-                          <div>- {`${(testWeight / 100) * onermT}`}kg</div>
+                          <div>
+                            - {`${((testWeight / 100) * onermT).toFixed(1)}`}kg
+                          </div>
                         )}
                       </div>
                     )}

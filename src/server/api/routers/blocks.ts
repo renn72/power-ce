@@ -189,6 +189,19 @@ export const blocksRouter = createTRPCRouter({
       })
       return block
     }),
+  getExercise: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const block = await ctx.prisma.exercise.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          ss: true,
+        },
+      })
+      return block
+    }),
   getUserActiveProgramFull: publicProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
