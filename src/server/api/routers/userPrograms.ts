@@ -127,6 +127,7 @@ export const userProgramsRouter = createTRPCRouter({
                       actualSets: exercise.sets,
                       repUnit: exercise.repUnit,
                       htmlLink: exercise.htmlLink,
+                      userId: input.userId,
                       ss: {
                         create: exercise?.ss?.map((s) => ({
                           name: s.name,
@@ -138,6 +139,7 @@ export const userProgramsRouter = createTRPCRouter({
                           weightBottom: s.weightBottom,
                           targetRpe: s.targetRpe,
                           weightType: s.weightType,
+                          userId: input.userId,
                         })),
                       },
                       set: {
@@ -222,6 +224,7 @@ export const userProgramsRouter = createTRPCRouter({
       const exercise = input.exercise
       const userId = exercise.userId || ''
       await ctx.prisma.set.deleteMany({ where: { exerciseId: exercise.id } })
+      await ctx.prisma.superSet.deleteMany({ where: { exerciseId: exercise.id } })
       const res = await ctx.prisma.exercise.update({
         where: { id: exercise.id },
         data: {
@@ -244,6 +247,21 @@ export const userProgramsRouter = createTRPCRouter({
           actualSets: exercise.sets,
           repUnit: exercise.repUnit,
           htmlLink: exercise.htmlLink,
+          userId: userId,
+          ss: {
+            create: exercise?.ss?.map((s) => ({
+              name: s.name,
+              lift: s.lift,
+              reps: s.reps,
+              onerm: s.onerm,
+              onermTop: s.onermTop,
+              weightTop: s.weightTop,
+              weightBottom: s.weightBottom,
+              targetRpe: s.targetRpe,
+              weightType: s.weightType,
+              userId: userId,
+            })),
+          },
           set: {
             create: Array.from(
               { length: exercise.sets ? +exercise.sets : 0 },

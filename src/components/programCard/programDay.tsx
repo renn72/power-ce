@@ -199,7 +199,7 @@ const ProgramDay = ({
                       >
                         <div className='flex w-full items-center justify-between gap-1 md:gap-2'>
                           <h3 className='text-lg capitalize leading-6 text-yellow-500'>
-                            {exercise.name}
+                            {exercise.ss && exercise.ss.length > 0 ? 'Super Set' : exercise.name}
                           </h3>
                           <div className='mr-2'>
                             {exercise.isComplete ? (
@@ -212,9 +212,6 @@ const ProgramDay = ({
                         <div>
                           {exercise.ss && exercise.ss.length > 0 ? (
                             <div className='relative flex flex-col items-baseline gap-1 text-sm'>
-                              <h4 className='text-xs text-gray-600'>
-                                Superset
-                              </h4>
                               <h3>{exercise.sets} X</h3>
                               <div className='pl-3 flex flex-col'>
                                 {exercise.ss.map((s) => (

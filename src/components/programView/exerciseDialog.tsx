@@ -26,6 +26,7 @@ import { type Exercise } from '@prisma/client'
 
 import { Prisma } from '@prisma/client'
 import { Checkbox } from '@/components/ui/checkbox'
+import { LoadingSpinner } from '../loading'
 
 const exerciseWithSet = Prisma.validator<Prisma.ExerciseArgs>()({
   include: {
@@ -77,10 +78,12 @@ const FormSS = ({
   ssIdx,
   onRemoveSS,
   formMethods,
+  exercise,
 }: {
   ssIdx: number
   onRemoveSS: (args0: number) => void
   formMethods: UseFormReturn
+  exercise: ExerciseWithSet
 }) => {
   const { register, control, watch, setValue } = formMethods
 
@@ -343,28 +346,29 @@ const ExerciseDialog = ({
   exerciseId,
   closeModal,
   userId,
+  programId,
 }: {
   exerciseId: string
   closeModal: () => void
   userId: string
+  programId: string
 }) => {
   const ctx = api.useContext()
   const { data: programData } = api.blocks.getUserActiveProgramFull.useQuery({
     userId: userId,
   })
 
-  const { data: exercise } = api.blocks.getExercise.useQuery({
+  const { data: exerciset, isLoading } = api.blocks.getExercise.useQuery({
     id: exerciseId,
   })
-  console.log('exercise', exercise)
-
   const [testWeight, setTestWeight] = useState<number | null>(null)
 
   const { mutate: updateExercise } =
     api.userPrograms.updateExercise.useMutation({
       onSuccess: () => {
         toast.success('Saved')
-        void ctx.blocks.getUserActiveProgramFull.invalidate()
+        void ctx.blocks.getUserActiveProgramFull.invalidate({ userId: userId})
+        void ctx.blocks.get.invalidate()
         closeModal()
       },
       onError: (e) => {
@@ -373,29 +377,36 @@ const ExerciseDialog = ({
       },
     })
 
-  // const exercise = programData
-  //   ?.find((program) =>
-  //     program.week.find((week) =>
-  //       week.day.find((day) =>
-  //         day.exercise.find((exercise) => exercise.id === exerciseId),
-  //       ),
-  //     ),
-  //   )
-  //   ?.week.find((week) =>
-  //     week.day.find((day) =>
-  //       day.exercise.find((exercise) => exercise.id === exerciseId),
-  //     ),
-  //   )
-  //   ?.day.find((day) =>
-  //     day.exercise.find((exercise) => exercise.id === exerciseId),
-  //   )
-  //   ?.exercise.find((exercise) => exercise.id === exerciseId) as ExerciseWithSet
+  const exercise = programData
+    ?.find((program) =>
+      program.week.find((week) =>
+        week.day.find((day) =>
+          day.exercise.find((exercise) => exercise.id === exerciseId),
+        ),
+      ),
+    )
+    ?.week.find((week) =>
+      week.day.find((day) =>
+        day.exercise.find((exercise) => exercise.id === exerciseId),
+      ),
+    )
+    ?.day.find((day) =>
+      day.exercise.find((exercise) => exercise.id === exerciseId),
+    )
+    ?.exercise.find((exercise) => exercise.id === exerciseId) as ExerciseWithSet
 
-  const formMethods = useForm()
+  const formMethods = useForm({
+    defaultValues: {
+      exercise: {
+        ss: exercise?.ss || [],
+      },
+    },
+  })
   const { register, watch, control, handleSubmit, getValues, setValue } =
     formMethods
 
-  const onSubmit = (input: Exercise) => {
+  const onSubmit = (i: Exercise) => {
+    const input = i.exercise
     const data = {
       id: exerciseId,
       name: input.name || '',
@@ -413,7 +424,18 @@ const ExerciseDialog = ({
       weightType: input.weightType,
       repUnit: input.repUnit,
       htmlLink: input.htmlLink,
-      userId: exercise?.set[0]?.userId || '',
+      isSS: input.isSS,
+      ss: input.ss.map((s) => ({
+        name: s.name,
+        onerm: s.onerm ? +s.onerm : null,
+        onermTop: s.onermTop ? +s.onermTop : null,
+        weightTop: s.weightTop ? +s.weightTop : null,
+        weightBottom: s.weightBottom ? +s.weightBottom : null,
+        targetRpe: s.targetRpe ? +s.targetRpe : null,
+        reps: s.reps ? +s.reps : null,
+        weightType: s.weightType,
+        repUnit: s.repUnit,
+      })),
     }
     updateExercise({ exercise: data })
   }
@@ -444,6 +466,8 @@ const ExerciseDialog = ({
     })
   }
 
+  const ss = watch(`exercise.ss`)
+
   const weightType = watch(`exercise.weightType`) as string
   console.log('weightType', weightType)
   const isSS = watch(`exercise.isSS`) as boolean
@@ -453,6 +477,7 @@ const ExerciseDialog = ({
   const onermB = watch(`exercise.onerm`) as number
   const onermT = watch(`exercise.onermTop`) as number
 
+  console.log('exercise', exercise)
   if (!exercise) return null
 
   return (
@@ -484,7 +509,7 @@ const ExerciseDialog = ({
                 <Controller
                   control={control}
                   name={`exercise.isSS`}
-                  defaultValue={exercise.isSS}
+                  defaultValue={exercise.ss && exercise.ss.length > 0}
                   render={({ field: { onChange, value } }) => (
                     <div className='absolute left-36 top-[29px] flex items-center gap-2'>
                       <Checkbox
@@ -503,7 +528,7 @@ const ExerciseDialog = ({
                 />
               </div>
             </div>
-            <div className='flex flex-col gap-4 mb-6'>
+            <div className='mb-6 flex flex-col gap-4'>
               {!isSS ? (
                 <div className={`flex flex-col gap-4 ${isSS ? 'hidden' : ''}`}>
                   <div className='grid grid-cols-2 gap-1 gap-x-4 md:grid-cols-5  md:gap-8'>
@@ -828,6 +853,7 @@ const ExerciseDialog = ({
                   {ssArray?.map((_, idx) => (
                     <div key={idx}>
                       <FormSS
+                        exercise={exercise}
                         ssIdx={idx}
                         onRemoveSS={onRemoveSS}
                         formMethods={formMethods}

@@ -81,10 +81,20 @@ export const blocksRouter = createTRPCRouter({
     })
     return blocks
   }),
+  getAllBlockTitlesAdmin: publicProcedure.query(async ({ ctx }) => {
+    const blocks = await ctx.prisma.block.findMany({
+      orderBy: { createdAt: 'desc' },
+      where: {
+        isProgram: false,
+      },
+    })
+    return blocks
+  }),
   getAllBlockTitles: publicProcedure.query(async ({ ctx }) => {
     const blocks = await ctx.prisma.block.findMany({
       orderBy: { createdAt: 'desc' },
       where: {
+        isDeleted: false,
         isProgram: false,
       },
     })
@@ -198,6 +208,7 @@ export const blocksRouter = createTRPCRouter({
         },
         include: {
           ss: true,
+          set: true,
         },
       })
       return block

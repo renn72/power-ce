@@ -55,6 +55,7 @@ const ExerciseView = ({
   }
 
   const exercise = program?.week[weekIdx]?.day[dayIdx]?.exercise[exerciseIdx]
+  const isSS = exercise?.ss && exercise?.ss.length > 0
   if (!exercise) return null
 
   return (
@@ -174,69 +175,91 @@ const ExerciseView = ({
           >
             <div>
               <h3 className='text-lg capitalize text-yellow-500'>
-                {exercise.name}
+                {isSS ? 'Super Set' : exercise.name}
               </h3>
               <h3 className='text-xxs capitalize leading-none text-gray-600'>
                 {exercise.lift}
               </h3>
             </div>
-            <div className='flex justify-between  gap-4'>
-              <div className='flex gap-4'>
-                <h3>{exercise.sets}</h3>
-                <h3>X</h3>
-                <h3>{exercise.reps}</h3>
-                <h3>{exercise.repUnit ? exercise.repUnit : 'reps'}</h3>
-              </div>
+            {isSS ? (
               <div>
-                {exercise.weightType === 'onerm' && (
+                <div className='relative flex flex-col items-baseline gap-1 text-sm'>
+                  <h3>{exercise.sets} X</h3>
+                  <div className='flex flex-col pl-3'>
+                    {exercise.ss.map((s) => (
+                      <div
+                        key={s.id}
+                        className='flex gap-2 '
+                      >
+                        <h3>{s.reps}</h3>
+                        <h3>-</h3>
+                        <h3>{s.name}</h3>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className='flex flex-col  gap-1'>
+                <div className='flex justify-between  gap-4'>
+                  <div className='flex gap-4'>
+                    <h3>{exercise.sets}</h3>
+                    <h3>X</h3>
+                    <h3>{exercise.reps}</h3>
+                    <h3>{exercise.repUnit ? exercise.repUnit : 'reps'}</h3>
+                  </div>
                   <div>
-                    {isOneRm(exercise.lift) ? (
-                      <div className='flex'>
+                    {exercise.weightType === 'onerm' && (
+                      <div>
+                        {isOneRm(exercise.lift) ? (
+                          <div className='flex'>
+                            <h4>
+                              {exercise.onerm ? (
+                                checkWeight(exercise.lift, exercise?.onerm)
+                              ) : (
+                                <div className='text-red-500'>Missing %</div>
+                              )}
+                            </h4>
+                            <h4>{exercise.onermTop && '-'}</h4>
+                            <h4>
+                              {exercise.onermTop &&
+                                checkWeight(exercise.lift, exercise.onermTop)}
+                              kg
+                            </h4>
+                          </div>
+                        ) : (
+                          <div className='text-red-500'>Missing 1rm</div>
+                        )}
+                      </div>
+                    )}
+                    {exercise.weightType === 'rpe' && (
+                      <div className='flex items-baseline gap-2'>
+                        <h4>RPE Target:</h4>
+                        <h4 className='flex items-baseline justify-center'>
+                          {exercise?.targetRpe && +exercise?.targetRpe}
+                        </h4>
+                      </div>
+                    )}
+                    {exercise.weightType === 'weight' && (
+                      <div className='flex items-baseline'>
                         <h4>
-                          {exercise.onerm ? (
-                            checkWeight(exercise.lift, exercise?.onerm)
+                          {exercise?.weightBottom ? (
+                            +exercise?.weightBottom
                           ) : (
-                            <div className='text-red-500'>Missing %</div>
+                            <div className='text-red-500'>Missing W</div>
                           )}
                         </h4>
-                        <h4>{exercise.onermTop && '-'}</h4>
+                        <h4>{exercise?.weightTop && '-'}</h4>
                         <h4>
-                          {exercise.onermTop &&
-                            checkWeight(exercise.lift, exercise.onermTop)}
+                          {exercise?.weightTop && +exercise?.weightTop}
                           kg
                         </h4>
                       </div>
-                    ) : (
-                      <div className='text-red-500'>Missing 1rm</div>
                     )}
                   </div>
-                )}
-                {exercise.weightType === 'rpe' && (
-                  <div className='flex items-baseline gap-2'>
-                    <h4>RPE Target:</h4>
-                    <h4 className='flex items-baseline justify-center'>
-                      {exercise?.targetRpe && +exercise?.targetRpe}
-                    </h4>
-                  </div>
-                )}
-                {exercise.weightType === 'weight' && (
-                  <div className='flex items-baseline'>
-                    <h4>
-                      {exercise?.weightBottom ? (
-                        +exercise?.weightBottom
-                      ) : (
-                        <div className='text-red-500'>Missing W</div>
-                      )}
-                    </h4>
-                    <h4>{exercise?.weightTop && '-'}</h4>
-                    <h4>
-                      {exercise?.weightTop && +exercise?.weightTop}
-                      kg
-                    </h4>
-                  </div>
-                )}
+                </div>
               </div>
-            </div>
+            )}
             <div>
               {exercise.notes && (
                 <div className='text-sm text-gray-400'>{exercise.notes}</div>

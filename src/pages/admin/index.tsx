@@ -7,7 +7,7 @@ import { api } from '~/utils/api'
 const Admin = () => {
   const ctx = api.useContext()
   const { data: allTemplates, isLoading: allTemplatesLoading } =
-    api.blocks.getAllBlockTitles.useQuery()
+    api.blocks.getAllBlockTitlesAdmin.useQuery()
   const { data: allPrograms, isLoading: allProgramsLoading } =
     api.blocks.getAllProgramTitles.useQuery()
   const { data: allUsers } = api.users.getAllUsers.useQuery()
