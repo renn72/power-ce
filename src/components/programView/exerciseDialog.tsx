@@ -5,6 +5,7 @@ import {
   CheckIcon,
   XCircleIcon,
   CheckCircleIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline'
 
 import { api } from '~/utils/api'
@@ -23,6 +24,7 @@ import { Label } from '@/components/ui/label'
 import { type Exercise } from '@prisma/client'
 
 import { Prisma } from '@prisma/client'
+import { Checkbox } from '@/components/ui/checkbox'
 
 const exerciseWithSet = Prisma.validator<Prisma.ExerciseArgs>()({
   include: {
@@ -34,9 +36,31 @@ type ExerciseWithSet = Prisma.ExerciseGetPayload<typeof exerciseWithSet>
 
 const plans = [
   {
-    name: '1rm%',
+    name: 'OneRM %',
     value: 'onerm',
   },
+  {
+    name: 'Percent',
+    value: 'percent',
+  },
+  {
+    name: 'Weight',
+    value: 'weight',
+  },
+  {
+    name: 'RPE Target',
+    value: 'rpe',
+  },
+]
+const ssPlans = [
+  // {
+  //   name: 'OneRM %',
+  //   value: 'onerm',
+  // },
+  // {
+  //   name: 'Percent',
+  //   value: 'percent',
+  // },
   {
     name: 'Weight',
     value: 'weight',
@@ -126,14 +150,14 @@ const ExerciseDialog = ({
     <>
       <Dialog.Title
         as='h3'
-        className='flex justify-between text-lg font-medium capitalize leading-6 text-yellow-500'
+        className='flex items-center justify-between text-xl font-medium capitalize leading-6 text-yellow-500'
       >
         {exercise.name}
         <button
           onClick={() => closeModal()}
-          className='text-gray-400 hover:text-white'
+          className='p-0 text-gray-400 hover:text-white'
         >
-          X
+          <XMarkIcon className='h-8 w-8' />
         </button>
       </Dialog.Title>
       <div className='my-8 flex justify-center'>
@@ -143,8 +167,28 @@ const ExerciseDialog = ({
           onSubmit={handleSubmit(onSubmit)}
           className='flex w-full flex-col items-center justify-center '
         >
-          <div className='flex flex-col justify-center'>
+          <div className=''>
             <div className='my-6 flex flex-col gap-8'>
+              <Controller
+                control={control}
+                name={`exercise.isSS`}
+                defaultValue={false}
+                render={({ field: { onChange, value } }) => (
+                  <div className='absolute left-16 top-2 flex items-baseline gap-2'>
+                    <Checkbox
+                      id='isSS'
+                      checked={value as boolean}
+                      onCheckedChange={onChange}
+                    />
+                    <label
+                      htmlFor='isSS'
+                      className=' text-lg'
+                    >
+                      SuperSet
+                    </label>
+                  </div>
+                )}
+              />
               <div className='grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-10'>
                 <div className='flex flex-col justify-center'>
                   <Controller
@@ -162,7 +206,7 @@ const ExerciseDialog = ({
                   />
                 </div>
                 <Input
-                  className=''
+                  className='text-yellow-500'
                   {...register(`name`)}
                   defaultValue={exercise.name || ''}
                   placeholder='name'

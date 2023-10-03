@@ -449,11 +449,9 @@ const FormExercise = ({
           defaultValue={false}
           render={({ field: { onChange, value } }) => (
             <div className='absolute left-16 top-2 flex items-baseline gap-2'>
-              {value ? 'true' : 'false'}
               <Checkbox
                 id='isSS'
-                value={value}
-                checked={value}
+                checked={value as boolean}
                 onCheckedChange={onChange}
               />
               <Label

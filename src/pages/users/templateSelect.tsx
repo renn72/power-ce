@@ -132,7 +132,7 @@ const TemplateSelect = ({
 
   if (blocksLoading) return <div>loading</div>
   const blocksTitle = blocksData
-    ?.filter((b) => b.trainerId === user.id)
+    ?.filter((b) => b.trainerId === user.id || user.id === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a')
     ?.map((block) => block.name)
 
   // if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
@@ -173,7 +173,7 @@ const TemplateSelect = ({
                     leaveFrom='opacity-100'
                     leaveTo='opacity-0'
                   >
-                    <Listbox.Options className='max-h-120 absolute z-10 mt-1 w-52 overflow-auto border border-gray-600 bg-black py-1 shadow-lg md:w-60 '>
+                    <Listbox.Options className='max-h-[32rem] absolute z-10 mt-1 w-52 overflow-auto border border-gray-600 bg-black py-1 shadow-lg md:w-80 '>
                       {blocksTitle?.map((templateName, Idx) => (
                         <Listbox.Option
                           key={Idx}

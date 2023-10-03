@@ -198,7 +198,7 @@ const Users: NextPage = () => {
 
   return (
     <>
-      <main className='flex h-full flex-col'>
+      <main className='flex h-full flex-col mb-80'>
         <div className=' flex w-full flex-col items-center justify-center gap-8 py-6 sm:px-2 md:mt-6 '>
           <UserSelect onSelectUser={setUserId} />
           {userId === 'all' ? (
