@@ -151,6 +151,16 @@ export const blocksRouter = createTRPCRouter({
       })
       return sets
     }),
+  getLogSets: privateProcedure
+    .query(async ({ ctx }) => {
+      const sets = await ctx.prisma.set.findMany({
+      orderBy: { flield1: 'desc' },
+        where: {
+          isComplete: true,
+        },
+      })
+      return sets
+    }),
   getAllAdmin: publicProcedure.query(async ({ ctx }) => {
     const blocks = await ctx.prisma.block.findMany({
       orderBy: { createdAt: 'desc' },

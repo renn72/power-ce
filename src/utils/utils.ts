@@ -21,3 +21,12 @@ export function getDate(date: string | null) {
     month: 'short',
   })
 }
+
+export function getTime(date: string | null) {
+  if (!date) return ''
+  const d = new Date(+date)
+  return d.toLocaleTimeString('en-AU', {
+    hour: 'numeric',
+    minute: 'numeric',
+  })
+}
