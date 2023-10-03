@@ -425,7 +425,7 @@ const ExerciseDialog = ({
       repUnit: input.repUnit,
       htmlLink: input.htmlLink,
       isSS: input.isSS,
-      ss: input.ss.map((s) => ({
+      ss: input.isSS ? input.ss.map((s) => ({
         name: s.name,
         onerm: s.onerm ? +s.onerm : null,
         onermTop: s.onermTop ? +s.onermTop : null,
@@ -435,7 +435,7 @@ const ExerciseDialog = ({
         reps: s.reps ? +s.reps : null,
         weightType: s.weightType,
         repUnit: s.repUnit,
-      })),
+      })) : null,
     }
     updateExercise({ exercise: data })
   }
@@ -455,7 +455,7 @@ const ExerciseDialog = ({
     ssField.insert(index + 1, {
       name: '',
       lift: 'unlinked',
-      reps: '',
+      reps: 1,
       onerm: '',
       onermTop: '',
       weightTop: '',
