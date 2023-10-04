@@ -120,7 +120,7 @@ const UserPage = ({
 
 const Users: NextPage = () => {
   const { user } = useUser()
-  const [userId, setUserId] = useState<string>('all')
+  const [userId, setUserId] = useState<string>(user?.id || 'all')
   if (!user) return <div>Login</div>
 
   const ctx = api.useContext()
