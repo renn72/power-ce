@@ -17,7 +17,7 @@ const dayWithExercise = Prisma.validator<Prisma.DayArgs>()({
     exercise: {
       include: {
         set: true,
-        ss: true
+        ss: true,
       },
     },
   },
@@ -109,7 +109,10 @@ const ProgramDay = ({
 
     const weight = day?.exercise[estimatedOnermIndex - 1]?.set[0]?.weight
     if (!weight) return ''
-    return `${((+weight * percent) / 100) * energyAdjust}`
+    // const res = Math.round((weight * (onerm / 100)) / 2.5) * 2.5
+    return `${
+      Math.round((((+weight * percent) / 100) * energyAdjust) / 2.5) * 2.5
+    }`
   }
 
   const closeModal = () => {
@@ -199,7 +202,9 @@ const ProgramDay = ({
                       >
                         <div className='flex w-full items-center justify-between gap-1 md:gap-2'>
                           <h3 className='text-lg capitalize leading-6 text-yellow-500'>
-                            {exercise.ss && exercise.ss.length > 0 ? 'Super Set' : exercise.name}
+                            {exercise.ss && exercise.ss.length > 0
+                              ? 'Super Set'
+                              : exercise.name}
                           </h3>
                           <div className='mr-2'>
                             {exercise.isComplete ? (
@@ -213,7 +218,7 @@ const ProgramDay = ({
                           {exercise.ss && exercise.ss.length > 0 ? (
                             <div className='relative flex flex-col items-baseline gap-1 text-sm'>
                               <h3>{exercise.sets} X</h3>
-                              <div className='pl-3 flex flex-col'>
+                              <div className='flex flex-col pl-3'>
                                 {exercise.ss.map((s) => (
                                   <div
                                     key={s.id}

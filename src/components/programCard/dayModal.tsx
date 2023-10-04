@@ -209,7 +209,9 @@ const ExerciseModal = ({
 
     const weight = day?.exercise[estimatedOnermIndex - 1]?.set[0]?.weight
     if (!weight) return ''
-    return `${((+weight * percent) / 100) * energyAdjust}`
+    return `${
+      Math.round((((+weight * percent) / 100) * energyAdjust) / 2.5) * 2.5
+    }`
   }
 
   const [weights, setWeights] = useState<number | null>(() => {
