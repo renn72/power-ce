@@ -151,16 +151,15 @@ export const blocksRouter = createTRPCRouter({
       })
       return sets
     }),
-  getLogSets: privateProcedure
-    .query(async ({ ctx }) => {
-      const sets = await ctx.prisma.set.findMany({
+  getLogSets: privateProcedure.query(async ({ ctx }) => {
+    const sets = await ctx.prisma.set.findMany({
       orderBy: { flield1: 'desc' },
-        where: {
-          isComplete: true,
-        },
-      })
-      return sets
-    }),
+      where: {
+        isComplete: true,
+      },
+    })
+    return sets
+  }),
   getAllAdmin: publicProcedure.query(async ({ ctx }) => {
     const blocks = await ctx.prisma.block.findMany({
       orderBy: { createdAt: 'desc' },
@@ -336,18 +335,18 @@ export const blocksRouter = createTRPCRouter({
                       repUnit: exercise.repUnit,
                       htmlLink: exercise.htmlLink,
                       ss: {
-                            create: exercise?.ss?.map((s) => ({
-                              name: s.name,
-                              lift: s.lift,
-                              reps: s.reps,
-                              onerm: s.onerm,
-                              onermTop: s.onermTop,
-                              weightTop: s.weightTop,
-                              weightBottom: s.weightBottom,
-                              targetRpe: s.targetRpe,
-                              weightType: s.weightType,
-                            })),
-                          }
+                        create: exercise?.ss?.map((s) => ({
+                          name: s.name,
+                          lift: s.lift,
+                          reps: s.reps,
+                          onerm: s.onerm,
+                          onermTop: s.onermTop,
+                          weightTop: s.weightTop,
+                          weightBottom: s.weightBottom,
+                          targetRpe: s.targetRpe,
+                          weightType: s.weightType,
+                        })),
+                      },
                     })),
                   },
                 })),
@@ -360,14 +359,16 @@ export const blocksRouter = createTRPCRouter({
       return block
     }),
 
-  getAllWeekTemplates: publicProcedure.query(async ({ ctx }) => {
-    const weeks = await ctx.prisma.week.findMany({
-      orderBy: { createdAt: 'desc' },
-      where: { isTemplate: true },
-      include: { day: { include: { exercise: { include: { ss: true } } } } },
-    })
-    return weeks
-  }),
+  getAllWeekTemplates: privateProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const weeks = await ctx.prisma.week.findMany({
+        orderBy: { createdAt: 'desc' },
+        where: { isTemplate: true, trainerId: input?.userId },
+        include: { day: { include: { exercise: { include: { ss: true } } } } },
+      })
+      return weeks
+    }),
 
   createWeek: privateProcedure
     .input(weekSchema)

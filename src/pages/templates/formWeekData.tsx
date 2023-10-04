@@ -12,6 +12,7 @@ import WeekTemplateSelect from './weekTemplateSelect'
 import { type WeekData, } from '~/store/types'
 import { type Block, } from '~/store/types'
 import { atom, useAtom } from 'jotai'
+import { useUser } from '@clerk/nextjs'
 
 const loadedTemplateAtom = atom<string>('')
 
@@ -28,8 +29,10 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
 
   const [loadedTemplate, setLoadedTemplate] = useAtom(loadedTemplateAtom)
 
+  const { user, } = useUser()
+
   const ctx = api.useContext()
-  const { data: weeksData, } = api.blocks.getAllWeekTemplates.useQuery()
+  const { data: weeksData, } = api.blocks.getAllWeekTemplates.useQuery({ userId: user?.id || '', })
 
   const { mutate: weekCreateMutate, } = api.blocks.createWeek.useMutation({
     onSuccess: () => {

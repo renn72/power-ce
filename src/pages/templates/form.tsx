@@ -253,7 +253,7 @@ const Form = () => {
 
   const onLoadTemplate = () => {
     const block = blocksData?.filter(
-      (block) => block.name === selectedTemplate,
+      (block) => block.id === selectedTemplate,
     )[0]
     console.log('onLoadTemplate', block)
     setBlockId(block?.id || '')

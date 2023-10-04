@@ -10,6 +10,7 @@ import {
 } from '@heroicons/react/24/outline'
 
 import { toast } from 'react-hot-toast'
+import { useUser } from '@clerk/nextjs'
 
 const WeekTemplateSelect = ({
   onSelectWeekTemplate,
@@ -18,8 +19,10 @@ const WeekTemplateSelect = ({
   onSelectWeekTemplate: (week: string) => void
   selectedWeekTemplate: string
 }) => {
+  const { user} = useUser()
   const ctx = api.useContext()
-  const { data: weeksData } = api.blocks.getAllWeekTemplates.useQuery()
+  const { data: weeksData } = api.blocks.getAllWeekTemplates.useQuery({userId: user?.id || ''})
+
   const { mutate: weekDeleteMutate } = api.blocks.deleteWeek.useMutation({
     onSuccess: () => {
       toast.success('Deleted')
