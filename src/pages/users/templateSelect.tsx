@@ -35,9 +35,9 @@ const TemplateSelect = ({
 
   const { data: blocksData, isLoading: blocksLoading } =
     api.blocks.getAllBlockTitles.useQuery()
-  const { data: currentPrograms } =
+  const { data: currentProgram } =
     api.blocks.getUserActiveProgramFull.useQuery({ userId: userId })
-  const currentProgram = currentPrograms?.[0]
+  console.log('currentProgram', currentProgram)
 
   const workoutCount = () => {
     if (!currentProgram) return
