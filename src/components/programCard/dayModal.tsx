@@ -83,20 +83,16 @@ const SetsModal = ({
               className='h-10 w-10 cursor-pointer text-gray-400'
             />
           ) : (
-            <div className='mt-6'></div>
+            <div className=''></div>
           )}
           <div
-            className='flex flex-col gap-1'
+              className={`flex h-12 min-w-[3rem] cursor-pointer items-center justify-center rounded-full bg-gray-800 text-xl hover:scale-105`}
             onClick={(e) => {
               e.stopPropagation()
               onSetDoneWrapper()
             }}
           >
-            <div
-              className={`flex h-12 min-w-[3rem] cursor-pointer items-center justify-center rounded-full bg-gray-800 text-xl hover:scale-105`}
-            >
               {isSS ? 'SS' : reps}
-            </div>
           </div>
           {!isSS && (
             <ChevronDownIcon
@@ -126,7 +122,7 @@ const ExerciseModal = ({
   userId: string
 }) => {
   const [rpe, setRpe] = useState('8')
-  const [exerciseSets, setExerciseSets] = useState(Number(exercise.sets))
+  const [exerciseSets, setExerciseSets] = useState(Number(exercise.sets) || 0)
 
   const { data: userCoreOneRM } = api.oneRepMax.getUserCoreLifts.useQuery({
     userId: userId,
@@ -248,19 +244,26 @@ const ExerciseModal = ({
                 return {
                   ...day,
                   exercise: day.exercise.map((exercise) => {
+                    if (exercise.id === newSet.exerciseId) {
+                      return {
+                        ...exercise,
+                        set: [
+                          ...exercise.set,
+                          {
+                            id: newSet.id || '',
+                            isComplete: true,
+                            rpe: newSet.rpe,
+                            weight: newSet.weight,
+                            estiamtedOnerm: newSet.estiamtedOnerm,
+                            rep: newSet.rep,
+                          },
+                        ],
+                      }
+                    }
+
                     return {
                       ...exercise,
-                      set: [
-                        ...exercise.set,
-                        {
-                          id: newSet.id || '',
-                          isComplete: true,
-                          rpe: newSet.rpe,
-                          weight: newSet.weight,
-                          estiamtedOnerm: newSet.estiamtedOnerm,
-                          rep: newSet.rep,
-                        },
-                      ],
+                      set: [...exercise.set],
                     }
                   }),
                 }
@@ -340,43 +343,32 @@ const ExerciseModal = ({
       rep: reps,
     })
 
-    // const isDone = exercise.set.reduce((acc, curr) => {
-    //   if (curr.id == set.id && set.isComplete) return false
-    //   if (curr.id == set.id) return acc
-    //   return curr.isComplete ? acc : false
-    // }, true)
-    //
-    // if (!exercise.isComplete && isDone) {
-    //   updateExerciseComplete({
-    //     id: exercise.id,
-    //     isComplete: true,
-    //     notes: notes,
-    //   })
-    // }
-    // if (exercise.isComplete && !isDone) {
-    //   updateExerciseComplete({
-    //     id: exercise.id,
-    //     isComplete: false,
-    //     notes: notes,
-    //   })
-    // }
-    //
-    // const isDayDone = day.exercise.reduce((acc, curr) => {
-    //   if (curr.id == exercise.id && exercise.isComplete) return false
-    //   if (curr.id == exercise.id && isDone) return acc
-    //   return curr.isComplete ? acc : false
-    // }, true)
-    //
-    // if (!day.isComplete && isDayDone) {
-    //   updateDayComplete({ id: day.id, isComplete: true })
-    // }
-    //
-    // if (day.isComplete && !isDayDone) {
-    //   updateDayComplete({ id: day.id, isComplete: false })
-    // }
+    const isDone = exercise.set.length + 1 === exerciseSets
+
+
+    if (!exercise.isComplete && isDone) {
+      updateExerciseComplete({
+        id: exercise.id,
+        isComplete: true,
+        notes: notes,
+      })
+    }
+
+    const isDayDone = day.exercise.reduce((acc, curr) => {
+      if (curr.id == exercise.id && exercise.isComplete) return false
+      if (curr.id == exercise.id && isDone) return acc
+      return curr.isComplete ? acc : false
+    }, true)
+
+    if (!day.isComplete && isDayDone) {
+      updateDayComplete({ id: day.id, isComplete: true })
+    }
+
+    if (day.isComplete && !isDayDone) {
+      updateDayComplete({ id: day.id, isComplete: false })
+    }
   }
 
-  console.log('exercise', exercise)
 
   useEffect(() => {
     const index = 8 - (+rpe - 6) / 0.5
@@ -402,9 +394,6 @@ const ExerciseModal = ({
     })
   }
 
-  const onSetUnDone = () => {
-    console.log('undone')
-  }
 
   const isSS = exercise.ss && exercise.ss.length > 0
 
@@ -708,7 +697,7 @@ const ExerciseModal = ({
                       <div className='ml-10 text-sm font-light text-gray-400 md:ml-16'>
                         {exercise?.notes}
                       </div>
-                      {exercise.sets && exercise.reps && (
+                      {exercise.sets && (
                         <div className='flex flex-col gap-2 md:gap-6'>
                           {isSS ? null : (
                             <div className='flex w-full items-center justify-center gap-4 text-2xl font-bold md:gap-6'>
@@ -839,19 +828,19 @@ const ExerciseModal = ({
                             )}
                           <div>
                             <AnimatePresence>
-                              <div className='flex items-center gap-3 text-xl font-medium md:gap-4 overflow-clip '>
+                              <div className='flex items-center gap-3 overflow-clip text-xl font-medium md:gap-4 h-36'>
                                 <MinusIcon
                                   onClick={() =>
                                     setExerciseSets((e) => (e > 1 ? e - 1 : e))
                                   }
-                                  className='h-8 w-8 cursor-pointer text-gray-400 flex-shrink-0'
+                                  className={`h-8 w-8 flex-shrink-0 cursor-pointer text-gray-400 ${exerciseSets - exercise.set.length <= 0 ? 'hidden' : ''}`}
                                 />
-                                {Array.from(
-                                  Array(
-                                    exerciseSets - exercise.set.length,
+                                {[
+                                  ...Array(
+                                    exerciseSets - exercise.set.length <= 0 ? 0 : exerciseSets - exercise.set.length,
                                   ).keys(),
-                                ).map((_, setIdx) => (
-                                  <div key={setIdx}>
+                                ].map((_, setIdx) => (
+                                  <div key={setIdx} className=''>
                                     <SetsModal
                                       exercise={exercise}
                                       onSetDone={onSetDone}
@@ -861,7 +850,7 @@ const ExerciseModal = ({
                                 ))}
                                 <PlusIcon
                                   onClick={() => setExerciseSets((e) => e + 1)}
-                                  className='h-8 w-8 cursor-pointer text-gray-400 flex-shrink-0'
+                                  className='h-8 w-8 flex-shrink-0 cursor-pointer text-gray-400'
                                 />
                               </div>
                             </AnimatePresence>
