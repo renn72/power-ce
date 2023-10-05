@@ -98,6 +98,17 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
               htmlLink: exercise.htmlLink,
               isComplete: false,
               isSS: exercise.isSS || false,
+              ss: exercise.ss.map((s) => ({
+            name: s.name,
+            onerm: s.onerm ? +s.onerm : null,
+            onermTop: s.onermTop ? +s.onermTop : null,
+            weightTop: s.weightTop ? +s.weightTop : null,
+            weightBottom: s.weightBottom ? +s.weightBottom : null,
+            targetRpe: s.targetRpe ? +s.targetRpe : null,
+            reps: s.reps ? +s.reps : null,
+            weightType: s.weightType,
+            repUnit: s.repUnit,
+          })),
 
             })
           ),
@@ -139,6 +150,17 @@ const FormWeekData = ({ weekIdx, }: { weekIdx: number }) => {
               htmlLink: exercise.htmlLink,
               isComplete: false,
               isSS: exercise.isSS || false,
+              ss: exercise.ss.map((s) => ({
+            name: s.name,
+            onerm: s.onerm ? +s.onerm : null,
+            onermTop: s.onermTop ? +s.onermTop : null,
+            weightTop: s.weightTop ? +s.weightTop : null,
+            weightBottom: s.weightBottom ? +s.weightBottom : null,
+            targetRpe: s.targetRpe ? +s.targetRpe : null,
+            reps: s.reps ? +s.reps : null,
+            weightType: s.weightType,
+            repUnit: s.repUnit,
+          })),
 
             })
           ),
