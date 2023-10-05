@@ -441,8 +441,7 @@ export const blocksRouter = createTRPCRouter({
               create: input.day.map((day) => ({
                 isRestDay: day.isRestDay,
                 exercise: {
-                  createMany: {
-                    data: day.exercise.map((exercise) => ({
+                  create: day.exercise.map((exercise) => ({
                       name: exercise.name,
                       lift: exercise.lift,
                       sets: exercise.sets,
@@ -475,7 +474,6 @@ export const blocksRouter = createTRPCRouter({
                           }
                         : undefined,
                     })),
-                  },
                 },
               })),
             },
