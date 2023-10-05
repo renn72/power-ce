@@ -1,38 +1,35 @@
-import { api, } from '~/utils/api'
+import { api } from '~/utils/api'
 
-import { toast, } from 'react-hot-toast'
-import {
-  testBlock, testBlock2,
-} from '~/store/defaultValues'
-import { Button, } from '@/components/ui/button'
+import { toast } from 'react-hot-toast'
+import { testBlock, testBlock2 } from '~/store/defaultValues'
+import { Button } from '@/components/ui/button'
 const Test = () => {
   const ctx = api.useContext()
-  const {
-    data: all, isLoading: tempLoading,
-  } = api.blocks.getAllAdmin.useQuery()
+  const { data: all, isLoading: tempLoading } =
+    api.blocks.getAllAdmin.useQuery()
 
-  const { mutate: deleteTemplate, } = api.blocks.hardDelete.useMutation({
+  const { mutate: deleteTemplate } = api.blocks.hardDelete.useMutation({
     onSuccess: () => {
       console.log('deleted')
       void ctx.blocks.getAllAdmin.invalidate()
     },
   })
 
-  const { mutate: deleteSoftTemplate, } = api.blocks.softDelete.useMutation({
+  const { mutate: deleteSoftTemplate } = api.blocks.softDelete.useMutation({
     onSuccess: () => {
       console.log('deleted')
       void ctx.blocks.getAllAdmin.invalidate()
     },
   })
 
-  const { mutate: undeleteSoftTemplate, } = api.blocks.softUnDelete.useMutation({
+  const { mutate: undeleteSoftTemplate } = api.blocks.softUnDelete.useMutation({
     onSuccess: () => {
       console.log('deleted')
       void ctx.blocks.getAllAdmin.invalidate()
     },
   })
 
-  const { mutate: blockCreateMutate, } = api.blocks.create.useMutation({
+  const { mutate: blockCreateMutate } = api.blocks.create.useMutation({
     onSuccess: () => {
       console.log('success')
       toast.success('Saved')
@@ -45,18 +42,27 @@ const Test = () => {
     },
   })
 
-  const { data: allUserPrograms, } = api.userPrograms.getAll.useQuery()
-  console.log('allUserPrograms', allUserPrograms)
+  const { mutate: cleanSets } = api.programs.cleanSets.useMutation({
+    onSuccess: () => {
+      console.log('deleted')
+      void ctx.blocks.getAllAdmin.invalidate()
+    }
+  })
 
-  const {
-    data: primaryLifts, isLoading: primaryLiftsLoading,
-  } = api.primaryLifts.getAll.useQuery()
+  const onCleanSets = () => {
+    console.log('clean')
+    cleanSets()
+  }
 
-  const {
-    data: allUsers, isLoading: usersLoading,
-  } = api.users.getAll.useQuery()
+  const { data: allUserPrograms } = api.userPrograms.getAll.useQuery()
 
-  const { mutate: createUserCoreOneRM, } = api.oneRepMax.create.useMutation({
+  const { data: primaryLifts, isLoading: primaryLiftsLoading } =
+    api.primaryLifts.getAll.useQuery()
+
+  const { data: allUsers, isLoading: usersLoading } =
+    api.users.getAll.useQuery()
+
+  const { mutate: createUserCoreOneRM } = api.oneRepMax.create.useMutation({
     onSettled: async () => {
       await ctx.oneRepMax.getUserCoreLifts.invalidate()
     },
@@ -66,23 +72,27 @@ const Test = () => {
     },
   })
 
-  const { mutate: deleteAllRM, } = api.oneRepMax.deleteAll.useMutation({
+  const { mutate: deleteAllRM } = api.oneRepMax.deleteAll.useMutation({
     onSuccess: () => {
       console.log('deleted')
       void ctx.oneRepMax.getUserCoreLifts.invalidate()
     },
   })
 
-  const { mutate: deleteUserProgram, } = api.userPrograms.deleteHard.useMutation({
-    onSuccess: () => {
-      console.log('deleted')
-      void ctx.userPrograms.getAll.invalidate()
+  const { mutate: deleteUserProgram } = api.userPrograms.deleteHard.useMutation(
+    {
+      onSuccess: () => {
+        console.log('deleted')
+        void ctx.userPrograms.getAll.invalidate()
+      },
     },
-  })
+  )
 
   const onUpdateOneRM = (userId: string, lift: string, weight: number) => {
     createUserCoreOneRM({
-      userId: userId, lift: lift.toLowerCase(), weight: +weight,
+      userId: userId,
+      lift: lift.toLowerCase(),
+      weight: +weight,
     })
   }
   const onGenerate = () => {
@@ -99,33 +109,32 @@ const Test = () => {
         onUpdateOneRM(user.id, lift.name, weight)
       })
     })
-
   }
 
-  if (tempLoading && primaryLiftsLoading && usersLoading) return <div>Loading</div>
+  if (tempLoading && primaryLiftsLoading && usersLoading)
+    return <div>Loading</div>
 
   const onDeleteUserProgram = (id: string) => {
     console.log('delete', id)
-    deleteUserProgram({ id: id, })
+    deleteUserProgram({ id: id })
   }
 
   const onDelete = (id: string) => {
     console.log('delete', id)
-    deleteTemplate({ id: id, })
+    deleteTemplate({ id: id })
   }
 
   const onDeleteSoft = (id: string) => {
     console.log('delete', id)
-    deleteSoftTemplate({ id: id, })
+    deleteSoftTemplate({ id: id })
   }
 
   const onUnDeleteSoft = (id: string) => {
     console.log('delete', id)
-    undeleteSoftTemplate({ id: id, })
+    undeleteSoftTemplate({ id: id })
   }
 
   const onCreate = () => {
-
     console.log('create')
     blockCreateMutate(testBlock)
   }
@@ -139,46 +148,54 @@ const Test = () => {
     deleteAllRM()
   }
 
-  console.log('all', all)
 
   const me = 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a'
 
   return (
     <div>
+      <Button
+        onClick={onCleanSets}
+      >
+        sets
+      </Button>
       <div>
         <h1>Templates</h1>
         {all?.map((template) => (
           <div
             key={template.id}
-            className='grid auto-cols-auto grid-flow-col divide-x-2 divide-gray-200 items-center'
+            className='grid auto-cols-auto grid-flow-col items-center divide-x-2 divide-gray-200'
           >
-            <h2
-              className='m-1 pl-1'
-            >{template.name}</h2>
+            <h2 className='m-1 pl-1'>{template.name}</h2>
+            <h3 className='m-2 pl-2'>
+              {template.isProgram ? 'program' : 'template'}
+            </h3>
+            <h3 className='m-2 pl-2'>
+              {template.userIdOfProgram == me ? 'me' : 'not me'}
+            </h3>
+            <h3 className='m-2 w-24 pl-2'>
+              {template.isProgramActive && 'active'}
+            </h3>
+            <h3 className='m-2 pl-2'>
+              {template.isDeleted ? 'deleted' : 'not deleted'}
+            </h3>
             <h3
-              className='m-2 pl-2'
-            >{template.isProgram ? 'program' : 'template'}</h3>
-            <h3
-              className='m-2 pl-2'
-            >{template.userIdOfProgram == me ? 'me' : 'not me'}</h3>
-            <h3
-              className='m-2 pl-2 w-24'
-            >{template.isProgramActive && 'active'}</h3>
-            <h3
-              className='m-2 pl-2'
-            >{template.isDeleted ? 'deleted' : 'not deleted'}</h3>
-            <h3
-              className='m-2 pl-2 cursor-pointer'
+              className='m-2 cursor-pointer pl-2'
               onClick={() => onUnDeleteSoft(template.id)}
-            >reverse delete</h3>
+            >
+              reverse delete
+            </h3>
             <h3
-              className='m-2 px-8 text-2xl cursor-pointer'
+              className='m-2 cursor-pointer px-8 text-2xl'
               onClick={() => onDelete(template.id)}
-            >HardX</h3>
+            >
+              HardX
+            </h3>
             <h3
-              className='m-2 px-8 text-2xl cursor-pointer'
+              className='m-2 cursor-pointer px-8 text-2xl'
               onClick={() => onDeleteSoft(template.id)}
-            >SoftX</h3>
+            >
+              SoftX
+            </h3>
           </div>
         ))}
         <h1>Programs</h1>
@@ -186,33 +203,36 @@ const Test = () => {
           {allUserPrograms?.map((program) => (
             <div
               key={program.id}
-              className='grid auto-cols-auto grid-flow-col divide-x-2 divide-gray-200 items-center'
+              className='grid auto-cols-auto grid-flow-col items-center divide-x-2 divide-gray-200'
             >
-              <h2
-                className='m-1 pl-1'
-              >
-                {all?.find((template) => template.id === program.programId)?.name}
+              <h2 className='m-1 pl-1'>
+                {
+                  all?.find((template) => template.id === program.programId)
+                    ?.name
+                }
               </h2>
-              <h2
-                className='m-1 pl-1'
-              >
-                {all?.find((template) => template.id === program.programId)?.userIdOfProgram === me ? 'me' : 'not me'}
+              <h2 className='m-1 pl-1'>
+                {all?.find((template) => template.id === program.programId)
+                  ?.userIdOfProgram === me
+                  ? 'me'
+                  : 'not me'}
               </h2>
+              <h3 className='m-2 pl-2'>
+                {program.isDeleted ? 'deleted' : 'not deleted'}
+              </h3>
+              <h3 className='m-2 pl-2'>
+                {program.isProgramActive ? 'active' : 'not active'}
+              </h3>
               <h3
-                className='m-2 pl-2'
-              >{program.isDeleted ? 'deleted' : 'not deleted'}</h3>
-              <h3
-                className='m-2 pl-2'
-              >{program.isProgramActive ? 'active' : 'not active'}</h3>
-              <h3
-                className='m-2 pl-2 cursor-pointer'
+                className='m-2 cursor-pointer pl-2'
                 onClick={() => onDeleteUserProgram(program.id)}
-              >X</h3>
+              >
+                X
+              </h3>
             </div>
           ))}
         </div>
         <div className='flex flex-col gap-6'>
-
           <Button
             className='w-44'
             onClick={onCreate}
@@ -227,12 +247,14 @@ const Test = () => {
           </Button>
           <Button
             className='w-44'
-            onClick={onGenerate}>
+            onClick={onGenerate}
+          >
             Generate 1rm
           </Button>
           <Button
             className='w-44'
-            onClick={onDeleteAll}>
+            onClick={onDeleteAll}
+          >
             Delete 1rm
           </Button>
         </div>

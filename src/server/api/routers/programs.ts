@@ -68,6 +68,16 @@ export const programsRouter = createTRPCRouter({
       return programDay
     }),
 
+  cleanSets: privateProcedure
+    .mutation(async ({ ctx, }) => {
+      const programSet = await ctx.prisma.set.deleteMany({
+        where: { isComplete: false },
+      })
+
+      return programSet
+    }),
+
+
   createSet: privateProcedure
     .input(
       z.object({

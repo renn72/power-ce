@@ -880,7 +880,7 @@ const ExerciseModal = ({
                                       }}
                                     >
                                       <div className='flex h-12 min-w-[1rem] cursor-pointer items-center justify-center rounded-full bg-black text-2xl font-bold text-yellow-500'>
-                                        {isSS ? 'SS' : exercise.reps}
+                                        {isSS ? 'SS' : set.rep}
                                       </div>
                                     </div>
                                     <div className=''>
