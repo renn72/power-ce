@@ -136,6 +136,7 @@ const Users: NextPage = () => {
       onSuccess: () => {
         toast.success('Saved')
         void ctx.blocks.getUserActiveProgram.invalidate()
+        void ctx.blocks.getUserActiveProgramFull.invalidate()
         void ctx.blocks.getAllUserProgramsTitles.invalidate()
       },
       onError: (e) => {
@@ -149,6 +150,7 @@ const Users: NextPage = () => {
         console.log('success')
         toast.success('Removed')
         void ctx.blocks.getUserActiveProgram.invalidate()
+        void ctx.blocks.getUserActiveProgramFull.invalidate()
         void ctx.blocks.getAllUserProgramsTitles.invalidate()
       },
       onError: (e) => {

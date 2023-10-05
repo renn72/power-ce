@@ -33,6 +33,8 @@ const TemplateSelect = ({
   const [template, setTemplate] = useState('')
   const [isSet, setIsSet] = useState(false)
 
+  const ctx = api.useContext()
+
   const { data: blocksData, isLoading: blocksLoading } =
     api.blocks.getAllBlockTitles.useQuery()
   const { data: currentProgram } =
@@ -108,15 +110,17 @@ const TemplateSelect = ({
     onClearTemplate(userId)
     setIsSet(false)
     setTemplate('')
+
+    void ctx.blocks.getUserActiveProgramFull.invalidate({ userId: userId })
   }
 
   const onSetLocalTemplate = (template: string) => {
     setTemplate(template)
     onSelectTemplate(template, userId)
+    void ctx.blocks.getUserActiveProgramFull.invalidate({ userId: userId })
   }
 
   useEffect(() => {
-    if (!currentProgram) return
     if (!currentProgram) {
       setIsSet(false)
       setTemplate('')
