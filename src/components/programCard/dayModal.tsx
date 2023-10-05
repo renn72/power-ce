@@ -86,13 +86,13 @@ const SetsModal = ({
             <div className=''></div>
           )}
           <div
-              className={`flex h-12 min-w-[3rem] cursor-pointer items-center justify-center rounded-full bg-gray-800 text-xl hover:scale-105`}
+            className={`flex h-12 min-w-[3rem] cursor-pointer items-center justify-center rounded-full bg-gray-800 text-xl hover:scale-105`}
             onClick={(e) => {
               e.stopPropagation()
               onSetDoneWrapper()
             }}
           >
-              {isSS ? 'SS' : reps}
+            {isSS ? 'SS' : reps}
           </div>
           {!isSS && (
             <ChevronDownIcon
@@ -126,6 +126,10 @@ const ExerciseModal = ({
 
   const { data: userCoreOneRM } = api.oneRepMax.getUserCoreLifts.useQuery({
     userId: userId,
+  })
+
+  const { data: program } = api.blocks.get.useQuery({
+    id: programId,
   })
 
   const [weights, setWeights] = useState<number | null>(() => {
@@ -337,14 +341,17 @@ const ExerciseModal = ({
     }
     createSet({
       exerciseId: exercise.id,
+      lift: exercise.lift,
+      name: exercise.name || '',
+      trainerId: program?.trainerId || '',
       rpe: +rpe,
       weight: weights ? +weights : 0,
       estiamtedOnerm: e ? e : 0, //e1rm,
       rep: reps,
+      setReps: exercise.reps ? Number(exercise.reps) : 0,
     })
 
     const isDone = exercise.set.length + 1 === exerciseSets
-
 
     if (!exercise.isComplete && isDone) {
       updateExerciseComplete({
@@ -355,20 +362,15 @@ const ExerciseModal = ({
     }
 
     const isDayDone = day.exercise.reduce((acc, curr) => {
-      if (curr.id == exercise.id && exercise.isComplete) return false
-      if (curr.id == exercise.id && isDone) return acc
       return curr.isComplete ? acc : false
     }, true)
+
+    console.log('isDayDone', isDayDone)
 
     if (!day.isComplete && isDayDone) {
       updateDayComplete({ id: day.id, isComplete: true })
     }
-
-    if (day.isComplete && !isDayDone) {
-      updateDayComplete({ id: day.id, isComplete: false })
-    }
   }
-
 
   useEffect(() => {
     const index = 8 - (+rpe - 6) / 0.5
@@ -393,7 +395,6 @@ const ExerciseModal = ({
       rep: newRep,
     })
   }
-
 
   const isSS = exercise.ss && exercise.ss.length > 0
 
@@ -828,19 +829,28 @@ const ExerciseModal = ({
                             )}
                           <div>
                             <AnimatePresence>
-                              <div className='flex items-center gap-3 overflow-clip text-xl font-medium md:gap-4 h-36'>
+                              <div className='flex h-36 items-center gap-3 overflow-clip text-xl font-medium md:gap-4'>
                                 <MinusIcon
                                   onClick={() =>
                                     setExerciseSets((e) => (e > 1 ? e - 1 : e))
                                   }
-                                  className={`h-8 w-8 flex-shrink-0 cursor-pointer text-gray-400 ${exerciseSets - exercise.set.length <= 0 ? 'hidden' : ''}`}
+                                  className={`h-8 w-8 flex-shrink-0 cursor-pointer text-gray-400 ${
+                                    exerciseSets - exercise.set.length <= 0
+                                      ? 'hidden'
+                                      : ''
+                                  }`}
                                 />
                                 {[
                                   ...Array(
-                                    exerciseSets - exercise.set.length <= 0 ? 0 : exerciseSets - exercise.set.length,
+                                    exerciseSets - exercise.set.length <= 0
+                                      ? 0
+                                      : exerciseSets - exercise.set.length,
                                   ).keys(),
                                 ].map((_, setIdx) => (
-                                  <div key={setIdx} className=''>
+                                  <div
+                                    key={setIdx}
+                                    className=''
+                                  >
                                     <SetsModal
                                       exercise={exercise}
                                       onSetDone={onSetDone}

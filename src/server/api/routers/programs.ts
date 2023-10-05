@@ -76,10 +76,14 @@ export const programsRouter = createTRPCRouter({
         weight: z.number(),
         estiamtedOnerm: z.number(),
         rep: z.number(),
+        lift: z.string(),
+        name: z.string(),
+        trainerId: z.string(),
+        setReps: z.number(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // const authorId = ctx.userId;
+      const userId = ctx.userId;
 
       console.log('check')
       console.log('input', JSON.stringify(input, null, 2))
@@ -92,6 +96,13 @@ export const programsRouter = createTRPCRouter({
           weight: input.weight,
           estiamtedOnerm: input.estiamtedOnerm,
           rep: input.rep,
+          userId: userId,
+          lift: input.lift,
+          name: input.name,
+          trainerId: input.trainerId,
+          actualReps: input.setReps,
+          
+
           flield1: Date.now().toString(),
         },
       })
