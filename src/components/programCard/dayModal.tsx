@@ -24,7 +24,8 @@ import getWeight from '~/utils/getWeight'
 import { NumericFormat } from 'react-number-format'
 import { Input } from '@/components/ui/input'
 import { PlaySquare, XIcon } from 'lucide-react'
-import Fireworks, { FireworksHandlers } from '@fireworks-js/react'
+
+import { checkWeight, checkPercentWeight } from '~/utils/program-card/utils'
 
 const dayWithExercise = Prisma.validator<Prisma.DayArgs>()({
   include: {
@@ -150,76 +151,15 @@ const ExerciseModal = ({
     userId: userId,
   })
 
-  const checkWeight = (
-    lift: string | null,
-    onerm: number | null,
-    index: number | null,
-  ) => {
-    if (!lift || !onerm) return ''
-    let energyAdjust = 1
-    if (+onerm < 100) {
-      if (selectedEnergy === 'B') energyAdjust = 0.95
-      if (selectedEnergy === 'C') energyAdjust = 0.9
-      if (selectedEnergy === 'D') energyAdjust = 0.85
-    }
-    if (+onerm >= 100 && +onerm < 200) {
-      if (selectedEnergy === 'B') energyAdjust = 0.97
-      if (selectedEnergy === 'C') energyAdjust = 0.94
-      if (selectedEnergy === 'D') energyAdjust = 0.91
-    }
-    if (+onerm >= 200) {
-      if (selectedEnergy === 'B') energyAdjust = 0.985
-      if (selectedEnergy === 'C') energyAdjust = 0.97
-      if (selectedEnergy === 'D') energyAdjust = 0.955
-    }
-
-    if (lift == 'weight') {
-      return getWeight(+onerm, 100 * energyAdjust)
-    }
-
-    if (index) {
-      const rm = day?.exercise[index - 1]?.set.filter((s) => s.isComplete)
-      const rmWeight = rm?.map((s) => s.estiamtedOnerm) || []
-      const w = rmWeight[rmWeight.length - 1]
-
-      if (w) return getWeight(+w, onerm * energyAdjust)
-    }
-
-    const w = userCoreOneRM?.find(
-      (coreLift) => coreLift?.lift === lift.toLowerCase(),
-    )?.weight
-
-    if (!w) return ''
-
-    return getWeight(+w, onerm * energyAdjust)
-  }
-
-  const checkPercentWeight = (
-    estimatedOnermIndex: number | null,
-    percent: number | null,
-  ) => {
-    if (!estimatedOnermIndex || !percent) return ''
-
-    if (!day?.exercise[estimatedOnermIndex - 1]?.set[0]?.weight) return ''
-
-    let energyAdjust = 1
-    if (selectedEnergy === 'B') energyAdjust = 0.98
-    if (selectedEnergy === 'C') energyAdjust = 0.96
-    if (selectedEnergy === 'D') energyAdjust = 0.94
-
-    const weight = day?.exercise[estimatedOnermIndex - 1]?.set[0]?.weight
-    if (!weight) return ''
-    return `${
-      Math.round((((+weight * percent) / 100) * energyAdjust) / 2.5) * 2.5
-    }`
-  }
-
   const [weights, setWeights] = useState<number | null>(() => {
     if (exercise.weightType == 'onerm' && exercise?.onerm) {
       const res = checkWeight(
         exercise.lift,
         +exercise?.onerm,
         exercise.estimatedOnermIndex,
+        selectedEnergy,
+        day,
+        userCoreOneRM,
       )
       return res ? +res : 0
     }
@@ -440,41 +380,14 @@ const ExerciseModal = ({
 
   const isSS = exercise.ss && exercise.ss.length > 0
 
-  const ref = useRef<FireworksHandlers>(null)
-  const wrapper = useRef<HTMLDivElement>(null)
-  const disDiv = useRef<HTMLDivElement>(null)
-
-
-  const toggle = (open: boolean) => {
-    console.log('toggle', open)
-
-
-    disDiv.current?.scrollIntoView({
-      behavior: 'smooth',
-    })
-
-
-    // if (!isSS) return
-    // setTimeout(() => {
-    //   if (!wrapper.current) return
-    //   console.log('stop')
-    //   ref.current?.stop()
-    //   ref.current?.clear()
-    //   wrapper.current.style.display = 'none'
-    //   ref.current?.updateBoundaries({ x: 0, y: 0, width: 0, height: 0 })
-    // }, 3000)
-  }
-
   return (
-    <div ref={disDiv}>
+    <div>
       <Disclosure>
         {({ open }) => (
           <>
             <div className='flex flex-col justify-start gap-2 '>
               <div className='flex flex-col gap-0'>
-                <Disclosure.Button
-                  className={`mt-1 w-full text-lg md:text-xl`}
-                >
+                <Disclosure.Button className={`mt-1 w-full text-lg md:text-xl`}>
                   <div className='flex flex-col gap-0'>
                     <div className='flex flex-col '>
                       <div className='flex items-end gap-2 md:gap-8'>
@@ -529,6 +442,9 @@ const ExerciseModal = ({
                                               'weight',
                                               +s?.weightBottom,
                                               null,
+                                              selectedEnergy,
+                                              day,
+                                              userCoreOneRM,
                                             )}
                                         </h4>
                                         <h4>{s?.weightTop && '-'}</h4>
@@ -538,6 +454,9 @@ const ExerciseModal = ({
                                               'weight',
                                               +s?.weightTop,
                                               null,
+                                              selectedEnergy,
+                                              day,
+                                              userCoreOneRM,
                                             )}
                                           kg
                                         </h4>
@@ -549,7 +468,7 @@ const ExerciseModal = ({
                             </div>
                           </div>
                         ) : (
-                          <div className='relative flex items-end gap-3 md:gap-8'>
+                          <div className='relative w-full flex items-end gap-3 md:gap-8'>
                             <div className='flex items-center gap-1'>
                               <h3>{exercise.sets}</h3>
                               <XIcon />
@@ -574,6 +493,8 @@ const ExerciseModal = ({
                                               {checkPercentWeight(
                                                 exercise.estimatedOnermIndex,
                                                 +exercise?.onerm,
+                                                day,
+                                                selectedEnergy,
                                               )}
                                             </h4>
                                           )}
@@ -583,6 +504,8 @@ const ExerciseModal = ({
                                               {checkPercentWeight(
                                                 exercise.estimatedOnermIndex,
                                                 +exercise?.onermTop,
+                                                day,
+                                                selectedEnergy,
                                               )}
                                             </h4>
                                           )}
@@ -607,6 +530,9 @@ const ExerciseModal = ({
                                                 exercise.lift,
                                                 +exercise?.onerm,
                                                 exercise.estimatedOnermIndex,
+                                                selectedEnergy,
+                                                day,
+                                                userCoreOneRM,
                                               )}
                                             </h4>
                                           )}
@@ -617,6 +543,9 @@ const ExerciseModal = ({
                                                 exercise.lift,
                                                 +exercise?.onermTop,
                                                 exercise.estimatedOnermIndex,
+                                                selectedEnergy,
+                                                day,
+                                                userCoreOneRM,
                                               )}
                                             </h4>
                                           )}
@@ -632,6 +561,9 @@ const ExerciseModal = ({
                                             exercise.lift,
                                             +exercise?.onerm,
                                             null,
+                                            selectedEnergy,
+                                            day,
+                                            userCoreOneRM,
                                           )}
                                         </h4>
                                       )}
@@ -642,6 +574,9 @@ const ExerciseModal = ({
                                             exercise.lift,
                                             +exercise?.onermTop,
                                             null,
+                                            selectedEnergy,
+                                            day,
+                                            userCoreOneRM,
                                           )}
                                         </h4>
                                       )}
@@ -667,6 +602,10 @@ const ExerciseModal = ({
                                       checkWeight(
                                         'weight',
                                         +exercise?.weightBottom,
+                                        null,
+                                        selectedEnergy,
+                                        day,
+                                        userCoreOneRM,
                                       )}
                                   </h4>
                                   <h4>{exercise?.weightTop && '-'}</h4>
@@ -675,6 +614,10 @@ const ExerciseModal = ({
                                       checkWeight(
                                         'weight',
                                         +exercise?.weightTop,
+                                        null,
+                                        selectedEnergy,
+                                        day,
+                                        userCoreOneRM,
                                       )}
                                     kg
                                   </h4>
@@ -737,26 +680,6 @@ const ExerciseModal = ({
                       <div className='ml-10 text-sm font-light text-gray-400 md:ml-16'>
                         {exercise?.notes}
                       </div>
-                      {isSS ? (
-                        <div ref={wrapper}>
-                          {/*
-                          <Fireworks
-                            ref={ref}
-                            options={{ opacity: 0.5 }}
-                            style={{
-                              top: 0,
-                              left: 0,
-                              width: '100%',
-                              height: '100%',
-                              position: 'fixed',
-                              background: '#000',
-                              display: 'block',
-                              zIndex: 9999,
-                            }}
-                          />
-                          */}
-                        </div>
-                      ) : null}
                       {exercise.sets && exercise.reps && (
                         <div className='flex flex-col gap-2 md:gap-6'>
                           {isSS ? null : (
