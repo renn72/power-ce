@@ -383,6 +383,62 @@ export const blocksRouter = createTRPCRouter({
               isRestDay: day.isRestDay,
               exercise: {
                 create: day.exercise.map((exercise) => ({
+                  name: exercise.name,
+                  lift: exercise.lift,
+                  sets: exercise.sets,
+                  reps: exercise.reps,
+                  onerm: exercise.onerm,
+                  onermTop: exercise.onermTop,
+                  weightTop: exercise.weightTop,
+                  weightBottom: exercise.weightBottom,
+                  targetRpe: exercise.targetRpe,
+                  notes: exercise?.notes,
+                  isEstimatedOnerm: exercise.isEstimatedOnerm,
+                  actualSets: exercise.sets,
+                  estimatedOnermIndex: exercise.estimatedOnermIndex,
+                  weightType: exercise.weightType,
+                  repUnit: exercise.repUnit,
+                  htmlLink: exercise.htmlLink,
+                  ss: exercise.isSS
+                    ? {
+                        create: exercise?.ss?.map((s) => ({
+                          name: s.name,
+                          lift: s.lift,
+                          reps: s.reps,
+                          onerm: s.onerm,
+                          onermTop: s.onermTop,
+                          weightTop: s.weightTop,
+                          weightBottom: s.weightBottom,
+                          targetRpe: s.targetRpe,
+                          weightType: s.weightType,
+                        })),
+                      }
+                    : undefined,
+                })),
+              },
+            })),
+          },
+        },
+      })
+
+      return week
+    }),
+  updateWeek: privateProcedure
+    .input(weekSchema)
+    .mutation(async ({ ctx, input }) => {
+      const authorId = ctx.userId
+      const updateAction = await ctx.prisma.$transaction([
+        ctx.prisma.week.delete({ where: { id: input.id } }),
+        ctx.prisma.week.create({
+          data: {
+            name: input.name,
+            isTemplate: input.isTemplate,
+            trainerId: authorId,
+            day: {
+              create: input.day.map((day) => ({
+                isRestDay: day.isRestDay,
+                exercise: {
+                  create: day.exercise.map((exercise) => ({
                     name: exercise.name,
                     lift: exercise.lift,
                     sets: exercise.sets,
@@ -415,62 +471,6 @@ export const blocksRouter = createTRPCRouter({
                         }
                       : undefined,
                   })),
-              },
-            })),
-          },
-        },
-      })
-
-      return week
-    }),
-  updateWeek: privateProcedure
-    .input(weekSchema)
-    .mutation(async ({ ctx, input }) => {
-      const authorId = ctx.userId
-      const updateAction = await ctx.prisma.$transaction([
-        ctx.prisma.week.delete({ where: { id: input.id } }),
-        ctx.prisma.week.create({
-          data: {
-            name: input.name,
-            isTemplate: input.isTemplate,
-            trainerId: authorId,
-            day: {
-              create: input.day.map((day) => ({
-                isRestDay: day.isRestDay,
-                exercise: {
-                  create: day.exercise.map((exercise) => ({
-                      name: exercise.name,
-                      lift: exercise.lift,
-                      sets: exercise.sets,
-                      reps: exercise.reps,
-                      onerm: exercise.onerm,
-                      onermTop: exercise.onermTop,
-                      weightTop: exercise.weightTop,
-                      weightBottom: exercise.weightBottom,
-                      targetRpe: exercise.targetRpe,
-                      notes: exercise?.notes,
-                      isEstimatedOnerm: exercise.isEstimatedOnerm,
-                      actualSets: exercise.sets,
-                      estimatedOnermIndex: exercise.estimatedOnermIndex,
-                      weightType: exercise.weightType,
-                      repUnit: exercise.repUnit,
-                      htmlLink: exercise.htmlLink,
-                      ss: exercise.isSS
-                        ? {
-                            create: exercise?.ss?.map((s) => ({
-                              name: s.name,
-                              lift: s.lift,
-                              reps: s.reps,
-                              onerm: s.onerm,
-                              onermTop: s.onermTop,
-                              weightTop: s.weightTop,
-                              weightBottom: s.weightBottom,
-                              targetRpe: s.targetRpe,
-                              weightType: s.weightType,
-                            })),
-                          }
-                        : undefined,
-                    })),
                 },
               })),
             },

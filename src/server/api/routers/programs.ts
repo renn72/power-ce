@@ -68,6 +68,57 @@ export const programsRouter = createTRPCRouter({
       return programDay
     }),
 
+  createSet: privateProcedure
+    .input(
+      z.object({
+        exerciseId: z.string(),
+        rpe: z.number(),
+        weight: z.number(),
+        estiamtedOnerm: z.number(),
+        rep: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      // const authorId = ctx.userId;
+
+      console.log('check')
+      console.log('input', JSON.stringify(input, null, 2))
+
+      const programSet = await ctx.prisma.set.create({
+        data: {
+          exerciseId: input.exerciseId,
+          isComplete: true,
+          rpe: input.rpe,
+          weight: input.weight,
+          estiamtedOnerm: input.estiamtedOnerm,
+          rep: input.rep,
+          flield1: Date.now().toString(),
+        },
+      })
+
+      return programSet
+    }),
+
+  deleteSet: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      // const authorId = ctx.userId;
+      //
+
+      console.log('input', JSON.stringify(input, null, 2))
+
+      const programSet = await ctx.prisma.set.delete({
+        where: { id: input.id },
+      })
+
+      return programSet
+    }),
+
+
   updateSet: privateProcedure
     .input(
       z.object({

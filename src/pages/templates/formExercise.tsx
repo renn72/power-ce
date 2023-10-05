@@ -427,6 +427,8 @@ const FormExercise = ({
     `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.isSS`,
   ) as boolean
 
+    
+
   console.log('isSS', isSS)
 
   useEffect(() => {

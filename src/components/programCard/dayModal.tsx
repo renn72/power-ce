@@ -14,7 +14,11 @@ import {
   StarIcon,
   ChevronDownIcon,
 } from '@heroicons/react/20/solid'
-import { StarIcon as StarIconHollow } from '@heroicons/react/24/outline'
+import {
+  MinusIcon,
+  PlusIcon,
+  StarIcon as StarIconHollow,
+} from '@heroicons/react/24/outline'
 import { rpe as rpeTable } from '~/store/defaultValues'
 
 import { useUser } from '@clerk/nextjs'
@@ -41,92 +45,68 @@ type Day = Prisma.DayGetPayload<typeof dayWithExercise>
 
 const SetsModal = ({
   exercise,
-  onUpdateRpe,
   onSetDone,
-  isComplete,
-  userId,
 }: {
   exercise: StoreExercise
-  onUpdateRpe: (args0: SetStore, args1: boolean) => void
-  onSetDone: (args0: SetStore) => void
+  onSetDone: (reps: number) => void
   isComplete: boolean
-  userId: string
 }) => {
+  const [reps, setReps] = useState<number>(Number(exercise.reps))
   const isSS = exercise.ss && exercise.ss.length > 0
 
+  const onUpdateRpeWrapper = (increase: boolean) => {
+    console.log('update', increase)
+    if (increase) {
+      setReps((prev) => prev + 1)
+    } else {
+      if (reps < 2) return
+      setReps((prev) => prev - 1)
+    }
+  }
+  const onSetDoneWrapper = () => {
+    console.log('done')
+    onSetDone(reps)
+  }
+
   return (
-    <AnimatePresence>
-      <div className='flex h-28 gap-2 px-1'>
-        {exercise.set
-          .filter((s) => s.isComplete == isComplete)
-          .map((set, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, scale: 1, y: 2 }}
-              transition={{ ease: 'easeIn', duration: 0.3 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0 }}
+    <>
+      <motion.div
+        initial={{ opacity: 0, scale: 1, y: 2 }}
+        transition={{ ease: 'easeIn', duration: 0.6 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 1 }}
+      >
+        <div className='flex flex-col items-center justify-center gap-1'>
+          {!isSS ? (
+            <ChevronUpIcon
+              onClick={() => onUpdateRpeWrapper(true)}
+              className='h-10 w-10 cursor-pointer text-gray-400'
+            />
+          ) : (
+            <div className='mt-6'></div>
+          )}
+          <div
+            className='flex flex-col gap-1'
+            onClick={(e) => {
+              e.stopPropagation()
+              onSetDoneWrapper()
+            }}
+          >
+            <div
+              className={`flex h-12 min-w-[3rem] cursor-pointer items-center justify-center rounded-full bg-gray-800 text-xl hover:scale-105`}
             >
-              <div className='flex flex-col items-center justify-center gap-1'>
-                {!set.isComplete && !isSS ? (
-                  <ChevronUpIcon
-                    onClick={() => onUpdateRpe(set, true)}
-                    className='h-10 w-10 cursor-pointer text-gray-400'
-                  />
-                ) : (
-                  <div className='mt-6'></div>
-                )}
-                <div
-                  className='flex flex-col gap-1'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onSetDone(set)
-                  }}
-                >
-                  <div
-                    className={
-                      set.isComplete
-                        ? `flex h-12 min-w-[1rem] cursor-pointer items-center justify-center rounded-full bg-black text-2xl font-bold text-yellow-500`
-                        : `flex h-12 min-w-[3rem] cursor-pointer items-center justify-center rounded-full bg-gray-800 text-xl hover:scale-105`
-                    }
-                  >
-                    {isSS ? 'SS' : set.rep}
-                  </div>
-                </div>
-                {!set.isComplete && !isSS && (
-                  <ChevronDownIcon
-                    onClick={() => onUpdateRpe(set, false)}
-                    className='h-10 w-10 cursor-pointer text-gray-400'
-                  />
-                )}
-                <div className='h-8'>
-                  {set.isComplete && (
-                    <div className='flex flex-col items-center text-xs tracking-tighter text-gray-400'>
-                      <div>RPE:{set.rpe}</div>
-                      {!isSS && (
-                        <div
-                          className={
-                            set.weight == 0 && exercise.lift != 'unlinked'
-                              ? 'text-red-500'
-                              : ''
-                          }
-                        >
-                          W:{set.weight === 0 ? '' : set.weight}
-                        </div>
-                      )}
-                      {set.estiamtedOnerm != 0 && (
-                        <div>
-                          E:{set.estiamtedOnerm === 0 ? '' : set.estiamtedOnerm}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-      </div>
-    </AnimatePresence>
+              {isSS ? 'SS' : reps}
+            </div>
+          </div>
+          {!isSS && (
+            <ChevronDownIcon
+              onClick={() => onUpdateRpeWrapper(false)}
+              className='h-10 w-10 cursor-pointer text-gray-400'
+            />
+          )}
+        </div>
+      </motion.div>
+    </>
   )
 }
 
@@ -146,6 +126,7 @@ const ExerciseModal = ({
   userId: string
 }) => {
   const [rpe, setRpe] = useState('8')
+  const [exerciseSets, setExerciseSets] = useState(Number(exercise.sets))
 
   const { data: userCoreOneRM } = api.oneRepMax.getUserCoreLifts.useQuery({
     userId: userId,
@@ -250,7 +231,7 @@ const ExerciseModal = ({
     },
   })
 
-  const { mutate: updateSet } = api.programs.updateSet.useMutation({
+  const { mutate: createSet } = api.programs.createSet.useMutation({
     onMutate: async (newSet) => {
       console.log('id', newSet)
       await utils.blocks.get.cancel({ id: programId })
@@ -269,19 +250,17 @@ const ExerciseModal = ({
                   exercise: day.exercise.map((exercise) => {
                     return {
                       ...exercise,
-                      set: exercise.set.map((set) => {
-                        if (set.id === newSet.id) {
-                          return {
-                            ...set,
-                            isComplete: newSet.isComplete,
-                            rpe: newSet.rpe,
-                            weight: newSet.weight,
-                            estiamtedOnerm: newSet.estiamtedOnerm,
-                            rep: newSet.rep,
-                          }
-                        }
-                        return set
-                      }),
+                      set: [
+                        ...exercise.set,
+                        {
+                          id: newSet.id || '',
+                          isComplete: true,
+                          rpe: newSet.rpe,
+                          weight: newSet.weight,
+                          estiamtedOnerm: newSet.estiamtedOnerm,
+                          rep: newSet.rep,
+                        },
+                      ],
                     }
                   }),
                 }
@@ -302,57 +281,102 @@ const ExerciseModal = ({
     },
   })
 
-  const onSetDone = (set: Set) => {
+  const { mutate: deleteSet } = api.programs.deleteSet.useMutation({
+    onMutate: async (newSet) => {
+      console.log('id', newSet)
+      await utils.blocks.get.cancel({ id: programId })
+      const previousProgram = utils.blocks.get.getData({ id: programId })
+
+      utils.blocks.get.setData(
+        { id: programId },
+        {
+          ...previousProgram,
+          week: previousProgram.week.map((week) => {
+            return {
+              ...week,
+              day: week.day.map((day) => {
+                return {
+                  ...day,
+                  exercise: day.exercise.map((exercise) => {
+                    return {
+                      ...exercise,
+                      set: exercise.set.filter((set) => set.id !== newSet.id),
+                    }
+                  }),
+                }
+              }),
+            }
+          }),
+        },
+      )
+
+      return { previousProgram }
+    },
+    onError: (err, newSet, context) => {
+      console.log(err)
+      utils.blocks.get.setData({ id: programId }, context?.previousProgram)
+    },
+    onSettled: () => {
+      void utils.blocks.get.invalidate({ id: programId })
+    },
+  })
+
+  const onDeleteSet = (id: string) => {
+    deleteSet({ id: id })
+  }
+
+  const onSetDone = (reps: number) => {
     let e = 0
     if (weights && exercise?.reps) {
       const wi = weights ? +weights : 0
       const e1 = e1rm[+exercise?.reps - 1]
       if (e1) e = +(+wi / (e1 / 100))?.toFixed(0)
     }
-    updateSet({
-      id: set.id,
-      isComplete: !set.isComplete,
+    createSet({
+      exerciseId: exercise.id,
       rpe: +rpe,
       weight: weights ? +weights : 0,
-      estiamtedOnerm: !set.isComplete ? (e ? e : 0) : 0, //e1rm,
-      rep: set?.rep,
+      estiamtedOnerm: e ? e : 0, //e1rm,
+      rep: reps,
     })
 
-    const isDone = exercise.set.reduce((acc, curr) => {
-      if (curr.id == set.id && set.isComplete) return false
-      if (curr.id == set.id) return acc
-      return curr.isComplete ? acc : false
-    }, true)
-
-    if (!exercise.isComplete && isDone) {
-      updateExerciseComplete({
-        id: exercise.id,
-        isComplete: true,
-        notes: notes,
-      })
-    }
-    if (exercise.isComplete && !isDone) {
-      updateExerciseComplete({
-        id: exercise.id,
-        isComplete: false,
-        notes: notes,
-      })
-    }
-
-    const isDayDone = day.exercise.reduce((acc, curr) => {
-      if (curr.id == exercise.id && exercise.isComplete) return false
-      if (curr.id == exercise.id && isDone) return acc
-      return curr.isComplete ? acc : false
-    }, true)
-
-    if (!day.isComplete && isDayDone) {
-      updateDayComplete({ id: day.id, isComplete: true })
-    }
-
-    if (day.isComplete && !isDayDone) {
-      updateDayComplete({ id: day.id, isComplete: false })
-    }
+    // const isDone = exercise.set.reduce((acc, curr) => {
+    //   if (curr.id == set.id && set.isComplete) return false
+    //   if (curr.id == set.id) return acc
+    //   return curr.isComplete ? acc : false
+    // }, true)
+    //
+    // if (!exercise.isComplete && isDone) {
+    //   updateExerciseComplete({
+    //     id: exercise.id,
+    //     isComplete: true,
+    //     notes: notes,
+    //   })
+    // }
+    // if (exercise.isComplete && !isDone) {
+    //   updateExerciseComplete({
+    //     id: exercise.id,
+    //     isComplete: false,
+    //     notes: notes,
+    //   })
+    // }
+    //
+    // const isDayDone = day.exercise.reduce((acc, curr) => {
+    //   if (curr.id == exercise.id && exercise.isComplete) return false
+    //   if (curr.id == exercise.id && isDone) return acc
+    //   return curr.isComplete ? acc : false
+    // }, true)
+    //
+    // if (!day.isComplete && isDayDone) {
+    //   updateDayComplete({ id: day.id, isComplete: true })
+    // }
+    //
+    // if (day.isComplete && !isDayDone) {
+    //   updateDayComplete({ id: day.id, isComplete: false })
+    // }
   }
+
+  console.log('exercise', exercise)
 
   useEffect(() => {
     const index = 8 - (+rpe - 6) / 0.5
@@ -376,6 +400,10 @@ const ExerciseModal = ({
         : 0, //e1rm,
       rep: newRep,
     })
+  }
+
+  const onSetUnDone = () => {
+    console.log('undone')
   }
 
   const isSS = exercise.ss && exercise.ss.length > 0
@@ -468,7 +496,7 @@ const ExerciseModal = ({
                             </div>
                           </div>
                         ) : (
-                          <div className='relative w-full flex items-end gap-3 md:gap-8'>
+                          <div className='relative flex w-full items-end gap-3 md:gap-8'>
                             <div className='flex items-center gap-1'>
                               <h3>{exercise.sets}</h3>
                               <XIcon />
@@ -729,7 +757,7 @@ const ExerciseModal = ({
                             {exercise.set.reduce((acc, curr) => {
                               return acc + (curr.isComplete ? 1 : 0)
                             }, 0)}{' '}
-                            / {exercise.sets}
+                            / {exerciseSets}
                           </div>
                           <RadioGroup
                             value={rpe}
@@ -809,20 +837,84 @@ const ExerciseModal = ({
                                 ) : null}
                               </div>
                             )}
-                          <SetsModal
-                            exercise={exercise}
-                            onUpdateRpe={onUpdateRpe}
-                            onSetDone={onSetDone}
-                            isComplete={false}
-                            userId={userId}
-                          />
-                          <SetsModal
-                            exercise={exercise}
-                            onUpdateRpe={onUpdateRpe}
-                            onSetDone={onSetDone}
-                            isComplete={true}
-                            userId={userId}
-                          />
+                          <div>
+                            <AnimatePresence>
+                              <div className='flex items-center gap-3 text-xl font-medium md:gap-4 overflow-clip '>
+                                <MinusIcon
+                                  onClick={() =>
+                                    setExerciseSets((e) => (e > 1 ? e - 1 : e))
+                                  }
+                                  className='h-8 w-8 cursor-pointer text-gray-400 flex-shrink-0'
+                                />
+                                {Array.from(
+                                  Array(
+                                    exerciseSets - exercise.set.length,
+                                  ).keys(),
+                                ).map((_, setIdx) => (
+                                  <div key={setIdx}>
+                                    <SetsModal
+                                      exercise={exercise}
+                                      onSetDone={onSetDone}
+                                      isComplete={exercise.isComplete}
+                                    />
+                                  </div>
+                                ))}
+                                <PlusIcon
+                                  onClick={() => setExerciseSets((e) => e + 1)}
+                                  className='h-8 w-8 cursor-pointer text-gray-400 flex-shrink-0'
+                                />
+                              </div>
+                            </AnimatePresence>
+                            <div className='flex w-full items-center justify-start gap-3 text-xl font-medium md:gap-4 '>
+                              {exercise.set
+                                .filter((s) => s.isComplete)
+                                .map((set) => (
+                                  <div
+                                    key={set.id}
+                                    className='flex flex-col items-center justify-center gap-1'
+                                  >
+                                    <div
+                                      className='flex flex-col gap-1'
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        onDeleteSet(set.id)
+                                      }}
+                                    >
+                                      <div className='flex h-12 min-w-[1rem] cursor-pointer items-center justify-center rounded-full bg-black text-2xl font-bold text-yellow-500'>
+                                        {isSS ? 'SS' : exercise.reps}
+                                      </div>
+                                    </div>
+                                    <div className=''>
+                                      <div className='flex flex-col items-center text-xs tracking-tighter text-gray-400'>
+                                        <div>RPE:{set.rpe}</div>
+                                        {!isSS && (
+                                          <div
+                                            className={
+                                              set.weight == 0 &&
+                                              exercise.lift != 'unlinked'
+                                                ? 'text-red-500'
+                                                : ''
+                                            }
+                                          >
+                                            W:
+                                            {set.weight === 0 ? '' : set.weight}
+                                          </div>
+                                        )}
+                                        {set.estiamtedOnerm != 0 && (
+                                          <div>
+                                            E:
+                                            {set.estiamtedOnerm === 0
+                                              ? ''
+                                              : set.estiamtedOnerm}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+
                           <Input
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
