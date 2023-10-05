@@ -446,7 +446,7 @@ const FormExercise = ({
         <Controller
           control={control}
           name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.isSS`}
-          defaultValue={false}
+          defaultValue={ssArray.length > 0}
           render={({ field: { onChange, value } }) => (
             <div className='absolute left-16 top-2 flex items-baseline gap-2'>
               <Checkbox
