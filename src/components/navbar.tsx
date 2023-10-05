@@ -17,6 +17,9 @@ const nav = [
     name: 'Dashboard', href: '/',
   },
   {
+    name: 'Program', href: '/program',
+  },
+  {
     name: 'Users', href: '/users', admin: true,
   },
   // {
