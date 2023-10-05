@@ -226,8 +226,7 @@ export const blocksRouter = createTRPCRouter({
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
       const userId = input.userId
-      const blocks = await ctx.prisma.block.findMany({
-        orderBy: { createdAt: 'desc' },
+      const block = await ctx.prisma.block.findFirst({
         where: {
           userIdOfProgram: userId,
           isProgramActive: true,
@@ -243,7 +242,7 @@ export const blocksRouter = createTRPCRouter({
           },
         },
       })
-      return blocks
+      return block
     }),
   getAllUserPrograms: publicProcedure
     .input(z.object({ userId: z.string().optional() }).optional())

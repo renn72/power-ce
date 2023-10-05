@@ -142,20 +142,6 @@ export const userProgramsRouter = createTRPCRouter({
                           userId: input.userId,
                         })),
                       },
-                      set: {
-                        createMany: {
-                          data: Array.from(
-                            { length: exercise.sets ? +exercise.sets : 0 },
-                            (_) => ({
-                              rep: exercise.reps,
-                              isComplete: false,
-                              userId: input.userId,
-                              name: exercise.name,
-                              lift: exercise.lift,
-                            }),
-                          ),
-                        },
-                      },
                     })),
                   },
                 })),
@@ -165,8 +151,6 @@ export const userProgramsRouter = createTRPCRouter({
         },
       })
       console.log('created program')
-
-      console.log('program', JSON.stringify(program, null, 2))
 
       const userProgram = ctx.prisma.userProgram.create({
         data: {
@@ -181,6 +165,7 @@ export const userProgramsRouter = createTRPCRouter({
         where: {
           NOT: { programId: program.id },
           userId: input.userId,
+          isProgramActive: true,
         },
         data: { isProgramActive: false },
       })
@@ -189,6 +174,7 @@ export const userProgramsRouter = createTRPCRouter({
         where: {
           NOT: { id: program.id },
           userIdOfProgram: input.userId,
+          isProgramActive: true,
         },
         data: { isProgramActive: false },
       })

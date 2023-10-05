@@ -66,10 +66,7 @@ const TemplateSelect = ({
       return 0
     }
 
-    return final.reduce(
-      (acc, curr) => acc + curr * -1,
-      0,
-    )
+    return final.reduce((acc, curr) => acc + curr * -1, 0)
   }
 
   const countDown = () => {
@@ -107,6 +104,12 @@ const TemplateSelect = ({
 
   const { user } = useUser()
 
+  const wrapperOnClearTemplate = (userId: string) => {
+    onClearTemplate(userId)
+    setIsSet(false)
+    setTemplate('')
+  }
+
   const onSetLocalTemplate = (template: string) => {
     setTemplate(template)
     onSelectTemplate(template, userId)
@@ -132,13 +135,17 @@ const TemplateSelect = ({
 
   if (blocksLoading) return <div>loading</div>
   const blocksTitle = blocksData
-    ?.filter((b) => b.trainerId === user.id || user.id === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a')
+    ?.filter(
+      (b) =>
+        b.trainerId === user.id ||
+        user.id === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a',
+    )
     ?.map((block) => block.name)
 
   // if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
 
   return (
-    <div className='mx-1 md:mx-2 flex flex-col md:flex-row md:items-center md:gap-6'>
+    <div className='mx-1 flex flex-col md:mx-2 md:flex-row md:items-center md:gap-6'>
       <div className='flex flex-row justify-between md:flex-row md:justify-normal md:gap-6 '>
         <div className='flex items-end text-lg font-semibold md:w-64'>
           <div className='text-xl font-bold tracking-tighter text-yellow-500'>
@@ -173,7 +180,7 @@ const TemplateSelect = ({
                     leaveFrom='opacity-100'
                     leaveTo='opacity-0'
                   >
-                    <Listbox.Options className='max-h-[32rem] absolute z-10 mt-1 w-52 overflow-auto border border-gray-600 bg-black py-1 shadow-lg md:w-80 '>
+                    <Listbox.Options className='absolute z-10 mt-1 max-h-[32rem] w-52 overflow-auto border border-gray-600 bg-black py-1 shadow-lg md:w-80 '>
                       {blocksTitle?.map((templateName, Idx) => (
                         <Listbox.Option
                           key={Idx}
@@ -215,13 +222,23 @@ const TemplateSelect = ({
               />
               <XCircleIcon
                 className='col-span-1 h-8 w-6 text-gray-400 hover:text-red-600 md:w-8'
-                onClick={() => onClearTemplate(userId)}
+                onClick={() => wrapperOnClearTemplate(userId)}
               />
             </div>
           </div>
         </div>
       </div>
-      <div className={`mt-2 font-normal text-sm ${workoutCount() <= 2 ? workoutCount() <= 1 ? 'text-red-500' : 'text-orange-400' : 'text-gray-400'}`}>{countDown()}</div>
+      <div
+        className={`mt-2 text-sm font-normal ${
+          workoutCount() <= 2
+            ? workoutCount() <= 1
+              ? 'text-red-500'
+              : 'text-orange-400'
+            : 'text-gray-400'
+        }`}
+      >
+        {countDown()}
+      </div>
     </div>
   )
 }
