@@ -35,7 +35,7 @@ const nav = [
     name: 'Log', href: '/log', admin: true,
   },
   {
-    name: 'Stats', href: '/stats',  admin: true,
+    name: 'Stats', href: '/stats',  superAdmin: true,
   },
   {
     name: 'DirtyAdmin', href: '/test',  superAdmin: true,

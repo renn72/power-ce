@@ -87,6 +87,22 @@ model CompLift {
   flield4 String?
 }
 
+model CompLiftAddress {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId String @unique
+  address String
+
+  isDeleted Boolean @default(false)
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+  flield4 String?
+  flield5 String?
+}
+
 model Post {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
