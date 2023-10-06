@@ -12,6 +12,50 @@ import { LoadingPage } from '~/components/loading'
 
 import { getDate } from '~/utils/utils'
 
+const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
+  api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
+  api.users.getAllUsers.useQuery()
+  const { data: programs } = api.blocks.getAllUserProgramsTitles.useQuery({
+    userId: userId,
+  })
+  api.blocks.get.useQuery({
+    id: programs?.find((p) => p.isProgramActive === true)?.id || '',
+  })
+  const { data: addressData, isLoading: addressDataLoading } =
+    api.compLift.getAddress.useQuery({
+      userId: userId,
+    })
+  const { data: allSets, isLoading: allSetsLoading } =
+    api.sets.getAllUser.useQuery({ userId: userId })
+
+  const estiamtedOnerm = Number(
+    allSets
+      ?.filter((s) => s.lift === lift)
+      .reduce(
+        (a, s) => (Number(a.estiamtedOnerm) < Number(s.estiamtedOnerm) ? s : a),
+        { estiamtedOnerm: 0 },
+      ).estiamtedOnerm,
+  )
+
+  const estiamtedOnermDate = allSets
+    ?.filter((s) => s.lift === lift)
+    .reduce(
+      (a, s) => (Number(a.estiamtedOnerm) < Number(s.estiamtedOnerm) ? s : a),
+      { estiamtedOnerm: 0 },
+    ).flield1
+
+  return (
+    <>
+      <div className='flex items-center gap-4'>
+        <div className='capitalize'>{lift}</div>
+        <div> Estiamted 1rm:</div>
+        <div>{estiamtedOnerm}kg</div>
+        <div>{getDate(estiamtedOnermDate || '')}</div>
+      </div>
+    </>
+  )
+}
+
 const Home: NextPage = () => {
   const { user } = useUser()
 
@@ -115,26 +159,18 @@ const Home: NextPage = () => {
           </Link>
         </div>
         <div className='flex flex-col gap-4'>
-          <div className='flex items-center gap-4'>
-            <div>Squat</div>
-            <div className='flex gap-2'>
-              <div> Estiamted 1rm:</div>
-              <div>{squatEstiamtedOnerm}kg</div>
-              <div>{getDate(squatEstiamtedOnermDate)}</div>
-            </div>
-          </div>
-          <div className='flex items-center gap-4'>
-            <div>Dead</div>
-              <div> Estiamted 1rm:</div>
-              <div>{deadEstiamtedOnerm}kg</div>
-              <div>{getDate(deadEstiamtedOnermDate)}</div>
-          </div>
-          <div className='flex items-center gap-4'>
-            <div>Bench</div>
-              <div> Estiamted 1rm:</div>
-              <div>{benchEstiamtedOnerm}kg</div>
-              <div>{getDate(benchEstiamtedOnermDate)}</div>
-          </div>
+          <Lift
+            lift='squat'
+            userId={userId}
+          />
+          <Lift
+            lift='deadlift'
+            userId={userId}
+          />
+          <Lift
+            lift='bench'
+            userId={userId}
+          />
         </div>
 
         <div className='w-fit'>
@@ -153,7 +189,7 @@ const Home: NextPage = () => {
               Save
             </Button>
             <Button className='rounded bg-yellow-400 px-4 py-2 font-bold text-gray-900 hover:bg-yellow-500'>
-              Update
+              Refresh
             </Button>
           </div>
         </div>
