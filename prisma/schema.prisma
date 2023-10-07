@@ -37,40 +37,38 @@ model CompLift {
   userId String
 
   name           String
+  Age           String
   AgeClass       String
   BirthYearClass String
   Division       String
   Event          String
 
-  BodyWeight  Decimal?
-  WeightClass Decimal?
+  BodyWeight  String?
+  WeightClass String?
 
-  Squat1    Decimal?
-  Squat2    Decimal?
-  Squat3    Decimal?
-  Squat4    Decimal?
-  SquatBest Decimal?
+  Squat1    String?
+  Squat2    String?
+  Squat3    String?
+  Squat4    String?
 
-  Bench1    Decimal?
-  Bench2    Decimal?
-  Bench3    Decimal?
-  Bench4    Decimal?
-  BenchBest Decimal?
+  Bench1    String?
+  Bench2    String?
+  Bench3    String?
+  Bench4    String?
 
-  Deadlift1    Decimal?
-  Deadlift2    Decimal?
-  Deadlift3    Decimal?
-  Deadlift4    Decimal?
-  DeadliftBest Decimal?
+  Deadlift1    String?
+  Deadlift2    String?
+  Deadlift3    String?
+  Deadlift4    String?
 
-  Total Decimal?
+  Total String?
 
   Place Int?
 
-  Dots         Decimal?
-  Wilks        Decimal?
-  Glossbrenner Decimal?
-  GoodLift     Decimal?
+  Dots         String?
+  Wilks        String?
+  Glossbrenner String?
+  GoodLift     String?
 
   Federation String?
 
@@ -85,6 +83,12 @@ model CompLift {
   flield2 String?
   flield3 String?
   flield4 String?
+  flield5 String?
+  flield6 String?
+  flield7 String?
+  flield8 String?
+  flield9 String?
+  flield0 String?
 }
 
 model CompLiftAddress {

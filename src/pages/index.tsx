@@ -76,10 +76,9 @@ const Home: NextPage = () => {
     })
   const { data: allSets, isLoading: allSetsLoading } =
     api.sets.getAllUser.useQuery({ userId: userId })
-  console.log('allsets', allSets)
 
   const { mutate: getOpenPowerliftingData } =
-    api.compLift.getOpenPower.useMutation({
+    api.compLift.setOpenPower.useMutation({
       onSuccess: (data) => {
         console.log(data)
       },
