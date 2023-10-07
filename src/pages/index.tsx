@@ -76,6 +76,11 @@ const Home: NextPage = () => {
     })
   const { data: allSets, isLoading: allSetsLoading } =
     api.sets.getAllUser.useQuery({ userId: userId })
+  const { data: compLifts, isLoading: compLiftsLoading } =
+    api.compLift.getCompLifts.useQuery({
+      userId: userId,
+    })
+  console.log({ compLifts })
 
   const { mutate: getOpenPowerliftingData } =
     api.compLift.setOpenPower.useMutation({
@@ -96,55 +101,8 @@ const Home: NextPage = () => {
     setAddress(addressData?.address || '')
   }, [addressData])
 
-  if (addressDataLoading || allSetsLoading) return <LoadingPage />
-
-  const squatEstiamtedOnerm = Number(
-    allSets
-      ?.filter((s) => s.lift === 'squat')
-      .reduce(
-        (a, s) => (Number(a.estiamtedOnerm) < Number(s.estiamtedOnerm) ? s : a),
-        { estiamtedOnerm: 0 },
-      ).estiamtedOnerm,
-  )
-
-  const squatEstiamtedOnermDate = allSets
-    ?.filter((s) => s.lift === 'squat')
-    .reduce(
-      (a, s) => (Number(a.estiamtedOnerm) < Number(s.estiamtedOnerm) ? s : a),
-      { estiamtedOnerm: 0 },
-    ).flield1
-
-  const deadEstiamtedOnerm = Number(
-    allSets
-      ?.filter((s) => s.lift === 'deadlift')
-      .reduce(
-        (a, s) => (Number(a.estiamtedOnerm) < Number(s.estiamtedOnerm) ? s : a),
-        { estiamtedOnerm: 0 },
-      ).estiamtedOnerm,
-  )
-
-  const deadEstiamtedOnermDate = allSets
-    ?.filter((s) => s.lift === 'deadlift')
-    .reduce(
-      (a, s) => (Number(a.estiamtedOnerm) < Number(s.estiamtedOnerm) ? s : a),
-      { estiamtedOnerm: 0 },
-    ).flield1
-
-  const benchEstiamtedOnerm = Number(
-    allSets
-      ?.filter((s) => s.lift === 'bench')
-      .reduce(
-        (a, s) => (Number(a.estiamtedOnerm) < Number(s.estiamtedOnerm) ? s : a),
-        { estiamtedOnerm: 0 },
-      ).estiamtedOnerm,
-  )
-
-  const benchEstiamtedOnermDate = allSets
-    ?.filter((s) => s.lift === 'bench')
-    .reduce(
-      (a, s) => (Number(a.estiamtedOnerm) < Number(s.estiamtedOnerm) ? s : a),
-      { estiamtedOnerm: 0 },
-    ).flield1
+  if (addressDataLoading || allSetsLoading || compLiftsLoading)
+    return <LoadingPage />
 
   return (
     <>
@@ -170,6 +128,39 @@ const Home: NextPage = () => {
             lift='bench'
             userId={userId}
           />
+        </div>
+        <div className='flex flex-col gap-4'>
+          {compLifts?.map((comp) => (
+            <div
+              key={comp.id}
+              className='flex flex-col gap-2'
+            >
+              <div className='flex gap-2'>
+                <div className='capitalize'>{comp.Federation}</div>
+                <div className='capitalize'>{comp.MeetName}</div>
+                <div className=''>{comp.Date}</div>
+              </div>
+              <div className=''>
+                Squat: {` `}
+                {
+                  Math.max(Number(comp.Squat1), Number(comp.Squat2), Number(comp.Squat3), Number(comp.Squat4))
+                }kg
+              </div>
+              <div className=''>
+                Bench: {` `}
+                {
+                  Math.max(Number(comp.Bench1), Number(comp.Bench2), Number(comp.Bench3), Number(comp.Bench4))
+                }kg
+              </div>
+              <div className=''>
+                Deadlift: {` `}
+                {
+                  Math.max(Number(comp.Deadlift1), Number(comp.Deadlift2), Number(comp.Deadlift3), Number(comp.Deadlift4))
+                }kg
+              </div>
+              <div className=''>Total: {comp.Total}kg</div>
+            </div>
+          ))}
         </div>
 
         <div className='w-fit'>

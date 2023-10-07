@@ -43,7 +43,7 @@ model CompLift {
   Division       String
   Event          String
 
-  BodyWeight  String?
+  BodyweightKg  String?
   WeightClass String?
 
   Squat1    String?
@@ -63,7 +63,7 @@ model CompLift {
 
   Total String?
 
-  Place Int?
+  Place String?
 
   Dots         String?
   Wilks        String?

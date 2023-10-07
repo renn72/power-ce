@@ -83,6 +83,24 @@ export const compLiftsRouter = createTRPCRouter({
         },
       })
     }),
+  getCompLifts: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const cl = await ctx.prisma.compLift.findMany({
+        orderBy: {
+          Date: 'desc',
+        },
+        where: {
+          userId: input.userId,
+        },
+      })
+      return cl
+    }),
+
   setOpenPower: privateProcedure
     .input(
       z.object({
@@ -106,7 +124,7 @@ export const compLiftsRouter = createTRPCRouter({
       console.log('data', data)
       console.log('res', res)
       // return data
-      const json  = Papa.parse(data, {
+      const json = Papa.parse(data, {
         download: false,
         header: true,
         delimiter: ',',
@@ -133,7 +151,7 @@ export const compLiftsRouter = createTRPCRouter({
             Division: e.Division,
             Event: e.Event,
             BodyweightKg: e.BodyweightKg,
-            WeightClassKg: e.WeightClassKg,
+            WeightClass: e.WeightClassKg,
             Squat1: e.Squat1Kg,
             Squat2: e.Squat2Kg,
             Squat3: e.Squat3Kg,
@@ -148,22 +166,23 @@ export const compLiftsRouter = createTRPCRouter({
             Deadlift4: e.Deadlift4Kg,
             Total: e.TotalKg,
             Place: e.Place,
-            Dot: e.Dots,
+            Dots: e.Dots,
             Wilks: e.Wilks,
             Glossbrenner: e.Glossbrenner,
-            Goodlift: e.Goodlift,
+            GoodLift: e.Goodlift,
             Federation: e.Federation,
             Date: e.Date,
             MeetName: e.MeetName,
             MeetCountry: e.MeetCountry,
             MeetState: e.MeetState,
             MeetTown: e.MeetTown,
-            }
-            
+          },
+        })
       })
 
       return json
     }),
+
 
   getAddress: privateProcedure
     .input(
