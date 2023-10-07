@@ -357,6 +357,7 @@ const ExerciseDialog = ({
   const { data: programData } = api.blocks.getUserActiveProgramFull.useQuery({
     userId: userId,
   })
+  console.log('programData', programData)
 
   const { data: exerciset, isLoading } = api.blocks.getExercise.useQuery({
     id: exerciseId,
@@ -377,15 +378,7 @@ const ExerciseDialog = ({
       },
     })
 
-  const exercise = programData
-    ?.find((program) =>
-      program.week.find((week) =>
-        week.day.find((day) =>
-          day.exercise.find((exercise) => exercise.id === exerciseId),
-        ),
-      ),
-    )
-    ?.week.find((week) =>
+  const exercise = programData.week.find((week) =>
       week.day.find((day) =>
         day.exercise.find((exercise) => exercise.id === exerciseId),
       ),
