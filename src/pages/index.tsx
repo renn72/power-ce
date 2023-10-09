@@ -46,11 +46,15 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
 
   return (
     <>
-      <div className='flex items-center gap-4'>
-        <div className='capitalize'>{lift}</div>
-        <div> Estiamted 1rm:</div>
-        <div>{estiamtedOnerm}kg</div>
-        <div>{getDate(estiamtedOnermDate || '')}</div>
+      <div className='flex flex-col gap-0'>
+        <div className='text-xl capitalize text-yellow-500'>{lift}</div>
+        <div className='flex gap-2'>
+          <div> Estiamted 1rm:</div>
+          <div>{estiamtedOnerm}kg</div>
+        </div>
+        <div className='text-sm text-gray-400'>
+          {getDate(estiamtedOnermDate || '')}
+        </div>
       </div>
     </>
   )
@@ -107,11 +111,11 @@ const Home: NextPage = () => {
   return (
     <>
       <main className='flex h-full flex-col gap-6 px-2  font-semibold'>
-        <div className='flex items-center justify-between '>
+        <div className='flex  items-center justify-between gap-1 lg:flex-col lg:items-start '>
           <h1 className='text-xl'>Profile</h1>
           <Link href='/program'>
-            <Button className='rounded bg-yellow-400 px-4 py-2 font-bold text-gray-900 hover:bg-yellow-500'>
-              Program
+            <Button className='h-8 rounded bg-yellow-400 font-bold text-gray-900 hover:bg-yellow-500'>
+              Current Program
             </Button>
           </Link>
         </div>
@@ -130,33 +134,48 @@ const Home: NextPage = () => {
           />
         </div>
         <div className='flex flex-col gap-4'>
+          <div className='text-xl capitalize text-yellow-500'>Competitions</div>
           {compLifts?.map((comp) => (
             <div
               key={comp.id}
-              className='flex flex-col gap-2'
+              className='flex flex-col gap-1'
             >
-              <div className='flex gap-2'>
-                <div className='capitalize'>{comp.Federation}</div>
-                <div className='capitalize'>{comp.MeetName}</div>
-                <div className=''>{comp.Date}</div>
+              <div className='flex flex-col gap-0'>
+                <div className='flex gap-0  flex-col text-lg text-yellow-500'>
+                  <div className='capitalize'>{comp.MeetName}</div>
+                  <div className='capitalize'>{comp.Federation}</div>
+                </div>
+                <div className='text-sm text-gray-400'>{comp.Date}</div>
               </div>
               <div className=''>
                 Squat: {` `}
-                {
-                  Math.max(Number(comp.Squat1), Number(comp.Squat2), Number(comp.Squat3), Number(comp.Squat4))
-                }kg
+                {Math.max(
+                  Number(comp.Squat1),
+                  Number(comp.Squat2),
+                  Number(comp.Squat3),
+                  Number(comp.Squat4),
+                )}
+                kg
               </div>
               <div className=''>
                 Bench: {` `}
-                {
-                  Math.max(Number(comp.Bench1), Number(comp.Bench2), Number(comp.Bench3), Number(comp.Bench4))
-                }kg
+                {Math.max(
+                  Number(comp.Bench1),
+                  Number(comp.Bench2),
+                  Number(comp.Bench3),
+                  Number(comp.Bench4),
+                )}
+                kg
               </div>
               <div className=''>
                 Deadlift: {` `}
-                {
-                  Math.max(Number(comp.Deadlift1), Number(comp.Deadlift2), Number(comp.Deadlift3), Number(comp.Deadlift4))
-                }kg
+                {Math.max(
+                  Number(comp.Deadlift1),
+                  Number(comp.Deadlift2),
+                  Number(comp.Deadlift3),
+                  Number(comp.Deadlift4),
+                )}
+                kg
               </div>
               <div className=''>Total: {comp.Total}kg</div>
             </div>
@@ -178,12 +197,9 @@ const Home: NextPage = () => {
             >
               Save
             </Button>
-            <Button className='rounded bg-yellow-400 px-4 py-2 font-bold text-gray-900 hover:bg-yellow-500'>
-              Refresh
-            </Button>
           </div>
         </div>
-        <div>
+        <div className='hidden'>
           <Button onClick={() => getOpenPowerliftingData({ userId: userId })}>
             Get Open Powerlifting Data
           </Button>
