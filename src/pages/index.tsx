@@ -2,15 +2,81 @@ import { type NextPage } from 'next'
 
 import { api } from '~/utils/api'
 
-import { useUser } from '@clerk/nextjs'
+import { Dialog, Transition } from '@headlessui/react'
+
+import { useUser, clerkClient } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { LoadingPage } from '~/components/loading'
 
 import { getDate } from '~/utils/utils'
+import { Cog6ToothIcon } from '@heroicons/react/20/solid'
+import { PencilSquareIcon, XMarkIcon } from '@heroicons/react/24/outline'
+
+const Settings = () => {
+  const { user } = useUser()
+
+  console.log(user)
+  const [goal1, setGoal1] = useState(
+    () => (user?.unsafeMetadata.goal1 as string) || '',
+  )
+  const [goal2, setGoal2] = useState(
+    () => (user?.unsafeMetadata.goal2 as string) || '',
+  )
+  const [goal3, setGoal3] = useState(
+    () => (user?.unsafeMetadata.goal3 as string) || '',
+  )
+
+  const onSetGoals = async () => {
+    if (!user) return null
+    await user.update({
+      unsafeMetadata: {
+        goal1: goal1,
+        goal2: goal2,
+        goal3: goal3,
+      },
+    })
+  }
+
+  return (
+    <>
+      <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-1'>
+          <h3>Goals</h3>
+          <div className='flex flex-col gap-1'>
+            <div className='flex items-center gap-1'>
+              <Input
+                value={goal1}
+                onChange={(e) => setGoal1(e.target.value)}
+                placeholder='Goal 1'
+              />
+            </div>
+            <div className='flex items-center gap-1'>
+              <Input
+                value={goal2}
+                onChange={(e) => setGoal2(e.target.value)}
+                placeholder='Goal 2'
+              />
+            </div>
+            <div className='flex items-center gap-1'>
+              <Input
+                value={goal3}
+                onChange={(e) => setGoal3(e.target.value)}
+                placeholder='Goal 1'
+              />
+            </div>
+            <Button
+              onClick={onSetGoals}
+              >Save</Button>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
 
 const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
@@ -66,6 +132,8 @@ const Home: NextPage = () => {
   // const userId = user?.id || ''
   const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v'
 
+  const [isOpen, setIsOpen] = useState(false)
+
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
   api.users.getAllUsers.useQuery()
   const { data: programs } = api.blocks.getAllUserProgramsTitles.useQuery({
@@ -100,6 +168,14 @@ const Home: NextPage = () => {
     },
   })
 
+  const closeModal = () => {
+    setIsOpen(false)
+  }
+
+  const openModal = () => {
+    setIsOpen(true)
+  }
+
   const [address, setAddress] = useState(addressData?.address || '')
   useEffect(() => {
     setAddress(addressData?.address || '')
@@ -111,13 +187,22 @@ const Home: NextPage = () => {
   return (
     <>
       <main className='flex h-full flex-col gap-6 px-2  font-semibold'>
-        <div className='flex  items-center justify-between gap-1 lg:flex-col lg:items-start '>
-          <h1 className='text-xl'>Profile</h1>
+        <div className='flex  flex-col gap-1 lg:items-start '>
+          <div className='flex w-full items-center justify-between'>
+            <h1 className='text-xl'>Profile</h1>
+            <Cog6ToothIcon
+              onClick={openModal}
+              className='h-6 w-6 text-yellow-500'
+            />
+          </div>
           <Link href='/program'>
-            <Button className='h-8 rounded bg-yellow-400 font-bold text-gray-900 hover:bg-yellow-500'>
+            <Button className='h-8 w-36 rounded bg-yellow-400 p-0 font-bold text-gray-900 hover:bg-yellow-500'>
               Current Program
             </Button>
           </Link>
+        </div>
+        <div className='flex  flex-col gap-1 lg:items-start '>
+          <h2>Goals</h2>
         </div>
         <div className='flex flex-col gap-4'>
           <Lift
@@ -133,16 +218,18 @@ const Home: NextPage = () => {
             userId={userId}
           />
         </div>
-        <div className='flex flex-col gap-4'>
-          <div className='text-xl capitalize text-yellow-500'>Competitions</div>
+        <div className='text-xl capitalize text-yellow-500'>Competitions</div>
+        <div className='flex flex-col gap-0 space-y-2 divide-y divide-dashed divide-gray-400 max-w-[800px]'>
           {compLifts?.map((comp) => (
             <div
               key={comp.id}
-              className='flex flex-col gap-1'
+              className='flex flex-col gap-1 pt-2'
             >
               <div className='flex flex-col gap-0'>
-                <div className='flex gap-0  flex-col text-lg text-yellow-500'>
-                  <div className='capitalize'>{comp.MeetName}</div>
+                <div className='flex flex-col  gap-0 text-lg'>
+                  <div className='capitalize  text-yellow-500'>
+                    {comp.MeetName}
+                  </div>
                   <div className='capitalize'>{comp.Federation}</div>
                 </div>
                 <div className='text-sm text-gray-400'>{comp.Date}</div>
@@ -204,6 +291,54 @@ const Home: NextPage = () => {
             Get Open Powerlifting Data
           </Button>
         </div>
+        <Transition
+          appear
+          show={isOpen}
+          as={Fragment}
+        >
+          <Dialog
+            as='div'
+            className='relative z-10 text-gray-200'
+            onClose={closeModal}
+          >
+            <Transition.Child
+              as={Fragment}
+              enter='ease-out duration-300'
+              enterFrom='opacity-0'
+              enterTo='opacity-100'
+              leave='ease-in duration-200'
+              leaveFrom='opacity-100'
+              leaveTo='opacity-0'
+            >
+              <div className='fixed inset-0 bg-black bg-opacity-75' />
+            </Transition.Child>
+
+            <div className='fixed inset-0 overflow-y-auto'>
+              <div className='flex min-h-full items-center justify-center p-4 text-center'>
+                <Transition.Child
+                  as={Fragment}
+                  enter='ease-out duration-300'
+                  enterFrom='opacity-0 scale-95'
+                  enterTo='opacity-100 scale-100'
+                  leave='ease-in duration-200'
+                  leaveFrom='opacity-100 scale-100'
+                  leaveTo='opacity-0 scale-95'
+                >
+                  <Dialog.Panel className='w-full max-w-7xl transform overflow-visible rounded-2xl border border-gray-800 bg-black p-6 text-left align-middle shadow-xl transition-all'>
+                    <Dialog.Title className='flex items-center justify-between text-lg font-medium leading-6 text-gray-200'>
+                      <div>Settings</div>
+                      <XMarkIcon
+                        onClick={closeModal}
+                        className='h-6 w-6'
+                      />
+                    </Dialog.Title>
+                    <Settings />
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </Dialog>
+        </Transition>
       </main>
     </>
   )

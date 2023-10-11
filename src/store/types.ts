@@ -74,6 +74,25 @@ export type Block = {
   week: Week[],
 }
 
+export type SuperData = {
+  lift: string,
+  name: string,
+  onerm: number | null,
+  onermTop: number | null,
+  weightTop: number | null,
+  weightBottom: number | null,
+  targetRpe: number | null,
+  isEstimatedOnerm: boolean,
+  sets: number | null,
+  reps: number | null,
+  estimatedOnermIndex: number | null,
+  weightType: string | null,
+  repUnit: string | null,
+  isComplete: boolean,
+  htmlLink: string | null,
+  isSS: boolean,
+}
+
 export type ExerciseData = {
   lift: string,
   name: string,
@@ -91,6 +110,7 @@ export type ExerciseData = {
   isComplete: boolean,
   htmlLink: string | null,
   isSS: boolean,
+  ss: SuperData[],
 }
 
 export type DayData = {

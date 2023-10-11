@@ -42,6 +42,7 @@ const ProgramDay = ({
   programId: string
   userId: string
 }) => {
+  console.log(day)
   const [isOpen, setIsOpen] = useState(false)
   const [selectedEngery, setSelectedEngery] = useState(day.energyRating || 'A')
 

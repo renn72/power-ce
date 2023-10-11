@@ -11,7 +11,7 @@ export const daysRouter = createTRPCRouter({
           id: input.id,
         },
         include: {
-          exercise: { include: { set: true } },
+          exercise: { include: { ss: true, set: true } },
         },
       })
       return day
