@@ -172,7 +172,7 @@ const Home: NextPage = () => {
 
   const defaultOpen = currentProgram?.week.reduce((acc, week) => {
     week.day.forEach((day) => {
-      if ((day.isComplete ? false : true) && acc === '') {
+      if (!day.isComplete && acc === '' && !day.isRestDay) {
         acc = day.id
       }
     })
@@ -206,7 +206,9 @@ const Home: NextPage = () => {
             />
           </div>
           {currentProgram && defaultOpen && (
-            <Link href={`/day/${currentProgram.id}/${defaultOpen}`}>
+            <Link 
+              href={`/day/${currentProgram.id}/${defaultOpen}`}
+            >
               <Button className='h-8 w-36 rounded bg-yellow-400 p-0 font-bold text-gray-900 hover:bg-yellow-500'>
                 Current Program
               </Button>
