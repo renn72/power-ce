@@ -945,6 +945,7 @@ const DayModal = ({
   programId: string
   userId: string
 }) => {
+  console.log('day', day)
   return (
     <>
       {day.isRestDay ? (

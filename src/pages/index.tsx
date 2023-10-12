@@ -68,9 +68,7 @@ const Settings = () => {
                 placeholder='Goal 1'
               />
             </div>
-            <Button
-              onClick={onSetGoals}
-              >Save</Button>
+            <Button onClick={onSetGoals}>Save</Button>
           </div>
         </div>
       </div>
@@ -139,8 +137,8 @@ const Home: NextPage = () => {
   const { data: programs } = api.blocks.getAllUserProgramsTitles.useQuery({
     userId: userId,
   })
-  api.blocks.get.useQuery({
-    id: programs?.find((p) => p.isProgramActive === true)?.id || '',
+  api.blocks.getUserActiveProgramFull.useQuery({
+    userId: userId,
   })
   const { data: addressData, isLoading: addressDataLoading } =
     api.compLift.getAddress.useQuery({
@@ -219,7 +217,7 @@ const Home: NextPage = () => {
           />
         </div>
         <div className='text-xl capitalize text-yellow-500'>Competitions</div>
-        <div className='flex flex-col gap-0 space-y-2 divide-y divide-dashed divide-gray-400 max-w-[800px]'>
+        <div className='flex max-w-[800px] flex-col gap-0 space-y-2 divide-y divide-dashed divide-gray-400'>
           {compLifts?.map((comp) => (
             <div
               key={comp.id}

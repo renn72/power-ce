@@ -20,6 +20,9 @@ const nav = [
     name: 'Program', href: '/program',
   },
   {
+    name: 'T', href: '/t/z',
+  },
+  {
     name: 'Users', href: '/users', admin: true,
   },
   // {

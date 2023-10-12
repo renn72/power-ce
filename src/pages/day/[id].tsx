@@ -936,19 +936,28 @@ const ExerciseModal = ({
   )
 }
 
-const DayView = () => {
+const Day = () => {
   const { user } = useUser()
   const userId = user?.id || ''
   const ctx = api.useContext()
   const router = useRouter()
   const dayId = router.query.id as string
-  const { data: day, isLoading: dayLoading } = api.days.get.useQuery({
-    id: dayId,
-  })
+
+  console.log('dayId', dayId)
+  // const { data: day, isLoading: dayLoading } = api.days.get.useQuery({
+  //   id: dayId,
+  // })
   const { data: program, isLoading: programLoading } =
     api.blocks.getUserActiveProgramFull.useQuery({
       userId: userId,
     })
+
+  const day = program?.week
+    .map((week) => week.day)
+    .flat()
+    .find((day) => day.id === dayId)
+
+  console.log('day', day)
 
   const { mutate: updateDayEnergy } = api.programs.updateDayEnergy.useMutation({
     onSuccess: () => {
@@ -968,7 +977,7 @@ const DayView = () => {
     })
   }
 
-  if (dayLoading || programLoading) return <div>Loading...</div>
+  if ( programLoading) return <div>Loading...</div>
   if (!day || !program) return <div>Day not found</div>
 
   return (
@@ -1057,4 +1066,4 @@ const DayView = () => {
   )
 }
 
-export default DayView
+export default Day

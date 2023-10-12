@@ -16,7 +16,7 @@ dayjs.extend(relativeTime)
 import CountDown from '~/components/countDown'
 import ProgramView from '~/components/programView'
 
-const Home: NextPage = () => {
+const Program: NextPage = () => {
   const { user } = useUser()
 
   const userId = user?.id || ''
@@ -104,5 +104,5 @@ const Home: NextPage = () => {
   )
 }
 
-export default Home
+export default Program
 
