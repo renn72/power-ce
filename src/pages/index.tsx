@@ -193,7 +193,7 @@ const Home: NextPage = () => {
               className='h-6 w-6 text-yellow-500'
             />
           </div>
-          <Link href='/program'>
+          <Link href='/day/clndrwzcp0002ivklxfo1zv52'>
             <Button className='h-8 w-36 rounded bg-yellow-400 p-0 font-bold text-gray-900 hover:bg-yellow-500'>
               Current Program
             </Button>

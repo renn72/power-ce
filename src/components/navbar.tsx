@@ -37,12 +37,12 @@ const nav = [
   {
     name: 'Log', href: '/log', admin: true,
   },
-  {
-    name: 'Stats', href: '/stats',  superAdmin: true,
-  },
-  {
-    name: 'DirtyAdmin', href: '/test',  superAdmin: true,
-  },
+  // {
+  //   name: 'Stats', href: '/stats',  superAdmin: true,
+  // },
+  // {
+  //   name: 'DirtyAdmin', href: '/test',  superAdmin: true,
+  // },
   {
     name: 'Admin', href: '/admin',  superAdmin: true,
   },
@@ -100,6 +100,7 @@ const Navbar = () => {
                             'px-3 py-2 text-lg'
                           )}
                           aria-current={item.href === router.pathname ? 'page' : undefined}
+                          prefetch={false}
                         >
                           {item.name}
                         </Link>

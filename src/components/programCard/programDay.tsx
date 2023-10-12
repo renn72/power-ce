@@ -196,7 +196,8 @@ const ProgramDay = ({
               >
                 <Disclosure.Panel className=''>
                   <Link
-                    href={`/t/${day.id}`}
+                    href={`/day/${day.id}`}
+                    prefetch={false}
                   >
                     <div className='flex cursor-pointer flex-col divide-y divide-dashed divide-gray-600 hover:bg-gray-900'>
                       {day.exercise.map((exercise) => (

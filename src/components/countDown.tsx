@@ -7,16 +7,14 @@ import Countdown from 'react-countdown'
 const CountDown = ({ userId }: { userId: string }) => {
   const [compDate, setCompDate] = useState<Date>()
   const [compName, setCompName] = useState<string>('')
-  const { data: compDateAll } = api.compDate.getAll.useQuery()
+  const { data: compDateUser } = api.compDate.getUser.useQuery({userId: userId})
 
-  const compDateUser = compDateAll?.filter(
-    (compDate) => compDate.userId === userId,
-  )
+  console.log('compDate', compDateUser)
 
   useEffect(() => {
-    if (compDateUser && compDateUser.length > 0 && compDateUser[0]) {
-      setCompDate(new Date(compDateUser[0].date))
-      setCompName(compDateUser[0].name)
+    if (compDateUser) {
+      setCompDate(new Date(compDateUser.date))
+      setCompName(compDateUser.name)
     }
   }, [compDateUser])
 
