@@ -100,7 +100,6 @@ const Navbar = () => {
                             'px-3 py-2 text-lg'
                           )}
                           aria-current={item.href === router.pathname ? 'page' : undefined}
-                          prefetch={false}
                         >
                           {item.name}
                         </Link>
