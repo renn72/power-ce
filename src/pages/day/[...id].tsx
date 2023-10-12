@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
 import { type Set } from '@prisma/client'
 import { Prisma } from '@prisma/client'
 import {
@@ -8,7 +8,7 @@ import {
 import { api } from '~/utils/api'
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { Transition, RadioGroup, Disclosure } from '@headlessui/react'
+import { Transition, RadioGroup, Disclosure, Dialog } from '@headlessui/react'
 import {
   ChevronUpIcon,
   StarIcon,
@@ -27,10 +27,11 @@ import getWeight from '~/utils/getWeight'
 
 import { NumericFormat } from 'react-number-format'
 import { Input } from '@/components/ui/input'
-import { PlaySquare, XIcon } from 'lucide-react'
+import { CheckCircleIcon, PlaySquare, XIcon } from 'lucide-react'
 
 import { checkWeight, checkPercentWeight } from '~/utils/program-card/utils'
 import { useRouter } from 'next/router'
+import { Button } from '@/components/ui/button'
 
 const dayWithExercise = Prisma.validator<Prisma.DayArgs>()({
   include: {
@@ -115,6 +116,8 @@ const ExerciseModal = ({
   day,
   programId,
   userId,
+  setIsOpen,
+  setExerciseToDelete,
 }: {
   exercise: StoreExercise
   idx: number
@@ -122,6 +125,8 @@ const ExerciseModal = ({
   day: Day
   programId: string
   userId: string
+  setIsOpen: (arg0: boolean) => void
+  setExerciseToDelete: (arg0: string) => void
 }) => {
   const [rpe, setRpe] = useState('8')
   const [exerciseSets, setExerciseSets] = useState(Number(exercise.sets) || 0)
@@ -405,7 +410,7 @@ const ExerciseModal = ({
       <Disclosure>
         {({ open }) => (
           <>
-            <div className='flex flex-col justify-start gap-2 '>
+            <div className='flex flex-col justify-start gap-2 overflow-hidden '>
               <div className='flex flex-col gap-0'>
                 <Disclosure.Button className={`mt-1 w-full text-lg md:text-xl`}>
                   <div className='flex flex-col gap-0'>
@@ -417,17 +422,29 @@ const ExerciseModal = ({
                           } h-6 w-8 text-gray-300 `}
                         />
                         <div className='mr-4 flex w-full items-center justify-between'>
-                          <div className='text-yellow-500 first-letter:text-2xl first-letter:font-bold first-letter:uppercase '>
+                          <div
+                            className={`${
+                              exercise.isComplete
+                                ? 'text-yellow-500'
+                                : 'text-white'
+                            }  font-medium first-letter:text-2xl first-letter:font-bold first-letter:uppercase `}
+                          >
                             {isSS ? 'Super set' : exercise.name}
                           </div>
-                          {exercise?.isComplete ? (
-                            <StarIcon className='h-6 w-6 text-yellow-500' />
-                          ) : (
-                            <StarIconHollow className='h-6 w-6 text-gray-600' />
-                          )}
+                          <div>
+                            {exercise.isComplete ? null : (
+                              <XIcon
+                                onClick={() => {
+                                  setIsOpen(true)
+                                  setExerciseToDelete(exercise.id)
+                                }}
+                                className='h-7 w-7 text-gray-600'
+                              />
+                            )}
+                          </div>
                         </div>
                       </div>
-                      <div className='ml-9 flex items-end gap-3 md:ml-16 md:gap-8'>
+                      <div className='ml-9 flex items-end gap-3 text-gray-400 md:ml-16 md:gap-8'>
                         {isSS ? (
                           <div className='w-full'>
                             <div className='ml-1 w-full'>
@@ -488,7 +505,7 @@ const ExerciseModal = ({
                             </div>
                           </div>
                         ) : (
-                          <div className='relative flex w-full items-end gap-3 md:gap-8'>
+                          <div className='relative flex w-full items-end gap-3 text-gray-400 md:gap-8'>
                             <div className='flex items-center gap-1'>
                               <h3>{exercise.sets}</h3>
                               <XIcon />
@@ -667,12 +684,12 @@ const ExerciseModal = ({
                         )}
                       </div>
                     </div>
-                    <div className='ml-10 font-light text-gray-400 transition delay-150 ease-in-out md:ml-16'>
+                    <div className='ml-10 font-light text-gray-500 transition delay-150 ease-in-out md:ml-16'>
                       <div
                         className={
                           open
                             ? `delay-[10ms] absolute text-sm opacity-40 transition-all ease-out`
-                            : `delay-[45ms] absolute flex w-full flex-row justify-start gap-1 text-sm opacity-100 transition-all ease-out`
+                            : `delay-[45ms] absolute flex w-full max-w-[85vw] flex-row justify-start gap-1 text-sm opacity-100 transition-all ease-out`
                         }
                       >
                         {exercise?.notes &&
@@ -829,9 +846,9 @@ const ExerciseModal = ({
                                 ) : null}
                               </div>
                             )}
-                          <div>
+                          <div className='mx-4 max-w-[90vw] overflow-clip'>
                             <AnimatePresence>
-                              <div className='flex h-36 items-center gap-3 overflow-clip text-xl font-medium md:gap-4'>
+                              <div className='flex h-36 items-center gap-3 text-xl font-medium md:gap-4'>
                                 <MinusIcon
                                   onClick={() =>
                                     setExerciseSets((e) => (e > 1 ? e - 1 : e))
@@ -941,16 +958,19 @@ const Day = () => {
   const userId = user?.id || ''
   const ctx = api.useContext()
   const router = useRouter()
-  const dayId = router.query.id as string
+  const [programId, dayId] = router.query.id as string[]
+  const [isOpen, setIsOpen] = useState(false)
+  const [exerciseToDelete, setExerciseToDelete] = useState<string>('')
+  const utils = api.useContext()
 
+  console.log('programId', programId)
   console.log('dayId', dayId)
   // const { data: day, isLoading: dayLoading } = api.days.get.useQuery({
   //   id: dayId,
   // })
-  const { data: program, isLoading: programLoading } =
-    api.blocks.getUserActiveProgramFull.useQuery({
-      userId: userId,
-    })
+  const { data: program, isLoading: programLoading } = api.blocks.get.useQuery({
+    id: programId || '',
+  })
 
   const day = program?.week
     .map((week) => week.day)
@@ -967,6 +987,76 @@ const Day = () => {
       console.log(e)
     },
   })
+  const { mutate: deleteExercise } = api.programs.deleteExercise.useMutation({
+    onMutate: async (exerciseToDelete) => {
+      if (!programId) return
+      console.log('id', exerciseToDelete)
+      await utils.blocks.get.cancel({ id: programId })
+      const previousProgram = utils.blocks.get.getData({ id: programId })
+
+      utils.blocks.get.setData(
+        { id: programId },
+        {
+          ...previousProgram,
+          week: previousProgram?.week.map((week) => {
+            return {
+              ...week,
+              day: week.day.map((day) => {
+                return {
+                  ...day,
+                  exercise: day.exercise.filter(
+                    (exercise) => exercise.id !== exerciseToDelete.id,
+                  ),
+                }
+              }),
+            }
+          }),
+        },
+      )
+      return { previousProgram }
+    },
+    onSuccess: () => {
+      void ctx.blocks.get.invalidate()
+    },
+    onError: (e) => {
+      console.log(e)
+    },
+  })
+
+  const { mutate: updateDayComplete } = api.programs.completeDay.useMutation({
+    onMutate: async (newDay) => {
+      console.log('id', newDay)
+      await utils.blocks.get.cancel({ id: programId })
+      const previousProgram = utils.blocks.get.getData({ id: programId })
+
+      utils.blocks.get.setData(
+        { id: programId },
+        {
+          ...previousProgram,
+          week: previousProgram?.week.map((week) => {
+            return {
+              ...week,
+              day: week.day.map((day) => {
+                if (day.id === newDay.id) {
+                  return {
+                    ...day,
+                    isComplete: newDay.isComplete,
+                  }
+                }
+                return day
+              }),
+            }
+          }),
+        },
+      )
+      return { previousProgram }
+    },
+    onError: (err, newExercise, context) => {
+      console.log('err', err)
+      utils.blocks.get.setData({ id: programId }, context?.previousProgram)
+    },
+  })
+
   const [selectedEngery, setSelectedEngery] = useState(day?.energyRating || 'A')
   const onSetEnergy = (e: string) => {
     setSelectedEngery(e)
@@ -977,7 +1067,7 @@ const Day = () => {
     })
   }
 
-  if ( programLoading) return <div>Loading...</div>
+  if (programLoading) return <div>Loading...</div>
   if (!day || !program) return <div>Day not found</div>
 
   return (
@@ -992,10 +1082,24 @@ const Day = () => {
             }`}
           ></h2>
           {day?.isComplete ? (
-            <StarIcon className='h-8 w-8 text-yellow-500' />
+            <div
+              onClick={() => {
+                updateDayComplete({ id: day.id, isComplete: false })
+              }}
+              className={`flex items-center justify-center gap-2 text-xl font-bold text-yellow-500`}
+            >
+              Completed
+            </div>
           ) : (
-            <div className='flex w-8 justify-end'>
-              <StarIconHollow className='h-6 w-6 text-gray-600' />
+            <div className='flex items-center justify-center gap-2'>
+              <Button
+                onClick={() => {
+                  updateDayComplete({ id: day.id, isComplete: true })
+                }}
+                className='w-40'
+              >
+                Complete
+              </Button>
             </div>
           )}
           <RadioGroup
@@ -1056,12 +1160,80 @@ const Day = () => {
                   selectedEnergy={selectedEngery}
                   day={day}
                   userId={userId}
+                  setIsOpen={setIsOpen}
+                  setExerciseToDelete={setExerciseToDelete}
                 />
               </div>
             ))}
           </div>
         </div>
       )}
+
+      <Transition
+        appear
+        show={isOpen}
+        as={Fragment}
+      >
+        <Dialog
+          as='div'
+          className='z-10'
+          onClose={() => setIsOpen(false)}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-gray-900/70' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full items-center justify-center p-1 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='transform overflow-hidden rounded-md bg-black p-8 text-left align-middle text-gray-200 transition-all md:min-h-[600px] md:p-4'>
+                  <Dialog.Title
+                    as='h3'
+                    className='flex items-center justify-center text-base font-medium leading-6 md:text-lg'
+                  >
+                    delete?
+                  </Dialog.Title>
+                  <div className='mt-2 flex justify-between gap-6'>
+                    <Button
+                      onClick={() => {
+                        setIsOpen(false)
+                        setExerciseToDelete('')
+                        deleteExercise({ id: exerciseToDelete })
+                      }}
+                    >
+                      Yes
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setExerciseToDelete('')
+                        setIsOpen(false)
+                      }}
+                    >
+                      No
+                    </Button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </>
   )
 }

@@ -10,11 +10,11 @@ import Link from 'next/link'
 import { Input } from '@/components/ui/input'
 import { Fragment, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { LoadingPage } from '~/components/loading'
+import { LoadingPage, LoadingSpinner } from '~/components/loading'
 
 import { getDate } from '~/utils/utils'
 import { Cog6ToothIcon } from '@heroicons/react/20/solid'
-import { PencilSquareIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 
 const Settings = () => {
   const { user } = useUser()
@@ -85,28 +85,27 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
   api.blocks.get.useQuery({
     id: programs?.find((p) => p.isProgramActive === true)?.id || '',
   })
-  const { data: addressData, isLoading: addressDataLoading } =
-    api.compLift.getAddress.useQuery({
-      userId: userId,
-    })
   const { data: allSets, isLoading: allSetsLoading } =
     api.sets.getAllUser.useQuery({ userId: userId })
 
-  const estiamtedOnerm = Number(
-    allSets
-      ?.filter((s) => s.lift === lift)
-      .reduce(
-        (a, s) => (Number(a.estiamtedOnerm) < Number(s.estiamtedOnerm) ? s : a),
-        { estiamtedOnerm: 0 },
-      ).estiamtedOnerm,
-  )
-
-  const estiamtedOnermDate = allSets
+  const estOnerm = allSets
     ?.filter((s) => s.lift === lift)
+    .map((s) => ({
+      estiamtedOnerm: Number(s.estiamtedOnerm),
+      flield1: s.flield1 || '',
+    }))
     .reduce(
-      (a, s) => (Number(a.estiamtedOnerm) < Number(s.estiamtedOnerm) ? s : a),
-      { estiamtedOnerm: 0 },
-    ).flield1
+      (a, s) => {
+        if (a.estimatedOnerm < s.estiamtedOnerm) {
+          a.estimatedOnerm = s.estiamtedOnerm
+          a.flield1 = s.flield1
+        }
+        return { ...a }
+      },
+      { estimatedOnerm: 0.0, flield1: '' },
+    )
+
+  if (allSetsLoading) return <LoadingSpinner />
 
   return (
     <>
@@ -114,10 +113,10 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
         <div className='text-xl capitalize text-yellow-500'>{lift}</div>
         <div className='flex gap-2'>
           <div> Estiamted 1rm:</div>
-          <div>{estiamtedOnerm}kg</div>
+          <div>{estOnerm?.estimatedOnerm}kg</div>
         </div>
         <div className='text-sm text-gray-400'>
-          {getDate(estiamtedOnermDate || '')}
+          {getDate(estOnerm?.flield1 || '')}
         </div>
       </div>
     </>
@@ -127,30 +126,27 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
 const Home: NextPage = () => {
   const { user } = useUser()
 
-  // const userId = user?.id || ''
-  const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v'
+  const userId = user?.id || ''
+  // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v'
 
   const [isOpen, setIsOpen] = useState(false)
 
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
   api.users.getAllUsers.useQuery()
-  const { data: programs } = api.blocks.getAllUserProgramsTitles.useQuery({
-    userId: userId,
-  })
-  api.blocks.getUserActiveProgramFull.useQuery({
-    userId: userId,
-  })
   const { data: addressData, isLoading: addressDataLoading } =
     api.compLift.getAddress.useQuery({
       userId: userId,
     })
-  const { data: allSets, isLoading: allSetsLoading } =
-    api.sets.getAllUser.useQuery({ userId: userId })
+  const { isLoading: allSetsLoading } = api.sets.getAllUser.useQuery({
+    userId: userId,
+  })
   const { data: compLifts, isLoading: compLiftsLoading } =
     api.compLift.getCompLifts.useQuery({
       userId: userId,
     })
-  console.log({ compLifts })
+  const { data: currentProgram, isLoading: programLoading } =
+    api.blocks.getUserActiveProgramFull.useQuery({ userId: userId })
+  console.log(currentProgram)
 
   const { mutate: getOpenPowerliftingData } =
     api.compLift.setOpenPower.useMutation({
@@ -174,13 +170,29 @@ const Home: NextPage = () => {
     setIsOpen(true)
   }
 
+  const defaultOpen = currentProgram?.week.reduce((acc, week) => {
+    week.day.forEach((day) => {
+      if ((day.isComplete ? false : true) && acc === '') {
+        acc = day.id
+      }
+    })
+    return acc
+  }, '')
+  console.log(defaultOpen)
+
   const [address, setAddress] = useState(addressData?.address || '')
   useEffect(() => {
     setAddress(addressData?.address || '')
   }, [addressData])
 
-  if (addressDataLoading || allSetsLoading || compLiftsLoading)
+  if (
+    addressDataLoading ||
+    allSetsLoading ||
+    compLiftsLoading ||
+    programLoading
+  ) {
     return <LoadingPage />
+  }
 
   return (
     <>
@@ -193,11 +205,13 @@ const Home: NextPage = () => {
               className='h-6 w-6 text-yellow-500'
             />
           </div>
-          <Link href='/day/clndrwzcp0002ivklxfo1zv52'>
-            <Button className='h-8 w-36 rounded bg-yellow-400 p-0 font-bold text-gray-900 hover:bg-yellow-500'>
-              Current Program
-            </Button>
-          </Link>
+          {currentProgram && defaultOpen && (
+            <Link href={`/day/${currentProgram.id}/${defaultOpen}`}>
+              <Button className='h-8 w-36 rounded bg-yellow-400 p-0 font-bold text-gray-900 hover:bg-yellow-500'>
+                Current Program
+              </Button>
+            </Link>
+          )}
         </div>
         <div className='flex  flex-col gap-1 lg:items-start '>
           <h2>Goals</h2>

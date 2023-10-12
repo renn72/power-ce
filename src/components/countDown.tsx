@@ -9,8 +9,6 @@ const CountDown = ({ userId }: { userId: string }) => {
   const [compName, setCompName] = useState<string>('')
   const { data: compDateUser } = api.compDate.getUser.useQuery({userId: userId})
 
-  console.log('compDate', compDateUser)
-
   useEffect(() => {
     if (compDateUser) {
       setCompDate(new Date(compDateUser.date))

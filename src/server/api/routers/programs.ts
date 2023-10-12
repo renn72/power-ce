@@ -44,10 +44,32 @@ export const programsRouter = createTRPCRouter({
 
       const programExercise = await ctx.prisma.exercise.update({
         where: { id: input.id },
-        data: { isComplete: input.isComplete, flield1: Date.now().toString(), flield2: input.notes },
+        data: {
+          isComplete: input.isComplete,
+          flield1: Date.now().toString(),
+          flield2: input.notes,
+        },
       })
       return programExercise
     }),
+  deleteExercise: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      // const authorId = ctx.userId;
+      // console.log('ctx', ctx.userId)
+
+      console.log('input', JSON.stringify(input, null, 2))
+
+      const programExercise = await ctx.prisma.exercise.delete({
+        where: { id: input.id },
+      })
+      return programExercise
+    }),
+
   completeDay: privateProcedure
     .input(
       z.object({
@@ -68,15 +90,13 @@ export const programsRouter = createTRPCRouter({
       return programDay
     }),
 
-  cleanSets: privateProcedure
-    .mutation(async ({ ctx, }) => {
-      const programSet = await ctx.prisma.set.deleteMany({
-        where: { isComplete: false },
-      })
+  cleanSets: privateProcedure.mutation(async ({ ctx }) => {
+    const programSet = await ctx.prisma.set.deleteMany({
+      where: { isComplete: false },
+    })
 
-      return programSet
-    }),
-
+    return programSet
+  }),
 
   createSet: privateProcedure
     .input(
@@ -93,7 +113,7 @@ export const programsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const userId = ctx.userId;
+      const userId = ctx.userId
 
       console.log('check')
       console.log('input', JSON.stringify(input, null, 2))
@@ -111,7 +131,6 @@ export const programsRouter = createTRPCRouter({
           name: input.name,
           trainerId: input.trainerId,
           actualReps: input.setReps,
-          
 
           flield1: Date.now().toString(),
         },
@@ -138,7 +157,6 @@ export const programsRouter = createTRPCRouter({
 
       return programSet
     }),
-
 
   updateSet: privateProcedure
     .input(

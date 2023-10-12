@@ -195,9 +195,7 @@ const ProgramDay = ({
                 leaveTo='transform scale-70 opacity-0'
               >
                 <Disclosure.Panel className=''>
-                  <Link
-                    href={`/day/${day.id}`}
-                  >
+                  <Link href={`/day/${programId}/${day.id}`}>
                     <div className='flex cursor-pointer flex-col divide-y divide-dashed divide-gray-600 hover:bg-gray-900'>
                       {day.exercise.map((exercise) => (
                         <div
