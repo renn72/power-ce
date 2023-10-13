@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Fragment, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { LoadingPage, LoadingSpinner } from '~/components/loading'
+import CompletedDay from '~/components/completedDay'
 
 import { getDate } from '~/utils/utils'
 import { Cog6ToothIcon } from '@heroicons/react/20/solid'
@@ -228,6 +229,12 @@ const Home: NextPage = () => {
             )}
             <div>
               <h3>Last Session</h3>
+              {currentProgram && lastFinished && (
+                <CompletedDay
+                  dayId={lastFinished}
+                  userId={userId}
+                />
+              )}
             </div>
           </div>
         </div>

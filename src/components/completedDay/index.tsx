@@ -54,7 +54,7 @@ const ExerciseView = ({
   return (
     <>
       <div>
-        {exercise.isComplete || !isAdmin ? (
+        {exercise.isComplete ? (
           <div className='flex flex-col gap-1 py-2 hover:rounded-md hover:bg-gray-900'>
             <div>
               <div className='flex justify-between text-lg'>
@@ -134,7 +134,6 @@ const ExerciseView = ({
                   key={s.id}
                   className='grid grid-cols-7 gap-x-1 tracking-tighter'
                 >
-                  {/* <h4 className=''>{setIndex + 1}.</h4> */}
                   <h4 className=''>{s?.rep}</h4>
                   {s.weight && +s.weight !== 0 && (
                     <h4 className='col-span-2'>{+s.weight}kg</h4>
@@ -164,7 +163,6 @@ const ExerciseView = ({
         ) : (
           <div
             className='flex cursor-pointer flex-col gap-1 py-2 hover:rounded-md hover:bg-gray-900'
-            onClick={() => openModal(exercise.id)}
           >
             <div>
               <h3 className='text-lg capitalize text-yellow-500'>
