@@ -437,3 +437,94 @@ model Lift {
 
   @@index([liftId])
 }
+
+model Goal {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId String
+
+  goal String
+  date DateTime
+  isComplete Boolean @default(false)
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  isDeleted Boolean @default(false)
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+  @@index([userId])
+}
+
+model DailyLog {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId String
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  weight Decimal?
+  fat Decimal?
+  carbs Decimal?
+  protein Decimal?
+  calories Decimal?
+
+  steps Int?
+
+  motivation Int?
+
+  notes String? @db.Text
+
+  sleepHrs Decimal?
+  sleepQuality Int?
+
+
+  recovery Int?
+  stress Int?
+  energy Int?
+
+  restingHeartRate Int?
+  vo2Max Int?
+
+  isDeleted Boolean @default(false)
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+  @@index([userId])
+}
+
+model UserProfile {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  DOB DateTime?
+  gender String?
+  height Decimal?
+
+  weight Decimal?
+  targetWeight Decimal?
+
+  weightGoal String?
+  activityLevelTraining String?
+  activityLevelRest String?
+
+  goals Goal[]
+  dailyLog DailyLog[]
+
+  squatOneRepMax Decimal?
+  benchOneRepMax Decimal?
+  deadliftOneRepMax Decimal?
+
+  isDeleted Boolean @default(false)
+
+  isTrainer Boolean @default(false)
+  isClient  Boolean @default(true)
+  isAdmin   Boolean @default(false)
+  isRoot    Boolean @default(false)
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+}

@@ -146,7 +146,6 @@ const Home: NextPage = () => {
     })
   const { data: currentProgram, isLoading: programLoading } =
     api.blocks.getUserActiveProgramFull.useQuery({ userId: userId })
-  console.log(currentProgram)
 
   const { mutate: getOpenPowerliftingData } =
     api.compLift.setOpenPower.useMutation({
@@ -180,6 +179,14 @@ const Home: NextPage = () => {
   }, '')
   console.log(defaultOpen)
 
+  const lastFinished = currentProgram?.week.reduce((acc, week) => {
+    week.day.forEach((day) => {
+      if (day.isComplete) acc = day.id
+    })
+    return acc
+  }, '')
+  console.log(lastFinished)
+
   const [address, setAddress] = useState(addressData?.address || '')
   useEffect(() => {
     setAddress(addressData?.address || '')
@@ -193,11 +200,12 @@ const Home: NextPage = () => {
   ) {
     return <LoadingPage />
   }
+  if (!user) return null
 
   return (
     <>
       <main className='flex h-full flex-col gap-6 px-2  font-semibold'>
-        <div className='flex  flex-col gap-1 lg:items-start '>
+        <div className='flex  flex-col gap-4 lg:items-start '>
           <div className='flex w-full items-center justify-between'>
             <h1 className='text-xl'>Profile</h1>
             <Cog6ToothIcon
@@ -205,15 +213,23 @@ const Home: NextPage = () => {
               className='h-6 w-6 text-yellow-500'
             />
           </div>
-          {currentProgram && defaultOpen && (
-            <Link 
-              href={`/day/${currentProgram.id}/${defaultOpen}`}
-            >
-              <Button className='h-8 w-36 rounded bg-yellow-400 p-0 font-bold text-gray-900 hover:bg-yellow-500'>
-                Current Program
-              </Button>
-            </Link>
-          )}
+          <div className='flex gap-1'>
+            <div>{user.fullName}</div>
+            <div></div>
+          </div>
+
+          <div className='flex flex-col gap-4'>
+            {currentProgram && defaultOpen && (
+              <Link href={`/day/${currentProgram.id}/${defaultOpen}`}>
+                <Button className='h-8 w-36 rounded bg-yellow-400 p-0 font-bold text-gray-900 hover:bg-yellow-500'>
+                  Current Program
+                </Button>
+              </Link>
+            )}
+            <div>
+              <h3>Last Session</h3>
+            </div>
+          </div>
         </div>
         <div className='flex  flex-col gap-1 lg:items-start '>
           <h2>Goals</h2>

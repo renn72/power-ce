@@ -36,6 +36,7 @@ const dayWithExercise = Prisma.validator<Prisma.DayArgs>()({
     exercise: {
       include: {
         set: true,
+        ss: true,
       },
     },
   },
