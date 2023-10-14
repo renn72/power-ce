@@ -345,7 +345,7 @@ const Home: NextPage = () => {
             </Button>
           </div>
         </div>
-        <div className=''>
+        <div className='hidden'>
           <Button onClick={() => setOpenPowerliftingData({ userId: userId })}>
             Set Open Powerlifting Data
           </Button>
