@@ -369,6 +369,9 @@ const ExerciseModal = ({
     }
 
     const isDayDone = day.exercise.reduce((acc, curr) => {
+      if (curr.id === exercise.id) {
+        return acc
+      }
       return curr.isComplete ? acc : false
     }, true)
 
@@ -963,8 +966,6 @@ const Day = () => {
   const [exerciseToDelete, setExerciseToDelete] = useState<string>('')
   const utils = api.useContext()
 
-  console.log('programId', programId)
-  console.log('dayId', dayId)
   // const { data: day, isLoading: dayLoading } = api.days.get.useQuery({
   //   id: dayId,
   // })
@@ -976,8 +977,6 @@ const Day = () => {
     .map((week) => week.day)
     .flat()
     .find((day) => day.id === dayId)
-
-  console.log('day', day)
 
   const { mutate: updateDayEnergy } = api.programs.updateDayEnergy.useMutation({
     onSuccess: () => {
