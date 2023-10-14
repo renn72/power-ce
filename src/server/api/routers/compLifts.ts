@@ -117,9 +117,7 @@ export const compLiftsRouter = createTRPCRouter({
         return 'no address'
       }
       console.log('address', address)
-      const res = await fetch(
-        'https://www.openpowerlifting.org/api/liftercsv/samdufty',
-      )
+      const res = await fetch(address.address)
       const data = await res.text()
       console.log('data', data)
       console.log('res', res)
@@ -182,7 +180,6 @@ export const compLiftsRouter = createTRPCRouter({
 
       return json
     }),
-
 
   getAddress: privateProcedure
     .input(

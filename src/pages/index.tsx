@@ -114,7 +114,9 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
         <div className='text-xl capitalize text-yellow-500'>{lift}</div>
         <div className='flex gap-2'>
           <div> Estiamted 1rm:</div>
-          <div>{estOnerm?.estimatedOnerm}kg</div>
+          <div className={`${estOnerm?.estimatedOnerm == 0 ? 'hidden' : ''}`}>
+            {estOnerm?.estimatedOnerm}kg
+          </div>
         </div>
         <div className='text-sm text-gray-400'>
           {getDate(estOnerm?.flield1 || '')}
@@ -128,9 +130,21 @@ const Home: NextPage = () => {
   const { user } = useUser()
 
   const userId = user?.id || ''
-  // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v'
+  // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam
+  // const userId = 'user_2Uj759BY4rnQ8r4KGafyBcT1fuD' //alex
+  // const userId = 'user_2UjZi8dZQQcmxhViIek8PUVjKp7' //ben
+  // const userId = 'user_2UmhNpWstVwbKlK0D3U9Zud4N43' //jayne
+  // const userId = 'user_2VPVPXid6tM9U1s5f6iodw5CoJv' //mary
+  // const userId = 'user_2VVN8mlFa7kbApqE1EYRYja62xS' //rachel
+  // const userId = 'user_2VxyYAeq0glZAPQM2OpTQRbXKxZ' //byung
+  // const userId = 'user_2WeOskMzYGguohYuGjW2LCuaYOh' //leroy
+  // const userId = 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv' //mitch
+
+  // const { data: user } = api.users.get.useQuery({ userId: userId })
 
   const [isOpen, setIsOpen] = useState(false)
+
+  const ctx = api.useContext()
 
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
   api.users.getAllUsers.useQuery()
@@ -148,10 +162,11 @@ const Home: NextPage = () => {
   const { data: currentProgram, isLoading: programLoading } =
     api.blocks.getUserActiveProgramFull.useQuery({ userId: userId })
 
-  const { mutate: getOpenPowerliftingData } =
+  const { mutate: setOpenPowerliftingData } =
     api.compLift.setOpenPower.useMutation({
       onSuccess: (data) => {
         console.log(data)
+        void ctx.compLift.getCompLifts.invalidate({ userId: userId })
       },
     })
 
@@ -178,7 +193,6 @@ const Home: NextPage = () => {
     })
     return acc
   }, '')
-  console.log(defaultOpen)
 
   const lastFinished = currentProgram?.week.reduce((acc, week) => {
     week.day.forEach((day) => {
@@ -186,7 +200,6 @@ const Home: NextPage = () => {
     })
     return acc
   }, '')
-  console.log(lastFinished)
 
   const [address, setAddress] = useState(addressData?.address || '')
   useEffect(() => {
@@ -211,35 +224,44 @@ const Home: NextPage = () => {
             <h1 className='text-xl'>Profile</h1>
             <Cog6ToothIcon
               onClick={openModal}
-              className='h-6 w-6 text-yellow-500'
+              className='hidden h-6 w-6 text-yellow-500'
             />
           </div>
+          <div className='flex flex-col gap-0 text-sm text-gray-400'>
+            <h3 className='text-base text-yellow-500 underline'>Changelog</h3>
+            <ul className='list-inside list-disc p-1'>
+              <li>
+                Current Program, will take you to your next uncompleted day
+              </li>
+              <li>
+                the old dashboard screen can be found under program in the menu
+              </li>
+              <li>
+                you can delete exercises from each day(an X in the top right
+                hand corner)
+              </li>
+              <li>you can add/remove sets from an exercise</li>
+              <li>
+                you can complete a day by pressing the complete button at the
+                top of the day
+              </li>
+              <li>
+                your current estimated One rep Maxes from your training block
+              </li>
+              <li>Your open powerlifting data </li>
+            </ul>
+          </div>
           <div className='flex gap-1'>
-            <div>{user.fullName}</div>
-            <div></div>
+            <div>{user.firstName}</div>
+            <div>{user.lastName}</div>
           </div>
-
-          <div className='flex flex-col gap-4'>
-            {currentProgram && defaultOpen && (
-              <Link href={`/day/${currentProgram.id}/${defaultOpen}`}>
-                <Button className='h-8 w-36 rounded bg-yellow-400 p-0 font-bold text-gray-900 hover:bg-yellow-500'>
-                  Current Program
-                </Button>
-              </Link>
-            )}
-            <div>
-              <h3>Last Session</h3>
-              {currentProgram && lastFinished && (
-                <CompletedDay
-                  dayId={lastFinished}
-                  userId={userId}
-                />
-              )}
-            </div>
-          </div>
-        </div>
-        <div className='flex  flex-col gap-1 lg:items-start '>
-          <h2>Goals</h2>
+          {currentProgram && defaultOpen && (
+            <Link href={`/day/${currentProgram.id}/${defaultOpen}`}>
+              <Button className='h-8 w-36 rounded bg-yellow-400 p-0 font-bold text-gray-900 hover:bg-yellow-500'>
+                Current Program
+              </Button>
+            </Link>
+          )}
         </div>
         <div className='flex flex-col gap-4'>
           <Lift
@@ -323,9 +345,9 @@ const Home: NextPage = () => {
             </Button>
           </div>
         </div>
-        <div className='hidden'>
-          <Button onClick={() => getOpenPowerliftingData({ userId: userId })}>
-            Get Open Powerlifting Data
+        <div className=''>
+          <Button onClick={() => setOpenPowerliftingData({ userId: userId })}>
+            Set Open Powerlifting Data
           </Button>
         </div>
         <Transition
