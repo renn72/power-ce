@@ -46,7 +46,7 @@ const Test = () => {
     onSuccess: () => {
       console.log('deleted')
       void ctx.blocks.getAllAdmin.invalidate()
-    }
+    },
   })
 
   const onCleanSets = () => {
@@ -84,6 +84,7 @@ const Test = () => {
       onSuccess: () => {
         console.log('deleted')
         void ctx.userPrograms.getAll.invalidate()
+        void ctx.blocks.getAllAdmin.invalidate()
       },
     },
   )
@@ -122,6 +123,10 @@ const Test = () => {
   const onDelete = (id: string) => {
     console.log('delete', id)
     deleteTemplate({ id: id })
+
+    // all
+    //   ?.filter((t) => t.isProgram &&  t.isDeleted)
+    //   ?.map((template) => deleteTemplate({ id: template.id }))
   }
 
   const onDeleteSoft = (id: string) => {
@@ -148,91 +153,53 @@ const Test = () => {
     deleteAllRM()
   }
 
-
   const me = 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a'
 
   return (
     <div>
-      <Button
-        onClick={onCleanSets}
-      >
-        sets
-      </Button>
       <div>
         <h1>Templates</h1>
-        {all?.map((template) => (
-          <div
-            key={template.id}
-            className='grid auto-cols-auto grid-flow-col items-center divide-x-2 divide-gray-200'
-          >
-            <h2 className='m-1 pl-1'>{template.name}</h2>
-            <h3 className='m-2 pl-2'>
-              {template.isProgram ? 'program' : 'template'}
-            </h3>
-            <h3 className='m-2 pl-2'>
-              {template.userIdOfProgram == me ? 'me' : 'not me'}
-            </h3>
-            <h3 className='m-2 w-24 pl-2'>
-              {template.isProgramActive && 'active'}
-            </h3>
-            <h3 className='m-2 pl-2'>
-              {template.isDeleted ? 'deleted' : 'not deleted'}
-            </h3>
-            <h3
-              className='m-2 cursor-pointer pl-2'
-              onClick={() => onUnDeleteSoft(template.id)}
-            >
-              reverse delete
-            </h3>
-            <h3
-              className='m-2 cursor-pointer px-8 text-2xl'
-              onClick={() => onDelete(template.id)}
-            >
-              HardX
-            </h3>
-            <h3
-              className='m-2 cursor-pointer px-8 text-2xl'
-              onClick={() => onDeleteSoft(template.id)}
-            >
-              SoftX
-            </h3>
-          </div>
-        ))}
-        <h1>Programs</h1>
-        <div className='flex flex-col gap-6'>
-          {allUserPrograms?.map((program) => (
+        {all
+          ?.filter((t) => t.isProgram)
+          ?.map((template) => (
             <div
-              key={program.id}
+              key={template.id}
               className='grid auto-cols-auto grid-flow-col items-center divide-x-2 divide-gray-200'
             >
-              <h2 className='m-1 pl-1'>
-                {
-                  all?.find((template) => template.id === program.programId)
-                    ?.name
-                }
-              </h2>
-              <h2 className='m-1 pl-1'>
-                {all?.find((template) => template.id === program.programId)
-                  ?.userIdOfProgram === me
-                  ? 'me'
-                  : 'not me'}
-              </h2>
+              <h2 className='m-1 pl-1'>{template.name}</h2>
               <h3 className='m-2 pl-2'>
-                {program.isDeleted ? 'deleted' : 'not deleted'}
+                {template.isProgram ? 'program' : 'template'}
               </h3>
               <h3 className='m-2 pl-2'>
-                {program.isProgramActive ? 'active' : 'not active'}
+                {template.userIdOfProgram == me ? 'me' : 'not me'}
+              </h3>
+              <h3 className='m-2 w-24 pl-2'>
+                {template.isProgramActive && 'active'}
+              </h3>
+              <h3 className='m-2 pl-2'>
+                {template.isDeleted ? 'deleted' : 'not deleted'}
               </h3>
               <h3
                 className='m-2 cursor-pointer pl-2'
-                onClick={() => onDeleteUserProgram(program.id)}
+                onClick={() => onUnDeleteSoft(template.id)}
               >
-                X
+                reverse delete
+              </h3>
+              <h3
+                className='m-2 cursor-pointer px-8 text-2xl'
+                onClick={() => onDelete(template.id)}
+              >
+                HardX
+              </h3>
+              <h3
+                className='m-2 cursor-pointer px-8 text-2xl'
+                onClick={() => onDeleteSoft(template.id)}
+              >
+                SoftX
               </h3>
             </div>
           ))}
-        </div>
-        <div className='flex flex-col gap-6'>
+        <div className='flex flex-col gap-6 hidden'>
           <Button
             className='w-44'
             onClick={onCreate}

@@ -28,11 +28,7 @@ const ProgramCard = ({
   const defaultOpen: { day: number; week: number } = program.week.reduce(
     (acc, week, weekIdx) => {
       week.day.forEach((day, dayIdx) => {
-        if (
-          (day.isComplete ? false : true) &&
-          acc.day === -1 &&
-          acc.week === -1
-        ) {
+        if (!day.isComplete && acc.day === -1 && !day.isRestDay) {
           acc.day = dayIdx
           acc.week = weekIdx
         }
@@ -42,6 +38,7 @@ const ProgramCard = ({
     },
     { day: -1, week: -1 },
   )
+  console.log(defaultOpen)
 
   if (programLoading) return <LoadingSpinner />
 

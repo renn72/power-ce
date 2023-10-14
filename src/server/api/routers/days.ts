@@ -11,9 +11,23 @@ export const daysRouter = createTRPCRouter({
           id: input.id,
         },
         include: {
-          exercise: { include: { set: true } },
+          exercise: { include: { ss: true, set: true } },
         },
       })
       return day
     }),
+  completeDay: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const day = await ctx.prisma.day.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          isComplete: true,
+        },
+      })
+      return day
+    }),
+
 })

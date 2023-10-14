@@ -54,6 +54,12 @@ export const usersRouter = createTRPCRouter({
 
     return res
   }),
+  get: privateProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const res = await clerkClient.users.getUser(input.userId)
+      return res
+    }),
 
   getTrainer: privateProcedure
     .input(z.object({ userId: z.string() }))

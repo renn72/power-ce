@@ -118,7 +118,7 @@ const UserPage = ({
   )
 }
 
-const Users: NextPage = () => {
+const Users = () => {
   const { user } = useUser()
   const [userId, setUserId] = useState<string>(user?.id || 'all')
   if (!user) return <div>Login</div>

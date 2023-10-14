@@ -24,6 +24,17 @@ export const compDateRouter = createTRPCRouter({
       })
       return compDates
     }),
+  getUser: privateProcedure
+    .input(z.object({ userId: z.string(), }))
+    .query(async ({
+      ctx, input,
+    }) => {
+      const compDates = await ctx.prisma.compDate.findFirst({
+        where: { userId: input.userId, },
+        orderBy: { createdAt: 'desc', },
+      })
+      return compDates
+    }),
   create: privateProcedure
     .input(z.object({
       name: z.string(), date: z.string(), userId: z.string(),

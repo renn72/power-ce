@@ -37,40 +37,38 @@ model CompLift {
   userId String
 
   name           String
+  Age           String
   AgeClass       String
   BirthYearClass String
   Division       String
   Event          String
 
-  BodyWeight  Decimal?
-  WeightClass Decimal?
+  BodyweightKg  String?
+  WeightClass String?
 
-  Squat1    Decimal?
-  Squat2    Decimal?
-  Squat3    Decimal?
-  Squat4    Decimal?
-  SquatBest Decimal?
+  Squat1    String?
+  Squat2    String?
+  Squat3    String?
+  Squat4    String?
 
-  Bench1    Decimal?
-  Bench2    Decimal?
-  Bench3    Decimal?
-  Bench4    Decimal?
-  BenchBest Decimal?
+  Bench1    String?
+  Bench2    String?
+  Bench3    String?
+  Bench4    String?
 
-  Deadlift1    Decimal?
-  Deadlift2    Decimal?
-  Deadlift3    Decimal?
-  Deadlift4    Decimal?
-  DeadliftBest Decimal?
+  Deadlift1    String?
+  Deadlift2    String?
+  Deadlift3    String?
+  Deadlift4    String?
 
-  Total Decimal?
+  Total String?
 
-  Place Int?
+  Place String?
 
-  Dots         Decimal?
-  Wilks        Decimal?
-  Glossbrenner Decimal?
-  GoodLift     Decimal?
+  Dots         String?
+  Wilks        String?
+  Glossbrenner String?
+  GoodLift     String?
 
   Federation String?
 
@@ -85,6 +83,28 @@ model CompLift {
   flield2 String?
   flield3 String?
   flield4 String?
+  flield5 String?
+  flield6 String?
+  flield7 String?
+  flield8 String?
+  flield9 String?
+  flield0 String?
+}
+
+model CompLiftAddress {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId String @unique
+  address String
+
+  isDeleted Boolean @default(false)
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+  flield4 String?
+  flield5 String?
 }
 
 model Post {
@@ -416,4 +436,95 @@ model Lift {
   flield3 String?
 
   @@index([liftId])
+}
+
+model Goal {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId String
+
+  goal String
+  date DateTime
+  isComplete Boolean @default(false)
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  isDeleted Boolean @default(false)
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+  @@index([userId])
+}
+
+model DailyLog {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId String
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  weight Decimal?
+  fat Decimal?
+  carbs Decimal?
+  protein Decimal?
+  calories Decimal?
+
+  steps Int?
+
+  motivation Int?
+
+  notes String? @db.Text
+
+  sleepHrs Decimal?
+  sleepQuality Int?
+
+
+  recovery Int?
+  stress Int?
+  energy Int?
+
+  restingHeartRate Int?
+  vo2Max Int?
+
+  isDeleted Boolean @default(false)
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+  @@index([userId])
+}
+
+model UserProfile {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  DOB DateTime?
+  gender String?
+  height Decimal?
+
+  weight Decimal?
+  targetWeight Decimal?
+
+  weightGoal String?
+  activityLevelTraining String?
+  activityLevelRest String?
+
+  goals Goal[]
+  dailyLog DailyLog[]
+
+  squatOneRepMax Decimal?
+  benchOneRepMax Decimal?
+  deadliftOneRepMax Decimal?
+
+  isDeleted Boolean @default(false)
+
+  isTrainer Boolean @default(false)
+  isClient  Boolean @default(true)
+  isAdmin   Boolean @default(false)
+  isRoot    Boolean @default(false)
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
 }

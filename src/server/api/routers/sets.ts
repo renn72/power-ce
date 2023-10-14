@@ -4,99 +4,34 @@ import { z } from 'zod'
 
 import { createTRPCRouter, privateProcedure } from '~/server/api/trpc'
 
-export const programsRouter = createTRPCRouter({
-  updateDayEnergy: privateProcedure
+export const setsRouter = createTRPCRouter({
+  getAllUser: privateProcedure
     .input(
       z.object({
-        id: z.string(),
-        energyRating: z.string(),
+        userId: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
-      // const authorId = ctx.userId;
-
-      console.log('ctx', ctx.userId)
-      console.log('input', JSON.stringify(input, null, 2))
-
-      const programDay = await ctx.prisma.day.update({
-        where: { id: input.id },
-        data: {
-          energyRating: input.energyRating,
-          flield1: Date.now().toString(),
+    .query(async ({ ctx, input }) => {
+      const res = await ctx.prisma.set.findMany({
+        where: {
+          userId: input.userId,
+          isComplete: true,
+          flield1: {
+            not: null,
+        }
         },
       })
-
-      return programDay
+      return res
     }),
-  completeExercise: privateProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        isComplete: z.boolean(),
-        notes: z.string(),
-      }),
-    )
+            
+  cleanSets: privateProcedure
     .mutation(async ({ ctx, input }) => {
-      // const authorId = ctx.userId;
-      // console.log('ctx', ctx.userId)
-
-      console.log('input', JSON.stringify(input, null, 2))
-
-      const programExercise = await ctx.prisma.exercise.update({
-        where: { id: input.id },
-        data: {
-          isComplete: input.isComplete,
-          flield1: Date.now().toString(),
-          flield2: input.notes,
-        },
+      const programSet = await ctx.prisma.set.deleteMany({
+        where: { isComplete: false },
       })
-      return programExercise
+
+      return programSet
     }),
-  deleteExercise: privateProcedure
-    .input(
-      z.object({
-        id: z.string(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      // const authorId = ctx.userId;
-      // console.log('ctx', ctx.userId)
-
-      console.log('input', JSON.stringify(input, null, 2))
-
-      const programExercise = await ctx.prisma.exercise.delete({
-        where: { id: input.id },
-      })
-      return programExercise
-    }),
-
-  completeDay: privateProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        isComplete: z.boolean(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      // const authorId = ctx.userId;
-      // console.log('ctx', ctx.userId)
-
-      console.log('input', JSON.stringify(input, null, 2))
-
-      const programDay = await ctx.prisma.day.update({
-        where: { id: input.id },
-        data: { isComplete: input.isComplete, flield1: Date.now().toString() },
-      })
-      return programDay
-    }),
-
-  cleanSets: privateProcedure.mutation(async ({ ctx }) => {
-    const programSet = await ctx.prisma.set.deleteMany({
-      where: { isComplete: false },
-    })
-
-    return programSet
-  }),
 
   createSet: privateProcedure
     .input(
@@ -113,7 +48,7 @@ export const programsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const userId = ctx.userId
+      const userId = ctx.userId;
 
       console.log('check')
       console.log('input', JSON.stringify(input, null, 2))
@@ -131,6 +66,7 @@ export const programsRouter = createTRPCRouter({
           name: input.name,
           trainerId: input.trainerId,
           actualReps: input.setReps,
+          
 
           flield1: Date.now().toString(),
         },
@@ -157,6 +93,7 @@ export const programsRouter = createTRPCRouter({
 
       return programSet
     }),
+
 
   updateSet: privateProcedure
     .input(
