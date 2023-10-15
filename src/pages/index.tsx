@@ -263,32 +263,10 @@ const Home: NextPage = () => {
             <h1 className='text-xl'>Profile</h1>
             <Cog6ToothIcon
               onClick={openModal}
-              className='h-6 w-6 cursor-pointer text-yellow-500'
+              className='h-6 w-6 cursor-pointer text-yellow-500 hidden'
             />
           </div>
           <div className='flex flex-col gap-0 text-sm text-gray-400'>
-            <h3 className='text-base text-yellow-500 underline'>Changelog</h3>
-            <ul className='list-inside list-disc p-1'>
-              <li>
-                Current Program, will take you to your next uncompleted day
-              </li>
-              <li>
-                the old dashboard screen can be found under program in the menu
-              </li>
-              <li>
-                you can delete exercises from each day(an X in the top right
-                hand corner)
-              </li>
-              <li>you can add/remove sets from an exercise</li>
-              <li>
-                you can complete a day by pressing the complete button at the
-                top of the day
-              </li>
-              <li>
-                your current estimated One rep Maxes from your training block
-              </li>
-              <li>Your open powerlifting data </li>
-            </ul>
           </div>
           <div className='flex gap-1'>
             <div>{user.firstName}</div>
