@@ -22,9 +22,9 @@ const nav = [
   {
     name: 'Users', href: '/users', admin: true,
   },
-  // {
-  //   name: 'Users-old', href: '/users-old', admin: true,
-  // },
+  {
+    name: 'Warmups', href: '/warmups', admin: true,
+  },
   {
     name: 'Primary Lifts', href: '/primary-lifts', admin: true,
   },
