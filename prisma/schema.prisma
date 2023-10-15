@@ -271,6 +271,8 @@ model Day {
 
   weekId String
 
+  warmupTemplateId String?
+
   week Week @relation(fields: [weekId], references: [id], onDelete: Cascade)
 
   energyRating String?  @default("A") @db.VarChar(1)
@@ -523,6 +525,39 @@ model UserProfile {
   isClient  Boolean @default(true)
   isAdmin   Boolean @default(false)
   isRoot    Boolean @default(false)
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+}
+
+model Warmup {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  warmup String
+  name String
+
+  warmupTemplateId String
+  warmupTemplate WarmupTemplate @relation(fields: [warmupTemplateId], references: [id], onDelete: Cascade)
+
+  isDeleted Boolean @default(false)
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+  @@index([warmupTemplateId])
+}
+
+model WarmupTemplate {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  name String
+
+  isDeleted Boolean @default(false)
+
+  warmup Warmup[]
 
   flield1 String?
   flield2 String?

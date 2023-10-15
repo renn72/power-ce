@@ -65,6 +65,7 @@ export type Day = {
   isRestDay: boolean,
   isComplete: boolean,
   exercise: Exercise[],
+  warmupTemplateId: string | null,
 };
 
 export type Week = {
@@ -121,6 +122,8 @@ export type DayData = {
   isRestDay: boolean,
   exercise: ExerciseData[],
   isComplete: boolean,
+  warmupTemplateId: string | null,
+  energyRating: string | null,
 };
 
 export type WeekData = {
