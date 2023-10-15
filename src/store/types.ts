@@ -29,6 +29,8 @@ export type SS = {
   repUnit: string | null,
   isComplete: boolean,
   htmlLink: string | null,
+  field1: string | null,
+  field2: string | null,
 }
 
 export type Exercise = {
@@ -51,6 +53,8 @@ export type Exercise = {
   repUnit: string | null,
   isComplete: boolean,
   htmlLink: string | null,
+  field1: string | null,
+  field2: string | null,
 }
 
 export type Day = {

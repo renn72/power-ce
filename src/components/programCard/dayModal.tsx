@@ -56,7 +56,6 @@ const SetsModal = ({
   const isSS = exercise.ss && exercise.ss.length > 0
 
   const onUpdateRpeWrapper = (increase: boolean) => {
-    console.log('update', increase)
     if (increase) {
       setReps((prev) => prev + 1)
     } else {
@@ -109,14 +108,12 @@ const SetsModal = ({
 
 const ExerciseModal = ({
   exercise,
-  idx,
   selectedEnergy,
   day,
   programId,
   userId,
 }: {
   exercise: StoreExercise
-  idx: number
   selectedEnergy: string
   day: Day
   programId: string
@@ -377,25 +374,6 @@ const ExerciseModal = ({
     const index = 8 - (+rpe - 6) / 0.5
     if (rpeTable[index]) setE1rm(rpeTable[index])
   }, [weights, rpe])
-
-  const onUpdateRpe = (set: Set, increase: boolean) => {
-    const newRep = increase ? +set.rep + 1 : +set.rep - 1
-    if (newRep < 1) return
-
-    updateSet({
-      id: set.id,
-      isComplete: set.isComplete,
-      rpe: +rpe,
-      weight: Number(weights),
-      estiamtedOnerm: !set.isComplete
-        ? +Number(
-            Number(weights || '') /
-              (e1rm[Number(exercise?.reps) || 1 - 1] || 0 / 100),
-          ).toFixed(0)
-        : 0, //e1rm,
-      rep: newRep,
-    })
-  }
 
   const isSS = exercise.ss && exercise.ss.length > 0
 
