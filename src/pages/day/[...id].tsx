@@ -434,62 +434,81 @@ const ExerciseModal = ({
                           </div>
                         </div>
                       </div>
-                      <div className='ml-9 flex items-end gap-3 text-gray-400 md:ml-16 md:gap-8'>
+                      <div className='flex items-end gap-3 text-gray-400 md:ml-16 md:gap-8'>
                         {isSS ? (
                           <div className='w-full'>
                             <div className='ml-1 w-full'>
                               {exercise.ss.map((s) => (
-                                <div
-                                  key={s.id}
-                                  className='text-md grid w-full grid-cols-8 gap-0'
-                                >
-                                  <div className='col-span-4 place-self-start'>
-                                    {s.name}
+                                <div key={s.id}>
+                                  <div className='text-md grid w-full grid-cols-9 gap-0'>
+                                    <div onClick={(e) => e.stopPropagation()}>
+                                      {s.htmlLink && s.htmlLink !== '' && (
+                                        <a
+                                          href={s.htmlLink}
+                                          rel='noreferrer'
+                                          target='_blank'
+                                        >
+                                          <PlaySquare
+                                            size={24}
+                                            fill='#EAB308'
+                                            color='black'
+                                          />
+                                        </a>
+                                      )}
+                                    </div>
+                                    <div className='col-span-4 place-self-start'>
+                                      {s.name}
+                                    </div>
+                                    <XIcon />
+                                    <div className='flex gap-1'>
+                                      <div>{s.reps}</div>
+                                      {s.repUnit ? <div>s.repUnit</div> : null}
+                                    </div>
+                                    <div className='col-span-2 place-self-center'>
+                                      {s.weightType === 'rpe' && (
+                                        <div className='flex items-baseline gap-0'>
+                                          <h4>RPE</h4>
+                                          <h4>-</h4>
+                                          <h4 className='flex items-baseline justify-center font-semibold'>
+                                            {s?.targetRpe && +s?.targetRpe}
+                                          </h4>
+                                        </div>
+                                      )}
+                                      {s.weightType === 'weight' && (
+                                        <div className='flex items-baseline'>
+                                          <h4>
+                                            {s?.weightBottom &&
+                                              checkWeight(
+                                                'weight',
+                                                +s?.weightBottom,
+                                                null,
+                                                selectedEnergy,
+                                                day,
+                                                userCoreOneRM,
+                                              )}
+                                          </h4>
+                                          <h4>{s?.weightTop && '-'}</h4>
+                                          <h4>
+                                            {s?.weightTop &&
+                                              checkWeight(
+                                                'weight',
+                                                +s?.weightTop,
+                                                null,
+                                                selectedEnergy,
+                                                day,
+                                                userCoreOneRM,
+                                              )}
+                                            kg
+                                          </h4>
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
-                                  <XIcon />
-                                  <div className='flex gap-1'>
-                                    <div>{s.reps}</div>
-                                    {s.repUnit ? <div>s.repUnit</div> : null}
-                                  </div>
-                                  <div className='col-span-2 place-self-center'>
-                                    {s.weightType === 'rpe' && (
-                                      <div className='flex items-baseline gap-0'>
-                                        <h4>RPE</h4>
-                                        <h4>-</h4>
-                                        <h4 className='flex items-baseline justify-center font-semibold'>
-                                          {s?.targetRpe && +s?.targetRpe}
-                                        </h4>
-                                      </div>
-                                    )}
-                                    {s.weightType === 'weight' && (
-                                      <div className='flex items-baseline'>
-                                        <h4>
-                                          {s?.weightBottom &&
-                                            checkWeight(
-                                              'weight',
-                                              +s?.weightBottom,
-                                              null,
-                                              selectedEnergy,
-                                              day,
-                                              userCoreOneRM,
-                                            )}
-                                        </h4>
-                                        <h4>{s?.weightTop && '-'}</h4>
-                                        <h4>
-                                          {s?.weightTop &&
-                                            checkWeight(
-                                              'weight',
-                                              +s?.weightTop,
-                                              null,
-                                              selectedEnergy,
-                                              day,
-                                              userCoreOneRM,
-                                            )}
-                                          kg
-                                        </h4>
-                                      </div>
-                                    )}
-                                  </div>
+                                  {s.notes && s.notes !== '' && (
+                                    <div className='mx-2 text-left text-xs font-extralight text-gray-400'>
+                                      {s.notes}
+                                    </div>
+                                  )}
                                 </div>
                               ))}
                             </div>
@@ -1140,7 +1159,9 @@ const Day = () => {
           </RadioGroup>
           {day.warmupTemplateId == '' && day.warmupTemplateId == null ? null : (
             <div className='p-1'>
-              <h2 className='ml-1 capitalize text-lg font-semibold'>{warmup?.name}</h2>
+              <h2 className='ml-1 text-lg font-semibold capitalize'>
+                {warmup?.name}
+              </h2>
               <div className='mx-4 flex flex-col'>
                 {warmup?.warmups.map((w) => (
                   <div
@@ -1148,7 +1169,9 @@ const Day = () => {
                     className='flex items-center justify-between gap-2'
                   >
                     <div className='capitalize'>{w.name}</div>
-                    <div className='text-sm font-light text-gray-400'>{w?.notes}</div>
+                    <div className='text-sm font-light text-gray-400'>
+                      {w?.notes}
+                    </div>
                     <div className='w-8'>
                       {w.link && (
                         <a>

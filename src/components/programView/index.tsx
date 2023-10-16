@@ -186,17 +186,32 @@ const ExerciseView = ({
             </div>
             {isSS ? (
               <div>
-                <div className='relative flex flex-col items-baseline gap-1 text-sm'>
+                <div className='relative flex flex-col overflow-hidden items-baseline gap-1 text-sm'>
                   <h3>{exercise.sets} X</h3>
-                  <div className='flex flex-col pl-3'>
+                  <div className='flex flex-col pl-3 '>
                     {exercise.ss.map((s) => (
                       <div
                         key={s.id}
-                        className='flex gap-2 '
+                        className='flex items-center gap-2'
                       >
+                        <div
+                          className='w-4'
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {s.htmlLink && s.htmlLink !== '' && (
+                            <a
+                              href={s.htmlLink}
+                              target='_blank'
+                              rel='noreferrer'
+                            >
+                              <PlaySquare className='h-4 w-4 text-yellow-500' />
+                            </a>
+                          )}
+                        </div>
                         <h3>{s.reps}</h3>
                         <h3>-</h3>
                         <h3>{s.name}</h3>
+                        {s.notes && <div className='overflow-hidden whitespace-nowrap w-fit'>{s.notes}</div>}
                       </div>
                     ))}
                   </div>
