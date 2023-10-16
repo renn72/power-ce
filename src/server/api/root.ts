@@ -11,6 +11,7 @@ import { compLiftsRouter, } from './routers/compLifts'
 import { compDateRouter, } from './routers/compDate'
 import { daysRouter } from './routers/days'
 import { setsRouter } from './routers/sets'
+import { warmupsRouter } from './routers/warmup'
 
 /**
  * This is the primary router for your server.
@@ -30,6 +31,7 @@ export const appRouter = createTRPCRouter({
   compDate: compDateRouter,
   days: daysRouter,
   sets: setsRouter,
+  warmups: warmupsRouter
 })
 
 // export type definition of API
