@@ -342,7 +342,7 @@ const FormSS = ({
                 render={({ field: { onChange, value } }) => (
                   <NumericFormat
                     className=' flex h-10 w-full border-b border-gray-600 bg-black px-3 py-2 text-sm text-gray-200 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50'
-                    value={value}
+                    value={value as number}
                     onChange={onChange}
                     placeholder='rpe target'
                   />
@@ -833,6 +833,30 @@ const FormExercise = ({
             </div>
           </div>
         )}
+        <div className='flex flex-col lg:flex-row gap-4 lg:items-center'>
+          <div className='pr-4 text-lg'>Tempo</div>
+        <div className='flex flex-row justify-between lg:gap-4 lg:items-center'>
+          <Input
+            type='number'
+            {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.tempoDown`, { valueAsNumber: true })}
+            placeholder='Down Count'
+            className='w-24 px-1 lg:w-32'
+          />
+          <Input
+            type='number'
+            {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.tempoPause`, { valueAsNumber: true })}
+            placeholder='Pause'
+            className='w-24 lg:w-32'
+          />
+          <Input
+            type='number'
+            {...register(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.tempoUp`, { valueAsNumber: true })}
+            placeholder='Up Count'
+            className='w-24 lg:w-32'
+          />
+
+        </div>
+        </div>
         <div className='flex flex-col items-center justify-between gap-4 md:flex-row md:gap-10'>
           <Input
             type='text'

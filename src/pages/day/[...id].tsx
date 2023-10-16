@@ -14,7 +14,13 @@ import { useUser } from '@clerk/nextjs'
 
 import { NumericFormat } from 'react-number-format'
 import { Input } from '@/components/ui/input'
-import { PlaySquare, XIcon } from 'lucide-react'
+import {
+  ArrowDownToLine,
+  ArrowUpToLine,
+  PauseOctagonIcon,
+  PlaySquare,
+  XIcon,
+} from 'lucide-react'
 
 import { checkWeight, checkPercentWeight } from '~/utils/program-card/utils'
 import { useRouter } from 'next/router'
@@ -514,181 +520,208 @@ const ExerciseModal = ({
                             </div>
                           </div>
                         ) : (
-                          <div className='relative flex w-full items-end gap-3 text-gray-400 md:gap-8'>
-                            <div className='flex items-center gap-1'>
-                              <h3>{exercise.sets}</h3>
-                              <XIcon />
-                              <h3>{exercise.reps}</h3>
-                              <h3>
-                                {exercise.repUnit ? exercise.repUnit : ''}
-                              </h3>
+                          <div>
+                            <div className='relative flex w-full items-end gap-3 text-gray-400 md:gap-8'>
+                              <div className='flex items-center gap-1'>
+                                <h3>{exercise.sets}</h3>
+                                <XIcon />
+                                <h3>{exercise.reps}</h3>
+                                <h3>
+                                  {exercise.repUnit ? exercise.repUnit : ''}
+                                </h3>
+                              </div>
+                              <div>
+                                {exercise.weightType === 'percent' && (
+                                  <div className=''>
+                                    {exercise.estimatedOnermIndex ? (
+                                      <div>
+                                        {Number(
+                                          day?.exercise[
+                                            exercise?.estimatedOnermIndex - 1
+                                          ]?.set[0]?.weight,
+                                        ) > 0 && (
+                                          <div className='flex'>
+                                            {exercise.onerm && (
+                                              <h4>
+                                                {checkPercentWeight(
+                                                  exercise.estimatedOnermIndex,
+                                                  +exercise?.onerm,
+                                                  day,
+                                                  selectedEnergy,
+                                                )}
+                                              </h4>
+                                            )}
+                                            {exercise.onermTop && <h4>-</h4>}
+                                            {exercise.onermTop && (
+                                              <h4>
+                                                {checkPercentWeight(
+                                                  exercise.estimatedOnermIndex,
+                                                  +exercise?.onermTop,
+                                                  day,
+                                                  selectedEnergy,
+                                                )}
+                                              </h4>
+                                            )}
+                                            <h4>kg</h4>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                )}
+                                {exercise.weightType === 'onerm' && (
+                                  <div className=''>
+                                    {exercise.estimatedOnermIndex ? (
+                                      <div>
+                                        {+day.exercise[
+                                          exercise.estimatedOnermIndex - 1
+                                        ]?.set[0]?.weight > 0 && (
+                                          <div className='flex'>
+                                            {exercise.onerm && (
+                                              <h4>
+                                                {checkWeight(
+                                                  exercise.lift,
+                                                  +exercise?.onerm,
+                                                  exercise.estimatedOnermIndex,
+                                                  selectedEnergy,
+                                                  day,
+                                                  userCoreOneRM,
+                                                )}
+                                              </h4>
+                                            )}
+                                            {exercise.onermTop && <h4>-</h4>}
+                                            {exercise.onermTop && (
+                                              <h4>
+                                                {checkWeight(
+                                                  exercise.lift,
+                                                  +exercise?.onermTop,
+                                                  exercise.estimatedOnermIndex,
+                                                  selectedEnergy,
+                                                  day,
+                                                  userCoreOneRM,
+                                                )}
+                                              </h4>
+                                            )}
+                                            <h4>kg</h4>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <div className='flex'>
+                                        {exercise.onerm && (
+                                          <h4>
+                                            {checkWeight(
+                                              exercise.lift,
+                                              +exercise?.onerm,
+                                              null,
+                                              selectedEnergy,
+                                              day,
+                                              userCoreOneRM,
+                                            )}
+                                          </h4>
+                                        )}
+                                        {exercise.onermTop && <h4>-</h4>}
+                                        {exercise.onermTop && (
+                                          <h4>
+                                            {checkWeight(
+                                              exercise.lift,
+                                              +exercise?.onermTop,
+                                              null,
+                                              selectedEnergy,
+                                              day,
+                                              userCoreOneRM,
+                                            )}
+                                          </h4>
+                                        )}
+                                        <h4>kg</h4>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                                {exercise.weightType === 'rpe' && (
+                                  <div className='flex items-baseline gap-2'>
+                                    <h4>RPE Target</h4>
+                                    <h4>-</h4>
+                                    <h4 className='flex items-baseline justify-center font-semibold'>
+                                      {exercise?.targetRpe &&
+                                        +exercise?.targetRpe}
+                                    </h4>
+                                  </div>
+                                )}
+                                {exercise.weightType === 'weight' && (
+                                  <div className='flex items-baseline'>
+                                    <h4>
+                                      {exercise?.weightBottom &&
+                                        checkWeight(
+                                          'weight',
+                                          +exercise?.weightBottom,
+                                          null,
+                                          selectedEnergy,
+                                          day,
+                                          userCoreOneRM,
+                                        )}
+                                    </h4>
+                                    <h4>{exercise?.weightTop && '-'}</h4>
+                                    <h4>
+                                      {exercise?.weightTop &&
+                                        checkWeight(
+                                          'weight',
+                                          +exercise?.weightTop,
+                                          null,
+                                          selectedEnergy,
+                                          day,
+                                          userCoreOneRM,
+                                        )}
+                                      kg
+                                    </h4>
+                                  </div>
+                                )}
+                              </div>
+                              <div
+                                onClick={(e) => e.stopPropagation()}
+                                className=''
+                              >
+                                {exercise.htmlLink && (
+                                  <a
+                                    href={exercise.htmlLink}
+                                    rel='noreferrer'
+                                    target='_blank'
+                                    className='absolute bottom-0 right-3'
+                                  >
+                                    <PlaySquare
+                                      size={30}
+                                      fill='#EAB308'
+                                      color='black'
+                                    />
+                                  </a>
+                                )}
+                              </div>
                             </div>
-                            <div>
-                              {exercise.weightType === 'percent' && (
-                                <div className=''>
-                                  {exercise.estimatedOnermIndex ? (
-                                    <div>
-                                      {Number(
-                                        day?.exercise[
-                                          exercise?.estimatedOnermIndex - 1
-                                        ]?.set[0]?.weight,
-                                      ) > 0 && (
-                                        <div className='flex'>
-                                          {exercise.onerm && (
-                                            <h4>
-                                              {checkPercentWeight(
-                                                exercise.estimatedOnermIndex,
-                                                +exercise?.onerm,
-                                                day,
-                                                selectedEnergy,
-                                              )}
-                                            </h4>
-                                          )}
-                                          {exercise.onermTop && <h4>-</h4>}
-                                          {exercise.onermTop && (
-                                            <h4>
-                                              {checkPercentWeight(
-                                                exercise.estimatedOnermIndex,
-                                                +exercise?.onermTop,
-                                                day,
-                                                selectedEnergy,
-                                              )}
-                                            </h4>
-                                          )}
-                                          <h4>kg</h4>
-                                        </div>
-                                      )}
-                                    </div>
-                                  ) : null}
-                                </div>
-                              )}
-                              {exercise.weightType === 'onerm' && (
-                                <div className=''>
-                                  {exercise.estimatedOnermIndex ? (
-                                    <div>
-                                      {+day.exercise[
-                                        exercise.estimatedOnermIndex - 1
-                                      ]?.set[0]?.weight > 0 && (
-                                        <div className='flex'>
-                                          {exercise.onerm && (
-                                            <h4>
-                                              {checkWeight(
-                                                exercise.lift,
-                                                +exercise?.onerm,
-                                                exercise.estimatedOnermIndex,
-                                                selectedEnergy,
-                                                day,
-                                                userCoreOneRM,
-                                              )}
-                                            </h4>
-                                          )}
-                                          {exercise.onermTop && <h4>-</h4>}
-                                          {exercise.onermTop && (
-                                            <h4>
-                                              {checkWeight(
-                                                exercise.lift,
-                                                +exercise?.onermTop,
-                                                exercise.estimatedOnermIndex,
-                                                selectedEnergy,
-                                                day,
-                                                userCoreOneRM,
-                                              )}
-                                            </h4>
-                                          )}
-                                          <h4>kg</h4>
-                                        </div>
-                                      )}
-                                    </div>
-                                  ) : (
-                                    <div className='flex'>
-                                      {exercise.onerm && (
-                                        <h4>
-                                          {checkWeight(
-                                            exercise.lift,
-                                            +exercise?.onerm,
-                                            null,
-                                            selectedEnergy,
-                                            day,
-                                            userCoreOneRM,
-                                          )}
-                                        </h4>
-                                      )}
-                                      {exercise.onermTop && <h4>-</h4>}
-                                      {exercise.onermTop && (
-                                        <h4>
-                                          {checkWeight(
-                                            exercise.lift,
-                                            +exercise?.onermTop,
-                                            null,
-                                            selectedEnergy,
-                                            day,
-                                            userCoreOneRM,
-                                          )}
-                                        </h4>
-                                      )}
-                                      <h4>kg</h4>
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                              {exercise.weightType === 'rpe' && (
-                                <div className='flex items-baseline gap-2'>
-                                  <h4>RPE Target</h4>
-                                  <h4>-</h4>
-                                  <h4 className='flex items-baseline justify-center font-semibold'>
-                                    {exercise?.targetRpe &&
-                                      +exercise?.targetRpe}
-                                  </h4>
-                                </div>
-                              )}
-                              {exercise.weightType === 'weight' && (
-                                <div className='flex items-baseline'>
-                                  <h4>
-                                    {exercise?.weightBottom &&
-                                      checkWeight(
-                                        'weight',
-                                        +exercise?.weightBottom,
-                                        null,
-                                        selectedEnergy,
-                                        day,
-                                        userCoreOneRM,
-                                      )}
-                                  </h4>
-                                  <h4>{exercise?.weightTop && '-'}</h4>
-                                  <h4>
-                                    {exercise?.weightTop &&
-                                      checkWeight(
-                                        'weight',
-                                        +exercise?.weightTop,
-                                        null,
-                                        selectedEnergy,
-                                        day,
-                                        userCoreOneRM,
-                                      )}
-                                    kg
-                                  </h4>
-                                </div>
-                              )}
-                            </div>
-                            <div
-                              onClick={(e) => e.stopPropagation()}
-                              className=''
-                            >
-                              {exercise.htmlLink && (
-                                <a
-                                  href={exercise.htmlLink}
-                                  rel='noreferrer'
-                                  target='_blank'
-                                  className='absolute bottom-0 right-3'
-                                >
-                                  <PlaySquare
-                                    size={30}
-                                    fill='#EAB308'
-                                    color='black'
-                                  />
-                                </a>
-                              )}
-                            </div>
+                            {exercise?.tempoDown ||
+                            exercise?.tempoUp ||
+                            exercise?.tempoPause ? (
+                              <div className='flex gap-4 text-sm'>
+                                <div>Tempo:</div>
+                                {exercise?.tempoDown && (
+                                  <div className='flex items-center gap-0 tracking-tighter'>
+                                    <h4>{exercise.tempoDown}</h4>
+                                    <ArrowDownToLine size={16} />
+                                  </div>
+                                )}
+                                {exercise?.tempoPause && (
+                                  <div className='flex items-center gap-0 tracking-tighter'>
+                                    <h4>{exercise.tempoPause}</h4>
+                                    <PauseOctagonIcon size={16} />
+                                  </div>
+                                )}
+                                {exercise?.tempoUp && (
+                                  <div className='flex items-center gap-0 tracking-tighter'>
+                                    <h4>{exercise.tempoUp}</h4>
+                                    <ArrowUpToLine size={16} />
+                                  </div>
+                                )}
+                              </div>
+                            ) : null}
                           </div>
                         )}
                       </div>

@@ -127,6 +127,9 @@ const Form = () => {
             repUnit: exercise.repUnit,
             htmlLink: exercise.htmlLink,
             isComplete: false,
+            tempoDown: exercise.tempoDown ? +exercise.tempoDown : null,
+            tempoUp: exercise.tempoUp ? +exercise.tempoUp : null,
+            tempoPause: exercise.tempoPause ? +exercise.tempoPause : null,
             isSS: exercise.isSS || false,
             ss: exercise.ss.map((s) => ({
               name: s.name,
@@ -182,6 +185,9 @@ const Form = () => {
             repUnit: exercise.repUnit,
             htmlLink: exercise.htmlLink,
             isComplete: false,
+            tempoDown: exercise.tempoDown ? +exercise.tempoDown : null,
+            tempoUp: exercise.tempoUp ? +exercise.tempoUp : null,
+            tempoPause: exercise.tempoPause ? +exercise.tempoPause : null,
             isSS: exercise.isSS || false,
             ss: exercise.ss.map((s) => ({
               name: s.name,
@@ -260,9 +266,7 @@ const Form = () => {
   }
 
   const onLoadTemplate = () => {
-    const block = blocksData?.find(
-      (block) => block.id === selectedTemplate,
-    )
+    const block = blocksData?.find((block) => block.id === selectedTemplate)
     console.log(selectedTemplate)
     console.log('onLoadTemplate', block)
     setBlockId(block?.id || '')
@@ -299,6 +303,9 @@ const Form = () => {
             weightType: exercise.weightType || undefined,
             repUnit: exercise.repUnit || undefined,
             htmlLink: exercise.htmlLink || undefined,
+            tempoDown: exercise.tempoDown || undefined,
+            tempoUp: exercise.tempoUp || undefined,
+            tempoPause: exercise.tempoPause || undefined,
             isSS: exercise.ss.length > 0 ? true : false,
             ss: exercise.ss.map((s) => ({
               name: s.name || '',

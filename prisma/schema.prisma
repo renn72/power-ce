@@ -231,6 +231,10 @@ model Exercise {
   isEstimatedOnerm    Boolean? @default(false)
   estimatedOnermIndex Int?
 
+  tempoDown Int?
+  tempoPause Int?
+  tempoUp Int?
+
   actualSets Int?
   actualReps Int?
   isComplete Boolean @default(false)

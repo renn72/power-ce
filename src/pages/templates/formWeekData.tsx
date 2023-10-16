@@ -100,6 +100,9 @@ const FormWeekData = ({ weekIdx }: { weekIdx: number }) => {
           repUnit: exercise.repUnit,
           htmlLink: exercise.htmlLink,
           isComplete: false,
+          tempoDown: exercise.tempoDown ? +exercise.tempoDown : null,
+          tempoUp: exercise.tempoUp ? +exercise.tempoUp : null,
+          tempoPause: exercise.tempoPause ? +exercise.tempoPause : null,
           isSS: exercise.isSS || false,
           ss: exercise.ss.map((s) => ({
             name: s.name,
@@ -151,6 +154,9 @@ const FormWeekData = ({ weekIdx }: { weekIdx: number }) => {
           repUnit: exercise.repUnit,
           htmlLink: exercise.htmlLink,
           isComplete: false,
+          tempoDown: exercise.tempoDown ? +exercise.tempoDown : null,
+          tempoUp: exercise.tempoUp ? +exercise.tempoUp : null,
+          tempoPause: exercise.tempoPause ? +exercise.tempoPause : null,
           isSS: exercise.isSS || false,
           ss: exercise.ss.map((s) => ({
             name: s.name,

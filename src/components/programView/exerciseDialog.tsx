@@ -341,18 +341,14 @@ const FormSS = ({
         <Input
           type='text'
           defaultValue={''}
-          {...register(
-            `exercise.ss.${ssIdx}.notes`,
-          )}
+          {...register(`exercise.ss.${ssIdx}.notes`)}
           placeholder='notes'
         />
         <Input
           type='text'
           className='w-72'
           defaultValue={''}
-          {...register(
-            `exercise.ss.${ssIdx}.htmlLink`,
-          )}
+          {...register(`exercise.ss.${ssIdx}.htmlLink`)}
           placeholder='link'
         />
       </div>
@@ -384,7 +380,7 @@ const ExerciseDialog = ({
     api.userPrograms.updateExercise.useMutation({
       onSuccess: () => {
         toast.success('Saved')
-        void ctx.blocks.getUserActiveProgramFull.invalidate({ userId: userId})
+        void ctx.blocks.getUserActiveProgramFull.invalidate({ userId: userId })
         void ctx.blocks.get.invalidate()
         closeModal()
       },
@@ -394,7 +390,8 @@ const ExerciseDialog = ({
       },
     })
 
-  const exercise = programData.week.find((week) =>
+  const exercise = programData.week
+    .find((week) =>
       week.day.find((day) =>
         day.exercise.find((exercise) => exercise.id === exerciseId),
       ),
@@ -403,6 +400,8 @@ const ExerciseDialog = ({
       day.exercise.find((exercise) => exercise.id === exerciseId),
     )
     ?.exercise.find((exercise) => exercise.id === exerciseId) as ExerciseWithSet
+
+    console.log('exercise', exercise)
 
   const formMethods = useForm({
     defaultValues: {
@@ -434,19 +433,24 @@ const ExerciseDialog = ({
       repUnit: input.repUnit,
       htmlLink: input.htmlLink,
       isSS: input.isSS,
-      ss: input.isSS ? input.ss.map((s) => ({
-        name: s.name,
-        onerm: s.onerm ? +s.onerm : null,
-        onermTop: s.onermTop ? +s.onermTop : null,
-        weightTop: s.weightTop ? +s.weightTop : null,
-        weightBottom: s.weightBottom ? +s.weightBottom : null,
-        targetRpe: s.targetRpe ? +s.targetRpe : null,
-        reps: s.reps ? +s.reps : null,
-        weightType: s.weightType,
-        repUnit: s.repUnit,
-        notes: s.notes,
-        htmlLink: s.htmlLink,
-      })) : null,
+      tempoDown: input.tempoDown ? +input.tempoDown : null,
+      tempoPause: input.tempoPause ? +input.tempoPause : null,
+      tempoUp: input.tempoUp ? +input.tempoUp : null,
+      ss: input.isSS
+        ? input.ss.map((s) => ({
+            name: s.name,
+            onerm: s.onerm ? +s.onerm : null,
+            onermTop: s.onermTop ? +s.onermTop : null,
+            weightTop: s.weightTop ? +s.weightTop : null,
+            weightBottom: s.weightBottom ? +s.weightBottom : null,
+            targetRpe: s.targetRpe ? +s.targetRpe : null,
+            reps: s.reps ? +s.reps : null,
+            weightType: s.weightType,
+            repUnit: s.repUnit,
+            notes: s.notes,
+            htmlLink: s.htmlLink,
+          }))
+        : null,
     }
     updateExercise({ exercise: data })
   }
@@ -858,7 +862,7 @@ const ExerciseDialog = ({
                       className='pl-12'
                       {...register(`exercise.sets`, { valueAsNumber: true })}
                       placeholder='sets'
-                      defaultValue={1}
+                      defaultValue={exercise.sets}
                     />
                   </div>
                   {ssArray?.map((_, idx) => (
@@ -888,17 +892,46 @@ const ExerciseDialog = ({
                   </div>
                 </div>
               )}
+              <div className='flex flex-col gap-4 lg:flex-row lg:items-center'>
+                <div className='pr-4 text-lg'>Tempo</div>
+                <div className='flex flex-row justify-between lg:items-center lg:gap-4'>
+                  <Input
+                    type='number'
+                    {...register(`exercise.tempoDown`, { valueAsNumber: true })}
+                    placeholder='Down Count'
+                    className='w-24 px-1 lg:w-32'
+                    defaultValue={exercise.tempoDown || undefined}
+                  />
+                  <Input
+                    type='number'
+                    {...register(`exercise.tempoPause`, {
+                      valueAsNumber: true,
+                    })}
+                    placeholder='Pause'
+                    className='w-24 lg:w-32'
+                    defaultValue={exercise.tempoPause || undefined}
+                  />
+                  <Input
+                    type='number'
+                    {...register(`exercise.tempoUp`, { valueAsNumber: true })}
+                    placeholder='Up Count'
+                    className='w-24 lg:w-32'
+                    defaultValue={exercise.tempoUp || undefined}
+                  />
+                </div>
+              </div>
               <div className='flex flex-col items-center justify-between gap-4 md:flex-row md:gap-10'>
                 <Input
                   type='text'
                   {...register(`exercise.notes`)}
                   placeholder='notes'
+                  defaultValue={exercise.notes || ''}
                 />
 
                 <Controller
                   control={control}
                   name={`exercise.estimatedOnermIndex`}
-                  defaultValue={null}
+                  defaultValue={exercise.estimatedOnermIndex}
                   render={({ field: { onChange, value } }) => (
                     <div className='flex items-center gap-2'>
                       <Listbox
@@ -982,6 +1015,7 @@ const ExerciseDialog = ({
                 className='w-72'
                 {...register(`exercise.htmlLink`)}
                 placeholder='link'
+                defaultValue={exercise.htmlLink || ''}
               />
             </div>
             <Button type='submit'>Update</Button>

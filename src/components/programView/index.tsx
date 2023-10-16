@@ -12,7 +12,15 @@ import { Dialog, Transition } from '@headlessui/react'
 import { LoadingPage } from '~/components/loading'
 
 import ExerciseDialog from './exerciseDialog'
-import { GitCommit, PlaySquare, Zap } from 'lucide-react'
+import {
+  ArrowDownToLine,
+  ArrowUpToLine,
+  GitCommit,
+  PauseCircleIcon,
+  PauseOctagonIcon,
+  PlaySquare,
+  Zap,
+} from 'lucide-react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
 const ExerciseView = ({
@@ -186,7 +194,7 @@ const ExerciseView = ({
             </div>
             {isSS ? (
               <div>
-                <div className='relative flex flex-col overflow-hidden items-baseline gap-1 text-sm'>
+                <div className='relative flex flex-col items-baseline gap-1 overflow-hidden text-sm'>
                   <h3>{exercise.sets} X</h3>
                   <div className='flex flex-col pl-3 '>
                     {exercise.ss.map((s) => (
@@ -211,7 +219,11 @@ const ExerciseView = ({
                         <h3>{s.reps}</h3>
                         <h3>-</h3>
                         <h3>{s.name}</h3>
-                        {s.notes && <div className='overflow-hidden whitespace-nowrap w-fit'>{s.notes}</div>}
+                        {s.notes && (
+                          <div className='w-fit overflow-hidden whitespace-nowrap'>
+                            {s.notes}
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -279,6 +291,31 @@ const ExerciseView = ({
               </div>
             )}
             <div>
+              {exercise?.tempoDown ||
+              exercise?.tempoUp ||
+              exercise?.tempoPause ? (
+                <div className='flex gap-4 text-sm'>
+                  <div>Tempo:</div>
+                  {exercise?.tempoDown && (
+                    <div className='flex items-center gap-0 tracking-tighter'>
+                      <h4>{exercise.tempoDown}</h4>
+                      <ArrowDownToLine size={16} />
+                    </div>
+                  )}
+                  {exercise?.tempoPause && (
+                    <div className='flex items-center gap-0 tracking-tighter'>
+                      <h4>{exercise.tempoPause}</h4>
+                      <PauseOctagonIcon size={16} />
+                    </div>
+                  )}
+                  {exercise?.tempoUp && (
+                    <div className='flex items-center gap-0 tracking-tighter'>
+                      <h4>{exercise.tempoUp}</h4>
+                      <ArrowUpToLine size={16} />
+                    </div>
+                  )}
+                </div>
+              ) : null}
               {exercise.notes && (
                 <div className='text-sm text-gray-400'>{exercise.notes}</div>
               )}

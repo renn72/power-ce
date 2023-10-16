@@ -56,6 +56,9 @@ export type Exercise = {
   htmlLink: string | null,
   field1: string | null,
   field2: string | null,
+  tempoDown: number | null,
+  tempoPause: number | null,
+  tempoUp: number | null,
 }
 
 export type Day = {
@@ -118,6 +121,9 @@ export type ExerciseData = {
   htmlLink: string | null,
   isSS: boolean,
   ss: SS[],
+  tempoDown: number | null,
+  tempoPause: number | null,
+  tempoUp: number | null,
 }
 
 export type DayData = {
