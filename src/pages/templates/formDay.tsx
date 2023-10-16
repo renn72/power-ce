@@ -6,6 +6,7 @@ import {
   CheckIcon,
   ChevronUpDownIcon,
   PlusCircleIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline'
 
 import { Button } from '@/components/ui/button'
@@ -100,7 +101,7 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
           ref={parent}
           className='mb-12 flex flex-col gap-6'
         >
-          <div className=''>
+          <div className={`flex gap-2 items-center ${isRest ? 'hidden' : ''}`}>
             <Controller
               control={control}
               name={`week.${weekIdx}.day.${dayIdx}.warmupTemplateId`}
@@ -171,6 +172,15 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
                   </div>
                 </Listbox>
               )}
+            />
+            <XMarkIcon
+              className='h-6 w-6 shrink-0 cursor-pointer text-gray-400 hover:text-white'
+              onClick={() =>
+                formMethods.setValue(
+                  `week.${weekIdx}.day.${dayIdx}.warmupTemplateId`,
+                  ''
+                )
+              }
             />
           </div>
           {exerciseField.fields.map((item, index) => {
