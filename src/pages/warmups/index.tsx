@@ -85,7 +85,7 @@ const Warmups = () => {
                   className='w-68'
                 />
                 <Input
-                  placeholder='Warmup'
+                  placeholder='Notes'
                   defaultValue={''}
                   {...register(`warmups.${index}.notes`)}
                   className='w-auto min-w-[200px] max-w-[90vw]'
