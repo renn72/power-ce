@@ -13,7 +13,6 @@ import {
   XCircleIcon,
   CheckCircleIcon,
   XMarkIcon,
-  PlusCircleIcon,
 } from '@heroicons/react/24/outline'
 
 import { NumericFormat } from 'react-number-format'
@@ -482,7 +481,7 @@ const FormExercise = ({
                   render={({ field: { onChange, value } }) => (
                     <LiftPicker
                       onChange={onChange}
-                      value={value}
+                      value={value as string}
                     />
                   )}
                 />

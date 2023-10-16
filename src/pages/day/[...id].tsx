@@ -1,33 +1,20 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
 import { type Set } from '@prisma/client'
 import { Prisma } from '@prisma/client'
-import {
-  type Exercise as StoreExercise,
-  type Set as SetStore,
-} from '~/store/types'
+import { type Exercise as StoreExercise } from '~/store/types'
 import { api } from '~/utils/api'
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { Transition, RadioGroup, Disclosure, Dialog } from '@headlessui/react'
-import {
-  ChevronUpIcon,
-  StarIcon,
-  ChevronDownIcon,
-} from '@heroicons/react/20/solid'
-import {
-  MinusIcon,
-  PlusIcon,
-  StarIcon as StarIconHollow,
-} from '@heroicons/react/24/outline'
+import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
+import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { rpe as rpeTable } from '~/store/defaultValues'
 
 import { useUser } from '@clerk/nextjs'
 
-import getWeight from '~/utils/getWeight'
-
 import { NumericFormat } from 'react-number-format'
 import { Input } from '@/components/ui/input'
-import { CheckCircleIcon, PlaySquare, XIcon } from 'lucide-react'
+import { PlaySquare, XIcon } from 'lucide-react'
 
 import { checkWeight, checkPercentWeight } from '~/utils/program-card/utils'
 import { useRouter } from 'next/router'
@@ -973,10 +960,15 @@ const Day = () => {
     id: programId || '',
   })
 
+  const { data: allWarmups, isLoading: allWarmupsLoading } =
+    api.warmups.getAll.useQuery()
+
   const day = program?.week
     .map((week) => week.day)
     .flat()
     .find((day) => day.id === dayId)
+
+  const warmup = allWarmups?.find((w) => w.id === day?.warmupTemplateId)
 
   const { mutate: updateDayEnergy } = api.programs.updateDayEnergy.useMutation({
     onSuccess: () => {
@@ -1066,7 +1058,7 @@ const Day = () => {
     })
   }
 
-  if (programLoading) return <div>Loading...</div>
+  if (programLoading || allWarmupsLoading) return <div>Loading...</div>
   if (!day || !program) return <div>Day not found</div>
 
   return (
@@ -1146,6 +1138,29 @@ const Day = () => {
               ))}
             </div>
           </RadioGroup>
+          {day.warmupTemplateId == '' && day.warmupTemplateId == null ? null : (
+            <div className='p-1'>
+              <h2 className='ml-1 capitalize text-lg font-semibold'>{warmup?.name}</h2>
+              <div className='mx-4 flex flex-col'>
+                {warmup?.warmups.map((w) => (
+                  <div
+                    key={w.id}
+                    className='flex items-center justify-between gap-2'
+                  >
+                    <div className='capitalize'>{w.name}</div>
+                    <div className='text-sm font-light text-gray-400'>{w?.notes}</div>
+                    <div className='w-8'>
+                      {w.link && (
+                        <a>
+                          <PlaySquare className='h-6 w-6 text-yellow-500' />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           <div className='flex w-full flex-col gap-6 divide-y divide-dashed divide-gray-600 pb-16 md:p-2'>
             {day.exercise.map((exercise, idx) => (
               <div
