@@ -337,6 +337,24 @@ const FormSS = ({
             </div>
           )}
         </div>
+
+        <Input
+          type='text'
+          defaultValue={''}
+          {...register(
+            `exercise.ss.${ssIdx}.notes`,
+          )}
+          placeholder='notes'
+        />
+        <Input
+          type='text'
+          className='w-72'
+          defaultValue={''}
+          {...register(
+            `exercise.ss.${ssIdx}.htmlLink`,
+          )}
+          placeholder='link'
+        />
       </div>
     </div>
   )
@@ -426,6 +444,8 @@ const ExerciseDialog = ({
         reps: s.reps ? +s.reps : null,
         weightType: s.weightType,
         repUnit: s.repUnit,
+        notes: s.notes,
+        htmlLink: s.htmlLink,
       })) : null,
     }
     updateExercise({ exercise: data })
