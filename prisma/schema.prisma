@@ -535,8 +535,9 @@ model Warmup {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  warmup String
+  notes String
   name String
+  link String
 
   warmupTemplateId String
   warmupTemplate WarmupTemplate @relation(fields: [warmupTemplateId], references: [id], onDelete: Cascade)
@@ -552,12 +553,13 @@ model Warmup {
 model WarmupTemplate {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
+  creatorId String
 
   name String
 
   isDeleted Boolean @default(false)
 
-  warmup Warmup[]
+  warmups Warmup[]
 
   flield1 String?
   flield2 String?

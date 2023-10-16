@@ -139,3 +139,14 @@ export type BlockData = {
   isProgram: boolean,
   week: WeekData[],
 }
+
+export type WarmupTemplate = {
+  name: string,
+  warmups: Warmup[],
+}
+
+export type Warmup = {
+  name: string,
+  notes: string,
+  link: string,
+}

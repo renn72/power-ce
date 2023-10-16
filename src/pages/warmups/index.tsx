@@ -8,13 +8,17 @@ import { api } from '~/utils/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { DotIcon, UndoDotIcon } from 'lucide-react'
+import { DotIcon } from 'lucide-react'
+
+import { type WarmupTemplate } from '~/store/types'
 
 export const defaultValues = {
   name: '',
   warmups: [
     {
-      warmup: '',
+      notes: '',
+      name: '',
+      link: '',
     },
   ],
 }
@@ -22,13 +26,11 @@ export const defaultValues = {
 const Warmups = () => {
   const formMethods = useForm({ defaultValues })
   const {
-    getValues,
     watch,
     register,
     reset,
     control,
     handleSubmit,
-    setError,
     formState: { errors },
   } = formMethods
 
@@ -37,8 +39,18 @@ const Warmups = () => {
     name: `warmups`,
   })
 
-  const onSubmit = (data: any) => {
+  const { mutate: createWarmup } = api.warmups.create.useMutation({
+    onSuccess: () => {
+      toast.success('Warmup created')
+      reset(defaultValues)
+    },
+  })
+
+  const { data: allWarmups } = api.warmups.getAll.useQuery()
+
+  const onSubmit = (data: WarmupTemplate) => {
     console.log(data)
+    createWarmup(data)
   }
   const [parent] = useAutoAnimate(/* optional config */)
   return (
@@ -54,7 +66,7 @@ const Warmups = () => {
         >
           <Input
             className='w-60'
-            placeholder='Name'
+            placeholder='Title'
             defaultValue={''}
             {...register('name', { required: 'Name is required' })}
           />
@@ -64,22 +76,42 @@ const Warmups = () => {
               className='flex items-center lg:gap-6'
             >
               <DotIcon className='h-6 w-6 text-gray-400' />
-              <Input
-                placeholder='Warmup'
-                defaultValue={''}
-                {...register(`warmups.${index}.warmup`)}
-                className='min-w-[200px] max-w-[90vw] font-mono'
-                size={watch(`warmups.${index}.warmup`).length / 1}
-              />
+              <div className='flex flex-col gap-1'>
+                <Input
+                  placeholder='Name'
+                  defaultValue={''}
+                  {...register(`warmups.${index}.name`)}
+                  className='w-68'
+                />
+                <Input
+                  placeholder='Warmup'
+                  defaultValue={''}
+                  {...register(`warmups.${index}.notes`)}
+                  className='w-auto min-w-[200px] max-w-[90vw]'
+                  size={
+                    watch(`warmups.${index}.notes`).length > 30
+                      ? watch(`warmups.${index}.notes`).length / 1.7
+                      : 17
+                  }
+                />
+                <Input
+                  placeholder='Link'
+                  defaultValue={''}
+                  {...register(`warmups.${index}.link`)}
+                  className='w-68'
+                />
+              </div>
               <XMarkIcon
-                className='h-6 w-6 cursor-pointer text-gray-400 hover:text-white'
+                className='h-6 w-6 shrink-0 cursor-pointer text-gray-400 hover:text-white'
                 onClick={() => warmupsField.remove(index)}
               />
             </div>
           ))}
           <PlusIcon
             className='h-6 w-full cursor-pointer text-center text-gray-400 hover:text-white'
-            onClick={() => warmupsField.append({ warmup: '' })}
+            onClick={() =>
+              warmupsField.append({ name: '', notes: '', link: '' })
+            }
           />
         </div>
         <Button
@@ -89,6 +121,35 @@ const Warmups = () => {
           Save
         </Button>
       </form>
+      <div className='mt-8'>
+        {allWarmups?.map((warmup) => (
+          <div
+            key={warmup.id}
+            className='flex flex-col gap-1'
+          >
+            <h1 className='capitalize'>{warmup.name}</h1>
+            <div className='ml-2 flex flex-col gap-0'>
+              {warmup.warmups.map((warmup) => (
+                <div
+                  key={warmup.id}
+                  className='flex gap-2'
+                >
+                  <h2 className='capitalize'>{warmup.name}</h2>
+                  <p>{warmup.notes}</p>
+                  <a
+                    href={warmup.link}
+                    target='_blank'
+                    rel='noreferrer'
+                    className='text-blue-500'
+                  >
+                    {warmup.link}
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
