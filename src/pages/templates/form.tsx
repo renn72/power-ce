@@ -71,6 +71,7 @@ const Form = () => {
       console.log('success')
       toast.success('Saved')
       void ctx.blocks.getAll.invalidate()
+      void ctx.blocks.getAllBlockTitles.invalidate()
     },
     onError: (e) => {
       console.log('error', e)
@@ -102,11 +103,13 @@ const Form = () => {
       id: '',
       isProgram: false,
       week: data.week.map((week) => ({
+        id: '',
         name: week.name || '',
         isTemplate: false,
         day: week.day.map((day) => ({
           isRestDay: day.isRestDay,
           isComplete: false,
+          warmupTemplateId: day.warmupTemplateId || '',
           exercise: day.exercise.map((exercise) => ({
             name: exercise.name,
             lift: exercise.lift,
@@ -159,6 +162,7 @@ const Form = () => {
         day: week.day.map((day) => ({
           isRestDay: day.isRestDay,
           isComplete: false,
+          warmupTemplateId: day.warmupTemplateId || '',
           exercise: day.exercise.map((exercise) => ({
             name: exercise.name,
             lift: exercise.lift,
@@ -252,9 +256,10 @@ const Form = () => {
   }
 
   const onLoadTemplate = () => {
-    const block = blocksData?.filter(
+    const block = blocksData?.find(
       (block) => block.id === selectedTemplate,
-    )[0]
+    )
+    console.log(selectedTemplate)
     console.log('onLoadTemplate', block)
     setBlockId(block?.id || '')
 
@@ -265,6 +270,7 @@ const Form = () => {
         isTemplate: false,
         day: week.day.map((day) => ({
           isRestDay: day.isRestDay,
+          warmupTemplateId: day.warmupTemplateId || '',
           exercise: day.exercise.map((exercise) => ({
             name: exercise.name || '',
             lift: exercise.lift || '',

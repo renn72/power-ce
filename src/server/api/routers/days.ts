@@ -29,5 +29,17 @@ export const daysRouter = createTRPCRouter({
       })
       return day
     }),
-
+  updateWarmupTemplateId: privateProcedure
+    .input(z.object({ id: z.string(), warmupTemplateId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const day = await ctx.prisma.day.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          warmupTemplateId: input.warmupTemplateId,
+        },
+      })
+      return day
+    }),
 })

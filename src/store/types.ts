@@ -47,6 +47,7 @@ export type Exercise = {
   targetRpe: string | number | null,
   notes: string | null,
   set: Set[],
+  isSS: boolean,
   ss: SS[],
   estimatedOnermIndex: number | null,
   weightType: string | null,
@@ -115,7 +116,7 @@ export type ExerciseData = {
   isComplete: boolean,
   htmlLink: string | null,
   isSS: boolean,
-  ss: SuperData[],
+  ss: SS[],
 }
 
 export type DayData = {
@@ -123,7 +124,6 @@ export type DayData = {
   exercise: ExerciseData[],
   isComplete: boolean,
   warmupTemplateId: string | null,
-  energyRating: string | null,
 };
 
 export type WeekData = {

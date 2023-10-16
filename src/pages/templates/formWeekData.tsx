@@ -82,6 +82,7 @@ const FormWeekData = ({ weekIdx }: { weekIdx: number }) => {
       day: week.day.map((day) => ({
         isRestDay: day.isRestDay,
         isComplete: false,
+        warmupTemplateId: day.warmupTemplateId,
         exercise: day.exercise.map((exercise) => ({
           name: exercise.name ? exercise.name : '',
           lift: exercise.lift ? exercise.lift : '',
@@ -130,6 +131,7 @@ const FormWeekData = ({ weekIdx }: { weekIdx: number }) => {
         id: loadedTemplate,
         isRestDay: day.isRestDay,
         isComplete: false,
+        warmupTemplateId: day.warmupTemplateId,
         exercise: day.exercise.map((exercise) => ({
           name: exercise.name ? exercise.name : '',
           lift: exercise.lift ? exercise.lift : '',

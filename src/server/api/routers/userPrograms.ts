@@ -108,6 +108,7 @@ export const userProgramsRouter = createTRPCRouter({
               day: {
                 create: week.day.map((day) => ({
                   isRestDay: day.isRestDay,
+                  warmupTemplateId: day.warmupTemplateId,
                   exercise: {
                     create: day.exercise.map((exercise) => ({
                       name: exercise.name,

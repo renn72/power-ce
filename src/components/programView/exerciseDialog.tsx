@@ -346,12 +346,10 @@ const ExerciseDialog = ({
   exerciseId,
   closeModal,
   userId,
-  programId,
 }: {
   exerciseId: string
   closeModal: () => void
   userId: string
-  programId: string
 }) => {
   const ctx = api.useContext()
   const { data: programData } = api.blocks.getUserActiveProgramFull.useQuery({

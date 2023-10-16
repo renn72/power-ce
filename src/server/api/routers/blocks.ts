@@ -48,6 +48,7 @@ const exerciseSchema = z.object({
 })
 const daySchema = z.object({
   isRestDay: z.boolean(),
+  warmupTemplateId: z.string(),
   exercise: z.array(exerciseSchema),
 })
 const weekSchema = z.object({
@@ -315,6 +316,7 @@ export const blocksRouter = createTRPCRouter({
               day: {
                 create: week.day.map((day) => ({
                   isRestDay: day.isRestDay,
+                  warmupTemplateId: day.warmupTemplateId,
                   exercise: {
                     create: day.exercise.map((exercise) => ({
                       name: exercise.name,
@@ -381,6 +383,7 @@ export const blocksRouter = createTRPCRouter({
           day: {
             create: input.day.map((day) => ({
               isRestDay: day.isRestDay,
+              warmupTemplateId: day.warmupTemplateId,
               exercise: {
                 create: day.exercise.map((exercise) => ({
                   name: exercise.name,
@@ -437,6 +440,7 @@ export const blocksRouter = createTRPCRouter({
             day: {
               create: input.day.map((day) => ({
                 isRestDay: day.isRestDay,
+                warmupTemplateId: day.warmupTemplateId,
                 exercise: {
                   create: day.exercise.map((exercise) => ({
                     name: exercise.name,
@@ -508,6 +512,7 @@ export const blocksRouter = createTRPCRouter({
                 day: {
                   create: week.day.map((day) => ({
                     isRestDay: day.isRestDay,
+                    warmupTemplateId: day.warmupTemplateId,
                     exercise: {
                       create: day.exercise.map((exercise) => ({
                         name: exercise.name,
