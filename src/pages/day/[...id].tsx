@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input'
 import {
   ArrowDownToLine,
   ArrowUpToLine,
+  HomeIcon,
   PauseOctagonIcon,
   PlaySquare,
   XIcon,
@@ -1134,15 +1135,20 @@ const Day = () => {
               Completed
             </div>
           ) : (
-            <div className='flex items-center justify-center gap-2'>
+            <div className='flex items-center justify-between mx-12'>
               <Button
                 onClick={() => {
                   updateDayComplete({ id: day.id, isComplete: true })
                 }}
-                className='w-40'
+                className='w-32'
               >
                 Complete
               </Button>
+                  <HomeIcon className='h-6 w-6 text-gray-200'
+                    onClick={() => {
+                      void router.push(`/`)
+                    }}
+                  />
             </div>
           )}
           <RadioGroup
