@@ -54,7 +54,7 @@ const Warmups = () => {
   }
   const [parent] = useAutoAnimate(/* optional config */)
   return (
-    <div className='mx-4 flex flex-col gap-4'>
+    <div className='mx-1 lg:mx-6 flex flex-col gap-4 mb-20'>
       <h1>Warmups</h1>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -62,7 +62,7 @@ const Warmups = () => {
       >
         <div
           ref={parent}
-          className='flex w-fit flex-col gap-1 sm:gap-8'
+          className='flex lg:w-fit flex-col gap-1 sm:gap-8 mb-4'
         >
           <Input
             className='w-60'
@@ -70,10 +70,11 @@ const Warmups = () => {
             defaultValue={''}
             {...register('name', { required: 'Name is required' })}
           />
+          <div className='flex flex-col gap-8  mb-6'>
           {warmupsField.fields.map((item, index) => (
             <div
               key={item.id}
-              className='flex items-center lg:gap-6'
+              className='flex items-center justify-between w-full lg:gap-6'
             >
               <DotIcon className='h-6 w-6 text-gray-400' />
               <div className='flex flex-col gap-1'>
@@ -107,6 +108,8 @@ const Warmups = () => {
               />
             </div>
           ))}
+
+          </div>
           <PlusIcon
             className='h-6 w-full cursor-pointer text-center text-gray-400 hover:text-white'
             onClick={() =>
@@ -121,26 +124,26 @@ const Warmups = () => {
           Save
         </Button>
       </form>
-      <div className='mt-8'>
+      <div className='flex flex-col gap-8 mt-8 '>
         {allWarmups?.map((warmup) => (
           <div
             key={warmup.id}
             className='flex flex-col gap-1'
           >
-            <h1 className='capitalize'>{warmup.name}</h1>
-            <div className='ml-2 flex flex-col gap-0'>
+            <h1 className='capitalize text-lg font-semibold'>{warmup.name}</h1>
+            <div className='ml-2 flex flex-col gap-2 '>
               {warmup.warmups.map((warmup) => (
                 <div
                   key={warmup.id}
-                  className='flex gap-2'
+                  className='flex flex-col gap-0'
                 >
-                  <h2 className='capitalize'>{warmup.name}</h2>
-                  <p>{warmup.notes}</p>
+                  <h2 className='capitalize font-semibold'>{warmup.name}</h2>
+                  <p className='text-sm font-light text-gray-400'>{warmup.notes}</p>
                   <a
                     href={warmup.link}
                     target='_blank'
                     rel='noreferrer'
-                    className='text-blue-500'
+                    className='text-sm text-gray-400'
                   >
                     {warmup.link}
                   </a>
