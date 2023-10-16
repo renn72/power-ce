@@ -6,7 +6,7 @@ import LiftPicker from './liftPicker'
 import { Input } from '@/components/ui/input'
 
 import { Listbox, Transition, RadioGroup } from '@headlessui/react'
-
+import { type SS } from '~/store/types'
 import {
   ChevronUpDownIcon,
   CheckIcon,
@@ -351,6 +351,23 @@ const FormSS = ({
             </div>
           )}
         </div>
+        <Input
+          type='text'
+          defaultValue={''}
+          {...register(
+            `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.ss.${ssIdx}.notes`,
+          )}
+          placeholder='notes'
+        />
+        <Input
+          type='text'
+          className='w-72'
+          defaultValue={''}
+          {...register(
+            `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.ss.${ssIdx}.htmlLink`,
+          )}
+          placeholder='link'
+        />
       </div>
     </div>
   )
@@ -382,7 +399,7 @@ const FormExercise = ({
 
   const ssArray = getValues(
     `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.ss`,
-  )
+  ) as SS[]
 
   const onRemoveSS = (index: number) => {
     ssField.remove(index)
@@ -400,6 +417,8 @@ const FormExercise = ({
       targetRpe: '',
       weightType: '',
       repUnit: '',
+      notes: '',
+      htmlLink: '',
     })
   }
 
@@ -425,8 +444,6 @@ const FormExercise = ({
   const isSS = watch(
     `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.isSS`,
   ) as boolean
-
-    
 
   console.log('isSS', isSS)
 

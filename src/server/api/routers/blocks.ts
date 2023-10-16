@@ -23,6 +23,7 @@ const ssSchema = z.object({
   weightBottom: z.number().min(0).max(99999).optional().nullable(),
   targetRpe: z.number().min(0).max(100).optional().nullable(),
   notes: z.string().min(0).max(280).optional().nullable(),
+  htmlLink: z.string().min(0).max(280).optional().nullable(),
   weightType: z.string().min(0).max(280).optional().nullable(),
   repUnit: z.string().min(0).max(55).optional().nullable(),
 })
@@ -346,6 +347,8 @@ export const blocksRouter = createTRPCRouter({
                           weightBottom: s.weightBottom,
                           targetRpe: s.targetRpe,
                           weightType: s.weightType,
+                          notes: s.notes,
+                          htmlLink: s.htmlLink,
                         })),
                       },
                     })),
@@ -414,6 +417,8 @@ export const blocksRouter = createTRPCRouter({
                           weightBottom: s.weightBottom,
                           targetRpe: s.targetRpe,
                           weightType: s.weightType,
+                          notes: s.notes,
+                          htmlLink: s.htmlLink,
                         })),
                       }
                     : undefined,
@@ -471,6 +476,8 @@ export const blocksRouter = createTRPCRouter({
                             weightBottom: s.weightBottom,
                             targetRpe: s.targetRpe,
                             weightType: s.weightType,
+                            notes: s.notes,
+                            htmlLink: s.htmlLink,
                           })),
                         }
                       : undefined,
@@ -543,6 +550,8 @@ export const blocksRouter = createTRPCRouter({
                                 weightBottom: s.weightBottom,
                                 targetRpe: s.targetRpe,
                                 weightType: s.weightType,
+                                notes: s.notes,
+                                htmlLink: s.htmlLink,
                               })),
                             }
                           : undefined,

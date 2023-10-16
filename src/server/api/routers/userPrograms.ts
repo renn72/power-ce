@@ -16,6 +16,7 @@ const ssSchema = z.object({
   weightBottom: z.number().min(0).max(99999).optional().nullable(),
   targetRpe: z.number().min(0).max(100).optional().nullable(),
   notes: z.string().min(0).max(280).optional().nullable(),
+  htmlLink: z.string().min(0).max(280).optional().nullable(),
   weightType: z.string().min(0).max(280).optional().nullable(),
   repUnit: z.string().min(0).max(55).optional().nullable(),
 })
@@ -141,6 +142,8 @@ export const userProgramsRouter = createTRPCRouter({
                           targetRpe: s.targetRpe,
                           weightType: s.weightType,
                           userId: input.userId,
+                          notes: s.notes,
+                          htmlLink: s.htmlLink,
                         })),
                       },
                     })),
@@ -247,19 +250,9 @@ export const userProgramsRouter = createTRPCRouter({
               targetRpe: s.targetRpe,
               weightType: s.weightType,
               userId: userId,
+              notes: s.notes,
+              htmlLink: s.htmlLink,
             })),
-          },
-          set: {
-            create: Array.from(
-              { length: exercise.sets ? +exercise.sets : 0 },
-              (_) => ({
-                rep: exercise.reps ? +exercise.reps : 1,
-                isComplete: false,
-                userId: userId,
-                name: exercise.name,
-                lift: exercise.lift,
-              }),
-            ),
           },
         },
       })

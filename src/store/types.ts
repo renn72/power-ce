@@ -97,6 +97,7 @@ export type SuperData = {
   isComplete: boolean,
   htmlLink: string | null,
   isSS: boolean,
+  notes: string | null,
 }
 
 export type ExerciseData = {
