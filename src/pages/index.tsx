@@ -17,105 +17,6 @@ import { getDate } from '~/utils/utils'
 import { Cog6ToothIcon } from '@heroicons/react/20/solid'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
-import {
-  useForm,
-  FormProvider,
-  useFieldArray,
-  Controller,
-} from 'react-hook-form'
-import { Calendar } from '@/components/ui/calendar'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import { Calendar as CalendarIcon } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { format, add } from 'date-fns'
-
-const Settings = () => {
-  const { user } = useUser()
-
-  const formMethods = useForm()
-  const {
-    register,
-    reset,
-    control,
-    handleSubmit,
-    setError,
-    formState: { errors },
-  } = formMethods
-
-  const onSubmit = (data: any) => {
-    console.log(data)
-  }
-  const onError = (data: any) => {
-    console.log(data)
-  }
-
-  return (
-    <>
-      <div className='flex flex-col gap-4'>
-        <div className='flex flex-col gap-1'>
-          <FormProvider {...formMethods}>
-            <form
-              onSubmit={handleSubmit(onSubmit, onError)}
-              className='flex flex-col gap-4'
-            >
-              <Input
-                placeholder='Height'
-                {...register('height')}
-                defaultValue={''}
-              />
-              <Input
-                placeholder='Weight'
-                {...register('weight')}
-                defaultValue={''}
-              />
-              <Controller
-                control={control}
-                name='dob'
-                defaultValue={''}
-                render={({ field: { onChange, value } }) => (
-                  <div className='flex items-end justify-between gap-2 md:justify-normal md:gap-6'>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          className={cn(
-                            'col-span-2 w-[190px] justify-start rounded-none border-0 border-b border-gray-600 px-1 text-left text-gray-200 hover:border-gray-200 md:w-[230px] md:px-2 ',
-                            !value && 'text-gray-600',
-                          )}
-                        >
-                          <CalendarIcon className='mr-2 h-4 w-4' />
-                          {value ? (
-                            format(value, 'PPP')
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className='z-10 w-auto bg-black py-3 text-gray-200 md:px-3'>
-                        <Calendar
-                          mode='single'
-                          selected={value}
-                          onSelect={(e) => {
-                            onChange(e)
-                          }}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                )}
-              />
-            </form>
-          </FormProvider>
-        </div>
-      </div>
-    </>
-  )
-}
-
 const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
   api.users.getAllUsers.useQuery()
@@ -178,6 +79,7 @@ const Home: NextPage = () => {
   // const userId = 'user_2VxyYAeq0glZAPQM2OpTQRbXKxZ' //byung
   // const userId = 'user_2WeOskMzYGguohYuGjW2LCuaYOh' //leroy
   // const userId = 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv' //mitch
+  // const userId = 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a' //me
 
   // const { data: user } = api.users.get.useQuery({ userId: userId })
 
@@ -261,13 +163,13 @@ const Home: NextPage = () => {
         <div className='flex  flex-col gap-4 lg:items-start '>
           <div className='flex w-full items-center justify-between'>
             <h1 className='text-xl'>Profile</h1>
-            <Cog6ToothIcon
-              onClick={openModal}
-              className='h-6 w-6 cursor-pointer text-yellow-500 hidden'
-            />
+            {userId == 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a' && (
+              <Link href='/settings'>
+                <Cog6ToothIcon className='h-6 w-6 cursor-pointer text-yellow-500' />
+              </Link>
+            )}
           </div>
-          <div className='flex flex-col gap-0 text-sm text-gray-400'>
-          </div>
+          <div className='flex flex-col gap-0 text-sm text-gray-400'></div>
           <div className='flex gap-1'>
             <div>{user.firstName}</div>
             <div>{user.lastName}</div>
@@ -367,54 +269,6 @@ const Home: NextPage = () => {
             Set Open Powerlifting Data
           </Button>
         </div>
-        <Transition
-          appear
-          show={isOpen}
-          as={Fragment}
-        >
-          <Dialog
-            as='div'
-            className='relative z-10 text-gray-200'
-            onClose={closeModal}
-          >
-            <Transition.Child
-              as={Fragment}
-              enter='ease-out duration-300'
-              enterFrom='opacity-0'
-              enterTo='opacity-100'
-              leave='ease-in duration-200'
-              leaveFrom='opacity-100'
-              leaveTo='opacity-0'
-            >
-              <div className='fixed inset-0 bg-black bg-opacity-75' />
-            </Transition.Child>
-
-            <div className='fixed inset-0 overflow-y-auto'>
-              <div className='flex min-h-full items-center justify-center p-4 text-center'>
-                <Transition.Child
-                  as={Fragment}
-                  enter='ease-out duration-300'
-                  enterFrom='opacity-0 scale-95'
-                  enterTo='opacity-100 scale-100'
-                  leave='ease-in duration-200'
-                  leaveFrom='opacity-100 scale-100'
-                  leaveTo='opacity-0 scale-95'
-                >
-                  <Dialog.Panel className='w-full max-w-7xl transform overflow-visible rounded-2xl border border-gray-800 bg-black p-6 text-left align-middle shadow-xl transition-all'>
-                    <Dialog.Title className='flex items-center justify-between text-lg font-medium leading-6 text-gray-200'>
-                      <div>Settings</div>
-                      <XMarkIcon
-                        onClick={closeModal}
-                        className='h-6 w-6'
-                      />
-                    </Dialog.Title>
-                    <Settings />
-                  </Dialog.Panel>
-                </Transition.Child>
-              </div>
-            </div>
-          </Dialog>
-        </Transition>
       </main>
     </>
   )
