@@ -4,7 +4,7 @@ import { createTRPCRouter, privateProcedure } from '~/server/api/trpc'
 
 const settingsSchema = z.object({
   userId: z.string(),
-  DOB: z.string(),
+  DOB: z.date(),
   height: z.number(),
   weight: z.number(),
   targetWeight: z.number(),

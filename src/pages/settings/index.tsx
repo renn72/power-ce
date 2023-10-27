@@ -35,17 +35,17 @@ import { Label } from '@/components/ui/label'
 import { LoadingPage } from '~/components/loading'
 
 type SettingsForm = {
-  height: number
-  DOB: string
-  weight: number
-  targetWeight: number
-  weightGoal: string
-  activityLevelTraining: string
-  activityLevelRest: string
-  goal: string
-  benchOneRepMax: number
-  deadliftOneRepMax: number
-  squatOneRepMax: number
+  height: number | null
+  DOB: string | null
+  weight: number | null
+  targetWeight: number | null
+  weightGoal: string | null
+  activityLevelTraining: string | null
+  activityLevelRest: string | null
+  goal: string | null
+  benchOneRepMax: number | null
+  deadliftOneRepMax: number | null
+  squatOneRepMax: number | null
 }
 
 const ModalWrapper = ({
@@ -130,18 +130,26 @@ const Settings = () => {
   const onSubmit = (data: SettingsForm) => {
     console.log(data)
     if (!user) return
+    if (!userSettings) {
+      console.log('no user settings')
+      return
+    }
+    return
     updateSettings({
       userId: user.id,
-      DOB: data.DOB || '',
-      height: data.height,
-      weight: data.weight,
-      targetWeight: data.targetWeight,
-      weightGoal: data.weightGoal,
-      activityLevelTraining: data.activityLevelTraining,
-      activityLevelRest: data.activityLevelRest,
-      benchOneRepMax: data.benchOneRepMax,
-      deadliftOneRepMax: data.deadliftOneRepMax,
-      squatOneRepMax: data.squatOneRepMax,
+      DOB: data.DOB || userSettings?.DOB || null,
+      height: data.height || userSettings?.height,
+      weight: data.weight || userSettings?.weight,
+      targetWeight: data.targetWeight || userSettings?.targetWeight,
+      weightGoal: data.weightGoal || userSettings?.weightGoal,
+      activityLevelTraining:
+        data.activityLevelTraining || userSettings?.activityLevelTraining,
+      activityLevelRest:
+        data.activityLevelRest || userSettings?.activityLevelRest,
+      benchOneRepMax: data.benchOneRepMax || userSettings?.benchOneRepMax,
+      deadliftOneRepMax:
+        data.deadliftOneRepMax || userSettings?.deadliftOneRepMax,
+      squatOneRepMax: data.squatOneRepMax || userSettings?.squatOneRepMax,
     })
   }
   const onError = (data: any) => {
@@ -169,7 +177,7 @@ const Settings = () => {
                 placeholder='Height'
                 className='bg-gray-900'
               />
-              <div className='flex justify-center gap-2 mt-4'>
+              <div className='mt-4 flex justify-center gap-2'>
                 <Button
                   onClick={() => {
                     setIsHeightModalOpen(false)
@@ -529,6 +537,12 @@ const Settings = () => {
             </Popover>
           </div>
         </div>
+        <Button
+          onClick={() => {
+            handleSubmit(onSubmit, onError)()
+          }}>
+          sub
+        </Button>
       </div>
     </>
   )
