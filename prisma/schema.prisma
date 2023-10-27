@@ -505,6 +505,8 @@ model UserProfile {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
+  userId String @unique
+
   DOB DateTime?
   gender String?
   height Decimal?

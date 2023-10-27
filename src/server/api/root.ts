@@ -1,17 +1,18 @@
-import { createTRPCRouter, } from '~/server/api/trpc'
-import { blocksRouter, } from '~/server/api/routers/blocks'
-import { usersRouter, } from '~/server/api/routers/users'
-import { programsRouter, } from './routers/programs'
-import { userProgramsRouter, } from './routers/userPrograms'
-import { oneRepMaxRouter, } from './routers/oneRepMax'
-import { liftsRouter, } from './routers/lifts'
-import { liftRouter, } from './routers/lift'
-import { primaryLiftsRouter, } from './routers/primaryLifts'
-import { compLiftsRouter, } from './routers/compLifts'
-import { compDateRouter, } from './routers/compDate'
+import { createTRPCRouter } from '~/server/api/trpc'
+import { blocksRouter } from '~/server/api/routers/blocks'
+import { usersRouter } from '~/server/api/routers/users'
+import { programsRouter } from './routers/programs'
+import { userProgramsRouter } from './routers/userPrograms'
+import { oneRepMaxRouter } from './routers/oneRepMax'
+import { liftsRouter } from './routers/lifts'
+import { liftRouter } from './routers/lift'
+import { primaryLiftsRouter } from './routers/primaryLifts'
+import { compLiftsRouter } from './routers/compLifts'
+import { compDateRouter } from './routers/compDate'
 import { daysRouter } from './routers/days'
 import { setsRouter } from './routers/sets'
 import { warmupsRouter } from './routers/warmup'
+import { settingsRouter } from './routers/settings'
 
 /**
  * This is the primary router for your server.
@@ -31,8 +32,9 @@ export const appRouter = createTRPCRouter({
   compDate: compDateRouter,
   days: daysRouter,
   sets: setsRouter,
-  warmups: warmupsRouter
+  warmups: warmupsRouter,
+  settings: settingsRouter,
 })
 
 // export type definition of API
-export type AppRouter = typeof appRouter;
+export type AppRouter = typeof appRouter
