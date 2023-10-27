@@ -300,7 +300,7 @@ const Settings = () => {
             )}
           />
           <h2>Activity Level</h2>
-          <div className='relative flex items-center gap-2'>
+          <div className='relative flex flex-col items-center gap-2'>
             <Label className='w-16'>Training</Label>
             <Controller
               name='activityLevelTraining'
@@ -414,7 +414,7 @@ const Settings = () => {
               )}
             </Popover>
           </div>
-          <div className='flex items-center gap-2'>
+          <div className='flex  flex-col items-center gap-2'>
             <Label className='w-16'>Rest</Label>
             <Controller
               name='activityLevelRest'
@@ -528,35 +528,6 @@ const Settings = () => {
               )}
             </Popover>
           </div>
-          <Input
-            type='number'
-            {...register('benchOneRepMax', { valueAsNumber: true })}
-            placeholder='Bench 1RM'
-          />
-          <Input
-            type='number'
-            {...register('deadliftOneRepMax', { valueAsNumber: true })}
-            placeholder='Deadlift 1RM'
-          />
-          <Input
-            type='number'
-            {...register('squatOneRepMax', { valueAsNumber: true })}
-            placeholder='Squat 1RM'
-          />
-
-          <Input
-            type='text'
-            {...register('openAddress')}
-            defaultValue={''}
-            placeholder='Open Powerlifting Address'
-          />
-          <Input
-            type='text'
-            {...register('instagram')}
-            defaultValue={''}
-            placeholder='Instagram'
-          />
-          <div className='flex justify-center'></div>
         </div>
       </div>
     </>
