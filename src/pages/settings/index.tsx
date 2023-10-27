@@ -25,13 +25,14 @@ import { Button } from '@/components/ui/button'
 
 import { Fragment, useEffect, useState } from 'react'
 
-import { Listbox, Transition, Popover } from '@headlessui/react'
+import { Listbox, Transition, Popover, Dialog } from '@headlessui/react'
 import {
   CheckIcon,
   ChevronUpDownIcon,
   QuestionMarkCircleIcon,
 } from '@heroicons/react/24/outline'
 import { Label } from '@/components/ui/label'
+import { LoadingPage } from '~/components/loading'
 
 type SettingsForm = {
   height: number
@@ -47,8 +48,64 @@ type SettingsForm = {
   squatOneRepMax: number
 }
 
+const ModalWrapper = ({
+  isOpen,
+  setIsOpen,
+  children,
+}: {
+  isOpen: boolean
+  setIsOpen: (args: boolean) => void
+  children: React.ReactNode
+}) => {
+  return (
+    <Transition
+      appear
+      show={isOpen}
+      as={Fragment}
+    >
+      <Dialog
+        as='div'
+        className='relative z-10'
+        onClose={() => setIsOpen(false)}
+      >
+        <Transition.Child
+          as={Fragment}
+          enter='ease-out duration-300'
+          enterFrom='opacity-0'
+          enterTo='opacity-100'
+          leave='ease-in duration-200'
+          leaveFrom='opacity-100'
+          leaveTo='opacity-0'
+        >
+          <div className='fixed inset-0 bg-black/50' />
+        </Transition.Child>
+
+        <div className='fixed inset-0 overflow-y-auto text-gray-200'>
+          <div className='flex min-h-full items-center justify-center p-4 text-center'>
+            <Transition.Child
+              as={Fragment}
+              enter='ease-out duration-300'
+              enterFrom='opacity-0 scale-95'
+              enterTo='opacity-100 scale-100'
+              leave='ease-in duration-200'
+              leaveFrom='opacity-100 scale-100'
+              leaveTo='opacity-0 scale-95'
+            >
+              <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-2xl bg-gray-900 p-6 text-left align-middle transition-all'>
+                {children}
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition>
+  )
+}
+
 const Settings = () => {
   const { user } = useUser()
+
+  const [isHeightModalOpen, setIsHeightModalOpen] = useState(false)
 
   const formMethods = useForm()
   const {
@@ -63,6 +120,11 @@ const Settings = () => {
       onSuccess: () => {
         toast.success('Settings updated')
       },
+    })
+
+  const { data: userSettings, isLoading: settingsLoading } =
+    api.settings.get.useQuery({
+      userId: user?.id || '',
     })
 
   const onSubmit = (data: SettingsForm) => {
@@ -85,16 +147,47 @@ const Settings = () => {
   const onError = (data: any) => {
     console.log(data)
   }
+  if (settingsLoading) return <LoadingPage />
 
   return (
     <>
       <div className='flex flex-col gap-4 px-4 py-2'>
         <div className='flex flex-col gap-1'>
-          <Input
-            type='number'
-            placeholder='Height'
-            {...register('height', { valueAsNumber: true })}
-          />
+          <div>
+            <div onClick={() => setIsHeightModalOpen(true)}>
+              <h4 className='text-xl'>Height</h4>
+              <p className='h-8 text-base text-gray-400'>
+                {Number(userSettings?.height || null)}cm
+              </p>
+            </div>
+            <ModalWrapper
+              isOpen={isHeightModalOpen}
+              setIsOpen={setIsHeightModalOpen}
+            >
+              <Input
+                type='number'
+                placeholder='Height'
+                className='bg-gray-900'
+              />
+              <div className='flex justify-center gap-2 mt-4'>
+                <Button
+                  onClick={() => {
+                    setIsHeightModalOpen(false)
+                  }}
+                >
+                  Save
+                </Button>
+                <Button
+                  onClick={() => {
+                    setIsHeightModalOpen(false)
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </ModalWrapper>
+          </div>
+          <div className='mb-16'></div>
           <div className='flex flex-col gap-4'>
             <Input
               type='number'
@@ -436,12 +529,6 @@ const Settings = () => {
             </Popover>
           </div>
           <Input
-            type='text'
-            {...register('goal')}
-            defaultValue={''}
-            placeholder='Goal'
-          />
-          <Input
             type='number'
             {...register('benchOneRepMax', { valueAsNumber: true })}
             placeholder='Bench 1RM'
@@ -469,14 +556,7 @@ const Settings = () => {
             defaultValue={''}
             placeholder='Instagram'
           />
-          <div className='flex justify-center'>
-            <Button
-              type='submit'
-              className='w-40 bg-yellow-400 text-center font-bold text-gray-900 hover:bg-yellow-500'
-            >
-              Save
-            </Button>
-          </div>
+          <div className='flex justify-center'></div>
         </div>
       </div>
     </>

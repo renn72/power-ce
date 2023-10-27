@@ -20,20 +20,16 @@ const settingsSchema = z.object({
 })
 
 export const settingsRouter = createTRPCRouter({
-  getAllUser: privateProcedure
+  get: privateProcedure
     .input(
       z.object({
         userId: z.string(),
       }),
     )
     .query(async ({ ctx, input }) => {
-      const res = await ctx.prisma.set.findMany({
+      const res = await ctx.prisma.userProfile.findUnique({
         where: {
           userId: input.userId,
-          isComplete: true,
-          flield1: {
-            not: null,
-          },
         },
       })
       return res
