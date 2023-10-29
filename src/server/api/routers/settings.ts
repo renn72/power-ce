@@ -35,6 +35,121 @@ export const settingsRouter = createTRPCRouter({
       return res
     }),
 
+  updateHeight: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        height: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.userProfile.upsert({
+        where: {
+          userId: input.userId,
+        },
+        update: {
+          height: input.height,
+        },
+        create: {
+          userId: input.userId,
+          height: input.height,
+        },
+      })
+      return res
+    }),
+
+  updateWeight: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        weight: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.userProfile.upsert({
+        where: {
+          userId: input.userId,
+        },
+        update: {
+          weight: input.weight,
+        },
+        create: {
+          userId: input.userId,
+          weight: input.weight,
+        },
+      })
+      return res
+    }),
+
+  updateTargetWeight: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        targetWeight: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.userProfile.upsert({
+        where: {
+          userId: input.userId,
+        },
+        update: {
+          targetWeight: input.targetWeight,
+        },
+        create: {
+          userId: input.userId,
+          targetWeight: input.targetWeight,
+        },
+      })
+      return res
+    }),
+
+  updateWeightGoal: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        weightGoal: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.userProfile.upsert({
+        where: {
+          userId: input.userId,
+        },
+        update: {
+          weightGoal: input.weightGoal,
+        },
+        create: {
+          userId: input.userId,
+          weightGoal: input.weightGoal,
+        },
+      })
+      return res
+    }),
+
+  updateDOB: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        DOB: z.date(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.userProfile.upsert({
+        where: {
+          userId: input.userId,
+        },
+        update: {
+          DOB: input.DOB,
+        },
+        create: {
+          userId: input.userId,
+          DOB: input.DOB,
+        },
+      })
+      return res
+    }),
+
   createUpdateSettings: privateProcedure
     .input(settingsSchema)
     .mutation(async ({ ctx, input }) => {

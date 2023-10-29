@@ -102,6 +102,10 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+.rdp-vhidden {
+  @apply hidden;
+}
+
 .text-xxs {
   font-size: 0.625rem;
   letter-spacing: -0.05em;
