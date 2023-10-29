@@ -1,5 +1,3 @@
-'use client'
-
 import * as React from 'react'
 import { buttonVariants } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -78,15 +76,18 @@ function Calendar({
                 handleChange(value)
               }}
             >
-              <SelectTrigger className='pr-1.5 focus:ring-0'>
+              <SelectTrigger className='mr-1.5 focus:ring-0 border-gray-600'>
                 <SelectValue>{selected?.props?.children}</SelectValue>
               </SelectTrigger>
-              <SelectContent position='popper' className='w-full bg-black z-50 text-gray-400'>
-                <ScrollArea className='h-80'>
+              <SelectContent
+                className='z-50 w-full bg-black text-gray-400'
+              >
+                <ScrollArea className='h-80 w-40'>
                   {options.map((option, id: number) => (
                     <SelectItem
                       key={`${option.props.value}-${id}`}
                       value={option.props.value?.toString() ?? ''}
+                      className='ml-20'
                     >
                       {option.props.children}
                     </SelectItem>

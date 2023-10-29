@@ -6,7 +6,7 @@ import {
   PopoverTrigger,
   PopoverClose,
 } from '@/components/ui/popover'
-import { Calendar as CalendarIcon } from 'lucide-react'
+import { Calendar as CalendarIcon, XIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { format, add } from 'date-fns'
 
@@ -502,10 +502,11 @@ const DOB = ({ defaultValue }: { defaultValue: string }) => {
         <div className='flex items-end justify-between gap-2 md:justify-normal md:gap-6'>
           <PopoverCN
             open={popoverOpen}
-            onOpenChange={setPopoverOpen}
+            setOpen={setPopoverOpen}
           >
             <PopoverTrigger asChild>
               <Button
+                onClick={() => setPopoverOpen(true)}
                 className={cn(
                   'col-span-2 w-full items-center justify-start rounded-none border-0 border-b border-gray-600 px-1 text-left text-gray-200 hover:border-gray-200 md:w-[230px] md:px-2 ',
                   !value && 'text-gray-600',
@@ -519,13 +520,20 @@ const DOB = ({ defaultValue }: { defaultValue: string }) => {
                 )}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className='z-10 mt-[-10rem] bg-black py-3 text-gray-200 md:px-3'>
+            <PopoverContent className='z-10 mt-[-10rem] bg-black border-gray-600 py-3 text-gray-200 md:px-3'>
+              <div>
+                <XIcon
+                  onClick={() => setPopoverOpen(false)}
+                  className='h-5 w-5 float-right cursor-pointer'
+                />
+              </div>
               <Calendar
                 mode='single'
-                selected={value}
+                selected={value ? value : undefined}
                 onSelect={(e) => {
                   setValue(e)
                 }}
+                defaultMonth={value ? value : undefined}
                 captionLayout='dropdown'
                 fromYear={new Date().getFullYear() - 100}
                 toYear={new Date().getFullYear()}
