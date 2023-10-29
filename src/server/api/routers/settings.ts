@@ -150,6 +150,52 @@ export const settingsRouter = createTRPCRouter({
       return res
     }),
 
+  updateActivityLevelTraining: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        activityLevelTraining: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.userProfile.upsert({
+        where: {
+          userId: input.userId,
+        },
+        update: {
+          activityLevelTraining: input.activityLevelTraining,
+        },
+        create: {
+          userId: input.userId,
+          activityLevelTraining: input.activityLevelTraining,
+        },
+      })
+      return res
+    }),
+
+  updateActivityLevelRest: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        activityLevelRest: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.userProfile.upsert({
+        where: {
+          userId: input.userId,
+        },
+        update: {
+          activityLevelRest: input.activityLevelRest,
+        },
+        create: {
+          userId: input.userId,
+          activityLevelRest: input.activityLevelRest,
+        },
+      })
+      return res
+    }),
+
   createUpdateSettings: privateProcedure
     .input(settingsSchema)
     .mutation(async ({ ctx, input }) => {
