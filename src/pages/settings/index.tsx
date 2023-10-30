@@ -4,9 +4,8 @@ import {
   Popover as PopoverCN,
   PopoverContent,
   PopoverTrigger,
-  PopoverClose,
 } from '@/components/ui/popover'
-import { Calendar as CalendarIcon, XIcon } from 'lucide-react'
+import { Calendar as CalendarIcon, HomeIcon, XIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { format, add } from 'date-fns'
 
@@ -28,6 +27,7 @@ import {
 import { Label } from '@/components/ui/label'
 import { LoadingPage } from '~/components/loading'
 import Decimal from 'decimal.js'
+import Link from 'next/link'
 
 const ModalWrapper = ({
   isOpen,
@@ -384,7 +384,7 @@ const Gender = ({ defaultValue }: { defaultValue: string }) => {
               leaveTo='opacity-0'
             >
               <Listbox.Options className='max-h-120 absolute z-10 mt-1 w-full overflow-auto border border-gray-600 bg-black py-1 capitalize shadow-lg '>
-                {['male', 'female', ].map((t, Idx) => (
+                {['male', 'female'].map((t, Idx) => (
                   <Listbox.Option
                     key={Idx}
                     className={({ active }) =>
@@ -445,7 +445,6 @@ const Gender = ({ defaultValue }: { defaultValue: string }) => {
     </div>
   )
 }
-
 
 const WeightGoal = ({ defaultValue }: { defaultValue: string }) => {
   const { user } = useUser()
@@ -1288,8 +1287,13 @@ const Settings = () => {
     <>
       <div className='mb-8 flex justify-center '>
         <div className='flex w-full max-w-screen-xl flex-col gap-2 px-4 py-2'>
-          <div className='flex gap-1 text-2xl font-semibold text-yellow-500'>
-            {user.firstName} {user.lastName}
+          <div className='flex items-center justify-between text-yellow-500'>
+            <div className='flex gap-1 text-2xl font-semibold text-yellow-500'>
+              {user.firstName} {user.lastName}
+            </div>
+            <Link href='/'>
+              <HomeIcon className='h-6 w-6' />
+            </Link>
           </div>
           <Height height={userSettings?.height || 0} />
           <Weight defaultValue={userSettings?.weight || 0} />

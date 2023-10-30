@@ -174,13 +174,15 @@ const Home: NextPage = () => {
       ? true
       : false
 
+  console.log(isSettings)
+
   const bmr =
     66 +
     13.7 * (Number(userSettings?.weight) || 0) +
     (5 * Number(userSettings?.height) || 0) -
     (6.8 *
       (new Date().getFullYear() -
-        new Date(+userSettings?.DOB || '').getFullYear()) || 0)
+        new Date(userSettings?.DOB || '').getFullYear()) || 0)
 
   const calories =
     bmr *
@@ -218,7 +220,11 @@ const Home: NextPage = () => {
             <div className='flex w-full items-center justify-between'>
               <h1 className='text-2xl'>Profile</h1>
               <Link href='/settings'>
-                <Cog6ToothIcon className='h-6 w-6 cursor-pointer text-yellow-500' />
+                <Cog6ToothIcon
+                  className={`h-6 w-6 cursor-pointer text-yellow-500 ${
+                    isSettings ? '' : 'animate-bounce'
+                  }`}
+                />
               </Link>
             </div>
             <div className='flex flex-col gap-0 text-sm text-gray-400'></div>
@@ -251,12 +257,14 @@ const Home: NextPage = () => {
             userSettings.activityLevelTraining !== '' &&
             userSettings.activityLevelRest &&
             userSettings.activityLevelRest !== '' ? (
-              <div className='flex flex-col gap-1'>
-                <h3>Macro Tagets</h3>
-                <div>fat: {fat.toFixed(0)}</div>
-                <div>carbs: {carbs.toFixed(0)}</div>
-                <div>protein: {protein.toFixed(0)}</div>
-                <div>calories: {calories.toFixed(0)}</div>
+              <div className='flex flex-col gap-1 rounded-lg p-2 font-normal'>
+                <h3 className='text-xl font-medium'>Macro Tagets</h3>
+                <div className='ml-2 flex flex-col gap-0'>
+                  <div>Fat: {fat.toFixed(0)}</div>
+                  <div>Carbs: {carbs.toFixed(0)}</div>
+                  <div>Protein: {protein.toFixed(0)}</div>
+                  <div>Calories: {calories.toFixed(0)}</div>
+                </div>
               </div>
             ) : null}
           </div>
