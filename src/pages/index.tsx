@@ -111,20 +111,17 @@ const Home: NextPage = () => {
       },
     })
 
+  const { data: userSettings, isLoading: settingsLoading } =
+    api.settings.get.useQuery({
+      userId: user?.id || '',
+    })
+
   const { mutate: saveAddress } = api.compLift.createAddress.useMutation({
     onSuccess: () => {
       toast.success('saved')
       console.log('success')
     },
   })
-
-  const closeModal = () => {
-    setIsOpen(false)
-  }
-
-  const openModal = () => {
-    setIsOpen(true)
-  }
 
   const defaultOpen = currentProgram?.week.reduce((acc, week) => {
     week.day.forEach((day) => {
@@ -151,28 +148,84 @@ const Home: NextPage = () => {
     addressDataLoading ||
     allSetsLoading ||
     compLiftsLoading ||
-    programLoading
+    programLoading ||
+    settingsLoading
   ) {
     return <LoadingPage />
   }
   if (!user) return null
+  const isSettings =
+    userSettings &&
+    userSettings.height &&
+    +userSettings.height !== 0 &&
+    userSettings.weight &&
+    +userSettings.weight !== 0 &&
+    userSettings.targetWeight &&
+    +userSettings.targetWeight !== 0 &&
+    userSettings.weightGoal &&
+    userSettings.weightGoal !== '' &&
+    userSettings.gender &&
+    userSettings.gender !== '' &&
+    userSettings.DOB &&
+    userSettings.activityLevelTraining &&
+    userSettings.activityLevelTraining !== '' &&
+    userSettings.activityLevelRest &&
+    userSettings.activityLevelRest !== ''
+      ? true
+      : false
+
+  const bmr =
+    66 +
+    13.7 * (Number(userSettings?.weight) || 0) +
+    (5 * Number(userSettings?.height) || 0) -
+    (6.8 *
+      (new Date().getFullYear() -
+        new Date(+userSettings?.DOB || '').getFullYear()) || 0)
+
+  const calories =
+    bmr *
+    (!userSettings?.activityLevelTraining
+      ? 1.2
+      : userSettings?.activityLevelTraining === 'sedentary'
+      ? 1.2
+      : userSettings?.activityLevelTraining === 'mild'
+      ? 1.375
+      : userSettings?.activityLevelTraining === 'moderate'
+      ? 1.55
+      : userSettings?.activityLevelTraining === 'heavy'
+      ? 1.7
+      : userSettings?.activityLevelTraining === 'extreme'
+      ? 1.9
+      : 1.2)
+
+  const protein = (Number(userSettings?.weight) || 0) * 2
+  const fat =
+    (Number(userSettings?.weight) || 0) *
+    (userSettings?.gender === 'female'
+      ? 0.4
+      : userSettings?.weightGoal === 'weight loss'
+      ? 0.7
+      : userSettings?.weightGoal === 'weight gain'
+      ? 1
+      : 0.8)
+  const carbs = (calories - protein * 4 - fat * 9) / 4
 
   return (
     <>
       <main className='flex h-full flex-col gap-6 px-2  font-semibold'>
         <div className='flex  flex-col gap-4 lg:items-start '>
-          <div className='flex w-full items-center justify-between'>
-            <h1 className='text-xl'>Profile</h1>
-            {userId == 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a' && (
+          <div className='flex  flex-col gap-1 lg:items-start '>
+            <div className='flex w-full items-center justify-between'>
+              <h1 className='text-2xl'>Profile</h1>
               <Link href='/settings'>
                 <Cog6ToothIcon className='h-6 w-6 cursor-pointer text-yellow-500' />
               </Link>
-            )}
-          </div>
-          <div className='flex flex-col gap-0 text-sm text-gray-400'></div>
-          <div className='flex gap-1'>
-            <div>{user.firstName}</div>
-            <div>{user.lastName}</div>
+            </div>
+            <div className='flex flex-col gap-0 text-sm text-gray-400'></div>
+            <div className='flex gap-1 text-xl'>
+              <div>{user.firstName}</div>
+              <div>{user.lastName}</div>
+            </div>
           </div>
           {currentProgram && defaultOpen && (
             <Link href={`/day/${currentProgram.id}/${defaultOpen}`}>
@@ -181,6 +234,32 @@ const Home: NextPage = () => {
               </Button>
             </Link>
           )}
+          <div>
+            {userSettings &&
+            userSettings.height &&
+            +userSettings.height !== 0 &&
+            userSettings.weight &&
+            +userSettings.weight !== 0 &&
+            userSettings.targetWeight &&
+            +userSettings.targetWeight !== 0 &&
+            userSettings.weightGoal &&
+            userSettings.weightGoal !== '' &&
+            userSettings.gender &&
+            userSettings.gender !== '' &&
+            userSettings.DOB &&
+            userSettings.activityLevelTraining &&
+            userSettings.activityLevelTraining !== '' &&
+            userSettings.activityLevelRest &&
+            userSettings.activityLevelRest !== '' ? (
+              <div className='flex flex-col gap-1'>
+                <h3>Macro Tagets</h3>
+                <div>fat: {fat.toFixed(0)}</div>
+                <div>carbs: {carbs.toFixed(0)}</div>
+                <div>protein: {protein.toFixed(0)}</div>
+                <div>calories: {calories.toFixed(0)}</div>
+              </div>
+            ) : null}
+          </div>
         </div>
         <div className='flex flex-col gap-4'>
           <Lift

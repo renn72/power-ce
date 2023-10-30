@@ -127,6 +127,29 @@ export const settingsRouter = createTRPCRouter({
       return res
     }),
 
+  updateGender: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        gender: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.userProfile.upsert({
+        where: {
+          userId: input.userId,
+        },
+        update: {
+          gender: input.gender,
+        },
+        create: {
+          userId: input.userId,
+          gender: input.gender,
+        },
+      })
+      return res
+    }),
+
   updateDOB: privateProcedure
     .input(
       z.object({
@@ -195,6 +218,73 @@ export const settingsRouter = createTRPCRouter({
       })
       return res
     }),
+  updateSquatOneRepMax: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        squatOneRepMax: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.userProfile.upsert({
+        where: {
+          userId: input.userId,
+        },
+        update: {
+          squatOneRepMax: input.squatOneRepMax,
+        },
+        create: {
+          userId: input.userId,
+          squatOneRepMax: input.squatOneRepMax,
+        },
+      })
+      return res
+    }),
+  updateBenchOneRepMax: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        benchOneRepMax: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.userProfile.upsert({
+        where: {
+          userId: input.userId,
+        },
+        update: {
+          benchOneRepMax: input.benchOneRepMax,
+        },
+        create: {
+          userId: input.userId,
+          benchOneRepMax: input.benchOneRepMax,
+        },
+      })
+      return res
+    }),
+  updateDeadliftOneRepMax: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        deadliftOneRepMax: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.userProfile.upsert({
+        where: {
+          userId: input.userId,
+        },
+        update: {
+          deadliftOneRepMax: input.deadliftOneRepMax,
+        },
+        create: {
+          userId: input.userId,
+          deadliftOneRepMax: input.deadliftOneRepMax,
+        },
+      })
+      return res
+    }),
+    
 
   createUpdateSettings: privateProcedure
     .input(settingsSchema)

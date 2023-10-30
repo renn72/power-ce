@@ -525,6 +525,10 @@ model UserProfile {
   benchOneRepMax Decimal?
   deadliftOneRepMax Decimal?
 
+  fatAdjustment Decimal?
+  carbAdjustment Decimal?
+  proteinAdjustment Decimal?
+
   isDeleted Boolean @default(false)
 
   isTrainer Boolean @default(false)
