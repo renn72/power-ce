@@ -1299,7 +1299,7 @@ const Settings = () => {
           <Weight defaultValue={userSettings?.weight || 0} />
           <TargetWeight defaultValue={userSettings?.targetWeight || 0} />
           <WeightGoal defaultValue={userSettings?.weightGoal || ''} />
-          <DOB defaultValue={userSettings?.DOB || ''} />
+          <DOB defaultValue={userSettings?.DOB || null} />
           <Gender defaultValue={userSettings?.gender || ''} />
           <div className='flex flex-col gap-0'>
             <div className='item-baseline flex gap-4'>
