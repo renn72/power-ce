@@ -2,20 +2,16 @@ import { type NextPage } from 'next'
 
 import { api } from '~/utils/api'
 
-import { Dialog, Transition } from '@headlessui/react'
-
-import { useUser, clerkClient } from '@clerk/nextjs'
+import { useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { LoadingPage, LoadingSpinner } from '~/components/loading'
-import CompletedDay from '~/components/completedDay'
 
 import { getDate } from '~/utils/utils'
 import { Cog6ToothIcon } from '@heroicons/react/20/solid'
-import { XMarkIcon } from '@heroicons/react/24/outline'
 
 const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
@@ -228,7 +224,6 @@ const Home: NextPage = () => {
       ? 1.9
       : 1.2)
 
-
   const carbsRest = (caloriesRest - protein * 4 - fat * 9) / 4
 
   return (
@@ -276,7 +271,7 @@ const Home: NextPage = () => {
             userSettings.activityLevelTraining !== '' &&
             userSettings.activityLevelRest &&
             userSettings.activityLevelRest !== '' ? (
-              <div className='flex flex-col gap-1 rounded-lg p-2 font-normal w-full max-w-screen-lg px-4'>
+              <div className='flex w-full max-w-screen-lg flex-col gap-1 rounded-lg p-2 px-4 font-normal'>
                 <h3 className='text-xl font-medium'>Macro Tagets</h3>
                 <div className='flex justify-between'>
                   <div className='ml-2 flex flex-col gap-0'>
