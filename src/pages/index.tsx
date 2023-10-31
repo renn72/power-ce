@@ -184,7 +184,7 @@ const Home: NextPage = () => {
       (new Date().getFullYear() -
         new Date(userSettings?.DOB || '').getFullYear()) || 0)
 
-  const calories =
+  const caloriesTraining =
     bmr *
     (!userSettings?.activityLevelTraining
       ? 1.2
@@ -210,7 +210,26 @@ const Home: NextPage = () => {
       : userSettings?.weightGoal === 'weight gain'
       ? 1
       : 0.8)
-  const carbs = (calories - protein * 4 - fat * 9) / 4
+  const carbsTraining = (caloriesTraining - protein * 4 - fat * 9) / 4
+
+  const caloriesRest =
+    bmr *
+    (!userSettings?.activityLevelRest
+      ? 1.2
+      : userSettings?.activityLevelRest === 'sedentary'
+      ? 1.2
+      : userSettings?.activityLevelRest === 'mild'
+      ? 1.375
+      : userSettings?.activityLevelRest === 'moderate'
+      ? 1.55
+      : userSettings?.activityLevelRest === 'heavy'
+      ? 1.7
+      : userSettings?.activityLevelRest === 'extreme'
+      ? 1.9
+      : 1.2)
+
+
+  const carbsRest = (caloriesRest - protein * 4 - fat * 9) / 4
 
   return (
     <>
@@ -257,13 +276,23 @@ const Home: NextPage = () => {
             userSettings.activityLevelTraining !== '' &&
             userSettings.activityLevelRest &&
             userSettings.activityLevelRest !== '' ? (
-              <div className='flex flex-col gap-1 rounded-lg p-2 font-normal'>
+              <div className='flex flex-col gap-1 rounded-lg p-2 font-normal w-full max-w-screen-lg px-4'>
                 <h3 className='text-xl font-medium'>Macro Tagets</h3>
-                <div className='ml-2 flex flex-col gap-0'>
-                  <div>Fat: {fat.toFixed(0)}</div>
-                  <div>Carbs: {carbs.toFixed(0)}</div>
-                  <div>Protein: {protein.toFixed(0)}</div>
-                  <div>Calories: {calories.toFixed(0)}</div>
+                <div className='flex justify-between'>
+                  <div className='ml-2 flex flex-col gap-0'>
+                    <h4 className='font-medium text-gray-400'>Training</h4>
+                    <div>Fat: {fat.toFixed(0)}</div>
+                    <div>Carbs: {carbsTraining.toFixed(0)}</div>
+                    <div>Protein: {protein.toFixed(0)}</div>
+                    <div>Calories: {caloriesTraining.toFixed(0)}</div>
+                  </div>
+                  <div className='ml-2 flex flex-col gap-0'>
+                    <h4 className='font-medium text-gray-400'>Rest</h4>
+                    <div>Fat: {fat.toFixed(0)}</div>
+                    <div>Carbs: {carbsRest.toFixed(0)}</div>
+                    <div>Protein: {protein.toFixed(0)}</div>
+                    <div>Calories: {caloriesRest.toFixed(0)}</div>
+                  </div>
                 </div>
               </div>
             ) : null}

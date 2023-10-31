@@ -20,6 +20,9 @@ module.exports = {
       screens: { '2xl': '1600px', '3xl': '1800px' },
     },
     extend: {
+      fontFamily: {
+        sans: ['var(--font-geist-sans)'],
+      },
       gridTemplateColumns: {
         '16': 'repeat(16, minmax(0, 1fr))',
         '15': 'repeat(15, minmax(0, 1fr))',
