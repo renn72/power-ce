@@ -748,64 +748,69 @@ const ActivityLevelTraining = ({ defaultValue }: { defaultValue: string }) => {
         isOpen={isOpen}
         setIsOpen={setIsOpen}
       >
-        <Listbox
-          value={value}
-          onChange={(e) => setValue(e)}
-        >
-          <div className='z-1 relative'>
-            <Listbox.Button className='relative h-10 w-full cursor-default border-b border-gray-600 pl-3 pr-10 text-left capitalize shadow-md hover:border-white focus:outline-none md:w-[230px] md:px-2 '>
-              <span
-                className={`block truncate ${
-                  value === '' ? 'text-sm text-gray-500' : ''
-                }`}
+        <div className='flex w-full items-end gap-4'>
+          <Listbox
+            value={value}
+            onChange={(e) => setValue(e)}
+          >
+            <div className='z-1 relative w-full'>
+              <Listbox.Button className='relative h-10 w-full cursor-default border-b border-gray-600 pl-3 pr-10 text-left capitalize shadow-md hover:border-white focus:outline-none md:w-[230px] md:px-2 '>
+                <span
+                  className={`block truncate ${
+                    value === '' ? 'text-sm text-gray-500' : ''
+                  }`}
+                >
+                  {value === '' ? 'Training' : value}
+                </span>
+                <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
+                  <ChevronUpDownIcon
+                    className='h-5 w-5'
+                    aria-hidden='true'
+                  />
+                </span>
+              </Listbox.Button>
+              <Transition
+                as={Fragment}
+                leave='transition ease-in duration-100'
+                leaveFrom='opacity-100'
+                leaveTo='opacity-0'
               >
-                {value === '' ? 'Training' : value}
-              </span>
-              <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
-                <ChevronUpDownIcon
-                  className='h-5 w-5'
-                  aria-hidden='true'
-                />
-              </span>
-            </Listbox.Button>
-            <Transition
-              as={Fragment}
-              leave='transition ease-in duration-100'
-              leaveFrom='opacity-100'
-              leaveTo='opacity-0'
-            >
-              <Listbox.Options className='max-h-120 absolute z-10 mt-1 w-full overflow-auto border border-gray-600 bg-black py-1 capitalize shadow-lg '>
-                {['sedentary', 'mild', 'moderate', 'heavy', 'extreme'].map(
-                  (t, Idx) => (
-                    <Listbox.Option
-                      key={Idx}
-                      className={({ active }) =>
-                        `relative cursor-default select-none py-2 pl-8 pr-4 ${
-                          active ? 'bg-yellow-400 text-black' : 'text-gray-200'
-                        }`
-                      }
-                      value={t}
-                    >
-                      {({ selected }) => (
-                        <>
-                          <span className={`block truncate`}>{t}</span>
-                          {selected ? (
-                            <span className='absolute inset-y-0 left-0 flex items-center pl-1'>
-                              <CheckIcon
-                                className='h-5 w-5'
-                                aria-hidden='true'
-                              />
-                            </span>
-                          ) : null}
-                        </>
-                      )}
-                    </Listbox.Option>
-                  ),
-                )}
-              </Listbox.Options>
-            </Transition>
-          </div>
-        </Listbox>
+                <Listbox.Options className='max-h-120 absolute z-10 mt-1 w-full overflow-auto border border-gray-600 bg-black py-1 capitalize shadow-lg '>
+                  {['sedentary', 'mild', 'moderate', 'heavy', 'extreme'].map(
+                    (t, Idx) => (
+                      <Listbox.Option
+                        key={Idx}
+                        className={({ active }) =>
+                          `relative cursor-default select-none py-2 pl-8 pr-4 ${
+                            active
+                              ? 'bg-yellow-400 text-black'
+                              : 'text-gray-200'
+                          }`
+                        }
+                        value={t}
+                      >
+                        {({ selected }) => (
+                          <>
+                            <span className={`block truncate`}>{t}</span>
+                            {selected ? (
+                              <span className='absolute inset-y-0 left-0 flex items-center pl-1'>
+                                <CheckIcon
+                                  className='h-5 w-5'
+                                  aria-hidden='true'
+                                />
+                              </span>
+                            ) : null}
+                          </>
+                        )}
+                      </Listbox.Option>
+                    ),
+                  )}
+                </Listbox.Options>
+              </Transition>
+            </div>
+          </Listbox>
+          <ActivityPopover />
+        </div>
         <div className='mt-4 flex justify-center gap-2'>
           <Button
             onClick={() => {
@@ -882,64 +887,69 @@ const ActivityLevelRest = ({ defaultValue }: { defaultValue: string }) => {
         isOpen={isOpen}
         setIsOpen={setIsOpen}
       >
-        <Listbox
-          value={value}
-          onChange={(e) => setValue(e)}
-        >
-          <div className='z-1 relative'>
-            <Listbox.Button className='relative h-10 w-full cursor-default border-b border-gray-600 pl-3 pr-10 text-left capitalize shadow-md hover:border-white focus:outline-none md:w-[230px] md:px-2 '>
-              <span
-                className={`block truncate ${
-                  value === '' ? 'text-sm text-gray-500' : ''
-                }`}
+        <div className='flex w-full items-end gap-4'>
+          <Listbox
+            value={value}
+            onChange={(e) => setValue(e)}
+          >
+            <div className='z-1 relative w-full'>
+              <Listbox.Button className='relative h-10 w-full cursor-default border-b border-gray-600 pl-3 pr-10 text-left capitalize shadow-md hover:border-white focus:outline-none md:w-[230px] md:px-2 '>
+                <span
+                  className={`block truncate ${
+                    value === '' ? 'text-sm text-gray-500' : ''
+                  }`}
+                >
+                  {value === '' ? 'Rest' : value}
+                </span>
+                <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
+                  <ChevronUpDownIcon
+                    className='h-5 w-5'
+                    aria-hidden='true'
+                  />
+                </span>
+              </Listbox.Button>
+              <Transition
+                as={Fragment}
+                leave='transition ease-in duration-100'
+                leaveFrom='opacity-100'
+                leaveTo='opacity-0'
               >
-                {value === '' ? 'Rest' : value}
-              </span>
-              <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
-                <ChevronUpDownIcon
-                  className='h-5 w-5'
-                  aria-hidden='true'
-                />
-              </span>
-            </Listbox.Button>
-            <Transition
-              as={Fragment}
-              leave='transition ease-in duration-100'
-              leaveFrom='opacity-100'
-              leaveTo='opacity-0'
-            >
-              <Listbox.Options className='max-h-120 absolute z-10 mt-1 w-full overflow-auto border border-gray-600 bg-black py-1 capitalize shadow-lg '>
-                {['sedentary', 'mild', 'moderate', 'heavy', 'extreme'].map(
-                  (t, Idx) => (
-                    <Listbox.Option
-                      key={Idx}
-                      className={({ active }) =>
-                        `relative cursor-default select-none py-2 pl-8 pr-4 ${
-                          active ? 'bg-yellow-400 text-black' : 'text-gray-200'
-                        }`
-                      }
-                      value={t}
-                    >
-                      {({ selected }) => (
-                        <>
-                          <span className={`block truncate`}>{t}</span>
-                          {selected ? (
-                            <span className='absolute inset-y-0 left-0 flex items-center pl-1'>
-                              <CheckIcon
-                                className='h-5 w-5'
-                                aria-hidden='true'
-                              />
-                            </span>
-                          ) : null}
-                        </>
-                      )}
-                    </Listbox.Option>
-                  ),
-                )}
-              </Listbox.Options>
-            </Transition>
-          </div>
-        </Listbox>
+                <Listbox.Options className='max-h-120 absolute z-10 mt-1 w-full overflow-auto border border-gray-600 bg-black py-1 capitalize shadow-lg '>
+                  {['sedentary', 'mild', 'moderate', 'heavy', 'extreme'].map(
+                    (t, Idx) => (
+                      <Listbox.Option
+                        key={Idx}
+                        className={({ active }) =>
+                          `relative cursor-default select-none py-2 pl-8 pr-4 ${
+                            active
+                              ? 'bg-yellow-400 text-black'
+                              : 'text-gray-200'
+                          }`
+                        }
+                        value={t}
+                      >
+                        {({ selected }) => (
+                          <>
+                            <span className={`block truncate`}>{t}</span>
+                            {selected ? (
+                              <span className='absolute inset-y-0 left-0 flex items-center pl-1'>
+                                <CheckIcon
+                                  className='h-5 w-5'
+                                  aria-hidden='true'
+                                />
+                              </span>
+                            ) : null}
+                          </>
+                        )}
+                      </Listbox.Option>
+                    ),
+                  )}
+                </Listbox.Options>
+              </Transition>
+            </div>
+          </Listbox>
+          <ActivityPopover />
+        </div>
         <div className='mt-4 flex justify-center gap-2'>
           <Button
             onClick={() => {
@@ -990,7 +1000,7 @@ const ActivityPopover = () => {
             leaveFrom='opacity-100 translate-y-0'
             leaveTo='opacity-0 translate-y-1'
           >
-            <Popover.Panel className='absolute left-0 z-10 w-[90vw] max-w-sm px-4 sm:px-0'>
+            <Popover.Panel className='absolute left-[-1rem] bottom-0 z-10 w-[100vw] max-w-md px-4 sm:px-0'>
               <div className='overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5'>
                 <div className='bg-gray-900 p-4 text-lg'>
                   <ul>
@@ -1304,7 +1314,6 @@ const Settings = () => {
           <div className='flex flex-col gap-0'>
             <div className='item-baseline flex gap-4'>
               <h2 className='text-xl font-medium'>Activity Level</h2>
-              <ActivityPopover />
             </div>
             <div className='ml-4 flex flex-col gap-0'>
               <ActivityLevelTraining
