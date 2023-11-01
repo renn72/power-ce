@@ -233,13 +233,16 @@ const Home: NextPage = () => {
           <div className='flex  flex-col gap-1 lg:items-start '>
             <div className='flex w-full items-center justify-between'>
               <h1 className='text-2xl'>Profile</h1>
-              <Link href='/settings'>
-                <Cog6ToothIcon
-                  className={`h-6 w-6 cursor-pointer text-yellow-500 ${
-                    isSettings ? '' : 'animate-bounce'
-                  }`}
-                />
-              </Link>
+              {(user?.id === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a' ||
+                user?.id === 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv') && (
+                <Link href='/settings'>
+                  <Cog6ToothIcon
+                    className={`h-6 w-6 cursor-pointer text-yellow-500 ${
+                      isSettings ? '' : 'animate-bounce'
+                    }`}
+                  />
+                </Link>
+              )}
             </div>
             <div className='flex flex-col gap-0 text-sm text-gray-400'></div>
             <div className='flex gap-1 text-xl'>
