@@ -1,6 +1,6 @@
 import { UserButton, } from '@clerk/nextjs'
 import Link from 'next/link'
-// import { api } from "~/utils/api";
+import { api } from "~/utils/api";
 
 import { useRouter, } from 'next/router'
 
@@ -62,6 +62,8 @@ const classNames = (...classes: string[]) => {
 }
 const Navbar = () => {
   const { user, } = useUser()
+  // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam
+  // const { data: user } = api.users.get.useQuery({ userId: userId })
   const router = useRouter()
   const isUserAdmin = admin.includes(user?.id || '')
   const isUserSuperAdmin = superAdmin.includes(user?.id || '')

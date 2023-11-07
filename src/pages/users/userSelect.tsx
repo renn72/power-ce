@@ -70,7 +70,7 @@ const UserSelect = ({
                 leaveFrom='opacity-100'
                 leaveTo='opacity-0'
               >
-                <Listbox.Options className='max-h-120 absolute z-10 mt-1 w-full overflow-auto border border-gray-600 bg-black py-1 shadow-lg '>
+                <Listbox.Options className='max-h-96 absolute z-10 mt-1 w-full overflow-auto border border-gray-600 bg-black py-1 shadow-lg '>
                   {allUsers?.map((u) => (
                     <Listbox.Option
                       key={u.id}
