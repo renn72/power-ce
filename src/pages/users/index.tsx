@@ -200,8 +200,7 @@ const Users = () => {
 
   return (
     <>
-      <main className='flex h-full flex-col mb-80'>
-        <div className=' flex w-full flex-col items-center justify-center gap-8 py-6 sm:px-2 md:mt-6 '>
+      <main className='flex h-full flex-col items-center justify-center gap-8 py-6 sm:px-2 md:mt-6 '>
           <UserSelect onSelectUser={setUserId} />
           {userId === 'all' ? (
             <div className='flex w-full flex-col gap-16'>
@@ -228,7 +227,6 @@ const Users = () => {
               onSelectTemplate={onSelectTemplate}
             />
           )}
-        </div>
       </main>
     </>
   )

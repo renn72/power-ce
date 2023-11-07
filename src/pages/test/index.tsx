@@ -155,79 +155,14 @@ const Test = () => {
 
   const me = 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a'
 
-  return (
-    <div>
-      <div>
-        <h1>Templates</h1>
-        {all
-          ?.filter((t) => t.isProgram)
-          ?.map((template) => (
-            <div
-              key={template.id}
-              className='grid auto-cols-auto grid-flow-col items-center divide-x-2 divide-gray-200'
-            >
-              <h2 className='m-1 pl-1'>{template.name}</h2>
-              <h3 className='m-2 pl-2'>
-                {template.isProgram ? 'program' : 'template'}
-              </h3>
-              <h3 className='m-2 pl-2'>
-                {template.userIdOfProgram == me ? 'me' : 'not me'}
-              </h3>
-              <h3 className='m-2 w-24 pl-2'>
-                {template.isProgramActive && 'active'}
-              </h3>
-              <h3 className='m-2 pl-2'>
-                {template.isDeleted ? 'deleted' : 'not deleted'}
-              </h3>
-              <h3
-                className='m-2 cursor-pointer pl-2'
-                onClick={() => onUnDeleteSoft(template.id)}
-              >
-                reverse delete
-              </h3>
-              <h3
-                className='m-2 cursor-pointer px-8 text-2xl'
-                onClick={() => onDelete(template.id)}
-              >
-                HardX
-              </h3>
-              <h3
-                className='m-2 cursor-pointer px-8 text-2xl'
-                onClick={() => onDeleteSoft(template.id)}
-              >
-                SoftX
-              </h3>
-            </div>
-          ))}
-        <div className='flex flex-col gap-6 hidden'>
-          <Button
-            className='w-44'
-            onClick={onCreate}
-          >
-            create tempate
-          </Button>
-          <Button
-            className='w-44'
-            onClick={onCreate2}
-          >
-            create tempate2
-          </Button>
-          <Button
-            className='w-44'
-            onClick={onGenerate}
-          >
-            Generate 1rm
-          </Button>
-          <Button
-            className='w-44'
-            onClick={onDeleteAll}
-          >
-            Delete 1rm
-          </Button>
-        </div>
-      </div>
+  return <div className='flex gap-12'>
+    <div className='w-[280px] h-[900px] border border-gray-600 shrink-0'>
+      sidebar
     </div>
-  )
+    <div className='w-[680px] h-[900px] border border-gray-600 shrink-0'>
+      content
+    </div>
+  </div>
 }
 
 export default Test

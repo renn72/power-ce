@@ -41,7 +41,7 @@ const nav = [
   //   name: 'DirtyAdmin', href: '/test',  superAdmin: true,
   // },
   {
-    name: 'Admin', href: '/admin',  superAdmin: true,
+    name: 'Admin', href: '/admin',  superAdmin: true, admin:true.
   },
   // {
   //   name: 'Lift', href: '/lift',
