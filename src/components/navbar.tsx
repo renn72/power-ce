@@ -1,4 +1,3 @@
-import { UserButton, } from '@clerk/nextjs'
 import Link from 'next/link'
 import { api } from "~/utils/api";
 
@@ -9,8 +8,6 @@ import {
   Bars3Icon, XMarkIcon, FingerPrintIcon,
 } from '@heroicons/react/24/outline'
 import Image from 'next/image'
-
-import { useUser, } from '@clerk/nextjs'
 
 const nav = [
   {
@@ -61,9 +58,8 @@ const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(' ')
 }
 const Navbar = () => {
-  const { user, } = useUser()
-  // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam
-  // const { data: user } = api.users.get.useQuery({ userId: userId })
+  const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam
+  const { data: user } = api.users.get.useQuery({ userId: userId })
   const router = useRouter()
   const isUserAdmin = admin.includes(user?.id || '')
   const isUserSuperAdmin = superAdmin.includes(user?.id || '')
@@ -108,7 +104,6 @@ const Navbar = () => {
                 </div>
                 <div className='hidden md:block'>
                   <div className='ml-4 flex items-center md:ml-6 text-gray-100'>
-                    <UserButton />
                   </div>
                 </div>
                 <div className='flex text-lg md:hidden text-gray-200'>
@@ -128,7 +123,6 @@ const Navbar = () => {
                         </>
                       )}
                   </Disclosure.Button>
-                  <UserButton />
                 </div>
               </div>
             </div>

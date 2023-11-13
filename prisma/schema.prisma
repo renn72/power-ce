@@ -37,29 +37,29 @@ model CompLift {
   userId String
 
   name           String
-  Age           String
+  Age            String
   AgeClass       String
   BirthYearClass String
   Division       String
   Event          String
 
-  BodyweightKg  String?
-  WeightClass String?
+  BodyweightKg String?
+  WeightClass  String?
 
-  Squat1    String?
-  Squat2    String?
-  Squat3    String?
-  Squat4    String?
+  Squat1 String?
+  Squat2 String?
+  Squat3 String?
+  Squat4 String?
 
-  Bench1    String?
-  Bench2    String?
-  Bench3    String?
-  Bench4    String?
+  Bench1 String?
+  Bench2 String?
+  Bench3 String?
+  Bench4 String?
 
-  Deadlift1    String?
-  Deadlift2    String?
-  Deadlift3    String?
-  Deadlift4    String?
+  Deadlift1 String?
+  Deadlift2 String?
+  Deadlift3 String?
+  Deadlift4 String?
 
   Total String?
 
@@ -95,7 +95,7 @@ model CompLiftAddress {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  userId String @unique
+  userId  String @unique
   address String
 
   isDeleted Boolean @default(false)
@@ -125,10 +125,10 @@ model Set {
   weight     Decimal?
   isComplete Boolean
 
-  name   String? @db.VarChar(255)
-  lift   String? @db.VarChar(55)
+  name String? @db.VarChar(255)
+  lift String? @db.VarChar(55)
 
-  userId String?
+  userId    String?
   trainerId String?
 
   actualReps Int?
@@ -157,7 +157,7 @@ model SuperSet {
   sets Int?
   reps Int?
 
-  userId String?
+  userId    String?
   trainerId String?
 
   repUnit String? @db.VarChar(55)
@@ -210,7 +210,7 @@ model Exercise {
   sets Int?
   reps Int?
 
-  userId String?
+  userId    String?
   trainerId String?
 
   repUnit String? @db.VarChar(55)
@@ -231,9 +231,9 @@ model Exercise {
   isEstimatedOnerm    Boolean? @default(false)
   estimatedOnermIndex Int?
 
-  tempoDown Int?
+  tempoDown  Int?
   tempoPause Int?
-  tempoUp Int?
+  tempoUp    Int?
 
   actualSets Int?
   actualReps Int?
@@ -267,7 +267,7 @@ model Day {
 
   name String? @db.VarChar(255)
 
-  userId String?
+  userId    String?
   trainerId String?
 
   exercise  Exercise[]
@@ -300,7 +300,7 @@ model Week {
   isTemplate Boolean?
   isDeleted  Boolean  @default(false)
 
-  userId String?
+  userId    String?
   trainerId String?
 
   day Day[]
@@ -332,7 +332,7 @@ model Block {
 
   isDeleted Boolean @default(false)
 
-  userId String?
+  userId    String?
   trainerId String?
 
   userIdOfProgram String?
@@ -423,7 +423,7 @@ model Lift {
 
   createdAtUser DateTime @default(now())
 
-  userId String
+  userId    String
   trainerId String?
 
   liftId String
@@ -450,16 +450,17 @@ model Goal {
 
   userId String
 
-  goal String
-  date DateTime
-  isComplete Boolean @default(false)
-  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal       String
+  date       DateTime
+  isComplete Boolean     @default(false)
+  user       UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   isDeleted Boolean @default(false)
 
   flield1 String?
   flield2 String?
   flield3 String?
+
   @@index([userId])
 }
 
@@ -468,12 +469,12 @@ model DailyLog {
   createdAt DateTime @default(now())
 
   userId String
-  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  UserProfile   UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  weight Decimal?
-  fat Decimal?
-  carbs Decimal?
-  protein Decimal?
+  weight   Decimal?
+  fat      Decimal?
+  carbs    Decimal?
+  protein  Decimal?
   calories Decimal?
 
   steps Int?
@@ -482,22 +483,22 @@ model DailyLog {
 
   notes String? @db.Text
 
-  sleepHrs Decimal?
+  sleepHrs     Decimal?
   sleepQuality Int?
 
-
   recovery Int?
-  stress Int?
-  energy Int?
+  stress   Int?
+  energy   Int?
 
   restingHeartRate Int?
-  vo2Max Int?
+  vo2Max           Int?
 
   isDeleted Boolean @default(false)
 
   flield1 String?
   flield2 String?
   flield3 String?
+
   @@index([userId])
 }
 
@@ -505,28 +506,30 @@ model UserProfile {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  userId String @unique
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
 
-  DOB DateTime?
+  DOB    DateTime?
   gender String?
   height Decimal?
 
-  weight Decimal?
+  weight       Decimal?
   targetWeight Decimal?
 
-  weightGoal String?
+  weightGoal            String?
   activityLevelTraining String?
-  activityLevelRest String?
+  activityLevelRest     String?
 
-  goals Goal[]
+  goals    Goal[]
   dailyLog DailyLog[]
 
-  squatOneRepMax Decimal?
-  benchOneRepMax Decimal?
+  squatOneRepMax    Decimal?
+  benchOneRepMax    Decimal?
   deadliftOneRepMax Decimal?
 
-  fatAdjustment Decimal?
-  carbAdjustment Decimal?
+  fatAdjustment     Decimal?
+  carbAdjustment    Decimal?
   proteinAdjustment Decimal?
 
   isDeleted Boolean @default(false)
@@ -546,17 +549,18 @@ model Warmup {
   createdAt DateTime @default(now())
 
   notes String
-  name String
-  link String
+  name  String
+  link  String
 
   warmupTemplateId String
-  warmupTemplate WarmupTemplate @relation(fields: [warmupTemplateId], references: [id], onDelete: Cascade)
+  warmupTemplate   WarmupTemplate @relation(fields: [warmupTemplateId], references: [id], onDelete: Cascade)
 
   isDeleted Boolean @default(false)
 
   flield1 String?
   flield2 String?
   flield3 String?
+
   @@index([warmupTemplateId])
 }
 
@@ -574,4 +578,50 @@ model WarmupTemplate {
   flield1 String?
   flield2 String?
   flield3 String?
+}
+
+// Necessary for Next auth
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? // @db.Text
+  access_token      String? // @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? // @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String        @id @default(cuid())
+  name          String?
+  email         String?       @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  userProfiles  UserProfile[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }

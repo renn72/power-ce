@@ -1,8 +1,8 @@
 import { type NextPage } from 'next'
+import { signIn, signOut, useSession } from "next-auth/react";
 
 import { api } from '~/utils/api'
 
-import { useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
@@ -63,9 +63,9 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
 }
 
 const Home: NextPage = () => {
-  const { user } = useUser()
+  // const { user } = useUser()
 
-  const userId = user?.id || ''
+  // const userId = user?.id || ''
   // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam
   // const userId = 'user_2Uj759BY4rnQ8r4KGafyBcT1fuD' //alex
   // const userId = 'user_2UjZi8dZQQcmxhViIek8PUVjKp7' //ben
@@ -75,9 +75,9 @@ const Home: NextPage = () => {
   // const userId = 'user_2VxyYAeq0glZAPQM2OpTQRbXKxZ' //byung
   // const userId = 'user_2WeOskMzYGguohYuGjW2LCuaYOh' //leroy
   // const userId = 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv' //mitch
-  // const userId = 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a' //me
+  const userId = 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a' //me
 
-  // const { data: user } = api.users.get.useQuery({ userId: userId })
+  const { data: user } = api.users.get.useQuery({ userId: userId })
 
   const [isOpen, setIsOpen] = useState(false)
 

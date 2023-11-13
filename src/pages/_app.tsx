@@ -5,6 +5,10 @@ import {
   SignedOut,
   RedirectToSignIn,
 } from '@clerk/nextjs'
+
+import { type Session } from 'next-auth'
+import { SessionProvider } from 'next-auth/react'
+
 import { Provider } from 'jotai'
 import Head from 'next/head'
 import Layout from '~/components/layout'
@@ -17,27 +21,14 @@ import '~/styles/globals.css'
 import { Toaster } from 'react-hot-toast'
 import { cn } from '@/lib/utils'
 
-const geist = localFont({
-  src: [
-    { path: '../../public/fonts/Geist/Geist-UltraLight.otf', weight: '200' },
-    { path: '../../public/fonts/Geist/Geist-Thin.otf', weight: '300' },
-    { path: '../../public/fonts/Geist/Geist-Light.otf', weight: '400' },
-    { path: '../../public/fonts/Geist/Geist-Regular.otf', weight: '500' },
-    { path: '../../public/fonts/Geist/Geist-Medium.otf', weight: '600' },
-    { path: '../../public/fonts/Geist/Geist-SemiBold.otf', weight: '700' },
-    { path: '../../public/fonts/Geist/Geist-Bold.otf', weight: '800' },
-    { path: '../../public/fonts/Geist/Geist-Black.otf', weight: '900' },
-  ],
-  display: 'swap',
-  variable: '--font-geist-sans',
-  fallback: ['inter'],
-})
-
-const MyApp: AppType = ({ Component, pageProps }) => {
+const MyApp: AppType<{ session: Session | null }> = ({
+  Component,
+  pageProps: { session, ...pageProps },
+}) => {
   return (
-    <Provider>
-      <ClerkProvider {...pageProps}>
-        <main >
+    <SessionProvider session={session}>
+      <Provider>
+        <main>
           <Head>
             <title>Power CE</title>
             <meta
@@ -50,14 +41,9 @@ const MyApp: AppType = ({ Component, pageProps }) => {
             />
           </Head>
 
-          <SignedOut>
-            <RedirectToSignIn />
-          </SignedOut>
-          <SignedIn>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </SignedIn>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
 
           <Toaster
             position='bottom-center'
@@ -69,8 +55,8 @@ const MyApp: AppType = ({ Component, pageProps }) => {
             }}
           />
         </main>
-      </ClerkProvider>
-    </Provider>
+      </Provider>
+    </SessionProvider>
   )
 }
 

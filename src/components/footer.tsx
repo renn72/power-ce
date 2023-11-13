@@ -1,10 +1,7 @@
-import { FingerPrintIcon, } from '@heroicons/react/24/outline'
 import { useAtom, } from 'jotai'
 import RPEModal from './rpeModal'
 import RmModal from './rmModal'
 import DealoadModal from './deloadModal'
-
-import { useUser, } from '@clerk/nextjs'
 
 import {
   rmModalIsOpenAtom, rpeModalIsOpenAtom, deloadModalIsOpenAtom,
@@ -18,10 +15,10 @@ const admin = [
 ]
 
 const Footer = () => {
-  const { user, } = useUser()
   const [, setRmModalIsOpen,] = useAtom(rmModalIsOpenAtom)
   const [, setRpeModalIsOpen,] = useAtom(rpeModalIsOpenAtom)
   const [, setDeloadModalIsOpen,] = useAtom(deloadModalIsOpenAtom)
+  const userId = 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv'
   return (
     <>
       <div className='px-4 sm:px-6 lg:px-8 py-2 flex justify-between items-center'>
@@ -33,7 +30,7 @@ const Footer = () => {
             height={50}
           />
         </Link>
-        {admin.includes(user?.id || '') && (
+        {admin.includes(userId || '') && (
           <div className='flex gap-2 text-sm md:text-lg font-bold text-gray-400'>
             <button
               className='bg-transparent hover:bg-gray-400 bg-gray-800 font-semibold hover:text-white w-10 h-10 md:w-12 md:h-12 border-2 border-gray-400 hover:border-transparent rounded-full'
