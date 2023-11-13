@@ -8,7 +8,7 @@ import {
 import EmailProvider from 'next-auth/providers/email'
 
 import { env } from '~/env.mjs'
-import { prisma } from '~/server/db'
+import { db } from '~/server/db'
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -46,7 +46,8 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
-  adapter: PrismaAdapter(prisma),
+  secret: process.env.NEXTAUTH_SECRET,
+  adapter: PrismaAdapter(db),
   providers: [
     EmailProvider({
       server: {

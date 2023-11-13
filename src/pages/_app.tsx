@@ -1,10 +1,4 @@
 import { type AppType } from 'next/app'
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  RedirectToSignIn,
-} from '@clerk/nextjs'
 
 import { type Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
@@ -15,11 +9,8 @@ import Layout from '~/components/layout'
 
 import { api } from '~/utils/api'
 
-import localFont from 'next/font/local'
-
 import '~/styles/globals.css'
 import { Toaster } from 'react-hot-toast'
-import { cn } from '@/lib/utils'
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
