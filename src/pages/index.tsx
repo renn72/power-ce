@@ -1,5 +1,5 @@
 import { type NextPage } from 'next'
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from 'next-auth/react'
 
 import { api } from '~/utils/api'
 
@@ -63,7 +63,10 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
 }
 
 const Home: NextPage = () => {
-  // const { user } = useUser()
+  const { data: session } = useSession()
+
+  const userId = session?.user.id || ''
+  console.log('id', userId)
 
   // const userId = user?.id || ''
   // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam
@@ -75,16 +78,15 @@ const Home: NextPage = () => {
   // const userId = 'user_2VxyYAeq0glZAPQM2OpTQRbXKxZ' //byung
   // const userId = 'user_2WeOskMzYGguohYuGjW2LCuaYOh' //leroy
   // const userId = 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv' //mitch
-  const userId = 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a' //me
+  // const userId = 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a' //me
 
-  const { data: user } = api.users.get.useQuery({ userId: userId })
+  // const { data: user } = api.users.get.useQuery({ userId: userId })
 
   const [isOpen, setIsOpen] = useState(false)
 
   const ctx = api.useContext()
 
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
-  api.users.getAllUsers.useQuery()
   const { data: addressData, isLoading: addressDataLoading } =
     api.compLift.getAddress.useQuery({
       userId: userId,
@@ -105,11 +107,6 @@ const Home: NextPage = () => {
         console.log(data)
         void ctx.compLift.getCompLifts.invalidate({ userId: userId })
       },
-    })
-
-  const { data: userSettings, isLoading: settingsLoading } =
-    api.settings.get.useQuery({
-      userId: user?.id || '',
     })
 
   const { mutate: saveAddress } = api.compLift.createAddress.useMutation({
@@ -144,87 +141,63 @@ const Home: NextPage = () => {
     addressDataLoading ||
     allSetsLoading ||
     compLiftsLoading ||
-    programLoading ||
-    settingsLoading
-  ) {
+    programLoading ) {
     return <LoadingPage />
   }
-  if (!user) return null
-  const isSettings =
-    userSettings &&
-    userSettings.height &&
-    +userSettings.height !== 0 &&
-    userSettings.weight &&
-    +userSettings.weight !== 0 &&
-    userSettings.targetWeight &&
-    +userSettings.targetWeight !== 0 &&
-    userSettings.weightGoal &&
-    userSettings.weightGoal !== '' &&
-    userSettings.gender &&
-    userSettings.gender !== '' &&
-    userSettings.DOB &&
-    userSettings.activityLevelTraining &&
-    userSettings.activityLevelTraining !== '' &&
-    userSettings.activityLevelRest &&
-    userSettings.activityLevelRest !== ''
-      ? true
-      : false
 
-  console.log(isSettings)
-
-  const bmr =
-    66 +
-    13.7 * (Number(userSettings?.weight) || 0) +
-    (5 * Number(userSettings?.height) || 0) -
-    (6.8 *
-      (new Date().getFullYear() -
-        new Date(userSettings?.DOB || '').getFullYear()) || 0)
-
-  const caloriesTraining =
-    bmr *
-    (!userSettings?.activityLevelTraining
-      ? 1.2
-      : userSettings?.activityLevelTraining === 'sedentary'
-      ? 1.2
-      : userSettings?.activityLevelTraining === 'mild'
-      ? 1.375
-      : userSettings?.activityLevelTraining === 'moderate'
-      ? 1.55
-      : userSettings?.activityLevelTraining === 'heavy'
-      ? 1.7
-      : userSettings?.activityLevelTraining === 'extreme'
-      ? 1.9
-      : 1.2)
-
-  const protein = (Number(userSettings?.weight) || 0) * 2
-  const fat =
-    (Number(userSettings?.weight) || 0) *
-    (userSettings?.gender === 'female'
-      ? 0.4
-      : userSettings?.weightGoal === 'weight loss'
-      ? 0.7
-      : userSettings?.weightGoal === 'weight gain'
-      ? 1
-      : 0.8)
-  const carbsTraining = (caloriesTraining - protein * 4 - fat * 9) / 4
-
-  const caloriesRest =
-    bmr *
-    (!userSettings?.activityLevelRest
-      ? 1.2
-      : userSettings?.activityLevelRest === 'sedentary'
-      ? 1.2
-      : userSettings?.activityLevelRest === 'mild'
-      ? 1.375
-      : userSettings?.activityLevelRest === 'moderate'
-      ? 1.55
-      : userSettings?.activityLevelRest === 'heavy'
-      ? 1.7
-      : userSettings?.activityLevelRest === 'extreme'
-      ? 1.9
-      : 1.2)
-
-  const carbsRest = (caloriesRest - protein * 4 - fat * 9) / 4
+  // const bmr =
+  //   66 +
+  //   13.7 * (Number(userSettings?.weight) || 0) +
+  //   (5 * Number(userSettings?.height) || 0) -
+  //   (6.8 *
+  //     (new Date().getFullYear() -
+  //       new Date(userSettings?.DOB || '').getFullYear()) || 0)
+  //
+  // const caloriesTraining =
+  //   bmr *
+  //   (!userSettings?.activityLevelTraining
+  //     ? 1.2
+  //     : userSettings?.activityLevelTraining === 'sedentary'
+  //     ? 1.2
+  //     : userSettings?.activityLevelTraining === 'mild'
+  //     ? 1.375
+  //     : userSettings?.activityLevelTraining === 'moderate'
+  //     ? 1.55
+  //     : userSettings?.activityLevelTraining === 'heavy'
+  //     ? 1.7
+  //     : userSettings?.activityLevelTraining === 'extreme'
+  //     ? 1.9
+  //     : 1.2)
+  //
+  // const protein = (Number(userSettings?.weight) || 0) * 2
+  // const fat =
+  //   (Number(userSettings?.weight) || 0) *
+  //   (userSettings?.gender === 'female'
+  //     ? 0.4
+  //     : userSettings?.weightGoal === 'weight loss'
+  //     ? 0.7
+  //     : userSettings?.weightGoal === 'weight gain'
+  //     ? 1
+  //     : 0.8)
+  // const carbsTraining = (caloriesTraining - protein * 4 - fat * 9) / 4
+  //
+  // const caloriesRest =
+  //   bmr *
+  //   (!userSettings?.activityLevelRest
+  //     ? 1.2
+  //     : userSettings?.activityLevelRest === 'sedentary'
+  //     ? 1.2
+  //     : userSettings?.activityLevelRest === 'mild'
+  //     ? 1.375
+  //     : userSettings?.activityLevelRest === 'moderate'
+  //     ? 1.55
+  //     : userSettings?.activityLevelRest === 'heavy'
+  //     ? 1.7
+  //     : userSettings?.activityLevelRest === 'extreme'
+  //     ? 1.9
+  //     : 1.2)
+  //
+  // const carbsRest = (caloriesRest - protein * 4 - fat * 9) / 4
 
   return (
     <>
@@ -233,21 +206,11 @@ const Home: NextPage = () => {
           <div className='flex  flex-col gap-1 lg:items-start '>
             <div className='flex w-full items-center justify-between'>
               <h1 className='text-2xl'>Profile</h1>
-              {(user?.id === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a' ||
-                user?.id === 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv') && (
-                <Link href='/settings'>
-                  <Cog6ToothIcon
-                    className={`h-6 w-6 cursor-pointer text-yellow-500 ${
-                      isSettings ? '' : 'animate-bounce'
-                    }`}
-                  />
-                </Link>
-              )}
             </div>
             <div className='flex flex-col gap-0 text-sm text-gray-400'></div>
             <div className='flex gap-1 text-xl'>
-              <div>{user.firstName}</div>
-              <div>{user.lastName}</div>
+              <div>user.firstName</div>
+              <div>user.lastName</div>
             </div>
           </div>
           {currentProgram && defaultOpen && (
@@ -257,44 +220,6 @@ const Home: NextPage = () => {
               </Button>
             </Link>
           )}
-          <div>
-            {userSettings &&
-            userSettings.height &&
-            +userSettings.height !== 0 &&
-            userSettings.weight &&
-            +userSettings.weight !== 0 &&
-            userSettings.targetWeight &&
-            +userSettings.targetWeight !== 0 &&
-            userSettings.weightGoal &&
-            userSettings.weightGoal !== '' &&
-            userSettings.gender &&
-            userSettings.gender !== '' &&
-            userSettings.DOB &&
-            userSettings.activityLevelTraining &&
-            userSettings.activityLevelTraining !== '' &&
-            userSettings.activityLevelRest &&
-            userSettings.activityLevelRest !== '' ? (
-              <div className='flex w-full max-w-screen-lg flex-col gap-1 rounded-lg p-2 px-4 font-normal'>
-                <h3 className='text-xl font-medium'>Macro Tagets</h3>
-                <div className='flex justify-between'>
-                  <div className='ml-2 flex flex-col gap-0'>
-                    <h4 className='font-medium text-gray-400'>Training</h4>
-                    <div>Fat: {fat.toFixed(0)}</div>
-                    <div>Carbs: {carbsTraining.toFixed(0)}</div>
-                    <div>Protein: {protein.toFixed(0)}</div>
-                    <div>Calories: {caloriesTraining.toFixed(0)}</div>
-                  </div>
-                  <div className='ml-2 flex flex-col gap-0'>
-                    <h4 className='font-medium text-gray-400'>Rest</h4>
-                    <div>Fat: {fat.toFixed(0)}</div>
-                    <div>Carbs: {carbsRest.toFixed(0)}</div>
-                    <div>Protein: {protein.toFixed(0)}</div>
-                    <div>Calories: {caloriesRest.toFixed(0)}</div>
-                  </div>
-                </div>
-              </div>
-            ) : null}
-          </div>
         </div>
         <div className='flex flex-col gap-4'>
           <Lift

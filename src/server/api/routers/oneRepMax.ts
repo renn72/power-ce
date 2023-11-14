@@ -15,7 +15,8 @@ export const oneRepMaxRouter = createTRPCRouter({
 
   getUser: publicProcedure
     .query(async ({ ctx, }) => {
-      const { userId, } = ctx
+      const userId = ctx.session?.user?.id
+      
       if (!userId) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',

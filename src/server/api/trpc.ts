@@ -41,7 +41,8 @@ interface CreateContextOptions {
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
-    db,
+    prisma: db,
+    userId: opts.session?.user?.id ?? null,
   }
 }
 
@@ -128,4 +129,4 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(enforceUserIsAuthed)
+export const privateProcedure = t.procedure.use(enforceUserIsAuthed)
