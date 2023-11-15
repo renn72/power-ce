@@ -1,7 +1,8 @@
 import Link from 'next/link'
-import { api } from '~/utils/api'
 
 import { useRouter } from 'next/router'
+
+import { useSession } from 'next-auth/react'
 
 import { Disclosure } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
@@ -74,7 +75,9 @@ const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(' ')
 }
 const Navbar = () => {
-  const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam
+  const { data: session } = useSession()
+  const userId = session?.user?.id
+  // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam
   // const { data: user } = api.users.get.useQuery({ userId: userId })
   const router = useRouter()
   const isUserAdmin = true // admin.includes(user?.id || '')

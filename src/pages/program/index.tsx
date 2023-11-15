@@ -1,6 +1,7 @@
 import { type NextPage } from 'next'
 
-import { useUser } from '@clerk/nextjs'
+import { useSession } from 'next-auth/react'
+
 import { api } from '~/utils/api'
 import ProgramCard from '~/components/programCard'
 import { LoadingPage } from '~/components/loading'
@@ -17,9 +18,9 @@ import CountDown from '~/components/countDown'
 import ProgramView from '~/components/programView'
 
 const Program: NextPage = () => {
-  const { user } = useUser()
-
-  const userId = user?.id || ''
+  const { data: session } = useSession()
+  const user = session?.user
+  const userId = session?.user?.id || ''
   // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v'
 
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })

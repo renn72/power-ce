@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
-import { type NextPage } from 'next'
-import { useUser } from '@clerk/nextjs'
 import { toast } from 'react-hot-toast'
 import { api } from '~/utils/api'
+import { useSession } from 'next-auth/react'
 
 import { Disclosure, Transition } from '@headlessui/react'
 
@@ -119,7 +118,8 @@ const UserPage = ({
 }
 
 const Users = () => {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const [userId, setUserId] = useState<string>(user?.id || 'all')
   if (!user) return <div>Login</div>
 

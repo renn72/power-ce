@@ -1,5 +1,5 @@
 import { type NextPage } from 'next'
-import { signIn, signOut, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 
 import { api } from '~/utils/api'
 
@@ -141,7 +141,8 @@ const Home: NextPage = () => {
     addressDataLoading ||
     allSetsLoading ||
     compLiftsLoading ||
-    programLoading ) {
+    programLoading
+  ) {
     return <LoadingPage />
   }
 
