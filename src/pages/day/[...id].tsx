@@ -849,7 +849,9 @@ const ExerciseModal = ({
                             exercise.lift !== 'unlinked' &&
                             (
                               Number(weights) /
-                              Number(e1rm[Number(exercise?.reps) - 1] || 0 / 100)
+                              Number(
+                                e1rm[Number(exercise?.reps) - 1] || 0 / 100,
+                              )
                             )?.toFixed(0) && (
                               <div className='mx-1 flex gap-2 px-2 md:mx-6'>
                                 <div>E1RM</div>
@@ -859,7 +861,8 @@ const ExerciseModal = ({
                                   <div>
                                     {(
                                       +weights /
-                                      (e1rm[Number(exercise.reps) - 1] || 0 / 100)
+                                      (e1rm[Number(exercise.reps) - 1] ||
+                                        0 / 100)
                                     )?.toFixed(0)}
                                     kg
                                   </div>
@@ -979,7 +982,7 @@ const Day = () => {
 
   const ctx = api.useContext()
   const router = useRouter()
-  const [programId, dayId] = router.query.id as string[]
+  const [programId, dayId] = (router.query.id as string[]) || ['', '']
   const [isOpen, setIsOpen] = useState(false)
   const [exerciseToDelete, setExerciseToDelete] = useState<string>('')
   const utils = api.useContext()
@@ -1112,7 +1115,7 @@ const Day = () => {
               Completed
             </div>
           ) : (
-            <div className='flex items-center justify-between mx-12'>
+            <div className='mx-12 flex items-center justify-between'>
               <Button
                 onClick={() => {
                   updateDayComplete({ id: day.id, isComplete: true })
@@ -1121,11 +1124,12 @@ const Day = () => {
               >
                 Complete
               </Button>
-                  <HomeIcon className='h-6 w-6 text-gray-200'
-                    onClick={() => {
-                      void router.push(`/`)
-                    }}
-                  />
+              <HomeIcon
+                className='h-6 w-6 text-gray-200'
+                onClick={() => {
+                  void router.push(`/`)
+                }}
+              />
             </div>
           )}
           <RadioGroup
