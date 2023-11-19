@@ -4,6 +4,8 @@ import { Prisma } from '@prisma/client'
 import { type Exercise as StoreExercise } from '~/store/types'
 import { api } from '~/utils/api'
 
+import { useSession } from 'next-auth/react'
+
 import { AnimatePresence, motion } from 'framer-motion'
 import { Transition, RadioGroup, Disclosure, Dialog } from '@headlessui/react'
 import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
@@ -61,7 +63,6 @@ const SetsModal = ({
     }
   }
   const onSetDoneWrapper = () => {
-    console.log('done')
     onSetDone(reps)
   }
 
@@ -105,7 +106,6 @@ const SetsModal = ({
 
 const ExerciseModal = ({
   exercise,
-  idx,
   selectedEnergy,
   day,
   programId,
@@ -114,7 +114,6 @@ const ExerciseModal = ({
   setExerciseToDelete,
 }: {
   exercise: StoreExercise
-  idx: number
   selectedEnergy: string
   day: Day
   programId: string
@@ -153,7 +152,7 @@ const ExerciseModal = ({
   })
 
   const [e1rm, setE1rm] = useState<number[]>([0])
-  const [notes, setNotes] = useState<string>(() => exercise?.flield2 || '')
+  const [notes, setNotes] = useState<string>(() => exercise?.field2 || '')
 
   const utils = api.useContext()
 
@@ -179,7 +178,7 @@ const ExerciseModal = ({
                         return {
                           ...exercise,
                           isComplete: newExercise.isComplete,
-                          flield2: newExercise.notes,
+                          field2: newExercise.notes,
                         }
                       }
                       return exercise
@@ -997,8 +996,9 @@ const ExerciseModal = ({
 }
 
 const Day = () => {
-  const { user } = useUser()
-  const userId = user?.id || ''
+  const { data: session } = useSession()
+  const userId = session?.user.id || ''
+
   const ctx = api.useContext()
   const router = useRouter()
   const [programId, dayId] = router.query.id as string[]
@@ -1070,6 +1070,7 @@ const Day = () => {
   const { mutate: updateDayComplete } = api.programs.completeDay.useMutation({
     onMutate: async (newDay) => {
       console.log('id', newDay)
+      if (!programId) return
       await utils.blocks.get.cancel({ id: programId })
       const previousProgram = utils.blocks.get.getData({ id: programId })
 
@@ -1097,6 +1098,7 @@ const Day = () => {
     },
     onError: (err, newExercise, context) => {
       console.log('err', err)
+      if (!programId) return
       utils.blocks.get.setData({ id: programId }, context?.previousProgram)
     },
   })
