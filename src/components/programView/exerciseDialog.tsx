@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input'
 import { UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { Controller } from 'react-hook-form'
-import LiftPicker from '~/pages/templates/liftPicker'
+import LiftPicker from '~/components/form/liftPicker'
 
 import { NumericFormat } from 'react-number-format'
 import { Label } from '@/components/ui/label'
@@ -26,7 +26,6 @@ import { type Exercise } from '@prisma/client'
 
 import { Prisma } from '@prisma/client'
 import { Checkbox } from '@/components/ui/checkbox'
-import { LoadingSpinner } from '../loading'
 
 const exerciseWithSet = Prisma.validator<Prisma.ExerciseArgs>()({
   include: {
@@ -401,7 +400,7 @@ const ExerciseDialog = ({
     )
     ?.exercise.find((exercise) => exercise.id === exerciseId) as ExerciseWithSet
 
-    console.log('exercise', exercise)
+  console.log('exercise', exercise)
 
   const formMethods = useForm({
     defaultValues: {
