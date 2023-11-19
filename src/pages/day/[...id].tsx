@@ -1,5 +1,4 @@
 import { useState, useEffect, Fragment } from 'react'
-import { type Set } from '@prisma/client'
 import { Prisma } from '@prisma/client'
 import { type Exercise as StoreExercise } from '~/store/types'
 import { api } from '~/utils/api'
@@ -1202,7 +1201,7 @@ const Day = () => {
             </div>
           )}
           <div className='flex w-full flex-col gap-6 divide-y divide-dashed divide-gray-600 pb-16 md:p-2'>
-            {day.exercise.map((exercise, idx) => (
+            {day?.exercise?.map((exercise, idx) => (
               <div
                 key={exercise.id}
                 className=''
