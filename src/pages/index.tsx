@@ -63,7 +63,7 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
 
 const Home: NextPage = () => {
   const { data: session } = useSession()
-  const userId = session?.user.id || ''
+  const userId = session?.user?.id || ''
 
   const { data: user } = api.users.get.useQuery({ userId: userId })
 
@@ -78,10 +78,6 @@ const Home: NextPage = () => {
   // const userId = 'user_2WeOskMzYGguohYuGjW2LCuaYOh' //leroy
   // const userId = 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv' //mitch
   // const userId = 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a' //me
-
-  // const { data: user } = api.users.get.useQuery({ userId: userId })
-
-  const [isOpen, setIsOpen] = useState(false)
 
   const ctx = api.useContext()
 
