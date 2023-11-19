@@ -1,14 +1,9 @@
 import { useState, useMemo } from 'react'
-import { Button } from '@/components/ui/button'
 import { api } from '~/utils/api'
 import { useSession } from 'next-auth/react'
 
-import { useUser } from '@clerk/nextjs'
-
 import { LoadingPage } from '~/components/loading'
 import UserSelect from './userSelect'
-
-import ResizableBox from './ResizableBox'
 
 import {
   Chart as ChartJS,

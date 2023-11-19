@@ -21,10 +21,6 @@ import {
 } from '@heroicons/react/24/outline'
 import { rpe as rpeTable } from '~/store/defaultValues'
 
-import { useUser } from '@clerk/nextjs'
-
-import getWeight from '~/utils/getWeight'
-
 import { NumericFormat } from 'react-number-format'
 import { Input } from '@/components/ui/input'
 import { PlaySquare, XIcon } from 'lucide-react'

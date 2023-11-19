@@ -2,16 +2,18 @@ import { useState, Fragment } from 'react'
 
 import { api } from '~/utils/api'
 
+import { useSession } from 'next-auth/react'
+
 import { Listbox, Transition } from '@headlessui/react'
 import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/24/outline'
-import { useUser } from '@clerk/nextjs'
 
 const UserSelect = ({
   onSelectUser,
 }: {
   onSelectUser: (arg0: string) => void
 }) => {
-  const { user: currentUser } = useUser()
+  const { data: session } = useSession()
+  const currentUser = session?.user
 
   const [user, setUser] = useState<string>(currentUser?.id || 'all')
 
