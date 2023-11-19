@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { api } from '~/utils/api'
+import { useSession } from 'next-auth/react'
 
 import { useUser } from '@clerk/nextjs'
 
@@ -112,7 +113,8 @@ const ChartComponent = ({ user }: { user: string }) => {
 const me = 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a'
 
 const Stats = () => {
-  const { user: currentUser } = useUser()
+  const { data: session } = useSession()
+  const currentUser = session?.user
 
   const [user, setUser] = useState<string>(() => currentUser?.id || '')
 
