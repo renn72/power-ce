@@ -63,8 +63,9 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
 
 const Home: NextPage = () => {
   const { data: session } = useSession()
-  const user = session?.user
   const userId = session?.user.id || ''
+
+  const { data: user } = api.users.get.useQuery({ userId: userId })
 
   // const userId = user?.id || ''
   // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam

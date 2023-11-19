@@ -4,6 +4,8 @@ import { useRouter } from 'next/router'
 
 import { useSession } from 'next-auth/react'
 
+import { api } from '~/utils/api'
+
 import { Disclosure } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
@@ -77,16 +79,15 @@ const classNames = (...classes: string[]) => {
 const Navbar = () => {
   const { data: session } = useSession()
   const userId = session?.user?.id
+  const { data: user } = api.users.get.useQuery({ userId: userId })
   // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam
-  // const { data: user } = api.users.get.useQuery({ userId: userId })
   const router = useRouter()
-  const isUserAdmin = true // admin.includes(user?.id || '')
-  const isUserSuperAdmin = true // superAdmin.includes(user?.id || '')
+  const isUserAdmin = user?.isAdmin
+  const isUserSuperAdmin = user?.isRoot || false
   const navigation = nav.filter(
     (item) =>
       !item.admin ||
-      (item.admin && isUserAdmin) ||
-      (item.superAdmin && isUserSuperAdmin),
+      (item.admin && (isUserAdmin && (!item.superAdmin || isUserSuperAdmin)))
   )
   return (
     <>

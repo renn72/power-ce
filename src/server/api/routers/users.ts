@@ -2,62 +2,31 @@ import { clerkClient } from '@clerk/nextjs/server'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-import {
-  createTRPCRouter,
-  privateProcedure,
-  publicProcedure,
-} from '~/server/api/trpc'
+import { createTRPCRouter, privateProcedure } from '~/server/api/trpc'
 
 export const usersRouter = createTRPCRouter({
-  getSuperAdmin: privateProcedure.query(async () => {
-    const user = await clerkClient.users.getUser(
-      'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a',
-    )
+  getSuperAdmin: privateProcedure.query(async ({ ctx }) => {
+    const user = await ctx.prisma.user.findFirst({
+      where: {
+        id: 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a',
+      },
+    })
     return user
   }),
 
-  getAll: publicProcedure.query(async () => {
-    const res = await clerkClient.users.getUserList({
-      orderBy: '-created_at',
-      limit: 100,
-    })
-    type Users = typeof res
-    const users: { users: Users; admins: Users } = {
-      users: [],
-      admins: [],
-    }
-    users.users = res.filter(
-      (user) =>
-        user.emailAddresses.filter(
-          (email) =>
-            email.emailAddress !== 'ren@warner.systems' &&
-            email.emailAddress !== 'mitchlee021@gmail.com',
-        ).length > 0,
-    )
-    users.admins = res.filter(
-      (user) =>
-        user.emailAddresses.filter(
-          (email) =>
-            email.emailAddress === 'ren@warner.systems' ||
-            email.emailAddress === 'mitchlee021@gmail.com',
-        ).length > 0,
-    )
-    console.log(users)
-
-    return users
-  }),
-  getAllUsers: publicProcedure.query(async () => {
-    const res = await clerkClient.users.getUserList({
-      orderBy: '-created_at',
-      limit: 100,
-    })
+  getAllUsers: privateProcedure.query(async ({ ctx }) => {
+    const res = await ctx.prisma.user.findMany({})
 
     return res
   }),
   get: privateProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const res = await clerkClient.users.getUser(input.userId)
+      const id = input.userId
+      const res = await ctx.prisma.user.findUnique({
+        where: { id },
+      })
+
       return res
     }),
 
