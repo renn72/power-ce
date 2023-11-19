@@ -92,6 +92,29 @@ export const usersRouter = createTRPCRouter({
       }
     }),
 
+  makeUsers: privateProcedure.mutation(async ({ ctx }) => {
+    const res = await clerkClient.users.getUserList({
+      orderBy: '-created_at',
+      limit: 100,
+    })
+
+    const users = res.map((user) => {
+      return {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        id: user.id,
+        email: user.emailAddresses[0]?.emailAddress,
+      }
+    })
+
+    const res2 = await ctx.prisma.user.createMany({
+      data: users,
+      skipDuplicates: true,
+    })
+
+    return res
+  }),
+
   deleteTrainer: privateProcedure
     .input(z.object({ userId: z.string() }))
     .mutation(async ({ ctx, input }) => {

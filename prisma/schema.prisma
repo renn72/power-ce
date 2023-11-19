@@ -533,11 +533,6 @@ model UserProfile {
 
   isDeleted Boolean @default(false)
 
-  isTrainer Boolean @default(false)
-  isClient  Boolean @default(true)
-  isAdmin   Boolean @default(false)
-  isRoot    Boolean @default(false)
-
   flield1 String?
   flield2 String?
   flield3 String?
@@ -618,6 +613,26 @@ model User {
   accounts      Account[]
   sessions      Session[]
   userProfiles  UserProfile[]
+
+
+  isDiet   Boolean @default(false)
+  isPower  Boolean @default(false)
+  isTrainer Boolean @default(false)
+  isClient  Boolean @default(true)
+  isAdmin   Boolean @default(false)
+  isSuper   Boolean @default(false)
+  isCreator Boolean @default(false)
+  isRoot    Boolean @default(false)
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+  flield4 String?
+  flield5 String?
+  flield6 String?
+  flield7 String?
+  flield8 String?
+  flield9 String?
 }
 
 model VerificationToken {

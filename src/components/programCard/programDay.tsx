@@ -48,7 +48,7 @@ const ProgramDay = ({
   const [selectedEngery, setSelectedEngery] = useState(day.energyRating || 'A')
 
   const { data: userCoreOneRM } = api.oneRepMax.getUserCoreLifts.useQuery({
-    userId: userId,
+    userId: userId || '',
   })
 
   const checkWeight = (

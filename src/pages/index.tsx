@@ -63,6 +63,7 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
 
 const Home: NextPage = () => {
   const { data: session } = useSession()
+  const user = session?.user
   const userId = session?.user.id || ''
 
   // const userId = user?.id || ''
@@ -207,8 +208,8 @@ const Home: NextPage = () => {
             </div>
             <div className='flex flex-col gap-0 text-sm text-gray-400'></div>
             <div className='flex gap-1 text-xl'>
-              <div>user.firstName</div>
-              <div>user.lastName</div>
+              <div>{user?.firstName}</div>
+              <div>{user?.lastName}</div>
             </div>
           </div>
           {currentProgram && defaultOpen && (

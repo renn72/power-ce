@@ -16,7 +16,7 @@ const ProgramCard = ({
   userId: string
 }) => {
   api.oneRepMax.getUserCoreLifts.useQuery({
-    userId: userId,
+    userId: userId || '',
   })
   const { data: allUsers } = api.users.getAllUsers.useQuery()
   const { data: program, isLoading: programLoading } = api.blocks.get.useQuery({
@@ -38,7 +38,6 @@ const ProgramCard = ({
     },
     { day: -1, week: -1 },
   )
-  console.log(defaultOpen)
 
   if (programLoading) return <LoadingSpinner />
 

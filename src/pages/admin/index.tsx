@@ -31,6 +31,8 @@ const Admin = () => {
     },
   })
 
+  const { mutate: makeUsers } = api.users.makeUsers.useMutation()
+
   console.log({ allTemplates, allPrograms, allUsers })
 
   if (allTemplatesLoading || allProgramsLoading) return <div>Loading...</div>
@@ -40,14 +42,15 @@ const Admin = () => {
   return (
     <div>
       <h1>Admin</h1>
+      <Button onClick={() => makeUsers()}>Build users</Button>
       <div className='mb-12'>
-        <h2 className='text-3xl font-bold mb-8'>Templates</h2>
+        <h2 className='mb-8 text-3xl font-bold'>Templates</h2>
         <div className='flex flex-col gap-4'>
           {allTemplates
             ?.filter((t) => t.isDeleted !== true)
             .map((template) => (
               <div
-                className='flex gap-4 text-xl items-baseline'
+                className='flex items-baseline gap-4 text-xl'
                 key={template.id}
               >
                 <div className='w-72 overflow-hidden'>{template.name}</div>
@@ -64,13 +67,13 @@ const Admin = () => {
         </div>
       </div>
       <div className='mb-12'>
-        <h2 className='text-3xl font-bold mb-8'>Deleted Templates</h2>
+        <h2 className='mb-8 text-3xl font-bold'>Deleted Templates</h2>
         <div className='flex flex-col gap-4'>
           {allTemplates
             ?.filter((t) => t.isDeleted === true)
             .map((template) => (
               <div
-                className='flex gap-4 text-xl items-baseline'
+                className='flex items-baseline gap-4 text-xl'
                 key={template.id}
               >
                 <div className='w-72 overflow-hidden'>{template.name}</div>
@@ -103,10 +106,10 @@ const Admin = () => {
                 )
                 .map((program) => (
                   <div
-                    className='flex gap-4 text-xl items-baseline'
+                    className='flex items-baseline gap-4 text-xl'
                     key={program.id}
                   >
-                    <div className='flex gap-4 items-baseline'>
+                    <div className='flex items-baseline gap-4'>
                       <ProgramCard
                         programId={program.id}
                         isAdmin={true}
