@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useAtom, atom } from 'jotai'
+import { useSession } from 'next-auth/react'
 
 import { ErrorMessage } from '@hookform/error-message'
 
@@ -13,8 +14,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-
-import { useUser } from '@clerk/nextjs'
 
 import { Switch, Tab } from '@headlessui/react'
 
@@ -32,7 +31,8 @@ export const selectedTemplateAtom = atom('')
 export const isSuperAdminAtom = atom(false)
 
 const Form = () => {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const formMethods = useForm({ defaultValues })
   const {
     register,

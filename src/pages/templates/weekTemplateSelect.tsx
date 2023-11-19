@@ -10,7 +10,7 @@ import {
 } from '@heroicons/react/24/outline'
 
 import { toast } from 'react-hot-toast'
-import { useUser } from '@clerk/nextjs'
+import { useSession } from 'next-auth/react'
 
 const WeekTemplateSelect = ({
   onSelectWeekTemplate,
@@ -19,7 +19,8 @@ const WeekTemplateSelect = ({
   onSelectWeekTemplate: (week: string) => void
   selectedWeekTemplate: string
 }) => {
-  const { user} = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const ctx = api.useContext()
   const { data: weeksData } = api.blocks.getAllWeekTemplates.useQuery({userId: user?.id || ''})
 

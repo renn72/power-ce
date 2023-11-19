@@ -468,8 +468,8 @@ model DailyLog {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  userId String
-  UserProfile   UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  UserProfile UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   weight   Decimal?
   fat      Decimal?
@@ -508,7 +508,6 @@ model UserProfile {
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  @@index([userId])
 
   DOB    DateTime?
   gender String?
@@ -542,6 +541,8 @@ model UserProfile {
   flield1 String?
   flield2 String?
   flield3 String?
+
+  @@index([userId])
 }
 
 model Warmup {
@@ -609,7 +610,8 @@ model Session {
 
 model User {
   id            String        @id @default(cuid())
-  name          String?
+  firstName     String?
+  lastName      String?
   email         String?       @unique
   emailVerified DateTime?
   image         String?

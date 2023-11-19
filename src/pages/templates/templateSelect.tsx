@@ -3,7 +3,7 @@ import { useAtom } from 'jotai'
 
 import { api } from '~/utils/api'
 
-import { useUser } from '@clerk/nextjs'
+import { useSession } from 'next-auth/react'
 
 import { Listbox, Transition } from '@headlessui/react'
 import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/24/outline'
@@ -16,7 +16,8 @@ const TemplateSelect = ({
   onSelectTemplate: (arg0: string) => void
 }) => {
   const [isSuperAdmin] = useAtom(isSuperAdminAtom)
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const [selectedTemplate] = useAtom(selectedTemplateAtom)
 
   const { data: blocksData } = api.blocks.getAllBlockTitles.useQuery()

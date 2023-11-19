@@ -13,7 +13,7 @@ import {
 
 import { capitaliseString } from '~/utils/utils'
 
-import { useUser } from '@clerk/nextjs'
+import { useSession } from 'next-auth/react'
 
 const TemplateSelect = ({
   onSelectTemplate,
@@ -32,6 +32,10 @@ const TemplateSelect = ({
 }) => {
   const [template, setTemplate] = useState('')
   const [isSet, setIsSet] = useState(false)
+
+  const { data: session } = useSession()
+  const user = session?.user
+  const trainerId = user?.id || ''
 
   const ctx = api.useContext()
 
@@ -104,8 +108,6 @@ const TemplateSelect = ({
     )} workouts)`
   }
 
-  const { user } = useUser()
-
   const wrapperOnClearTemplate = (userId: string) => {
     onClearTemplate(userId)
     setIsSet(false)
@@ -141,8 +143,8 @@ const TemplateSelect = ({
   const blocksTitle = blocksData
     ?.filter(
       (b) =>
-        b.trainerId === user.id ||
-        user.id === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a',
+        b.trainerId === trainerId ||
+        trainerId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a',
     )
     ?.map((block) => block.name)
 
@@ -154,7 +156,7 @@ const TemplateSelect = ({
         <div className='flex items-end text-lg font-semibold md:w-64'>
           <div className='text-xl font-bold tracking-tighter text-yellow-500'>
             {capitaliseString(userFirstName)}{' '}
-            {capitaliseString(userLastName.slice(0, 1))}
+            {capitaliseString(userLastName?.slice(0, 1) || '')}
           </div>
           {isSet && false && (
             <CheckCircleIcon className='h-8 w-6 text-green-600 md:w-8' />

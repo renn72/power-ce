@@ -1,6 +1,6 @@
 import { type NextPage, } from 'next'
 import React from 'react'
-import { useUser, } from '@clerk/nextjs'
+import { useSession } from 'next-auth/react'
 
 import Form from './form'
 
@@ -14,9 +14,10 @@ const Templates: NextPage = () => {
   } = api.blocks.getAll.useQuery()
 
   // Check for admin role
-  const { user, } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   if (!user) return <div>Login</div>
-  if (user.organizationMemberships[0]?.role !== 'admin') return <div>Not auth</div>
+  // if (user.organizationMemberships[0]?.role !== 'admin') return <div>Not auth</div>
 
   if (blocksLoading) {
     return (
