@@ -8,7 +8,7 @@ import { useSession } from 'next-auth/react'
 import { Listbox, Transition } from '@headlessui/react'
 import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 
-import { isSuperAdminAtom, selectedTemplateAtom } from './form'
+import { isSuperAdminAtom, selectedTemplateAtom } from './index'
 
 const TemplateSelect = ({
   onSelectTemplate,

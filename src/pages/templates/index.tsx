@@ -2,7 +2,7 @@ import { type NextPage, } from 'next'
 import React from 'react'
 import { useSession } from 'next-auth/react'
 
-import Form from './form'
+import Form from '~/components/form'
 
 import { api, } from '~/utils/api'
 import { LoadingPage, } from '~/components/loading'

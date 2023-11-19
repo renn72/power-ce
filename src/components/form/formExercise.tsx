@@ -145,7 +145,7 @@ const FormSS = ({
               render={({ field: { onChange, value } }) => (
                 <div className=''>
                   <RadioGroup
-                    value={value}
+                    value={value as string}
                     onChange={onChange}
                   >
                     <div className='flex items-center justify-start gap-1 md:gap-2'>
@@ -565,7 +565,7 @@ const FormExercise = ({
                   render={({ field: { onChange, value } }) => (
                     <div className=''>
                       <RadioGroup
-                        value={value}
+                        value={value as string}
                         onChange={onChange}
                       >
                         <div className='flex items-center justify-start gap-1 py-6 md:gap-2'>
