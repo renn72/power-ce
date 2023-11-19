@@ -9,6 +9,8 @@ import { Calendar as CalendarIcon, HomeIcon, XIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { format, add } from 'date-fns'
 
+import { useSession } from 'next-auth/react'
+
 import { api } from '~/utils/api'
 
 import { useUser } from '@clerk/nextjs'
@@ -1264,11 +1266,13 @@ const DeadOneRM = ({ defaultValue }: { defaultValue: Decimal | number }) => {
 }
 
 const Settings = () => {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
+  const userId = session?.user.id || ''
 
   const { data: userSettings, isLoading: settingsLoading } =
     api.settings.get.useQuery({
-      userId: user?.id || '',
+      userId: userId,
     })
 
   if (settingsLoading) return <LoadingPage />
