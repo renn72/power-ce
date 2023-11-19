@@ -23,7 +23,7 @@ const Footer = () => {
   const [, setRpeModalIsOpen] = useAtom(rpeModalIsOpenAtom)
   const [, setDeloadModalIsOpen] = useAtom(deloadModalIsOpenAtom)
   const { data: session } = useSession()
-  const userId = session?.user?.id
+  const userId = session?.user?.id || ''
   return (
     <>
       <div className='flex items-center justify-between px-4 py-2 sm:px-6 lg:px-8'>
