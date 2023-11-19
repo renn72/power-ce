@@ -1,4 +1,3 @@
-import { useForm, Controller } from 'react-hook-form'
 import { Calendar } from '~/components/calendar'
 import {
   Popover as PopoverCN,
@@ -13,8 +12,6 @@ import { useSession } from 'next-auth/react'
 
 import { api } from '~/utils/api'
 
-import { useUser } from '@clerk/nextjs'
-
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
@@ -26,7 +23,6 @@ import {
   ChevronUpDownIcon,
   QuestionMarkCircleIcon,
 } from '@heroicons/react/24/outline'
-import { Label } from '@/components/ui/label'
 import { LoadingPage } from '~/components/loading'
 import Decimal from 'decimal.js'
 import Link from 'next/link'
@@ -86,7 +82,8 @@ const ModalWrapper = ({
 }
 
 const Height = ({ height }: { height: Decimal | number }) => {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const [isOpen, setIsOpen] = useState(false)
   const [value, setValue] = useState(
     Number(height) == 0 ? undefined : Number(height),
@@ -163,7 +160,8 @@ const Height = ({ height }: { height: Decimal | number }) => {
 }
 
 const Weight = ({ defaultValue }: { defaultValue: Decimal | number }) => {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const [isOpen, setIsOpen] = useState(false)
   const [value, setValue] = useState(
     Number(defaultValue) == 0 ? undefined : Number(defaultValue),
@@ -240,7 +238,8 @@ const Weight = ({ defaultValue }: { defaultValue: Decimal | number }) => {
 }
 
 const TargetWeight = ({ defaultValue }: { defaultValue: Decimal | number }) => {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const [isOpen, setIsOpen] = useState(false)
   const [value, setValue] = useState(
     Number(defaultValue) == 0 ? undefined : Number(defaultValue),
@@ -317,7 +316,8 @@ const TargetWeight = ({ defaultValue }: { defaultValue: Decimal | number }) => {
 }
 
 const Gender = ({ defaultValue }: { defaultValue: string }) => {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const [isOpen, setIsOpen] = useState(false)
   const [value, setValue] = useState(defaultValue)
   const utils = api.useContext()
@@ -449,7 +449,8 @@ const Gender = ({ defaultValue }: { defaultValue: string }) => {
 }
 
 const WeightGoal = ({ defaultValue }: { defaultValue: string }) => {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const [isOpen, setIsOpen] = useState(false)
   const [value, setValue] = useState(defaultValue)
   const utils = api.useContext()
@@ -581,8 +582,8 @@ const WeightGoal = ({ defaultValue }: { defaultValue: string }) => {
 }
 
 const DOB = ({ defaultValue }: { defaultValue: string }) => {
-  console.log(defaultValue)
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const [isOpen, setIsOpen] = useState(false)
   const [popoverOpen, setPopoverOpen] = useState(false)
   const [value, setValue] = useState(
@@ -708,7 +709,8 @@ const DOB = ({ defaultValue }: { defaultValue: string }) => {
 }
 
 const ActivityLevelTraining = ({ defaultValue }: { defaultValue: string }) => {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const [isOpen, setIsOpen] = useState(false)
   const [value, setValue] = useState(defaultValue)
   const utils = api.useContext()
@@ -847,7 +849,8 @@ const ActivityLevelTraining = ({ defaultValue }: { defaultValue: string }) => {
 }
 
 const ActivityLevelRest = ({ defaultValue }: { defaultValue: string }) => {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const [isOpen, setIsOpen] = useState(false)
   const [value, setValue] = useState(defaultValue)
   const utils = api.useContext()
@@ -1002,7 +1005,7 @@ const ActivityPopover = () => {
             leaveFrom='opacity-100 translate-y-0'
             leaveTo='opacity-0 translate-y-1'
           >
-            <Popover.Panel className='absolute left-[-1rem] bottom-0 z-10 w-[100vw] max-w-md px-4 sm:px-0'>
+            <Popover.Panel className='absolute bottom-0 left-[-1rem] z-10 w-[100vw] max-w-md px-4 sm:px-0'>
               <div className='overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5'>
                 <div className='bg-gray-900 p-4 text-lg'>
                   <ul>
@@ -1035,7 +1038,8 @@ const ActivityPopover = () => {
 }
 
 const SquatOneRM = ({ defaultValue }: { defaultValue: Decimal | number }) => {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const [isOpen, setIsOpen] = useState(false)
   const [value, setValue] = useState(
     Number(defaultValue) == 0 ? undefined : Number(defaultValue),
@@ -1112,7 +1116,8 @@ const SquatOneRM = ({ defaultValue }: { defaultValue: Decimal | number }) => {
 }
 
 const BenchOneRM = ({ defaultValue }: { defaultValue: Decimal | number }) => {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const [isOpen, setIsOpen] = useState(false)
   const [value, setValue] = useState(
     Number(defaultValue) == 0 ? undefined : Number(defaultValue),
@@ -1189,7 +1194,8 @@ const BenchOneRM = ({ defaultValue }: { defaultValue: Decimal | number }) => {
 }
 
 const DeadOneRM = ({ defaultValue }: { defaultValue: Decimal | number }) => {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const [isOpen, setIsOpen] = useState(false)
   const [value, setValue] = useState(
     Number(defaultValue) == 0 ? undefined : Number(defaultValue),

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useUser } from '@clerk/nextjs'
 import { toast } from 'react-hot-toast'
 import { api } from '~/utils/api'
 
@@ -7,7 +6,6 @@ import * as React from 'react'
 import { format, add } from 'date-fns'
 import { Calendar as CalendarIcon } from 'lucide-react'
 
-import { CheckCircleIcon } from '@heroicons/react/24/outline'
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -19,10 +17,7 @@ import {
 } from '@/components/ui/popover'
 import { Input } from '@/components/ui/input'
 
-import Countdown from 'react-countdown'
-
 const CompDate = ({ userId }: { userId: string }) => {
-  const { user } = useUser()
   const [date, setDate] = useState<Date>()
   const [compName, setCompName] = useState<string>('')
   const [isSet, setIsSet] = useState<boolean>(false)

@@ -11,7 +11,6 @@ import { toast } from 'react-hot-toast'
 import { LoadingPage, LoadingSpinner } from '~/components/loading'
 
 import { getDate } from '~/utils/utils'
-import { Cog6ToothIcon } from '@heroicons/react/20/solid'
 
 const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
@@ -64,9 +63,7 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
 
 const Home: NextPage = () => {
   const { data: session } = useSession()
-
   const userId = session?.user.id || ''
-  console.log('id', userId)
 
   // const userId = user?.id || ''
   // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam

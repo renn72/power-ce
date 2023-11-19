@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, Fragment } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import { type Set } from '@prisma/client'
 import { Prisma } from '@prisma/client'
 import { type Exercise as StoreExercise } from '~/store/types'
@@ -11,8 +11,6 @@ import { Transition, RadioGroup, Disclosure, Dialog } from '@headlessui/react'
 import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { rpe as rpeTable } from '~/store/defaultValues'
-
-import { useUser } from '@clerk/nextjs'
 
 import { NumericFormat } from 'react-number-format'
 import { Input } from '@/components/ui/input'
@@ -191,7 +189,7 @@ const ExerciseModal = ({
         )
         return { previousProgram }
       },
-      onError: (err, newExercise, context) => {
+      onError: (err, _newExercise, context) => {
         console.log('err', err)
         utils.blocks.get.setData({ id: programId }, context?.previousProgram)
       },
@@ -225,7 +223,7 @@ const ExerciseModal = ({
       )
       return { previousProgram }
     },
-    onError: (err, newExercise, context) => {
+    onError: (err, _newExercise, context) => {
       console.log('err', err)
       utils.blocks.get.setData({ id: programId }, context?.previousProgram)
     },
@@ -279,7 +277,7 @@ const ExerciseModal = ({
 
       return { previousProgram }
     },
-    onError: (err, newSet, context) => {
+    onError: (err, _newSet, context) => {
       console.log(err)
       utils.blocks.get.setData({ id: programId }, context?.previousProgram)
     },
@@ -298,7 +296,7 @@ const ExerciseModal = ({
         { id: programId },
         {
           ...previousProgram,
-          week: previousProgram.week.map((week) => {
+          week: previousProgram?.week.map((week) => {
             return {
               ...week,
               day: week.day.map((day) => {
@@ -319,7 +317,7 @@ const ExerciseModal = ({
 
       return { previousProgram }
     },
-    onError: (err, newSet, context) => {
+    onError: (err, _newSet, context) => {
       console.log(err)
       utils.blocks.get.setData({ id: programId }, context?.previousProgram)
     },
@@ -379,25 +377,6 @@ const ExerciseModal = ({
     const index = 8 - (+rpe - 6) / 0.5
     if (rpeTable[index]) setE1rm(rpeTable[index])
   }, [weights, rpe])
-
-  const onUpdateRpe = (set: Set, increase: boolean) => {
-    const newRep = increase ? +set.rep + 1 : +set.rep - 1
-    if (newRep < 1) return
-
-    updateSet({
-      id: set.id,
-      isComplete: set.isComplete,
-      rpe: +rpe,
-      weight: Number(weights),
-      estiamtedOnerm: !set.isComplete
-        ? +Number(
-            Number(weights || '') /
-              (e1rm[Number(exercise?.reps) || 1 - 1] || 0 / 100),
-          ).toFixed(0)
-        : 0, //e1rm,
-      rep: newRep,
-    })
-  }
 
   const isSS = exercise.ss && exercise.ss.length > 0
 
@@ -686,7 +665,7 @@ const ExerciseModal = ({
                                     href={exercise.htmlLink}
                                     rel='noreferrer'
                                     target='_blank'
-                                    className='absolute bottom-0 right-3'
+                                    className='absolute bottom-0 right-0'
                                   >
                                     <PlaySquare
                                       size={30}
@@ -871,17 +850,17 @@ const ExerciseModal = ({
                             exercise.lift !== 'unlinked' &&
                             (
                               Number(weights) /
-                              Number(e1rm[+exercise?.reps - 1] || 0 / 100)
+                              Number(e1rm[Number(exercise?.reps) - 1] || 0 / 100)
                             )?.toFixed(0) && (
                               <div className='mx-1 flex gap-2 px-2 md:mx-6'>
                                 <div>E1RM</div>
                                 {weights &&
                                 weights !== 0 &&
-                                e1rm[+exercise.reps - 1] ? (
+                                e1rm[Number(exercise.reps) - 1] ? (
                                   <div>
                                     {(
                                       +weights /
-                                      (e1rm[+exercise.reps - 1] || 0 / 100)
+                                      (e1rm[Number(exercise.reps) - 1] || 0 / 100)
                                     )?.toFixed(0)}
                                     kg
                                   </div>
@@ -1006,9 +985,6 @@ const Day = () => {
   const [exerciseToDelete, setExerciseToDelete] = useState<string>('')
   const utils = api.useContext()
 
-  // const { data: day, isLoading: dayLoading } = api.days.get.useQuery({
-  //   id: dayId,
-  // })
   const { data: program, isLoading: programLoading } = api.blocks.get.useQuery({
     id: programId || '',
   })
@@ -1096,7 +1072,7 @@ const Day = () => {
       )
       return { previousProgram }
     },
-    onError: (err, newExercise, context) => {
+    onError: (err, _newExercise, context) => {
       console.log('err', err)
       if (!programId) return
       utils.blocks.get.setData({ id: programId }, context?.previousProgram)

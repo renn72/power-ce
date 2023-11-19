@@ -12,7 +12,8 @@ import WeekTemplateSelect from './weekTemplateSelect'
 import { type WeekData } from '~/store/types'
 import { type Block } from '~/store/types'
 import { atom, useAtom } from 'jotai'
-import { useUser } from '@clerk/nextjs'
+
+import { useSession } from 'next-auth/react'
 
 const loadedTemplateAtom = atom<string>('')
 
@@ -31,7 +32,8 @@ const FormWeekData = ({ weekIdx }: { weekIdx: number }) => {
 
   const [loadedTemplate, setLoadedTemplate] = useAtom(loadedTemplateAtom)
 
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
 
   const ctx = api.useContext()
   const { data: weeksData } = api.blocks.getAllWeekTemplates.useQuery({
