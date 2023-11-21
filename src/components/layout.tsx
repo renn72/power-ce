@@ -3,10 +3,14 @@ import Navbar from './navbar'
 import Footer from './footer'
 
 import { useSession, signIn } from 'next-auth/react'
+import { LoadingPage } from './loading'
 
 const Layout = (props: PropsWithChildren) => {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const user = session?.user
+
+  if (status === 'loading') return <LoadingPage />
+
   return (
     <>
       <div className='flex min-h-screen min-w-fit flex-col bg-black text-gray-200'>
