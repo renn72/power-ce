@@ -3,7 +3,7 @@ import { toast } from 'react-hot-toast'
 import { api } from '~/utils/api'
 import { useSession } from 'next-auth/react'
 
-import { Disclosure, Transition } from '@headlessui/react'
+import { Disclosure, Transition, Tab } from '@headlessui/react'
 
 import { ChevronUpIcon } from '@heroicons/react/20/solid'
 import TemplateSelect from './templateSelect'
@@ -58,7 +58,11 @@ const UserDisclosure = ({
             {isOneRM ? (
               <OneRMCard userId={userId} />
             ) : (
-              <ProgramView userId={userId} isAdmin={true} programId={programId} />
+              <ProgramView
+                userId={userId}
+                isAdmin={true}
+                programId={programId}
+              />
             )}
           </Disclosure.Panel>
         </Transition>
@@ -88,7 +92,7 @@ const UserPage = ({
 
   return (
     <div className='flex w-full flex-col justify-start gap-0'>
-      <div className='flex justify-end w-full'>
+      <div className='flex w-full justify-end'>
         <CountDown userId={userId} />
       </div>
       <TemplateSelect
@@ -120,7 +124,7 @@ const UserPage = ({
 const Users = () => {
   const { data: session } = useSession()
   const user = session?.user
-  const [userId, setUserId] = useState<string>(user?.id || 'all')
+  const [userId, setUserId] = useState<string>(user?.id || '')
   if (!user) return <div>Login</div>
 
   const ctx = api.useContext()
@@ -200,33 +204,25 @@ const Users = () => {
 
   return (
     <>
-      <main className='flex h-full flex-col items-center justify-center gap-8 py-6 sm:px-2 md:mt-6 '>
-          <UserSelect onSelectUser={setUserId} />
-          {userId === 'all' ? (
-            <div className='flex w-full flex-col gap-16'>
-              {allUsers?.map((user) => (
-                <UserPage
-                  key={user.id}
-                  userId={user.id}
-                  userFirstName={getFirstName(user.id)}
-                  userLastName={getLastName(user.id)}
-                  onSetTemplate={onSetTemplate}
-                  onClearTemplate={onClearTemplate}
-                  onSelectTemplate={onSelectTemplate}
-                />
-              ))}
-            </div>
-          ) : (
-            <UserPage
-              key={userId}
-              userId={userId}
-              userFirstName={getFirstName(userId)}
-              userLastName={getLastName(userId)}
-              onSetTemplate={onSetTemplate}
-              onClearTemplate={onClearTemplate}
-              onSelectTemplate={onSelectTemplate}
-            />
-          )}
+      <main className='flex h-full flex-col items-center justify-center gap-8 py-3 sm:px-2 md:mt-6 '>
+        <UserSelect onSelectUser={setUserId} />
+        <Tab.Group
+          vertical
+          defaultIndex={0}
+        >
+          <div className='flex gap-2'>
+            <Tab.List className='flex flex-col gap-2'>
+              <Tab>Tab 1</Tab>
+              <Tab>Tab 2</Tab>
+              <Tab>Tab 3</Tab>
+            </Tab.List>
+            <Tab.Panels>
+              <Tab.Panel>Content 1</Tab.Panel>
+              <Tab.Panel>Content 2</Tab.Panel>
+              <Tab.Panel>Content 3</Tab.Panel>
+            </Tab.Panels>
+          </div>
+        </Tab.Group>
       </main>
     </>
   )

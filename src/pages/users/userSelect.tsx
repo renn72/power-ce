@@ -31,18 +31,11 @@ const UserSelect = ({
     if (user) {
       return `${user.firstName || ''} ${user.lastName || ''}`
     }
-    if (id === 'all') {
-      return 'All Users'
-    }
   }
 
   const allUsers = users?.map((u) => {
     return { id: u.id, firstName: u.firstName || '', lastName: u.lastName || '' }
   })
-
-  if (!allUsers?.find((u) => u.id === 'all')) {
-    allUsers?.unshift({ id: 'all', firstName: 'All', lastName: 'Users' })
-  }
 
   if (usersLoading) return <div>loading</div>
 
