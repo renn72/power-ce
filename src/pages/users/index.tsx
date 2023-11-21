@@ -17,6 +17,10 @@ import UserSelect from './userSelect'
 import CountDown from '~/components/countDown'
 import TrainerSelect from './trainerSelect'
 
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}
+
 const UserDisclosure = ({
   userId,
   isOneRM,
@@ -121,6 +125,19 @@ const UserPage = ({
   )
 }
 
+const TabWrapper = ({ title }: { title: string }) => (
+  <Tab
+    className={({ selected }) =>
+      classNames(
+        'py-4 hover:bg-gray-900',
+        selected ? 'font-semibold text-white' : 'font-medium text-gray-500',
+      )
+    }
+  >
+    {title}
+  </Tab>
+)
+
 const Users = () => {
   const { data: session } = useSession()
   const user = session?.user
@@ -185,15 +202,6 @@ const Users = () => {
     })
   }
 
-  const getFirstName = (id: string) => {
-    const res = allUsers?.find((u) => u.id == id)?.firstName
-    return res ? res : ''
-  }
-  const getLastName = (id: string) => {
-    const res = allUsers?.find((u) => u.id == id)?.lastName
-    return res ? res : ''
-  }
-
   if (usersLoading || blocksLoading) {
     return (
       <div>
@@ -204,19 +212,19 @@ const Users = () => {
 
   return (
     <>
-      <main className='flex h-full flex-col items-center justify-center gap-8 py-3 sm:px-2 md:mt-6 '>
+      <main className='flex h-full flex-col items-center justify-center gap-8 py-3 sm:px-6 md:mt-6 '>
         <UserSelect onSelectUser={setUserId} />
         <Tab.Group
           vertical
           defaultIndex={0}
         >
-          <div className='flex gap-2'>
-            <Tab.List className='flex flex-col gap-2'>
-              <Tab>Tab 1</Tab>
-              <Tab>Tab 2</Tab>
-              <Tab>Tab 3</Tab>
+          <div className='flex w-full gap-2'>
+            <Tab.List className='flex w-36 flex-col divide-y divide-gray-600'>
+              <TabWrapper title='Overview' />
+              <TabWrapper title='Program' />
+              <TabWrapper title='One RM' />
             </Tab.List>
-            <Tab.Panels>
+            <Tab.Panels className='w-full'>
               <Tab.Panel>Content 1</Tab.Panel>
               <Tab.Panel>Content 2</Tab.Panel>
               <Tab.Panel>Content 3</Tab.Panel>
