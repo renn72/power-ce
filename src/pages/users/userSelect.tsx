@@ -29,12 +29,20 @@ const UserSelect = ({
   const getUser = (id: string) => {
     const user = users?.find((u) => u.id === id)
     if (user) {
-      return `${user.firstName || ''} ${user.lastName || ''}`
+      if (user.firstName) {
+        return `${user.firstName || ''} ${user.lastName || ''}`
+      }
+      return user.email
     }
   }
 
   const allUsers = users?.map((u) => {
-    return { id: u.id, firstName: u.firstName || '', lastName: u.lastName || '' }
+    return {
+      id: u.id,
+      firstName: u.firstName || '',
+      lastName: u.lastName || '',
+      email: u.email,
+    }
   })
 
   if (usersLoading) return <div>loading</div>
@@ -65,7 +73,7 @@ const UserSelect = ({
                 leaveFrom='opacity-100'
                 leaveTo='opacity-0'
               >
-                <Listbox.Options className='max-h-96 absolute z-10 mt-1 w-full overflow-auto border border-gray-600 bg-black py-1 shadow-lg '>
+                <Listbox.Options className='absolute z-10 mt-1 max-h-96 w-full overflow-auto border border-gray-600 bg-black py-1 shadow-lg '>
                   {allUsers?.map((u) => (
                     <Listbox.Option
                       key={u.id}
@@ -79,7 +87,7 @@ const UserSelect = ({
                       {({ selected }) => (
                         <>
                           <span className={`block truncate capitalize`}>
-                            {u.firstName} {u.lastName}
+                            {u.firstName ? u.firstName + ' ' + u.lastName : u.email }
                           </span>
                           {selected ? (
                             <span className='absolute inset-y-0 left-0 flex items-center pl-1'>

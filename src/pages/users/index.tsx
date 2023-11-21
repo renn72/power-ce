@@ -16,6 +16,7 @@ import UserSelect from './userSelect'
 
 import CountDown from '~/components/countDown'
 import TrainerSelect from './trainerSelect'
+import Settings from '~/components/settings'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -180,6 +181,12 @@ const Users = () => {
       },
     })
 
+  api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
+  const { data: activeProgram, isLoading: loadingProgram } =
+    api.blocks.getUserActiveProgram.useQuery({
+      userId: userId,
+    })
+
   const onSelectTemplate = (template: string, userId: string) => {
     console.log('template', template)
     console.log('userId', userId)
@@ -202,7 +209,7 @@ const Users = () => {
     })
   }
 
-  if (usersLoading || blocksLoading) {
+  if (usersLoading || blocksLoading || loadingProgram) {
     return (
       <div>
         <LoadingPage />
@@ -223,11 +230,38 @@ const Users = () => {
               <TabWrapper title='Overview' />
               <TabWrapper title='Program' />
               <TabWrapper title='One RM' />
+              <TabWrapper title='Settings' />
             </Tab.List>
-            <Tab.Panels className='w-full'>
-              <Tab.Panel>Content 1</Tab.Panel>
-              <Tab.Panel>Content 2</Tab.Panel>
-              <Tab.Panel>Content 3</Tab.Panel>
+            <Tab.Panels className='w-full min-w-[1100px]'>
+              <Tab.Panel>
+                <h2 className='text-2xl font-medium'>Overview</h2>
+                <div className='flex w-full justify-end'>
+                  <CountDown userId={userId} />
+                </div>
+                <TemplateSelect
+                  onSelectTemplate={onSelectTemplate}
+                  onSetTemplate={onSetTemplate}
+                  onClearTemplate={onClearTemplate}
+                  userId={userId}
+                  userFirstName={user.firstName}
+                  userLastName={user.lastName}
+                />
+                <TrainerSelect userId={userId} />
+                <CompDate userId={userId} />
+              </Tab.Panel>
+              <Tab.Panel>
+                <ProgramView
+                  userId={userId}
+                  isAdmin={true}
+                  programId={activeProgram?.id || ''}
+                />
+              </Tab.Panel>
+              <Tab.Panel>
+                <OneRMCard userId={userId} />
+              </Tab.Panel>
+              <Tab.Panel>
+                <Settings userId={userId} />
+              </Tab.Panel>
             </Tab.Panels>
           </div>
         </Tab.Group>

@@ -506,7 +506,7 @@ model UserProfile {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  userId String
+  userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   DOB    DateTime?

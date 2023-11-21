@@ -58,6 +58,63 @@ export const settingsRouter = createTRPCRouter({
       return res
     }),
 
+  updateFirstName: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        firstName: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.user.update({
+        where: {
+          id: input.userId,
+        },
+        data: {
+          firstName: input.firstName,
+        },
+      })
+      return res
+    }),
+
+  updateLastName: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        lastName: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.user.update({
+        where: {
+          id: input.userId,
+        },
+        data: {
+          lastName: input.lastName,
+        },
+      })
+      return res
+    }),
+
+  updateEmail: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        email: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.user.update({
+        where: {
+          id: input.userId,
+        },
+        data: {
+          email: input.email,
+        },
+      })
+      return res
+    }),
+
   updateWeight: privateProcedure
     .input(
       z.object({
