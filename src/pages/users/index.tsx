@@ -7,7 +7,7 @@ import { Disclosure, Transition, Tab } from '@headlessui/react'
 
 import { ChevronUpIcon } from '@heroicons/react/20/solid'
 import TemplateSelect from './templateSelect'
-import { LoadingPage } from '~/components/loading'
+import { LoadingPage, LoadingWrapper } from '~/components/loading'
 import OneRMCard from '~/components/oneRMCard'
 
 import ProgramView from '~/components/programView'
@@ -17,6 +17,7 @@ import UserSelect from './userSelect'
 import CountDown from '~/components/countDown'
 import TrainerSelect from './trainerSelect'
 import Settings from '~/components/settings'
+import { RefreshCcwIcon } from 'lucide-react'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -186,6 +187,92 @@ const ProgramHistory = ({ userId }: { userId: string }) => {
   )
 }
 
+const OpenPowerlifting = ({ userId }: { userId: string }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const ctx = api.useContext()
+  const { data: compLifts, isLoading: compLiftsLoading } =
+    api.compLift.getCompLifts.useQuery({
+      userId: userId,
+    })
+
+  const { mutate: setOpenPowerliftingData } =
+    api.compLift.setOpenPower.useMutation({
+      onSuccess: (data) => {
+        console.log(data)
+        void ctx.compLift.getCompLifts.invalidate({ userId: userId })
+        setIsOpen(false)
+      },
+    })
+
+  if (compLiftsLoading) return <LoadingPage />
+
+  return (
+    <div className='flex flex-col gap-8'>
+      <div className='flex gap-24'>
+        <div className='text-xl font-semibold capitalize text-yellow-500'>
+          Competitions
+        </div>
+        <RefreshCcwIcon
+          className='h-6 w-6 cursor-pointer p-1 text-yellow-400 '
+          onClick={() => {
+            setIsOpen(true)
+            setOpenPowerliftingData({ userId: userId })}}
+        />
+      </div>
+      <div className='flex max-w-[800px] flex-col gap-0 space-y-2 divide-y divide-dashed divide-gray-400'>
+        {compLifts?.map((comp) => (
+          <div
+            key={comp.id}
+            className='flex flex-col gap-1 pt-2'
+          >
+            <div className='flex flex-col gap-0'>
+              <div className='flex flex-col  gap-0 text-lg'>
+                <div className='capitalize  text-yellow-500'>
+                  {comp.MeetName}
+                </div>
+                <div className='capitalize'>{comp.Federation}</div>
+              </div>
+              <div className='text-sm text-gray-400'>{comp.Date}</div>
+            </div>
+            <div className=''>
+              Squat: {` `}
+              {Math.max(
+                Number(comp.Squat1),
+                Number(comp.Squat2),
+                Number(comp.Squat3),
+                Number(comp.Squat4),
+              )}
+              kg
+            </div>
+            <div className=''>
+              Bench: {` `}
+              {Math.max(
+                Number(comp.Bench1),
+                Number(comp.Bench2),
+                Number(comp.Bench3),
+                Number(comp.Bench4),
+              )}
+              kg
+            </div>
+            <div className=''>
+              Deadlift: {` `}
+              {Math.max(
+                Number(comp.Deadlift1),
+                Number(comp.Deadlift2),
+                Number(comp.Deadlift3),
+                Number(comp.Deadlift4),
+              )}
+              kg
+            </div>
+            <div className=''>Total: {comp.Total}kg</div>
+          </div>
+        ))}
+      </div>
+      <LoadingWrapper isOpen={isOpen} setIsOpen={setIsOpen} />
+    </div>
+  )
+}
+
 const TabWrapper = ({ title }: { title: string }) => (
   <Tab
     className={({ selected }) =>
@@ -285,7 +372,7 @@ const Users = () => {
           vertical
           defaultIndex={0}
         >
-          <div className='flex w-full gap-2'>
+          <div className='flex w-full gap-4 lg:gap-16'>
             <Tab.List className='flex w-36 flex-col divide-y divide-gray-600'>
               <TabWrapper title='Overview' />
               <TabWrapper title='Program' />
@@ -333,7 +420,9 @@ const Users = () => {
                 <CompDate userId={userId} />
               </Tab.Panel>
 
-              <Tab.Panel>open powerlifting</Tab.Panel>
+              <Tab.Panel>
+                <OpenPowerlifting userId={userId} />
+              </Tab.Panel>
 
               <Tab.Panel>
                 <Settings userId={userId} />

@@ -92,7 +92,10 @@ const FirstName = ({ name, userId }: { name: string; userId: string }) => {
   })
   return (
     <div>
-      <div onClick={() => setIsOpen(true)}>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
         <h4 className='text-xl'>First Name</h4>
         <p className='h-8 text-base text-gray-400'>
           {name == '' ? '...' : name}
@@ -144,7 +147,10 @@ const LastName = ({ name, userId }: { name: string; userId: string }) => {
   })
   return (
     <div>
-      <div onClick={() => setIsOpen(true)}>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
         <h4 className='text-xl'>Last Name</h4>
         <p className='h-8 text-base text-gray-400'>
           {name == '' ? '...' : name}
@@ -196,7 +202,10 @@ const Email = ({ name, userId }: { name: string; userId: string }) => {
   })
   return (
     <div>
-      <div onClick={() => setIsOpen(true)}>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
         <h4 className='text-xl'>Email</h4>
         <p className='h-8 text-base text-gray-400'>
           {name == '' ? '...' : name}
@@ -273,7 +282,10 @@ const Height = ({
   })
   return (
     <div>
-      <div onClick={() => setIsOpen(true)}>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
         <h4 className='text-xl'>Height</h4>
         <p className='h-8 text-base text-gray-400'>
           {Number(height || null)}cm
@@ -351,7 +363,10 @@ const Weight = ({
   })
   return (
     <div>
-      <div onClick={() => setIsOpen(true)}>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
         <h4 className='text-xl'>Weight</h4>
         <p className='h-8 text-base text-gray-400'>
           {Number(defaultValue || null)}kg
@@ -429,7 +444,10 @@ const TargetWeight = ({
   })
   return (
     <div>
-      <div onClick={() => setIsOpen(true)}>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
         <h4 className='text-xl'>Target Weight</h4>
         <p className='h-8 text-base text-gray-400'>
           {Number(defaultValue || null)}kg
@@ -505,7 +523,10 @@ const Gender = ({
   })
   return (
     <div>
-      <div onClick={() => setIsOpen(true)}>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
         <h4 className='text-xl'>Gender</h4>
         <p className='h-8 text-base capitalize text-gray-400'>
           {defaultValue == '' ? '...' : defaultValue}
@@ -638,7 +659,10 @@ const WeightGoal = ({
   })
   return (
     <div>
-      <div onClick={() => setIsOpen(true)}>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
         <h4 className='text-xl'>Weight Goal</h4>
         <p className='h-8 text-base capitalize text-gray-400'>
           {defaultValue == '' ? '...' : defaultValue}
@@ -778,7 +802,10 @@ const DOB = ({
   })
   return (
     <div>
-      <div onClick={() => setIsOpen(true)}>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
         <h4 className='text-xl'>DOB</h4>
         <p className='h-8 text-base text-gray-400'>
           {defaultValue == null
@@ -907,7 +934,10 @@ const ActivityLevelTraining = ({
   })
   return (
     <div>
-      <div onClick={() => setIsOpen(true)}>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
         <h4 className='text-xl'>Training</h4>
         <p className='h-8 text-base capitalize text-gray-400'>
           {defaultValue == '' ? '.' : defaultValue}
@@ -1052,7 +1082,10 @@ const ActivityLevelRest = ({
   })
   return (
     <div>
-      <div onClick={() => setIsOpen(true)}>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
         <h4 className='text-xl'>Rest</h4>
         <p className='h-8 text-base capitalize text-gray-400'>
           {defaultValue == '' ? '.' : defaultValue}
@@ -1248,7 +1281,10 @@ const SquatOneRM = ({
   })
   return (
     <div>
-      <div onClick={() => setIsOpen(true)}>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
         <h4 className='text-xl'>Squat 1 Rep Max</h4>
         <p className='h-8 text-base text-gray-400'>
           {Number(defaultValue) == 0 ? '.' : `${Number(defaultValue)}kg`}
@@ -1331,7 +1367,10 @@ const BenchOneRM = ({
   })
   return (
     <div>
-      <div onClick={() => setIsOpen(true)}>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
         <h4 className='text-xl'>Bench 1 Rep Max</h4>
         <p className='h-8 text-base text-gray-400'>
           {Number(defaultValue) == 0 ? '.' : `${Number(defaultValue)}kg`}
@@ -1414,7 +1453,10 @@ const DeadOneRM = ({
   })
   return (
     <div>
-      <div onClick={() => setIsOpen(true)}>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
         <h4 className='text-xl'>Deadlift 1 Rep Max</h4>
         <p className='h-8 text-base text-gray-400'>
           {Number(defaultValue) == 0 ? '.' : `${Number(defaultValue)}kg`}
@@ -1491,7 +1533,7 @@ const Settings = ({ userId }: { userId: string }) => {
   return (
     <>
       <div className='mb-8 flex justify-center '>
-        <div className='flex w-full max-w-screen-xl flex-col gap-2 px-4 py-2'>
+        <div className='flex w-full flex-col gap-2 px-4 py-2'>
           <div className='flex items-center justify-between text-yellow-500'>
             <div className='flex gap-1 text-2xl font-semibold text-yellow-500'>
               {user.firstName} {user.lastName}
