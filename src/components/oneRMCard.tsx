@@ -3,21 +3,11 @@ import React, {
 } from 'react'
 import dayjs from 'dayjs'
 
-import Decimal from 'decimal.js'
-
-import {
-  Dialog,
-  Transition,
-} from '@headlessui/react'
 import { Input, } from '@/components/ui/input'
 import { toast, } from 'react-hot-toast'
 
 import {
-  ArrowUpIcon,
-  ArrowDownIcon,
   PencilSquareIcon,
-  PlusCircleIcon,
-  MinusCircleIcon,
 } from '@heroicons/react/24/outline'
 
 import { api, } from '~/utils/api'
@@ -176,7 +166,7 @@ const OneRMCard = ({ userId, }: { userId: string }) => {
     <>
       <div>
         <div
-          className='grid text-gray-300 grid-cols-1 md:grid-cols-3 '
+          className='grid text-gray-300 grid-cols-3 '
         >
           {primaryLifts?.map((lift, idx) => (
             <div

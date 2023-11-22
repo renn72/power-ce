@@ -219,7 +219,7 @@ const Users = () => {
 
   return (
     <>
-      <main className='flex h-full flex-col items-center justify-center gap-8 py-3 sm:px-6 md:mt-6 '>
+      <main className='flex h-full min-w-[1200px] flex-col items-center justify-center gap-8 py-3 sm:px-6 md:mt-6 '>
         <UserSelect onSelectUser={setUserId} />
         <Tab.Group
           vertical
@@ -232,10 +232,10 @@ const Users = () => {
               <TabWrapper title='One RM' />
               <TabWrapper title='Settings' />
             </Tab.List>
-            <Tab.Panels className='w-full min-w-[1100px]'>
+            <Tab.Panels className='w-full '>
               <Tab.Panel>
                 <h2 className='text-2xl font-medium'>Overview</h2>
-                <div className='flex w-full justify-end'>
+                <div className='w-64'>
                   <CountDown userId={userId} />
                 </div>
                 <TemplateSelect

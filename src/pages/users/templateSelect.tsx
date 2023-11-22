@@ -151,27 +151,26 @@ const TemplateSelect = ({
   // if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
 
   return (
-    <div className='mx-1 flex flex-col md:mx-2 md:flex-row md:items-center md:gap-6'>
-      <div className='flex flex-row justify-between md:flex-row md:justify-normal md:gap-6 '>
-        <div className='flex items-end text-lg font-semibold md:w-64'>
+    <div className='mx-1 flex mx-2 flex-row items-center gap-6'>
+      <div className='flex flex-row justify-normal gap-6 '>
+        <div className='flex items-end text-lg font-semibold w-64'>
           <div className='text-xl font-bold tracking-tighter text-yellow-500'>
-            {capitaliseString(userFirstName)}{' '}
-            {capitaliseString(userLastName?.slice(0, 1) || '')}
+            Current Program:
           </div>
           {isSet && false && (
             <CheckCircleIcon className='h-8 w-6 text-green-600 md:w-8' />
           )}
         </div>
 
-        <div className='flex flex-col justify-start sm:gap-6 md:flex-row md:items-center'>
-          <div className='flex justify-start sm:gap-2 md:items-center'>
-            <div className='flex flex-col justify-center text-sm font-bold md:text-base'>
+        <div className='flex justify-start gap-6 flex-row items-center'>
+          <div className='flex justify-start gap-2 items-center'>
+            <div className='flex flex-col justify-center font-bold text-base'>
               <Listbox
                 value={template}
                 onChange={(e) => onSetLocalTemplate(e)}
               >
                 <div className='z-1 relative'>
-                  <Listbox.Button className='relative h-10 w-36 cursor-default border-b border-gray-600 pl-3 pr-10 text-left shadow-md hover:border-white focus:outline-none md:w-60 '>
+                  <Listbox.Button className='relative h-10  cursor-default border-b border-gray-600 pl-3 pr-10 text-left shadow-md hover:border-white focus:outline-none w-60 '>
                     <span className='block truncate'>{template}</span>
                     <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
                       <ChevronUpDownIcon
@@ -186,7 +185,7 @@ const TemplateSelect = ({
                     leaveFrom='opacity-100'
                     leaveTo='opacity-0'
                   >
-                    <Listbox.Options className='absolute z-10 mt-1 max-h-[32rem] w-52 overflow-auto border border-gray-600 bg-black py-1 shadow-lg md:w-80 '>
+                    <Listbox.Options className='absolute z-10 mt-1 max-h-[32rem] w-80 overflow-auto border border-gray-600 bg-black py-1 shadow-lg md:w-80 '>
                       {blocksTitle?.map((templateName, Idx) => (
                         <Listbox.Option
                           key={Idx}
@@ -223,11 +222,11 @@ const TemplateSelect = ({
             </div>
             <div className='ml-4 flex items-end justify-start gap-2'>
               <PencilSquareIcon
-                className='h-8 w-6 text-gray-400 hover:text-green-600 md:w-8'
+                className='h-8 w-8 text-gray-400 hover:text-green-600 md:w-8'
                 onClick={() => onSetTemplateWrapper(template, userId)}
               />
               <XCircleIcon
-                className='col-span-1 h-8 w-6 text-gray-400 hover:text-red-600 md:w-8'
+                className='col-span-1 h-8 w-8 text-gray-400 hover:text-red-600 md:w-8'
                 onClick={() => wrapperOnClearTemplate(userId)}
               />
             </div>

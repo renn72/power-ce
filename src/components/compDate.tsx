@@ -81,14 +81,14 @@ const CompDate = ({ userId }: { userId: string }) => {
 
   return (
     <>
-      <div className='mx-2 flex flex-col gap-2 md:gap-6 lg:flex-row'>
-        <div className='flex items-end justify-between gap-2 md:justify-normal md:gap-6'>
-          <div className='text-lg font-semibold md:w-64'>
+      <div className='mx-2 flex gap-6 flex-row'>
+        <div className='flex items-end gap-6 justify-normal md:gap-6'>
+          <div className='text-lg font-semibold w-64'>
             <div>Next Comp</div>
           </div>
           <div className=''>
             <Input
-              className='w-[13.2rem] text-sm font-semibold md:w-72 md:text-sm'
+              className='text-sm font-semibold w-72 md:text-sm'
               placeholder='Comp Name'
               value={compName}
               onChange={(e) => setCompName(e.target.value)}
@@ -96,12 +96,12 @@ const CompDate = ({ userId }: { userId: string }) => {
           </div>
         </div>
 
-        <div className='flex items-end justify-between gap-2 md:justify-normal md:gap-6'>
+        <div className='flex items-end gap-6 justify-normal md:gap-6'>
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 className={cn(
-                  'col-span-2 md:w-[230px] w-[190px] px-1 md:px-2 justify-start rounded-none border-0 border-b border-gray-600 text-left text-gray-200 hover:border-gray-200 ',
+                  'col-span-2 w-[230px] px-2 justify-start rounded-none border-0 border-b border-gray-600 text-left text-gray-200 hover:border-gray-200 ',
                   !date && 'text-gray-600',
                 )}
               >
@@ -123,13 +123,13 @@ const CompDate = ({ userId }: { userId: string }) => {
           </Popover>
           <div className='flex gap-2'>
             <Button
-              className='w-16 md:w-28'
+              className='w-28'
               onClick={onSave}
             >
               Save
             </Button>
             <Button
-              className='w-16 md:w-28'
+              className='w-28'
               onClick={onClear}
             >
               Clear

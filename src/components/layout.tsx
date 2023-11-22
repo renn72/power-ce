@@ -13,7 +13,7 @@ const Layout = (props: PropsWithChildren) => {
 
   return (
     <>
-      <div className='flex min-h-screen min-w-fit flex-col bg-black text-gray-200'>
+      <div className='flex min-h-screen w-full flex-col bg-black text-gray-200 overflow-auto'>
         <Navbar />
         {user ? (
           <div className='grow'>{props.children}</div>
