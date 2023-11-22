@@ -100,6 +100,16 @@ const Program: NextPage = () => {
         <div className='2xl:grid-cols-14'></div>
         <div className='2xl:grid-cols-15'></div>
         <div className='2xl:grid-cols-16'></div>
+        <div className='grid-cols-7'></div>
+        <div className='grid-cols-8'></div>
+        <div className='grid-cols-9'></div>
+        <div className='grid-cols-10'></div>
+        <div className='grid-cols-11'></div>
+        <div className='grid-cols-12'></div>
+        <div className='grid-cols-13'></div>
+        <div className='grid-cols-14'></div>
+        <div className='grid-cols-15'></div>
+        <div className='grid-cols-16'></div>
       </main>
     </>
   )

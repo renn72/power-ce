@@ -219,7 +219,7 @@ const Users = () => {
 
   return (
     <>
-      <main className='flex h-full min-w-[1200px] flex-col items-center justify-center gap-8 py-3 px-2 sm:px-6 md:mt-6 '>
+      <main className='flex h-full min-w-[1500px] flex-col items-center justify-center gap-8 py-3 px-2 sm:px-6 md:mt-6 '>
         <UserSelect onSelectUser={setUserId} />
         <Tab.Group
           vertical

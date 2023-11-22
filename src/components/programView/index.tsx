@@ -393,6 +393,7 @@ const ProgramView = ({
 
   if (programLoading || warmupsLoading) return <LoadingPage />
 
+
   return (
     <>
       <div className='mt-8 flex flex-col gap-8 text-base sm:text-lg md:px-2'>
@@ -400,15 +401,35 @@ const ProgramView = ({
           <div key={week.id}>
             <h1 className='mb-2 text-2xl font-bold'>Week {weekIndex + 1}</h1>
             <div
-              className={`grid grid-cols-1 md:px-2 lg:grid-cols-5 2xl:${
-                'grid-cols-' +
-                week.day
-                  .reduce(
-                    (acc, d) => (d.isRestDay === true ? acc + 1 : acc + 2),
-                    0,
-                  )
-                  .toString()
-              } `}
+              className={`grid md:px-2 ${
+                isAdmin
+                  ? `
+${
+                      'grid-cols-' +
+                      week.day
+                        .reduce(
+                          (acc, d) =>
+                            d.isRestDay === true ? acc + 1 : acc + 2,
+                          0,
+                        )
+                        .toString()
+                    }
+`
+                  : `
+
+grid-cols-1 lg:grid-cols-5 2xl:${
+                      'grid-cols-' +
+                      week.day
+                        .reduce(
+                          (acc, d) =>
+                            d.isRestDay === true ? acc + 1 : acc + 2,
+                          0,
+                        )
+                        .toString()
+                    } 
+`
+              }  
+`}
             >
               {week.day.map((day, dayIndex) => (
                 <div
