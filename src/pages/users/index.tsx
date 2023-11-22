@@ -126,6 +126,66 @@ const UserPage = ({
   )
 }
 
+const ProgramHistory = ({ userId }: { userId: string }) => {
+  api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
+
+  const { data: programs, isLoading: programsLoading } =
+    api.blocks.getAllUserProgramsTitles.useQuery({ userId: userId })
+
+  if (programsLoading) return <LoadingPage />
+
+  return (
+    <div className='flex flex-col gap-16'>
+      {programs &&
+        programs.map((program) => (
+          <div key={program.id}>
+            {program.isProgramActive ? null : (
+              <Disclosure defaultOpen={false}>
+                {({ open }) => (
+                  <div className='flex flex-col md:gap-8'>
+                    <div className='flex flex-col sm:flex-row md:gap-6'>
+                      <Disclosure.Button
+                        className={`${
+                          open
+                            ? 'border-b border-yellow-500'
+                            : 'border-b border-black hover:border-white'
+                        } flex items-center gap-2 px-2 py-2 text-lg font-medium `}
+                      >
+                        {program.name}
+                        <ChevronUpIcon
+                          className={`${
+                            open ? 'rotate-180 transform' : ''
+                          } h-8 w-8 text-gray-400`}
+                        />
+                      </Disclosure.Button>
+                      <div className='flex gap-2'></div>
+                    </div>
+
+                    <Transition
+                      className='transition-all duration-300 ease-out'
+                      enterFrom='transform scale-70 opacity-0'
+                      enterTo='transform scale-100 opacity-100'
+                      leaveFrom='transform scale-100 opacity-100'
+                      leaveTo='transform scale-70 opacity-0'
+                    >
+                      <Disclosure.Panel className=''>
+                        <ProgramView
+                          userId={userId}
+                          programId={program.id}
+                          isAdmin={false}
+                        />
+                      </Disclosure.Panel>
+                    </Transition>
+                  </div>
+                )}
+              </Disclosure>
+            )}
+          </div>
+        ))}
+    </div>
+  )
+}
+
 const TabWrapper = ({ title }: { title: string }) => (
   <Tab
     className={({ selected }) =>
@@ -219,7 +279,7 @@ const Users = () => {
 
   return (
     <>
-      <main className='flex h-full min-w-[1500px] flex-col items-center justify-center gap-8 py-3 px-2 sm:px-6 md:mt-6 '>
+      <main className='flex h-full min-w-[1500px] flex-col items-center justify-center gap-8 px-2 py-3 sm:px-6 md:mt-6 '>
         <UserSelect onSelectUser={setUserId} />
         <Tab.Group
           vertical
@@ -229,7 +289,10 @@ const Users = () => {
             <Tab.List className='flex w-36 flex-col divide-y divide-gray-600'>
               <TabWrapper title='Overview' />
               <TabWrapper title='Program' />
+              <TabWrapper title='History' />
               <TabWrapper title='One RM' />
+              <TabWrapper title='Competitions' />
+              <TabWrapper title='Open Powerlifting' />
               <TabWrapper title='Settings' />
             </Tab.List>
             <Tab.Panels className='w-full '>
@@ -247,8 +310,8 @@ const Users = () => {
                   userLastName={user.lastName}
                 />
                 <TrainerSelect userId={userId} />
-                <CompDate userId={userId} />
               </Tab.Panel>
+
               <Tab.Panel>
                 <ProgramView
                   userId={userId}
@@ -256,9 +319,22 @@ const Users = () => {
                   programId={activeProgram?.id || ''}
                 />
               </Tab.Panel>
+
+              <Tab.Panel>
+                History
+                <ProgramHistory userId={userId} />
+              </Tab.Panel>
+
               <Tab.Panel>
                 <OneRMCard userId={userId} />
               </Tab.Panel>
+
+              <Tab.Panel>
+                <CompDate userId={userId} />
+              </Tab.Panel>
+
+              <Tab.Panel>open powerlifting</Tab.Panel>
+
               <Tab.Panel>
                 <Settings userId={userId} />
               </Tab.Panel>

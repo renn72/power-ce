@@ -6,7 +6,6 @@ import * as React from 'react'
 import { format, add } from 'date-fns'
 import { Calendar as CalendarIcon } from 'lucide-react'
 
-
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -16,11 +15,11 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Input } from '@/components/ui/input'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 
 const CompDate = ({ userId }: { userId: string }) => {
   const [date, setDate] = useState<Date>()
   const [compName, setCompName] = useState<string>('')
-  const [isSet, setIsSet] = useState<boolean>(false)
 
   const ctx = api.useContext()
 
@@ -67,41 +66,51 @@ const CompDate = ({ userId }: { userId: string }) => {
     })
   }
 
-  useEffect(() => {
-    if (compDateUser && compDateUser.length > 0 && compDateUser[0]) {
-      setDate(new Date(compDateUser[0].date))
-      setCompName(compDateUser[0].name)
-      setIsSet(true)
-    } else {
-      setDate(undefined)
-      setCompName('')
-      setIsSet(false)
-    }
-  }, [compDateUser])
+  console.log('compDateUser', compDateUser)
 
   return (
     <>
-      <div className='mx-2 flex gap-6 flex-row'>
-        <div className='flex items-end gap-6 justify-normal md:gap-6'>
-          <div className='text-lg font-semibold w-64'>
-            <div>Next Comp</div>
-          </div>
-          <div className=''>
-            <Input
-              className='text-sm font-semibold w-72 md:text-sm'
-              placeholder='Comp Name'
-              value={compName}
-              onChange={(e) => setCompName(e.target.value)}
-            />
-          </div>
+      <div className='mx-2 flex flex-col gap-6'>
+        <div className='w-64 text-lg font-semibold'>
+          <div>Upcoming Comp</div>
         </div>
 
-        <div className='flex items-end gap-6 justify-normal md:gap-6'>
+        <div className='flex flex-col gap-2'>
+          {compDateUser?.map((comp) => (
+            <div
+              key={comp.id}
+              className='flex flex-row gap-2'
+            >
+              <div className='w-64 text-lg font-semibold'>{comp.name}</div>
+              <div className='w-64 text-lg font-semibold'>
+                {format(new Date(comp.date), 'PPP')}
+              </div>
+              <XMarkIcon
+                className='h-6 w-6 cursor-pointer text-gray-300 hover:text-gray-100'
+                onClick={() => {
+                  mutateCompDateDelete({
+                    userId: userId,
+                    name: comp.name,
+                    date: comp.date,
+                  })
+                }}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className='flex items-end justify-normal gap-6 md:gap-6'>
+          <Input
+            className='w-72 text-sm font-semibold md:text-sm'
+            placeholder='Comp Name'
+            value={compName}
+            onChange={(e) => setCompName(e.target.value)}
+          />
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 className={cn(
-                  'col-span-2 w-[230px] px-2 justify-start rounded-none border-0 border-b border-gray-600 text-left text-gray-200 hover:border-gray-200 ',
+                  'col-span-2 w-[230px] justify-start rounded-none border-0 border-b border-gray-600 px-2 text-left text-gray-200 hover:border-gray-200 ',
                   !date && 'text-gray-600',
                 )}
               >
@@ -109,7 +118,7 @@ const CompDate = ({ userId }: { userId: string }) => {
                 {date ? format(date, 'PPP') : <span>Pick a date</span>}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className='z-10 w-auto bg-black py-3 md:px-3 text-gray-200'>
+            <PopoverContent className='z-10 w-auto bg-black py-3 text-gray-200 md:px-3'>
               <Calendar
                 mode='single'
                 selected={date}
