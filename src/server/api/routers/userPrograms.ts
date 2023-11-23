@@ -104,6 +104,7 @@ export const userProgramsRouter = createTRPCRouter({
         data: {
           name: block.name,
           isProgram: true,
+          isSecondary: false,
           userIdOfProgram: input.userId,
           isProgramActive: true,
           trainerId: block.trainerId,
@@ -193,6 +194,118 @@ export const userProgramsRouter = createTRPCRouter({
 
       return program
     }),
+
+  createSecondary: privateProcedure
+    .input(programSchema)
+    .mutation(async ({ ctx, input }) => {
+      console.log('start')
+
+      const block = await ctx.prisma.block.findUnique({
+        where: { id: input.templateId },
+        include: {
+          week: {
+            include: {
+              day: { include: { exercise: { include: { ss: true } } } },
+            },
+          },
+        },
+      })
+
+      if (!block) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Block not found',
+        })
+      }
+
+      console.log('found block')
+
+      const program = await ctx.prisma.block.create({
+        data: {
+          name: block.name,
+          isProgram: true,
+          userIdOfProgram: input.userId,
+          isProgramActive: false,
+          isSecondary: true,
+          trainerId: block.trainerId,
+          week: {
+            create: block.week.map((week) => ({
+              day: {
+                create: week.day.map((day) => ({
+                  isRestDay: day.isRestDay,
+                  warmupTemplateId: day.warmupTemplateId,
+                  exercise: {
+                    create: day.exercise.map((exercise) => ({
+                      name: exercise.name,
+                      lift: exercise.lift,
+                      sets: exercise.sets,
+                      reps: exercise.reps,
+                      onerm: exercise.onerm,
+                      onermTop: exercise?.onermTop,
+                      weightTop: exercise.weightTop,
+                      weightBottom: exercise.weightBottom,
+                      targetRpe: exercise.targetRpe,
+                      estimatedOnermIndex: exercise.estimatedOnermIndex,
+                      weightType: exercise.weightType,
+                      notes: exercise?.notes,
+                      isEstimatedOnerm: exercise?.isEstimatedOnerm,
+                      isComplete: false,
+                      tempoDown: exercise.tempoDown,
+                      tempoPause: exercise.tempoPause,
+                      tempoUp: exercise.tempoUp,
+                      actualSets: exercise.sets,
+                      repUnit: exercise.repUnit,
+                      htmlLink: exercise.htmlLink,
+                      userId: input.userId,
+                      ss: {
+                        create: exercise?.ss?.map((s) => ({
+                          name: s.name,
+                          lift: s.lift,
+                          reps: s.reps,
+                          onerm: s.onerm,
+                          onermTop: s.onermTop,
+                          weightTop: s.weightTop,
+                          weightBottom: s.weightBottom,
+                          targetRpe: s.targetRpe,
+                          weightType: s.weightType,
+                          userId: input.userId,
+                          notes: s.notes,
+                          htmlLink: s.htmlLink,
+                        })),
+                      },
+                    })),
+                  },
+                })),
+              },
+            })),
+          },
+        },
+      })
+      console.log('created program')
+
+      const userProgram = ctx.prisma.userProgram.create({
+        data: {
+          userId: input.userId,
+          templateId: input.templateId,
+          programId: program.id,
+          isProgramActive: false,
+        },
+      })
+
+      const proUpdate = ctx.prisma.block.updateMany({
+        where: {
+          NOT: { id: program.id },
+          userIdOfProgram: input.userId,
+          isSecondary: true,
+        },
+        data: { isSecondary: false },
+      })
+
+      await ctx.prisma.$transaction([userProgram, proUpdate])
+
+      return program
+    }),
+
   remove: privateProcedure
     .input(z.object({ userId: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -214,6 +327,21 @@ export const userProgramsRouter = createTRPCRouter({
 
       return res
     }),
+
+  removeSecondary: privateProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+
+      const res = await ctx.prisma.block.deleteMany({
+        where: {
+          userIdOfProgram: input.userId,
+          isSecondary: true,
+        },
+      })
+
+      return res
+    }),
+
   updateExercise: privateProcedure
     .input(z.object({ exercise: exerciseSchema }))
     .mutation(async ({ ctx, input }) => {

@@ -249,6 +249,19 @@ export const blocksRouter = createTRPCRouter({
       })
       return block
     }),
+  getUserSecondaryProgram: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const userId = input.userId
+      const block = await ctx.prisma.block.findFirst({
+        where: {
+          userIdOfProgram: userId,
+          isSecondary: true,
+          isDeleted: false,
+        },
+      })
+      return block
+    }),
   getAllUserPrograms: publicProcedure
     .input(z.object({ userId: z.string().optional() }).optional())
     .query(async ({ ctx, input }) => {
@@ -280,6 +293,7 @@ export const blocksRouter = createTRPCRouter({
         where: {
           userIdOfProgram: userId,
           isDeleted: false,
+          isSecondary: false || null,
         },
       })
       return blocks

@@ -43,7 +43,7 @@ export const LoadingWrapper = ({
               leaveFrom='opacity-100 scale-100'
               leaveTo='opacity-0 scale-95'
             >
-              <Dialog.Panel className=''>
+              <Dialog.Panel className='fixed inset-0'>
                 <LoadingPage />
               </Dialog.Panel>
             </Transition.Child>

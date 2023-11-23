@@ -11,8 +11,6 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/outline'
 
-import { capitaliseString } from '~/utils/utils'
-
 import { useSession } from 'next-auth/react'
 
 const TemplateSelect = ({
@@ -20,15 +18,13 @@ const TemplateSelect = ({
   onSetTemplate,
   onClearTemplate,
   userId,
-  userFirstName,
-  userLastName,
+  isCurrent,
 }: {
   onSelectTemplate: (arg0: string, arg1: string) => void
   onSetTemplate: (arg0: string, arg1: string) => void
   onClearTemplate: (arg0: string) => void
   userId: string
-  userFirstName: string | null
-  userLastName: string | null
+  isCurrent: boolean
 }) => {
   const [template, setTemplate] = useState('')
   const [isSet, setIsSet] = useState(false)
@@ -41,12 +37,18 @@ const TemplateSelect = ({
 
   const { data: blocksData, isLoading: blocksLoading } =
     api.blocks.getAllBlockTitles.useQuery()
-  const { data: currentProgram } =
-    api.blocks.getUserActiveProgramFull.useQuery({ userId: userId })
+  const { data: currentProgram } = api.blocks.getUserActiveProgramFull.useQuery(
+    { userId: userId },
+  )
   console.log('currentProgram', currentProgram)
 
+  const { data: secondProgram } = api.blocks.getUserSecondaryProgram.useQuery({
+    userId: userId,
+  })
+  console.log('secondProgram', secondProgram)
+
   const workoutCount = () => {
-    if (!currentProgram) return
+    if (!currentProgram) return ''
     const complete: number[] = currentProgram.week.map((w) =>
       w.day.map((d) => {
         if (d.isComplete === true) return 2
@@ -54,7 +56,7 @@ const TemplateSelect = ({
         return d.isRestDay ? 0 : -1
       }),
     )
-    if (!complete) return
+    if (!complete) return ''
 
     const completeFlat = complete.flat()
 
@@ -112,31 +114,41 @@ const TemplateSelect = ({
     onClearTemplate(userId)
     setIsSet(false)
     setTemplate('')
-
     void ctx.blocks.getUserActiveProgramFull.invalidate({ userId: userId })
+    void ctx.blocks.getUserSecondaryProgram.invalidate({ userId: userId })
   }
 
   const onSetLocalTemplate = (template: string) => {
     setTemplate(template)
     onSelectTemplate(template, userId)
-    void ctx.blocks.getUserActiveProgramFull.invalidate({ userId: userId })
   }
 
   useEffect(() => {
-    if (!currentProgram) {
-      setIsSet(false)
-      setTemplate('')
-      return
+    if (isCurrent) {
+      if (!currentProgram) {
+        setIsSet(false)
+        setTemplate('')
+        return
+      }
+      const templateName = currentProgram?.name
+      if (!templateName) return
+      setIsSet(true)
+      setTemplate(templateName)
+    } else {
+      if (!secondProgram) {
+        setIsSet(false)
+        setTemplate('')
+        return
+      }
+      const templateName = secondProgram?.name
+      if (!templateName) return
+      setIsSet(true)
+      setTemplate(templateName)
     }
-    const templateName = currentProgram?.name
-    if (!templateName) return
-    setIsSet(true)
-    setTemplate(templateName)
-  }, [currentProgram])
+  }, [currentProgram, secondProgram])
 
   const onSetTemplateWrapper = (template: string, userId: string) => {
     onSetTemplate(template, userId)
-    setIsSet(false)
   }
 
   if (blocksLoading) return <div>loading</div>
@@ -151,26 +163,26 @@ const TemplateSelect = ({
   // if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
 
   return (
-    <div className='mx-1 flex mx-2 flex-row items-center gap-6'>
+    <div className='mx-1 mx-2 flex flex-row items-center gap-6'>
       <div className='flex flex-row justify-normal gap-6 '>
-        <div className='flex items-end text-lg font-semibold w-64'>
+        <div className='flex w-64 items-end text-lg font-semibold'>
           <div className='text-xl font-bold tracking-tighter text-yellow-500'>
-            Current Program:
+            {isCurrent ? 'Current' : 'Next'} Program:{' '}
           </div>
           {isSet && false && (
             <CheckCircleIcon className='h-8 w-6 text-green-600 md:w-8' />
           )}
         </div>
 
-        <div className='flex justify-start gap-6 flex-row items-center'>
-          <div className='flex justify-start gap-2 items-center'>
-            <div className='flex flex-col justify-center font-bold text-base'>
+        <div className='flex flex-row items-center justify-start gap-6'>
+          <div className='flex items-center justify-start gap-2'>
+            <div className='flex flex-col justify-center text-base font-bold'>
               <Listbox
                 value={template}
                 onChange={(e) => onSetLocalTemplate(e)}
               >
                 <div className='z-1 relative'>
-                  <Listbox.Button className='relative h-10  cursor-default border-b border-gray-600 pl-3 pr-10 text-left shadow-md hover:border-white focus:outline-none w-60 '>
+                  <Listbox.Button className='relative h-10  w-60 cursor-default border-b border-gray-600 pl-3 pr-10 text-left shadow-md hover:border-white focus:outline-none '>
                     <span className='block truncate'>{template}</span>
                     <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
                       <ChevronUpDownIcon
@@ -235,14 +247,14 @@ const TemplateSelect = ({
       </div>
       <div
         className={`mt-2 text-sm font-normal ${
-          workoutCount() <= 2
-            ? workoutCount() <= 1
+          Number(workoutCount()) <= 2
+            ? Number(workoutCount()) <= 1
               ? 'text-red-500'
               : 'text-orange-400'
             : 'text-gray-400'
         }`}
       >
-        {countDown()}
+        {isCurrent && countDown()}
       </div>
     </div>
   )

@@ -26,6 +26,7 @@ import { type BlockData } from '~/store/types'
 
 import { classNames } from '~/utils/utils'
 import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
+import { LoadingWrapper } from '../loading'
 
 export const selectedTemplateAtom = atom('')
 export const isSuperAdminAtom = atom(false)
@@ -43,6 +44,7 @@ const Form = () => {
     formState: { errors },
   } = formMethods
 
+  const [isOpen, setIsOpen] = useState(false)
   const [isUpdate, setIsUpdate] = useState(false)
   const [blockId, setBlockId] = useState('')
   const [isSuperAdmin, setIsSuperAdmin] = useAtom(isSuperAdminAtom)
@@ -57,7 +59,7 @@ const Form = () => {
 
   const { mutate: blockCreateMutate } = api.blocks.create.useMutation({
     onSuccess: () => {
-      console.log('success')
+      setIsOpen(false)
       toast.success('Saved')
       void ctx.blocks.getAll.invalidate()
     },
@@ -68,7 +70,7 @@ const Form = () => {
   })
   const { mutate: blockUpdateMutate } = api.blocks.update.useMutation({
     onSuccess: () => {
-      console.log('success')
+      setIsOpen(false)
       toast.success('Saved')
       void ctx.blocks.getAll.invalidate()
       void ctx.blocks.getAllBlockTitles.invalidate()
@@ -80,7 +82,7 @@ const Form = () => {
   })
 
   const onSubmit = (data: Block) => {
-    console.log('submit')
+    setIsOpen(true)
     if (isUpdate) {
       updateBlock(data)
     } else {
@@ -348,6 +350,10 @@ const Form = () => {
 
   return (
     <>
+      <LoadingWrapper
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
       {isMe ? (
         <div className='flex items-center gap-1'>
           Super

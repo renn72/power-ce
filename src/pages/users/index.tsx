@@ -213,10 +213,11 @@ const OpenPowerlifting = ({ userId }: { userId: string }) => {
           Competitions
         </div>
         <RefreshCcwIcon
-          className='h-6 w-6 cursor-pointer p-1 text-yellow-400 '
+          className='h-6 w-6 cursor-pointer p-1 text-yellow-400 hover:animate-spin hover:text-yellow-500 '
           onClick={() => {
             setIsOpen(true)
-            setOpenPowerliftingData({ userId: userId })}}
+            setOpenPowerliftingData({ userId: userId })
+          }}
         />
       </div>
       <div className='flex max-w-[800px] flex-col gap-0 space-y-2 divide-y divide-dashed divide-gray-400'>
@@ -268,7 +269,10 @@ const OpenPowerlifting = ({ userId }: { userId: string }) => {
           </div>
         ))}
       </div>
-      <LoadingWrapper isOpen={isOpen} setIsOpen={setIsOpen} />
+      <LoadingWrapper
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
     </div>
   )
 }
@@ -289,7 +293,8 @@ const TabWrapper = ({ title }: { title: string }) => (
 const Users = () => {
   const { data: session } = useSession()
   const user = session?.user
-  const [userId, setUserId] = useState<string>(user?.id || '')
+  const [userId, setUserId] = useState<string>(() => user?.id || '')
+  const [isOpen, setIsOpen] = useState<boolean>(false)
   if (!user) return <div>Login</div>
 
   const ctx = api.useContext()
@@ -300,10 +305,45 @@ const Users = () => {
   const { data: blocksData, isLoading: blocksLoading } =
     api.blocks.getAllBlockTitles.useQuery()
 
+  const { mutate: userProgramCreateSecondaryMutate } =
+    api.userPrograms.createSecondary.useMutation({
+      onSuccess: () => {
+        toast.success('Saved')
+        setIsOpen(false)
+        void ctx.blocks.getUserActiveProgram.invalidate()
+        void ctx.blocks.getUserSecondaryProgram.invalidate()
+        void ctx.blocks.getUserActiveProgramFull.invalidate()
+        void ctx.blocks.getAllUserProgramsTitles.invalidate()
+      },
+      onError: (e) => {
+        console.log('error', e)
+        toast.error('Error')
+        setIsOpen(false)
+      },
+    })
+  const { mutate: userProgramRemoveSecondaryMutate } =
+    api.userPrograms.removeSecondary.useMutation({
+      onSuccess: () => {
+        console.log('success')
+        setIsOpen(false)
+        toast.success('Removed')
+        void ctx.blocks.getUserActiveProgram.invalidate()
+        void ctx.blocks.getUserSecondaryProgram.invalidate()
+        void ctx.blocks.getUserActiveProgramFull.invalidate()
+        void ctx.blocks.getAllUserProgramsTitles.invalidate()
+      },
+      onError: (e) => {
+        setIsOpen(false)
+        console.log('error', e)
+        toast.error('Error')
+      },
+    })
+
   const { mutate: userProgramCreateMutate } =
     api.userPrograms.create.useMutation({
       onSuccess: () => {
         toast.success('Saved')
+        setIsOpen(false)
         void ctx.blocks.getUserActiveProgram.invalidate()
         void ctx.blocks.getUserActiveProgramFull.invalidate()
         void ctx.blocks.getAllUserProgramsTitles.invalidate()
@@ -311,26 +351,34 @@ const Users = () => {
       onError: (e) => {
         console.log('error', e)
         toast.error('Error')
+        setIsOpen(false)
       },
     })
   const { mutate: userProgramRemoveMutate } =
     api.userPrograms.remove.useMutation({
       onSuccess: () => {
         console.log('success')
+        setIsOpen(false)
         toast.success('Removed')
         void ctx.blocks.getUserActiveProgram.invalidate()
         void ctx.blocks.getUserActiveProgramFull.invalidate()
         void ctx.blocks.getAllUserProgramsTitles.invalidate()
       },
       onError: (e) => {
+        setIsOpen(false)
         console.log('error', e)
         toast.error('Error')
       },
     })
 
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
-  const { data: activeProgram, isLoading: loadingProgram } =
-    api.blocks.getUserActiveProgram.useQuery({
+
+  const { data: activeProgram } = api.blocks.getUserActiveProgram.useQuery({
+    userId: userId,
+  })
+
+  const { data: secondaryProgram } =
+    api.blocks.getUserSecondaryProgram.useQuery({
       userId: userId,
     })
 
@@ -341,13 +389,14 @@ const Users = () => {
 
   const onClearTemplate = (userId: string) => {
     console.log('userId', userId)
+    setIsOpen(true)
     userProgramRemoveMutate({ userId: userId })
   }
 
   const onSetTemplate = (template: string, userId: string) => {
     const templateId = blocksData?.find((block) => block.name === template)?.id
     if (!templateId) return
-
+    setIsOpen(true)
     userProgramCreateMutate({
       userId: userId,
       templateId: templateId,
@@ -356,16 +405,35 @@ const Users = () => {
     })
   }
 
-  if (usersLoading || blocksLoading || loadingProgram) {
-    return (
-      <div>
-        <LoadingPage />
-      </div>
-    )
+  const onSelectSecondaryTemplate = (template: string, userId: string) => {
+    console.log('template', template)
+    console.log('userId', userId)
+  }
+
+  const onClearSecondaryTemplate = (userId: string) => {
+    console.log('userId', userId)
+    setIsOpen(true)
+    userProgramRemoveSecondaryMutate({ userId: userId })
+  }
+
+  const onSetSecondaryTemplate = (template: string, userId: string) => {
+    const templateId = blocksData?.find((block) => block.name === template)?.id
+    if (!templateId) return
+    setIsOpen(true)
+    userProgramCreateSecondaryMutate({
+      userId: userId,
+      templateId: templateId,
+      programId: '',
+      isProgramActive: true,
+    })
   }
 
   return (
     <>
+      <LoadingWrapper
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
       <main className='flex h-full min-w-[1500px] flex-col items-center justify-center gap-8 px-2 py-3 sm:px-6 md:mt-6 '>
         <UserSelect onSelectUser={setUserId} />
         <Tab.Group
@@ -384,22 +452,42 @@ const Users = () => {
             </Tab.List>
             <Tab.Panels className='w-full '>
               <Tab.Panel>
-                <h2 className='text-2xl font-medium'>Overview</h2>
-                <div className='w-64'>
-                  <CountDown userId={userId} />
+                <div className='flex flex-col gap-4'>
+                  <h2 className='text-2xl font-medium'>Overview</h2>
+                  <div className='w-64'>
+                    <CountDown userId={userId} />
+                  </div>
+                  {activeProgram ? (
+                    <div className='flex gap-4'>
+                      <div className='w-48' >Current Program:</div>
+                      <div>{activeProgram.name}</div>
+                    </div>
+                  ) : null}
+                  {secondaryProgram ? (
+                    <div className='flex gap-4'>
+                      <div className='w-48'>Next Program:</div>
+                      <div>{secondaryProgram.name}</div>
+                    </div>
+                  ) : null}
+                  <TrainerSelect userId={userId} />
                 </div>
+              </Tab.Panel>
+
+              <Tab.Panel>
                 <TemplateSelect
                   onSelectTemplate={onSelectTemplate}
                   onSetTemplate={onSetTemplate}
                   onClearTemplate={onClearTemplate}
                   userId={userId}
-                  userFirstName={user.firstName}
-                  userLastName={user.lastName}
+                  isCurrent={true}
                 />
-                <TrainerSelect userId={userId} />
-              </Tab.Panel>
-
-              <Tab.Panel>
+                <TemplateSelect
+                  onSelectTemplate={onSelectSecondaryTemplate}
+                  onSetTemplate={onSetSecondaryTemplate}
+                  onClearTemplate={onClearSecondaryTemplate}
+                  userId={userId}
+                  isCurrent={false}
+                />
                 <ProgramView
                   userId={userId}
                   isAdmin={true}

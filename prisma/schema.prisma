@@ -338,6 +338,9 @@ model Block {
   userIdOfProgram String?
   isProgramActive Boolean?
 
+  isComplete Boolean?
+  isSecondary Boolean?
+
   flield1 String?
   flield2 String?
   flield3 String?
