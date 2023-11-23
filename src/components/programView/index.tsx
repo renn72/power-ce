@@ -393,7 +393,6 @@ const ProgramView = ({
 
   if (programLoading || warmupsLoading) return <LoadingPage />
 
-
   return (
     <>
       <div className='mt-8 flex flex-col gap-8 text-base sm:text-lg md:px-2'>
@@ -405,15 +404,11 @@ const ProgramView = ({
                 isAdmin
                   ? `
 ${
-                      'grid-cols-' +
-                      week.day
-                        .reduce(
-                          (acc, d) =>
-                            d.isRestDay === true ? acc + 1 : acc + 2,
-                          0,
-                        )
-                        .toString()
-                    }
+  'grid-cols-' +
+  week.day
+    .reduce((acc, d) => (d.isRestDay === true ? acc + 1 : acc + 2), 0)
+    .toString()
+}
 `
                   : `
 
@@ -472,8 +467,9 @@ grid-cols-1 lg:grid-cols-5 2xl:${
                         )}
                       </div>
                       <div
-                        className='cursor-pointer'
+                        className={isAdmin ? 'cursor-pointer' : ''}
                         onClick={(e) => {
+                          if (!isAdmin) return
                           e.stopPropagation()
                           setIsOpenWarmup(true)
                           setWarmupDayId(day.id)

@@ -1108,7 +1108,7 @@ const Day = () => {
           {day?.isComplete ? (
             <div
               onClick={() => {
-                updateDayComplete({ id: day.id, isComplete: false })
+                // updateDayComplete({ id: day.id, isComplete: false, programId: programId  })
               }}
               className={`flex items-center justify-center gap-2 text-xl font-bold text-yellow-500`}
             >
@@ -1118,7 +1118,7 @@ const Day = () => {
             <div className='mx-12 flex items-center justify-between'>
               <Button
                 onClick={() => {
-                  updateDayComplete({ id: day.id, isComplete: true })
+                  updateDayComplete({ id: day.id, isComplete: true, programId: program.id })
                 }}
                 className='w-32'
               >

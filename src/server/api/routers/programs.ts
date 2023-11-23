@@ -75,6 +75,7 @@ export const programsRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         isComplete: z.boolean(),
+        programId: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -87,6 +88,46 @@ export const programsRouter = createTRPCRouter({
         where: { id: input.id },
         data: { isComplete: input.isComplete, flield1: Date.now().toString() },
       })
+
+      const program = await ctx.prisma.block.findUnique({
+        where: { id: input.programId },
+        include: {
+          week: {
+            include: {
+              day: {
+                include: {
+                  exercise: true,
+                },
+              },
+            },
+          },
+        },
+      })
+
+      if (!program) return programDay
+
+      const days = program.week
+        .map((week) =>
+          week.day.map((day) => (day.isComplete || day.isRestDay ? 0 : 1)),
+        )
+        .flat()
+
+      const total = days.reduce((a, b) => a + b, 0)
+
+      if (total === 0) {
+        await ctx.prisma.block.update({
+          where: { id: input.programId },
+          data: { isComplete: true },
+        })
+        const newProgram = await ctx.prisma.block.updateMany({
+          where: { userId: ctx.userId, isSecondary: true },
+          data: { isProgramActive: true, isSecondary: false },
+        })
+      }
+
+      console.log('days', days)
+      console.log('total', total)
+
       return programDay
     }),
 
