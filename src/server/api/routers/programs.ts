@@ -114,15 +114,19 @@ export const programsRouter = createTRPCRouter({
 
       const total = days.reduce((a, b) => a + b, 0)
 
-      if (total === 0) {
-        await ctx.prisma.block.update({
+      if (total == 0) {
+        console.log('total', total)
+        const programupdate = await ctx.prisma.block.update({
           where: { id: input.programId },
           data: { isComplete: true, isProgramActive: false },
         })
         const newProgram = await ctx.prisma.block.updateMany({
-          where: { userId: ctx.userId, isSecondary: true },
+          where: { userIdOfProgram: ctx.userId, isSecondary: true },
           data: { isProgramActive: true, isSecondary: false },
         })
+
+        console.log('programupdate', programupdate)
+        console.log('newProgram', newProgram)
       }
 
       console.log('days', days)
