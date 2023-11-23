@@ -117,7 +117,7 @@ export const programsRouter = createTRPCRouter({
       if (total === 0) {
         await ctx.prisma.block.update({
           where: { id: input.programId },
-          data: { isComplete: true },
+          data: { isComplete: true, isProgramActive: false },
         })
         const newProgram = await ctx.prisma.block.updateMany({
           where: { userId: ctx.userId, isSecondary: true },

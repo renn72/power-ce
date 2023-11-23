@@ -28,6 +28,8 @@ const Program: NextPage = () => {
   const { data: programs, isLoading: programsLoading } =
     api.blocks.getAllUserProgramsTitles.useQuery({ userId: userId })
 
+  console.log('programs', programs)
+
   if (programsLoading || !user) return <LoadingPage />
 
   return (
@@ -35,6 +37,7 @@ const Program: NextPage = () => {
       <main className='flex h-full flex-col px-2 font-semibold'>
         <div className='flex w-full flex-col py-2 sm:px-6 md:mx-auto lg:px-2'>
           <CountDown userId={user?.id || ''} />
+          test
           <div className='flex flex-col gap-16'>
             {programs &&
               programs.map((program) => (
