@@ -11,6 +11,7 @@ import { toast } from 'react-hot-toast'
 import { LoadingPage, LoadingSpinner } from '~/components/loading'
 
 import { getDate } from '~/utils/utils'
+import { Cog8ToothIcon } from '@heroicons/react/20/solid'
 
 const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
@@ -199,9 +200,12 @@ const Home: NextPage = () => {
     <>
       <main className='flex h-full flex-col gap-6 px-2  font-semibold'>
         <div className='flex  flex-col gap-4 lg:items-start '>
-          <div className='flex  flex-col gap-1 lg:items-start '>
+          <div className='flex  w-full flex-col gap-1 lg:items-start '>
             <div className='flex w-full items-center justify-between'>
               <h1 className='text-2xl'>Profile</h1>
+              <Link href='/settings'>
+                <Cog8ToothIcon className='h-6 w-6 text-yellow-400' />
+              </Link>
             </div>
             <div className='flex flex-col gap-0 text-sm text-gray-400'></div>
             <div className='flex gap-1 text-xl'>
