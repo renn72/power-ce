@@ -338,7 +338,7 @@ model Block {
   userIdOfProgram String?
   isProgramActive Boolean?
 
-  isComplete Boolean?
+  isComplete  Boolean?
   isSecondary Boolean?
 
   flield1 String?
@@ -617,15 +617,15 @@ model User {
   sessions      Session[]
   userProfiles  UserProfile[]
 
-
-  isDiet   Boolean @default(false)
-  isPower  Boolean @default(false)
-  isTrainer Boolean @default(false)
-  isClient  Boolean @default(true)
-  isAdmin   Boolean @default(false)
-  isSuper   Boolean @default(false)
-  isCreator Boolean @default(false)
-  isRoot    Boolean @default(false)
+  isDiet         Boolean @default(false)
+  isPower        Boolean @default(false)
+  isTrainer      Boolean @default(false)
+  isClient       Boolean @default(true)
+  isRecordEditor Boolean @default(false)
+  isAdmin        Boolean @default(false)
+  isSuper        Boolean @default(false)
+  isCreator      Boolean @default(false)
+  isRoot         Boolean @default(false)
 
   flield1 String?
   flield2 String?

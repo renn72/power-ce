@@ -66,6 +66,8 @@ const Home: NextPage = () => {
   const { data: session } = useSession()
   const userId = session?.user?.id || ''
 
+  console.log('session', session)
+
   const { data: user } = api.users.get.useQuery({ userId: userId })
 
   // const userId = user?.id || ''
