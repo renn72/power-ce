@@ -295,14 +295,12 @@ const Users = () => {
   const user = session?.user
   const [userId, setUserId] = useState<string>(() => user?.id || '')
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  if (!user) return <div>Login</div>
 
   const ctx = api.useContext()
 
-  const { data: allUsers, isLoading: usersLoading } =
-    api.users.getAllUsers.useQuery()
+  api.users.getAllUsers.useQuery()
 
-  const { data: blocksData, isLoading: blocksLoading } =
+  const { data: blocksData, } =
     api.blocks.getAllBlockTitles.useQuery()
 
   const { mutate: userProgramCreateSecondaryMutate } =
@@ -427,6 +425,8 @@ const Users = () => {
       isProgramActive: true,
     })
   }
+
+  if(!user.isAdmin) return <div>Not Authorized</div>
 
   return (
     <>

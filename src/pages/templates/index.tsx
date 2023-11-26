@@ -13,11 +13,8 @@ const Templates: NextPage = () => {
     data: blocksData, isLoading: blocksLoading,
   } = api.blocks.getAll.useQuery()
 
-  // Check for admin role
   const { data: session } = useSession()
   const user = session?.user
-  if (!user) return <div>Login</div>
-  // if (user.organizationMemberships[0]?.role !== 'admin') return <div>Not auth</div>
 
   if (blocksLoading) {
     return (
@@ -28,6 +25,8 @@ const Templates: NextPage = () => {
   }
 
   if (!blocksData) return <div>Something went wrong</div>
+  if (!user) return <div>Login</div>
+  if (!user.isAdmin) return <div>Not Authorized</div>
 
   return (
     <>

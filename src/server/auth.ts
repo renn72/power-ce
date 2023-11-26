@@ -22,6 +22,13 @@ declare module 'next-auth' {
       id: string
       firstName: string
       lastName: string
+      isDiet: boolean
+      isPower: boolean
+      isTrainer: boolean
+      isClient: boolean
+      isRecordEdit: boolean
+      isAdmin: boolean
+      isSuper: boolean
       // ...other properties
       // role: UserRole;
     }

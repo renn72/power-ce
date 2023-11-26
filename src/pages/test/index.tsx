@@ -2,16 +2,16 @@ import React, { useState } from 'react'
 import { api } from '~/utils/api'
 import { useSession } from 'next-auth/react'
 
-const Users = () => {
+const Test = () => {
   const { data: session } = useSession()
   const user = session?.user
-  const [userId, setUserId] = useState<string>(user?.id || 'all')
 
   const ctx = api.useContext()
 
   const { data: allUsers } = api.users.getAllUsers.useQuery()
 
-  console.log('all users', allUsers)
+  if (!user) return <div>Login</div>
+  if (!user.isSuper) return <div>Not Authorized</div>
 
   return (
     <>
@@ -22,4 +22,4 @@ const Users = () => {
   )
 }
 
-export default Users
+export default Test

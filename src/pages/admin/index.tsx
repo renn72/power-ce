@@ -1,10 +1,13 @@
 import { Button } from '@/components/ui/button'
+import { useSession } from 'next-auth/react'
 import React from 'react'
 import ProgramCard from '~/components/programCard'
 
 import { api } from '~/utils/api'
 
 const Admin = () => {
+  const { data: session} = useSession()
+  const user = session?.user
   const ctx = api.useContext()
   const { data: allTemplates, isLoading: allTemplatesLoading } =
     api.blocks.getAllBlockTitlesAdmin.useQuery()
@@ -31,18 +34,18 @@ const Admin = () => {
     },
   })
 
-  const { mutate: makeUsers } = api.users.makeUsers.useMutation()
-
   console.log({ allTemplates, allPrograms, allUsers })
 
   if (allTemplatesLoading || allProgramsLoading) return <div>Loading...</div>
 
   if (!allTemplates || !allPrograms || !allUsers) return null
 
+  if (!user) return <div>Login</div>
+  if (!user.isSuper) return <div>Not Authorized</div>
+
   return (
     <div>
       <h1>Admin</h1>
-      <Button onClick={() => makeUsers()}>Build users</Button>
       <div className='mb-12'>
         <h2 className='mb-8 text-3xl font-bold'>Templates</h2>
         <div className='flex flex-col gap-4'>

@@ -32,6 +32,8 @@ const Program: NextPage = () => {
 
   if (programsLoading || !user) return <LoadingPage />
 
+  if (!user) return <div>Login</div>
+
   return (
     <>
       <main className='flex h-full flex-col px-2 font-semibold'>
@@ -119,4 +121,3 @@ const Program: NextPage = () => {
 }
 
 export default Program
-

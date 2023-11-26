@@ -64,11 +64,10 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
 
 const Home: NextPage = () => {
   const { data: session } = useSession()
+  const user = session?.user
   const userId = session?.user?.id || ''
 
   console.log('session', session)
-
-  const { data: user } = api.users.get.useQuery({ userId: userId })
 
   // const userId = user?.id || ''
   // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam
@@ -143,60 +142,6 @@ const Home: NextPage = () => {
   ) {
     return <LoadingPage />
   }
-
-  // const bmr =
-  //   66 +
-  //   13.7 * (Number(userSettings?.weight) || 0) +
-  //   (5 * Number(userSettings?.height) || 0) -
-  //   (6.8 *
-  //     (new Date().getFullYear() -
-  //       new Date(userSettings?.DOB || '').getFullYear()) || 0)
-  //
-  // const caloriesTraining =
-  //   bmr *
-  //   (!userSettings?.activityLevelTraining
-  //     ? 1.2
-  //     : userSettings?.activityLevelTraining === 'sedentary'
-  //     ? 1.2
-  //     : userSettings?.activityLevelTraining === 'mild'
-  //     ? 1.375
-  //     : userSettings?.activityLevelTraining === 'moderate'
-  //     ? 1.55
-  //     : userSettings?.activityLevelTraining === 'heavy'
-  //     ? 1.7
-  //     : userSettings?.activityLevelTraining === 'extreme'
-  //     ? 1.9
-  //     : 1.2)
-  //
-  // const protein = (Number(userSettings?.weight) || 0) * 2
-  // const fat =
-  //   (Number(userSettings?.weight) || 0) *
-  //   (userSettings?.gender === 'female'
-  //     ? 0.4
-  //     : userSettings?.weightGoal === 'weight loss'
-  //     ? 0.7
-  //     : userSettings?.weightGoal === 'weight gain'
-  //     ? 1
-  //     : 0.8)
-  // const carbsTraining = (caloriesTraining - protein * 4 - fat * 9) / 4
-  //
-  // const caloriesRest =
-  //   bmr *
-  //   (!userSettings?.activityLevelRest
-  //     ? 1.2
-  //     : userSettings?.activityLevelRest === 'sedentary'
-  //     ? 1.2
-  //     : userSettings?.activityLevelRest === 'mild'
-  //     ? 1.375
-  //     : userSettings?.activityLevelRest === 'moderate'
-  //     ? 1.55
-  //     : userSettings?.activityLevelRest === 'heavy'
-  //     ? 1.7
-  //     : userSettings?.activityLevelRest === 'extreme'
-  //     ? 1.9
-  //     : 1.2)
-  //
-  // const carbsRest = (caloriesRest - protein * 4 - fat * 9) / 4
 
   return (
     <>
