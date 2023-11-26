@@ -44,24 +44,12 @@ const nav = [
     href: '/log',
     admin: true,
   },
-  // {
-  //   name: 'Stats', href: '/stats',  superAdmin: true,
-  // },
-  // {
-  //   name: 'DirtyAdmin', href: '/test',  superAdmin: true,
-  // },
   {
     name: 'Admin',
     href: '/admin',
     superAdmin: true,
     admin: true,
   },
-  // {
-  //   name: 'Lift', href: '/lift',
-  // },
-  // {
-  //   name: "PB's", href: '/pbs',
-  // },
 ]
 
 const admin = [
@@ -78,12 +66,13 @@ const classNames = (...classes: string[]) => {
 }
 const Navbar = () => {
   const { data: session } = useSession()
+  const user = session?.user
   const userId = session?.user?.id || ''
-  const { data: user } = api.users.get.useQuery({ userId: userId })
+
   // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam
   const router = useRouter()
   const isUserAdmin = user?.isAdmin
-  const isUserSuperAdmin = user?.isRoot || false
+  const isUserSuperAdmin = user?.isSuper || false
   const navigation = nav.filter(
     (item) =>
       !item.admin ||
