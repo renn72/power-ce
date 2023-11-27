@@ -241,6 +241,9 @@ const Home: NextPage = () => {
             size={address.length / 1.7}
             placeholder='Open Powerlifting Address'
           />
+          <div className='text-gray-600 px-3 font-normal text-xs mb-4'>
+            eg. https://www.openpowerlifting.org/api/liftercsv/johndoe
+          </div>
           <div className='flex items-center gap-4'>
             <Button
               className='rounded bg-yellow-400 px-4 py-2 font-bold text-gray-900 hover:bg-yellow-500'
