@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { toast } from 'react-hot-toast'
 import { api } from '~/utils/api'
 import { useSession } from 'next-auth/react'
@@ -18,6 +18,8 @@ import CountDown from '~/components/countDown'
 import TrainerSelect from './trainerSelect'
 import Settings from '~/components/settings'
 import { RefreshCcwIcon } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -194,15 +196,31 @@ const OpenPowerlifting = ({ userId }: { userId: string }) => {
     api.compLift.getCompLifts.useQuery({
       userId: userId,
     })
+  const { data: addressData, isLoading: addressDataLoading } =
+    api.compLift.getAddress.useQuery({
+      userId: userId,
+    })
 
   const { mutate: setOpenPowerliftingData } =
     api.compLift.setOpenPower.useMutation({
       onSuccess: (data) => {
         console.log(data)
-        void ctx.compLift.getCompLifts.invalidate({ userId: userId })
+        void ctx.compLift.getCompLifts.invalidate()
         setIsOpen(false)
       },
     })
+
+  const { mutate: saveAddress } = api.compLift.createAddress.useMutation({
+    onSuccess: () => {
+      toast.success('saved')
+      void ctx.compLift.getCompLifts.invalidate({ userId: userId })
+    },
+  })
+
+  const [address, setAddress] = useState(addressData?.address || '')
+  useEffect(() => {
+    setAddress(addressData?.address || '')
+  }, [addressData])
 
   if (compLiftsLoading) return <LoadingPage />
 
@@ -269,6 +287,23 @@ const OpenPowerlifting = ({ userId }: { userId: string }) => {
           </div>
         ))}
       </div>
+        <div className='w-full'>
+          <Input
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            className='mb-4 w-[600px]'
+            size={address.length / 1.7}
+            placeholder='Open Powerlifting Address'
+          />
+          <div className='flex items-center gap-4'>
+            <Button
+              className='rounded bg-yellow-400 px-4 py-2 font-bold text-gray-900 hover:bg-yellow-500'
+              onClick={() => saveAddress({ userId: userId, address: address })}
+            >
+              Save
+            </Button>
+          </div>
+        </div>
       <LoadingWrapper
         isOpen={isOpen}
         setIsOpen={setIsOpen}
