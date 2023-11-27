@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button'
 
 import { Fragment, useState } from 'react'
 
-import { Listbox, Transition, Popover, Dialog } from '@headlessui/react'
+import { Listbox, Transition, Popover, Dialog, Switch } from '@headlessui/react'
 import {
   CheckIcon,
   ChevronUpDownIcon,
@@ -26,6 +26,7 @@ import {
 import { LoadingPage } from '~/components/loading'
 import Decimal from 'decimal.js'
 import Link from 'next/link'
+import { Toggle } from '@/components/ui/toggle'
 
 const ModalWrapper = ({
   isOpen,
@@ -1498,7 +1499,367 @@ const DeadOneRM = ({
   )
 }
 
+const AdminToggle = ({
+  value,
+  userId,
+}: {
+  value: boolean
+  userId: string
+}) => {
+  const utils = api.useContext()
+  const { mutate } = api.settings.updateIsAdmin.useMutation({
+    onMutate: async (newData) => {
+      await utils.users.get.cancel({ userId: userId })
+      const previousData = utils.users.get.getData({
+        userId: userId,
+      })
+      if (!previousData) return { previousData }
+      utils.users.get.setData(
+        { userId: userId },
+        {
+          ...previousData,
+          isAdmin: newData.isAdmin,
+        },
+      )
+      return { previousData }
+    },
+    onError: (err, _newData, context) => {
+      console.log(err)
+      utils.users.get.setData(
+        { userId: userId || '' },
+        context?.previousData,
+      )
+    },
+  })
+  const onChange = () => {
+    mutate({ userId: userId, isAdmin: !value })
+  }
+
+  return (
+    <>
+      <div className='mb-2 flex items-center justify-start gap-4 text-lg text-gray-600 sm:gap-6'>
+        <label className={value ? `scale-110 text-gray-200 w-48` : `w-48`}>
+          Admin
+        </label>
+        <Switch
+          checked={value}
+          onChange={onChange}
+          className={`${value ? 'bg-gray-200' : 'bg-gray-600'}
+          relative inline-flex h-[24px] w-[64px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75  sm:h-[28px] sm:w-[74px]`}
+        >
+          <span
+            aria-hidden='true'
+            className={`${value ? 'translate-x-9' : 'translate-x-0'}
+            pointer-events-none inline-block h-[20px] w-[24px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out sm:h-[24px] sm:w-[34px]`}
+          />
+        </Switch>
+      </div>
+    </>
+  )
+}
+
+const RecordEditorToggle = ({
+  value,
+  userId,
+}: {
+  value: boolean
+  userId: string
+}) => {
+  const utils = api.useContext()
+  const { mutate } = api.settings.updateIsRecordEditor.useMutation({
+    onMutate: async (newData) => {
+      await utils.users.get.cancel({ userId: userId })
+      const previousData = utils.users.get.getData({
+        userId: userId,
+      })
+      if (!previousData) return { previousData }
+      utils.users.get.setData(
+        { userId: userId },
+        {
+          ...previousData,
+          isRecordEditor: newData.isRecordEditor,
+        },
+      )
+      return { previousData }
+    },
+    onError: (err, _newData, context) => {
+      console.log(err)
+      utils.users.get.setData(
+        { userId: userId || '' },
+        context?.previousData,
+      )
+    },
+  })
+  const onChange = () => {
+    mutate({ userId: userId, isRecordEditor: !value })
+  }
+
+  return (
+    <>
+      <div className='mb-2 flex items-center justify-start gap-4 text-lg text-gray-600 sm:gap-6'>
+        <label className={value ? `scale-110 text-gray-200 w-48` : `w-48`}>
+          Edit Record Table
+        </label>
+        <Switch
+          checked={value}
+          onChange={onChange}
+          className={`${value ? 'bg-gray-200' : 'bg-gray-600'}
+          relative inline-flex h-[24px] w-[64px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75  sm:h-[28px] sm:w-[74px]`}
+        >
+          <span
+            aria-hidden='true'
+            className={`${value ? 'translate-x-9' : 'translate-x-0'}
+            pointer-events-none inline-block h-[20px] w-[24px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out sm:h-[24px] sm:w-[34px]`}
+          />
+        </Switch>
+      </div>
+    </>
+  )
+}
+
+const TrainerToggle = ({
+  value,
+  userId,
+}: {
+  value: boolean
+  userId: string
+}) => {
+  const utils = api.useContext()
+  const { mutate } = api.settings.updateIsTrainer.useMutation({
+    onMutate: async (newData) => {
+      await utils.users.get.cancel({ userId: userId })
+      const previousData = utils.users.get.getData({
+        userId: userId,
+      })
+      if (!previousData) return { previousData }
+      utils.users.get.setData(
+        { userId: userId },
+        {
+          ...previousData,
+          isTrainer: newData.isTrainer,
+        },
+      )
+      return { previousData }
+    },
+    onError: (err, _newData, context) => {
+      console.log(err)
+      utils.users.get.setData(
+        { userId: userId || '' },
+        context?.previousData,
+      )
+    },
+  })
+  const onChange = () => {
+    mutate({ userId: userId, isTrainer: !value })
+  }
+
+  return (
+    <>
+      <div className='mb-2 flex items-center justify-start gap-4 text-lg text-gray-600 sm:gap-6'>
+        <label className={value ? `scale-110 text-gray-200 w-48` : `w-48`}>
+          Trainer
+        </label>
+        <Switch
+          checked={value}
+          onChange={onChange}
+          className={`${value ? 'bg-gray-200' : 'bg-gray-600'}
+          relative inline-flex h-[24px] w-[64px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75  sm:h-[28px] sm:w-[74px]`}
+        >
+          <span
+            aria-hidden='true'
+            className={`${value ? 'translate-x-9' : 'translate-x-0'}
+            pointer-events-none inline-block h-[20px] w-[24px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out sm:h-[24px] sm:w-[34px]`}
+          />
+        </Switch>
+      </div>
+    </>
+  )
+}
+
+const PowerToggle = ({
+  value,
+  userId,
+}: {
+  value: boolean
+  userId: string
+}) => {
+  const utils = api.useContext()
+  const { mutate } = api.settings.updateIsPower.useMutation({
+    onMutate: async (newData) => {
+      await utils.users.get.cancel({ userId: userId })
+      const previousData = utils.users.get.getData({
+        userId: userId,
+      })
+      if (!previousData) return { previousData }
+      utils.users.get.setData(
+        { userId: userId },
+        {
+          ...previousData,
+          isPower: newData.isPower,
+        },
+      )
+      return { previousData }
+    },
+    onError: (err, _newData, context) => {
+      console.log(err)
+      utils.users.get.setData(
+        { userId: userId || '' },
+        context?.previousData,
+      )
+    },
+  })
+  const onChange = () => {
+    mutate({ userId: userId, isPower: !value })
+  }
+
+  return (
+    <>
+      <div className='mb-2 flex items-center justify-start gap-4 text-lg text-gray-600 sm:gap-6'>
+        <label className={value ? `scale-110 text-gray-200 w-48` : `w-48`}>
+          Power Lifter
+        </label>
+        <Switch
+          checked={value}
+          onChange={onChange}
+          className={`${value ? 'bg-gray-200' : 'bg-gray-600'}
+          relative inline-flex h-[24px] w-[64px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75  sm:h-[28px] sm:w-[74px]`}
+        >
+          <span
+            aria-hidden='true'
+            className={`${value ? 'translate-x-9' : 'translate-x-0'}
+            pointer-events-none inline-block h-[20px] w-[24px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out sm:h-[24px] sm:w-[34px]`}
+          />
+        </Switch>
+      </div>
+    </>
+  )
+}
+
+const DietToggle = ({
+  value,
+  userId,
+}: {
+  value: boolean
+  userId: string
+}) => {
+  const utils = api.useContext()
+  const { mutate } = api.settings.updateIsDiet.useMutation({
+    onMutate: async (newData) => {
+      await utils.users.get.cancel({ userId: userId })
+      const previousData = utils.users.get.getData({
+        userId: userId,
+      })
+      if (!previousData) return { previousData }
+      utils.users.get.setData(
+        { userId: userId },
+        {
+          ...previousData,
+          isDiet: newData.isDiet,
+        },
+      )
+      return { previousData }
+    },
+    onError: (err, _newData, context) => {
+      console.log(err)
+      utils.users.get.setData(
+        { userId: userId || '' },
+        context?.previousData,
+      )
+    },
+  })
+  const onChange = () => {
+    mutate({ userId: userId, isDiet: !value })
+  }
+
+  return (
+    <>
+      <div className='mb-2 flex items-center justify-start gap-4 text-lg text-gray-600 sm:gap-6'>
+        <label className={value ? `scale-110 text-gray-200 w-48` : `w-48`}>
+          Nutrition
+        </label>
+        <Switch
+          checked={value}
+          onChange={onChange}
+          className={`${value ? 'bg-gray-200' : 'bg-gray-600'}
+          relative inline-flex h-[24px] w-[64px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75  sm:h-[28px] sm:w-[74px]`}
+        >
+          <span
+            aria-hidden='true'
+            className={`${value ? 'translate-x-9' : 'translate-x-0'}
+            pointer-events-none inline-block h-[20px] w-[24px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out sm:h-[24px] sm:w-[34px]`}
+          />
+        </Switch>
+      </div>
+    </>
+  )
+}
+
+const ClientToggle = ({
+  value,
+  userId,
+}: {
+  value: boolean
+  userId: string
+}) => {
+  const utils = api.useContext()
+  const { mutate } = api.settings.updateIsClient.useMutation({
+    onMutate: async (newData) => {
+      await utils.users.get.cancel({ userId: userId })
+      const previousData = utils.users.get.getData({
+        userId: userId,
+      })
+
+      if (!previousData) return { previousData }
+
+      utils.users.get.setData(
+        { userId: userId },
+        {
+          ...previousData,
+          isClient: newData.isClient,
+        },
+      )
+
+      return { previousData }
+    },
+    onError: (err, _newData, context) => {
+      console.log(err)
+      utils.users.get.setData(
+        { userId: userId || '' },
+        context?.previousData,
+      )
+    },
+  })
+  const onChange = () => {
+    mutate({ userId: userId, isClient: !value })
+  }
+
+  return (
+    <>
+      <div className='mb-2 flex items-center justify-start gap-4 text-lg text-gray-600 sm:gap-6'>
+        <label className={value ? `scale-110 text-gray-200 w-48` : `w-48`}>
+          Client
+        </label>
+        <Switch
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          checked={value}
+          onChange={onChange}
+          className={`${value ? 'bg-gray-200' : 'bg-gray-600'}
+          relative inline-flex h-[24px] w-[64px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75  sm:h-[28px] sm:w-[74px]`}
+        >
+          <span
+            aria-hidden='true'
+            className={`${value ? 'translate-x-9' : 'translate-x-0'}
+            pointer-events-none inline-block h-[20px] w-[24px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out sm:h-[24px] sm:w-[34px]`}
+          />
+        </Switch>
+      </div>
+    </>
+  )
+}
+
 const Settings = ({ userId }: { userId: string }) => {
+  const { data: session } = useSession()
+  const isAdmin = session?.user?.isAdmin
   const { data: user } = api.users.get.useQuery({
     userId: userId,
   })
@@ -1510,25 +1871,6 @@ const Settings = ({ userId }: { userId: string }) => {
 
   if (settingsLoading) return <LoadingPage />
   if (!user) return null
-
-  const isSettings =
-    userSettings &&
-    userSettings.height &&
-    +userSettings.height !== 0 &&
-    userSettings.weight &&
-    +userSettings.weight !== 0 &&
-    userSettings.targetWeight &&
-    +userSettings.targetWeight !== 0 &&
-    userSettings.weightGoal &&
-    userSettings.weightGoal !== '' &&
-    userSettings.activityLevelTraining &&
-    userSettings.activityLevelTraining !== '' &&
-    userSettings.activityLevelRest &&
-    userSettings.activityLevelRest !== ''
-      ? true
-      : false
-
-  console.log(isSettings)
 
   return (
     <>
@@ -1602,6 +1944,34 @@ const Settings = ({ userId }: { userId: string }) => {
               defaultValue={userSettings?.deadliftOneRepMax || 0}
             />
           </div>
+          {isAdmin && (
+            <div className='border border-gray-600 w-fit py-4 px-8 rounded-xl'>
+              <ClientToggle
+                value={user.isClient}
+                userId={userId}
+              />
+              <TrainerToggle
+                value={user.isTrainer}
+                userId={userId}
+              />
+              <PowerToggle
+                value={user.isPower}
+                userId={userId}
+              />
+              <DietToggle
+                value={user.isDiet}
+                userId={userId}
+              />
+              <RecordEditorToggle
+                value={user.isRecordEditor}
+                userId={userId}
+              />
+              <AdminToggle
+                value={user.isAdmin}
+                userId={userId}
+              />
+            </div>
+          )}
         </div>
       </div>
     </>

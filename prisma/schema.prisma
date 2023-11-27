@@ -543,6 +543,23 @@ model UserProfile {
   @@index([userId])
 }
 
+model Record {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  date DateTime @default(now())
+
+  lift String
+  wc   String
+
+  gender String
+
+  name String
+  weight Decimal
+
+  isDeleted Boolean @default(false)
+}
+
 model Warmup {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
