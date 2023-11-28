@@ -26,7 +26,7 @@ declare module 'next-auth' {
       isPower: boolean
       isTrainer: boolean
       isClient: boolean
-      isRecordEdit: boolean
+      isRecordEditor: boolean
       isAdmin: boolean
       isSuper: boolean
       // ...other properties
@@ -58,7 +58,7 @@ export const authOptions: NextAuthOptions = {
         isPower: user.isPower,
         isTrainer: user.isTrainer,
         isClient: user.isClient,
-        isRecordEdit: user.isRecordEdit,
+        isRecordEditor: user.isRecordEditor,
         isAdmin: user.isAdmin,
         isSuper: user.isSuper,
       },

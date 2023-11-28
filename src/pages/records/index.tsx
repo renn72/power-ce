@@ -149,6 +149,7 @@ const Cell = ({
       >
         <div className='flex flex-col gap-2'>
           <h2 className='flex gap-2 text-2xl font-semibold mb-4'>
+            <div>{gender === 'm' ? 'Men' : 'Women'}</div>
             <div>{wc}kg</div>
             <div className='capitalize'>{lift}</div>
           </h2>
@@ -224,7 +225,9 @@ const Records = () => {
   const user = session?.user
   const userId = session?.user?.id || ''
 
-  const isSuper = user?.isRecordEdit || false
+  const isSuper = user?.isRecordEditor || false
+
+
 
   const { data: _records } = api.records.getAll.useQuery()
 
@@ -233,7 +236,7 @@ const Records = () => {
     weight: Number(r.weight),
   }))
 
-  console.log('records', records)
+  console.log(user)
 
   if (!user) return null
 
