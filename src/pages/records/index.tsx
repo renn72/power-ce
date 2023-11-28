@@ -224,9 +224,7 @@ const Records = () => {
   const user = session?.user
   const userId = session?.user?.id || ''
 
-  const isSuper = user?.isSuper
-
-  const ctx = api.useContext()
+  const isSuper = user?.isRecordEdit || false
 
   const { data: _records } = api.records.getAll.useQuery()
 
@@ -260,7 +258,7 @@ const Records = () => {
               <Cell
                 recordName={
                   records
-                    ?.filter((r) => r.lift === 'squat' && r.wc === weight)
+                    ?.filter((r) => r.lift === 'squat' && r.wc === weight && r.gender === 'm')
                     .reduce(
                       (acc, cur) => {
                         if (cur.weight > acc.weight) {
@@ -275,7 +273,7 @@ const Records = () => {
                 recordWeight={`
                       ${
                         records
-                          ?.filter((r) => r.lift === 'squat' && r.wc === weight)
+                          ?.filter((r) => r.lift === 'squat' && r.wc === weight && r.gender === 'm')
                           .reduce(
                             (acc, cur) => {
                               if (cur.weight > acc.weight) {
