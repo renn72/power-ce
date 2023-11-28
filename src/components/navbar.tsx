@@ -53,8 +53,6 @@ const nav = [
   {
     name: 'Records',
     href: '/records',
-    admin: true,
-    superAdmin: true,
   },
 ]
 

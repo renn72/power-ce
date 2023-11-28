@@ -94,6 +94,7 @@ const Cell = ({
   recordName,
   recordWeight,
   userId,
+  isAuth,
 }: {
   wc: string
   gender: string
@@ -101,6 +102,7 @@ const Cell = ({
   recordName: string
   recordWeight: string
   userId: string
+  isAuth: boolean
 }) => {
   const ctx = api.useContext()
   const [isOpen, setIsOpen] = useState(false)
@@ -127,7 +129,10 @@ const Cell = ({
 
   return (
     <div
-      onClick={() => setIsOpen(true)}
+      onClick={() => {
+        if (!isAuth) return
+        setIsOpen(true)
+      }}
       className='flex w-64 cursor-pointer gap-2 border border-gray-400 px-4 py-2 hover:scale-105 hover:bg-gray-900'
     >
       <div className='flex gap-1'>
@@ -202,6 +207,8 @@ const Records = () => {
   const user = session?.user
   const userId = session?.user?.id || ''
 
+  const isSuper = user?.isSuper
+
   const ctx = api.useContext()
 
   const { data: _records } = api.records.getAll.useQuery()
@@ -214,13 +221,12 @@ const Records = () => {
   console.log('records', records)
 
   if (!user) return null
-  if (!user.isAdmin) return null
 
   return (
     <div className='flex flex-col gap-12 text-xl font-semibold mb-32'>
       <div className='flex flex-col gap-1'>
         <h1>Men</h1>
-        <div className='flex items-baseline font-bold tracking-widest'>
+        <div className='flex items-baseline font-bold tracking-widest w-fit'>
           <CellWCHeading>WC</CellWCHeading>
           <CellHeading>SQUAT</CellHeading>
           <CellHeading>BENCH</CellHeading>
@@ -269,6 +275,7 @@ const Records = () => {
                 wc={weight}
                 lift={'squat'}
                 userId={userId}
+                isAuth={isSuper}
               />
               <Cell
                 recordName={
@@ -305,6 +312,7 @@ const Records = () => {
                 wc={weight}
                 lift={'bench'}
                 userId={userId}
+                isAuth={isSuper}
               />
               <Cell
                 recordName={
@@ -343,6 +351,7 @@ const Records = () => {
                 wc={weight}
                 lift={'deadlift'}
                 userId={userId}
+                isAuth={isSuper}
               />
               <Cell
                 recordName={
@@ -379,6 +388,7 @@ const Records = () => {
                 wc={weight}
                 lift={'total'}
                 userId={userId}
+                isAuth={isSuper}
               />
             </div>
           ))}
@@ -386,7 +396,7 @@ const Records = () => {
       </div>
       <div className='flex flex-col gap-1'>
         <h1>Women</h1>
-        <div className='flex items-baseline font-bold tracking-widest'>
+        <div className='flex items-baseline font-bold tracking-widest w-fit'>
           <CellWCHeading>WC</CellWCHeading>
           <CellHeading>SQUAT</CellHeading>
           <CellHeading>BENCH</CellHeading>
@@ -435,6 +445,7 @@ const Records = () => {
                 wc={weight}
                 lift={'squat'}
                 userId={userId}
+                isAuth={isSuper}
               />
               <Cell
                 recordName={
@@ -471,6 +482,7 @@ const Records = () => {
                 wc={weight}
                 lift={'bench'}
                 userId={userId}
+                isAuth={isSuper}
               />
               <Cell
                 recordName={
@@ -509,6 +521,7 @@ const Records = () => {
                 wc={weight}
                 lift={'deadlift'}
                 userId={userId}
+                isAuth={isSuper}
               />
               <Cell
                 recordName={
@@ -545,6 +558,7 @@ const Records = () => {
                 wc={weight}
                 lift={'total'}
                 userId={userId}
+                isAuth={isSuper}
               />
             </div>
           ))}

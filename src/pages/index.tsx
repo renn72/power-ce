@@ -182,7 +182,12 @@ const Home: NextPage = () => {
             userId={userId}
           />
         </div>
-        <div className='text-xl capitalize text-yellow-500'>Competitions</div>
+        <Link href={'/records'}>
+          <Button className='h-8 w-36 rounded bg-yellow-400 p-0 font-bold text-gray-900 hover:bg-yellow-500'>
+            CE Records
+          </Button>
+        </Link>
+        <div className='text-xl capitalize text-yellow-500 mt-10'>Competitions</div>
         <div className='flex max-w-[800px] flex-col gap-0 space-y-2 divide-y divide-dashed divide-gray-400'>
           {compLifts?.map((comp) => (
             <div
@@ -241,7 +246,7 @@ const Home: NextPage = () => {
             size={address.length / 1.7}
             placeholder='Open Powerlifting Address'
           />
-          <div className='text-gray-600 px-3 font-normal text-xs mb-4'>
+          <div className='mb-4 px-3 text-xs font-normal text-gray-600'>
             eg. https://www.openpowerlifting.org/api/liftercsv/johndoe
           </div>
           <div className='flex items-center gap-4'>
