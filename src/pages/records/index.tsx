@@ -136,7 +136,10 @@ const Cell = ({
       className='flex w-64 cursor-pointer gap-2 border border-gray-400 px-4 py-2 hover:scale-105 hover:bg-gray-900'
     >
       <div className='flex gap-1'>
-        <div>{recordWeight}<span className='text-sm text-gray-400'>kg</span></div>
+        <div>
+          {recordWeight}
+          <span className='text-sm text-gray-400'>kg</span>
+        </div>
         <div className='text-yellow-500'>/</div>
         <div>{recordName}</div>
       </div>
@@ -144,42 +147,56 @@ const Cell = ({
         isOpen={isOpen}
         setIsOpen={setIsOpen}
       >
-        <Input
-          placeholder='Name'
-          className='bg-gray-900'
-          value={name}
-          onChange={(e) => {
-            setName(e.target.value)
-          }}
-        />
-        <Input
-          placeholder='Weight'
-          className='bg-gray-900'
-          value={value}
-          onChange={(e) => {
-            setValue(e.target.value)
-          }}
-        />
-        <div className='mt-4 flex justify-center gap-2'>
-          <Button
-            onClick={() => {
-              if (!value) return
-              if (!name) return
-              onSave()
-              setIsOpen(false)
+        <div className='flex flex-col gap-2'>
+          <h2 className='flex gap-2 text-2xl font-semibold mb-4'>
+            <div>{wc}kg</div>
+            <div className='capitalize'>{lift}</div>
+          </h2>
+          <div className='flex gap-1 text-xl justify-center'>
+            <div>
+              {recordWeight}
+              <span className='text-sm text-gray-400'>kg</span>
+            </div>
+            <div className='text-yellow-500'>/</div>
+            <div>{recordName}</div>
+          </div>
+          <Input
+            placeholder='Name'
+            className='bg-gray-900'
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value)
             }}
-          >
-            Save
-          </Button>
-          <Button
-            onClick={() => {
-              setName('')
-              setValue('')
-              setIsOpen(false)
+          />
+          <Input
+            placeholder='Weight'
+            className='bg-gray-900'
+            value={value}
+            onChange={(e) => {
+              setValue(e.target.value)
             }}
-          >
-            Cancel
-          </Button>
+          />
+          <div className='mt-4 flex justify-center gap-2'>
+            <Button
+              onClick={() => {
+                if (!value) return
+                if (!name) return
+                onSave()
+                setIsOpen(false)
+              }}
+            >
+              Save
+            </Button>
+            <Button
+              onClick={() => {
+                setName('')
+                setValue('')
+                setIsOpen(false)
+              }}
+            >
+              Cancel
+            </Button>
+          </div>
         </div>
       </ModalWrapper>
     </div>
@@ -223,10 +240,10 @@ const Records = () => {
   if (!user) return null
 
   return (
-    <div className='flex flex-col gap-12 text-xl font-semibold mb-32'>
+    <div className='mb-32 flex flex-col gap-12 text-xl font-semibold'>
       <div className='flex flex-col gap-1'>
         <h1>Men</h1>
-        <div className='flex items-baseline font-bold tracking-widest w-fit'>
+        <div className='flex w-fit items-baseline font-bold tracking-widest'>
           <CellWCHeading>WC</CellWCHeading>
           <CellHeading>SQUAT</CellHeading>
           <CellHeading>BENCH</CellHeading>
@@ -280,7 +297,12 @@ const Records = () => {
               <Cell
                 recordName={
                   records
-                    ?.filter((r) => r.lift === 'bench' && r.wc === weight && r.gender === 'm' )
+                    ?.filter(
+                      (r) =>
+                        r.lift === 'bench' &&
+                        r.wc === weight &&
+                        r.gender === 'm',
+                    )
                     .reduce(
                       (acc, cur) => {
                         if (cur.weight > acc.weight) {
@@ -295,7 +317,12 @@ const Records = () => {
                 recordWeight={`
                       ${
                         records
-                          ?.filter((r) => r.lift === 'bench' && r.wc === weight && r.gender === 'm' )
+                          ?.filter(
+                            (r) =>
+                              r.lift === 'bench' &&
+                              r.wc === weight &&
+                              r.gender === 'm',
+                          )
                           .reduce(
                             (acc, cur) => {
                               if (cur.weight > acc.weight) {
@@ -317,7 +344,12 @@ const Records = () => {
               <Cell
                 recordName={
                   records
-                    ?.filter((r) => r.lift === 'deadlift' && r.wc === weight && r.gender === 'm' )
+                    ?.filter(
+                      (r) =>
+                        r.lift === 'deadlift' &&
+                        r.wc === weight &&
+                        r.gender === 'm',
+                    )
                     .reduce(
                       (acc, cur) => {
                         if (cur.weight > acc.weight) {
@@ -333,7 +365,10 @@ const Records = () => {
                       ${
                         records
                           ?.filter(
-                            (r) => r.lift === 'deadlift' && r.wc === weight && r.gender === 'm' 
+                            (r) =>
+                              r.lift === 'deadlift' &&
+                              r.wc === weight &&
+                              r.gender === 'm',
                           )
                           .reduce(
                             (acc, cur) => {
@@ -356,7 +391,12 @@ const Records = () => {
               <Cell
                 recordName={
                   records
-                    ?.filter((r) => r.lift === 'total' && r.wc === weight && r.gender === 'm' )
+                    ?.filter(
+                      (r) =>
+                        r.lift === 'total' &&
+                        r.wc === weight &&
+                        r.gender === 'm',
+                    )
                     .reduce(
                       (acc, cur) => {
                         if (cur.weight > acc.weight) {
@@ -371,7 +411,12 @@ const Records = () => {
                 recordWeight={`
                       ${
                         records
-                          ?.filter((r) => r.lift === 'total' && r.wc === weight && r.gender === 'm' )
+                          ?.filter(
+                            (r) =>
+                              r.lift === 'total' &&
+                              r.wc === weight &&
+                              r.gender === 'm',
+                          )
                           .reduce(
                             (acc, cur) => {
                               if (cur.weight > acc.weight) {
@@ -396,7 +441,7 @@ const Records = () => {
       </div>
       <div className='flex flex-col gap-1'>
         <h1>Women</h1>
-        <div className='flex items-baseline font-bold tracking-widest w-fit'>
+        <div className='flex w-fit items-baseline font-bold tracking-widest'>
           <CellWCHeading>WC</CellWCHeading>
           <CellHeading>SQUAT</CellHeading>
           <CellHeading>BENCH</CellHeading>
@@ -413,7 +458,12 @@ const Records = () => {
               <Cell
                 recordName={
                   records
-                    ?.filter((r) => r.lift === 'squat' && r.wc === weight && r.gender === 'w' )
+                    ?.filter(
+                      (r) =>
+                        r.lift === 'squat' &&
+                        r.wc === weight &&
+                        r.gender === 'w',
+                    )
                     .reduce(
                       (acc, cur) => {
                         if (cur.weight > acc.weight) {
@@ -428,7 +478,12 @@ const Records = () => {
                 recordWeight={`
                       ${
                         records
-                          ?.filter((r) => r.lift === 'squat' && r.wc === weight && r.gender === 'w' )
+                          ?.filter(
+                            (r) =>
+                              r.lift === 'squat' &&
+                              r.wc === weight &&
+                              r.gender === 'w',
+                          )
                           .reduce(
                             (acc, cur) => {
                               if (cur.weight > acc.weight) {
@@ -450,7 +505,12 @@ const Records = () => {
               <Cell
                 recordName={
                   records
-                    ?.filter((r) => r.lift === 'bench' && r.wc === weight && r.gender === 'w' )
+                    ?.filter(
+                      (r) =>
+                        r.lift === 'bench' &&
+                        r.wc === weight &&
+                        r.gender === 'w',
+                    )
                     .reduce(
                       (acc, cur) => {
                         if (cur.weight > acc.weight) {
@@ -465,7 +525,12 @@ const Records = () => {
                 recordWeight={`
                       ${
                         records
-                          ?.filter((r) => r.lift === 'bench' && r.wc === weight && r.gender === 'w' )
+                          ?.filter(
+                            (r) =>
+                              r.lift === 'bench' &&
+                              r.wc === weight &&
+                              r.gender === 'w',
+                          )
                           .reduce(
                             (acc, cur) => {
                               if (cur.weight > acc.weight) {
@@ -487,7 +552,12 @@ const Records = () => {
               <Cell
                 recordName={
                   records
-                    ?.filter((r) => r.lift === 'deadlift' && r.wc === weight && r.gender === 'w' )
+                    ?.filter(
+                      (r) =>
+                        r.lift === 'deadlift' &&
+                        r.wc === weight &&
+                        r.gender === 'w',
+                    )
                     .reduce(
                       (acc, cur) => {
                         if (cur.weight > acc.weight) {
@@ -503,7 +573,10 @@ const Records = () => {
                       ${
                         records
                           ?.filter(
-                            (r) => r.lift === 'deadlift' && r.wc === weight && r.gender === 'w' 
+                            (r) =>
+                              r.lift === 'deadlift' &&
+                              r.wc === weight &&
+                              r.gender === 'w',
                           )
                           .reduce(
                             (acc, cur) => {
@@ -526,7 +599,12 @@ const Records = () => {
               <Cell
                 recordName={
                   records
-                    ?.filter((r) => r.lift === 'total' && r.wc === weight && r.gender === 'w' )
+                    ?.filter(
+                      (r) =>
+                        r.lift === 'total' &&
+                        r.wc === weight &&
+                        r.gender === 'w',
+                    )
                     .reduce(
                       (acc, cur) => {
                         if (cur.weight > acc.weight) {
@@ -541,7 +619,12 @@ const Records = () => {
                 recordWeight={`
                       ${
                         records
-                          ?.filter((r) => r.lift === 'total' && r.wc === weight && r.gender === 'w' )
+                          ?.filter(
+                            (r) =>
+                              r.lift === 'total' &&
+                              r.wc === weight &&
+                              r.gender === 'w',
+                          )
                           .reduce(
                             (acc, cur) => {
                               if (cur.weight > acc.weight) {
