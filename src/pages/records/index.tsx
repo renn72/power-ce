@@ -136,7 +136,7 @@ const Cell = ({
       className='flex w-64 cursor-pointer gap-2 border border-gray-400 px-4 py-2 hover:scale-105 hover:bg-gray-900'
     >
       <div className='flex gap-1'>
-        <div>{recordWeight}kg</div>
+        <div>{recordWeight}<span className='text-sm text-gray-400'>kg</span></div>
         <div className='text-yellow-500'>/</div>
         <div>{recordName}</div>
       </div>
