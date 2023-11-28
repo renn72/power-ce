@@ -50,15 +50,12 @@ const nav = [
     superAdmin: true,
     admin: true,
   },
-]
-
-const admin = [
-  'user_2RB3u3X0pKDxnvmHraPW3RfwrAv',
-  'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a',
-]
-const superAdmin = [
-  'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a',
-  'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a',
+  {
+    name: 'Records',
+    href: '/records',
+    admin: true,
+    superAdmin: true,
+  },
 ]
 
 const classNames = (...classes: string[]) => {
@@ -76,7 +73,7 @@ const Navbar = () => {
   const navigation = nav.filter(
     (item) =>
       !item.admin ||
-      (item.admin && (isUserAdmin && (!item.superAdmin || isUserSuperAdmin)))
+      (item.admin && isUserAdmin && (!item.superAdmin || isUserSuperAdmin)),
   )
   return (
     <>

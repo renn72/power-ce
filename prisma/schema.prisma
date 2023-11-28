@@ -557,6 +557,8 @@ model Record {
   name String
   weight Decimal
 
+  userId String
+
   isDeleted Boolean @default(false)
 }
 
