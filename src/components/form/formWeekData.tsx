@@ -50,8 +50,10 @@ const FormWeekData = ({ weekIdx }: { weekIdx: number }) => {
     },
   })
   const { mutate: weekUpdateMutate } = api.blocks.updateWeek.useMutation({
-    onSuccess: () => {
+    onSuccess: (res) => {
+      console.log('res', res)
       toast.success('Saved')
+      setLoadedTemplate(res[1].id || '')
       void ctx.blocks.getAllWeekTemplates.invalidate()
     },
     onError: () => {
