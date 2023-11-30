@@ -5,6 +5,17 @@ import { useSession } from 'next-auth/react'
 import { Fragment, useState } from 'react'
 import { LoadingPage } from '~/components/loading'
 import { api } from '~/utils/api'
+import { cn } from '@/lib/utils'
+import { format, add } from 'date-fns'
+import { Calendar as CalendarIcon } from 'lucide-react'
+import { Calendar } from '@/components/ui/calendar'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  PopoverClose,
+} from '@/components/ui/popover'
+import { XMarkIcon } from '@heroicons/react/20/solid'
 
 const women = [
   '48',
@@ -64,7 +75,7 @@ const ModalWrapper = ({
           leaveFrom='opacity-100'
           leaveTo='opacity-0'
         >
-          <div className='fixed inset-0 bg-black/50' />
+          <div className='fixed inset-0 bg-black/75' />
         </Transition.Child>
 
         <div className='fixed inset-0 overflow-y-auto text-gray-200'>
@@ -79,6 +90,14 @@ const ModalWrapper = ({
               leaveTo='opacity-0 scale-95'
             >
               <Dialog.Panel className='w-full max-w-md transform overflow-visible rounded-2xl bg-gray-900 p-6 text-left align-middle transition-all'>
+                <Dialog.Title className='mb-[-2rem] flex justify-end'>
+                  <XMarkIcon
+                    className='z-50 h-8 w-8 cursor-pointer text-gray-300 hover:text-yellow-500'
+                    onClick={() => {
+                      setIsOpen(false)
+                    }}
+                  />
+                </Dialog.Title>
                 {children}
               </Dialog.Panel>
             </Transition.Child>
@@ -99,9 +118,9 @@ const Cell = ({
 }: {
   wc: string
   gender: string
-  lift: string
   recordName: string
   recordWeight: string
+  lift: string
   userId: string
   isAuth: boolean
 }) => {
@@ -109,6 +128,8 @@ const Cell = ({
   const [isOpen, setIsOpen] = useState(false)
   const [name, setName] = useState('')
   const [value, setValue] = useState('')
+  const [date, setDate] = useState(new Date())
+  const { data: records } = api.records.getAll.useQuery()
   const { mutate: saveRecord } = api.records.create.useMutation({
     onSuccess: (data) => {
       console.log(data)
@@ -116,27 +137,39 @@ const Cell = ({
     },
   })
 
+  const { mutate: deleteRecord } = api.records.delete.useMutation({
+    onSuccess: () => {
+      void ctx.records.getAll.invalidate()
+    },
+  })
+
   const onSave = () => {
+    setDate(new Date())
+    setValue('')
+    setName('')
     saveRecord({
       userId: userId,
       name: name,
       weight: Number(value),
-      date: new Date().toISOString(),
+      date: date.toISOString(),
       gender: gender,
       wc: wc,
       lift: lift,
     })
   }
 
+  const recordNames = records?.filter(
+    (r) => r.lift === lift && r.wc === wc && r.gender === gender,
+  )
+
   return (
     <div
       onClick={() => {
-        if (!isAuth) return
         setIsOpen(true)
       }}
-      className='flex w-64 cursor-pointer gap-2 border border-gray-400 px-4 py-2 hover:scale-105 hover:bg-gray-900'
+      className='flex w-72 2xl:w-[32rem] 2xl:py-5 cursor-pointer justify-center gap-2 border border-gray-400 px-4 py-2 hover:scale-105 hover:bg-gray-900'
     >
-      <div className='flex gap-1'>
+      <div className='flex gap-1 '>
         <div>
           {recordWeight}
           <span className='text-sm text-gray-400'>kg</span>
@@ -148,57 +181,115 @@ const Cell = ({
         isOpen={isOpen}
         setIsOpen={setIsOpen}
       >
-        <div className='flex flex-col gap-2'>
-          <h2 className='flex gap-2 text-2xl font-semibold mb-4'>
+        <div className='flex flex-col gap-2 py-2'>
+          <h2 className='mb-4 flex gap-2 text-2xl font-semibold'>
             <div>{gender === 'm' ? 'Men' : 'Women'}</div>
             <div>{wc}kg</div>
             <div className='capitalize'>{lift}</div>
           </h2>
-          <div className='flex gap-1 text-xl justify-center'>
+          <div className='flex flex-col divide-y divide-gray-600 divide-dashed py-4 text-xl'>
+            {recordNames?.map((r, idx) => (
+              <div
+                key={idx}
+                className='flex gap-2 items-center font-semibold py-2'
+              >
+                <div className='text-gray-400 text-lg w-36 font-light'>
+                  {r.date.toLocaleString('en-AU', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </div>
+                <div>
+                  {+r.weight}
+                  <span className='text-sm text-gray-400'>kg</span>
+                </div>
+                <div className='text-yellow-500'>/</div>
+                <div>{r.name}</div>
+                {isAuth && (
+                  <XMarkIcon
+                    className='h-6 w-6 cursor-pointer text-gray-300 hover:text-red-500 ml-8'
+                    onClick={() => {
+                      deleteRecord({
+                        id: r.id,
+                      })
+                    }}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+          {isAuth && (
             <div>
-              {recordWeight}
-              <span className='text-sm text-gray-400'>kg</span>
+              <Input
+                placeholder='Name'
+                className='bg-gray-900'
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value)
+                }}
+              />
+              <Input
+                placeholder='Weight'
+                className='bg-gray-900'
+                value={value}
+                onChange={(e) => {
+                  setValue(e.target.value)
+                }}
+              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <div className='flex items-center gap-8 text-gray-500'>
+                    <div>Date:</div>
+                    <Button
+                      className={cn(
+                        'col-span-2 w-[230px] justify-start rounded-none border-0 border-b border-gray-600 px-2 text-left text-gray-200 hover:border-gray-200 ',
+                        !date && 'text-gray-600',
+                      )}
+                    >
+                      <CalendarIcon className='mr-2 h-4 w-4' />
+                      {date ? format(date, 'PPP') : <span>Pick a date</span>}
+                    </Button>
+                  </div>
+                </PopoverTrigger>
+                <PopoverContent className='z-10 w-auto bg-black py-3 text-gray-200 md:px-3 '>
+                  <PopoverClose className='flex w-full justify-end'>
+                    <XMarkIcon className='mb-[-1rem] h-6 w-6 cursor-pointer text-gray-300 hover:text-gray-100' />
+                  </PopoverClose>
+                  <Calendar
+                    mode='single'
+                    selected={date}
+                    onSelect={(e) => {
+                      const a = add(e || new Date(), { hours: 8 })
+                      setDate(a)
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              <div className='mt-4 flex justify-center gap-2'>
+                <Button
+                  onClick={() => {
+                    if (!value) return
+                    if (!name) return
+                    onSave()
+                    setIsOpen(false)
+                  }}
+                >
+                  Save
+                </Button>
+                <Button
+                  onClick={() => {
+                    setName('')
+                    setValue('')
+                    setIsOpen(false)
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
             </div>
-            <div className='text-yellow-500'>/</div>
-            <div>{recordName}</div>
-          </div>
-          <Input
-            placeholder='Name'
-            className='bg-gray-900'
-            value={name}
-            onChange={(e) => {
-              setName(e.target.value)
-            }}
-          />
-          <Input
-            placeholder='Weight'
-            className='bg-gray-900'
-            value={value}
-            onChange={(e) => {
-              setValue(e.target.value)
-            }}
-          />
-          <div className='mt-4 flex justify-center gap-2'>
-            <Button
-              onClick={() => {
-                if (!value) return
-                if (!name) return
-                onSave()
-                setIsOpen(false)
-              }}
-            >
-              Save
-            </Button>
-            <Button
-              onClick={() => {
-                setName('')
-                setValue('')
-                setIsOpen(false)
-              }}
-            >
-              Cancel
-            </Button>
-          </div>
+          )}
         </div>
       </ModalWrapper>
     </div>
@@ -206,17 +297,19 @@ const Cell = ({
 }
 
 const CellWCHeading = ({ children }: { children: React.ReactNode }) => (
-  <div className='w-32 border border-gray-800 bg-yellow-500 px-4 py-2 text-gray-900'>
+  <div className='flex w-32 2xl:w-48 justify-center border border-gray-800 bg-yellow-500 px-4 py-2 2xl:py-5 text-gray-900'>
     {children}
   </div>
 )
 
 const CellWC = ({ children }: { children: React.ReactNode }) => (
-  <div className='w-32 border border-gray-400 px-4 py-2'>{children}</div>
+  <div className='flex w-32 2xl:w-48 justify-center border border-gray-400 px-4 py-2 2xl:py-5'>
+    {children}
+  </div>
 )
 
 const CellHeading = ({ children }: { children: React.ReactNode }) => (
-  <div className='w-64 border border-gray-800 bg-yellow-500 px-4  py-2 text-gray-900'>
+  <div className='flex w-72 2xl:w-[32rem] justify-center border border-gray-800  bg-yellow-500 px-4 py-2 2xl:py-5 text-gray-900'>
     {children}
   </div>
 )
@@ -228,20 +321,19 @@ const Records = () => {
 
   const isSuper = user?.isRecordEditor || false
 
-  const { data: _records, isLoading: recordsLoading } = api.records.getAll.useQuery()
+  const { data: _records, isLoading: recordsLoading } =
+    api.records.getAll.useQuery()
 
   const records = _records?.map((r) => ({
     ...r,
     weight: Number(r.weight),
   }))
 
-  console.log(user)
-
   if (!user) return null
   if (recordsLoading) return <LoadingPage />
 
   return (
-    <div className='mb-32 flex flex-col gap-12 text-xl font-semibold'>
+    <div className='mb-32 flex flex-col gap-12 text-xl 2xl:text-4xl font-semibold'>
       <div className='flex flex-col gap-1'>
         <h1>Men</h1>
         <div className='flex w-fit items-baseline font-bold tracking-widest'>
@@ -261,7 +353,12 @@ const Records = () => {
               <Cell
                 recordName={
                   records
-                    ?.filter((r) => r.lift === 'squat' && r.wc === weight && r.gender === 'm')
+                    ?.filter(
+                      (r) =>
+                        r.lift === 'squat' &&
+                        r.wc === weight &&
+                        r.gender === 'm',
+                    )
                     .reduce(
                       (acc, cur) => {
                         if (cur.weight > acc.weight) {
@@ -276,7 +373,12 @@ const Records = () => {
                 recordWeight={`
                       ${
                         records
-                          ?.filter((r) => r.lift === 'squat' && r.wc === weight && r.gender === 'm')
+                          ?.filter(
+                            (r) =>
+                              r.lift === 'squat' &&
+                              r.wc === weight &&
+                              r.gender === 'm',
+                          )
                           .reduce(
                             (acc, cur) => {
                               if (cur.weight > acc.weight) {

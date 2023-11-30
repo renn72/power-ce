@@ -16,7 +16,11 @@ export const recordsRouter = createTRPCRouter({
       return record
     }),
   getAll: privateProcedure.query(async ({ ctx }) => {
-    const records = await ctx.prisma.record.findMany({})
+    const records = await ctx.prisma.record.findMany({
+      orderBy: {
+        date: 'asc',
+      },
+    })
 
     return records
   }),
@@ -42,6 +46,17 @@ export const recordsRouter = createTRPCRouter({
           name: input.name,
           weight: input.weight,
           userId: input.userId,
+        },
+      })
+
+      return record
+    }),
+  delete: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const record = await ctx.prisma.record.delete({
+        where: {
+          id: input.id,
         },
       })
 
