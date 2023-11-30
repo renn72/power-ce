@@ -20,6 +20,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 const CompDate = ({ userId }: { userId: string }) => {
   const [date, setDate] = useState<Date>()
   const [compName, setCompName] = useState<string>('')
+  const [isSet, setIsSet] = useState<boolean>(false)
 
   const ctx = api.useContext()
 
@@ -65,6 +66,7 @@ const CompDate = ({ userId }: { userId: string }) => {
       date: date?.toISOString() || '',
     })
   }
+
 
   console.log('compDateUser', compDateUser)
 
