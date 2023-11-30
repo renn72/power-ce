@@ -664,3 +664,31 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+model Ingredient {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  name String @unique
+
+  calories Decimal
+  fat      Decimal
+  carbs    Decimal
+  protein  Decimal
+
+  size Decimal
+
+  unit String
+
+  isScalable Boolean @default(true)
+
+  isGluetenFree Boolean @default(false)
+  isVegan      Boolean  @default(false)
+  isVegetarian Boolean  @default(false)
+
+  isDeleted Boolean @default(false)
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+}
