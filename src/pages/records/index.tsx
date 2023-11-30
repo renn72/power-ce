@@ -79,7 +79,7 @@ const ModalWrapper = ({
         </Transition.Child>
 
         <div className='fixed inset-0 overflow-y-auto text-gray-200'>
-          <div className='flex min-h-full items-center justify-center p-4 text-center'>
+          <div className='flex min-h-full items-center justify-center p-2 text-center'>
             <Transition.Child
               as={Fragment}
               enter='ease-out duration-300'
@@ -89,7 +89,7 @@ const ModalWrapper = ({
               leaveFrom='opacity-100 scale-100'
               leaveTo='opacity-0 scale-95'
             >
-              <Dialog.Panel className='w-full max-w-md transform overflow-visible rounded-2xl bg-gray-900 p-6 text-left align-middle transition-all'>
+              <Dialog.Panel className='w-full max-w-md transform overflow-visible rounded-2xl bg-gray-900 px-4 py-6 text-left align-middle transition-all lg:px-6'>
                 <Dialog.Title className='mb-[-2rem] flex justify-end'>
                   <XMarkIcon
                     className='z-50 h-8 w-8 cursor-pointer text-gray-300 hover:text-yellow-500'
@@ -167,7 +167,7 @@ const Cell = ({
       onClick={() => {
         setIsOpen(true)
       }}
-      className='flex w-72 2xl:w-[32rem] 2xl:py-5 cursor-pointer justify-center gap-2 border border-gray-400 px-4 py-2 hover:scale-105 hover:bg-gray-900'
+      className='flex w-72 cursor-pointer justify-center gap-2 border border-gray-400 px-4 py-2 hover:scale-105 hover:bg-gray-900 2xl:w-[32rem] 2xl:py-5'
     >
       <div className='flex gap-1 '>
         <div>
@@ -187,13 +187,13 @@ const Cell = ({
             <div>{wc}kg</div>
             <div className='capitalize'>{lift}</div>
           </h2>
-          <div className='flex flex-col divide-y divide-gray-600 divide-dashed py-4 text-xl'>
+          <div className='flex flex-col divide-y divide-dashed divide-gray-600 py-4 text-lg lg:text-xl'>
             {recordNames?.map((r, idx) => (
               <div
                 key={idx}
-                className='flex gap-2 items-center font-semibold py-2'
+                className='flex items-center justify-between py-2 font-semibold lg:justify-start lg:gap-2'
               >
-                <div className='text-gray-400 text-lg w-36 font-light'>
+                <div className='w-28 font-light tracking-tighter text-gray-400 lg:w-36'>
                   {r.date.toLocaleString('en-AU', {
                     year: 'numeric',
                     month: 'short',
@@ -207,14 +207,14 @@ const Cell = ({
                 <div className='text-yellow-500'>/</div>
                 <div>{r.name}</div>
                 {isAuth && (
-                  <XMarkIcon
-                    className='h-6 w-6 cursor-pointer text-gray-300 hover:text-red-500 ml-8'
-                    onClick={() => {
-                      deleteRecord({
-                        id: r.id,
-                      })
-                    }}
-                  />
+                    <XMarkIcon
+                      className='h-6 w-6 cursor-pointer text-gray-300 hover:text-red-500 lg:ml-8'
+                      onClick={() => {
+                        deleteRecord({
+                          id: r.id,
+                        })
+                      }}
+                    />
                 )}
               </div>
             ))}
@@ -297,19 +297,19 @@ const Cell = ({
 }
 
 const CellWCHeading = ({ children }: { children: React.ReactNode }) => (
-  <div className='flex w-32 2xl:w-48 justify-center border border-gray-800 bg-yellow-500 px-4 py-2 2xl:py-5 text-gray-900'>
+  <div className='flex w-32 justify-center border border-gray-800 bg-yellow-500 px-4 py-2 text-gray-900 2xl:w-48 2xl:py-5'>
     {children}
   </div>
 )
 
 const CellWC = ({ children }: { children: React.ReactNode }) => (
-  <div className='flex w-32 2xl:w-48 justify-center border border-gray-400 px-4 py-2 2xl:py-5'>
+  <div className='flex w-32 justify-center border border-gray-400 px-4 py-2 2xl:w-48 2xl:py-5'>
     {children}
   </div>
 )
 
 const CellHeading = ({ children }: { children: React.ReactNode }) => (
-  <div className='flex w-72 2xl:w-[32rem] justify-center border border-gray-800  bg-yellow-500 px-4 py-2 2xl:py-5 text-gray-900'>
+  <div className='flex w-72 justify-center border border-gray-800 bg-yellow-500  px-4 py-2 text-gray-900 2xl:w-[32rem] 2xl:py-5'>
     {children}
   </div>
 )
@@ -333,7 +333,7 @@ const Records = () => {
   if (recordsLoading) return <LoadingPage />
 
   return (
-    <div className='mb-32 flex flex-col gap-12 text-xl 2xl:text-4xl font-semibold'>
+    <div className='mb-32 flex flex-col gap-12 text-xl font-semibold 2xl:text-4xl'>
       <div className='flex flex-col gap-1'>
         <h1>Men</h1>
         <div className='flex w-fit items-baseline font-bold tracking-widest'>
