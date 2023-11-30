@@ -20,21 +20,31 @@ declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: DefaultSession['user'] & {
       id: string
-      firstName: string
-      lastName: string
-      isDiet: boolean
-      isPower: boolean
-      isTrainer: boolean
-      isClient: boolean
-      isRecordEditor: boolean
-      isAdmin: boolean
-      isSuper: boolean
+      // firstName: string
+      // lastName: string
+      // isDiet: boolean
+      // isPower: boolean
+      // isTrainer: boolean
+      // isClient: boolean
+      // isRecordEditor: boolean
+      // isAdmin: boolean
+      // isSuper: boolean
       // ...other properties
       // role: UserRole;
     }
   }
 
   // interface User {
+  //     id: string
+  //     firstName: string
+  //     lastName: string
+  //     isDiet: boolean
+  //     isPower: boolean
+  //     isTrainer: boolean
+  //     isClient: boolean
+  //     isRecordEditor: boolean
+  //     isAdmin: boolean
+  //     isSuper: boolean
   //   // ...other properties
   //   // role: UserRole;
   // }

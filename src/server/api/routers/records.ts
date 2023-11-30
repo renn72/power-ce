@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { createTRPCRouter, privateProcedure } from '~/server/api/trpc'
+import { createTRPCRouter, privateProcedure, publicProcedure } from '~/server/api/trpc'
 
 export const recordsRouter = createTRPCRouter({
   get: privateProcedure
@@ -15,7 +15,7 @@ export const recordsRouter = createTRPCRouter({
 
       return record
     }),
-  getAll: privateProcedure.query(async ({ ctx }) => {
+  getAll: publicProcedure.query(async ({ ctx }) => {
     const records = await ctx.prisma.record.findMany({
       orderBy: {
         date: 'asc',

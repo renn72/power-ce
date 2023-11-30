@@ -637,6 +637,7 @@ model User {
   userProfiles  UserProfile[]
 
   isDiet         Boolean @default(false)
+  isDietTrainer  Boolean @default(false)
   isPower        Boolean @default(false)
   isTrainer      Boolean @default(false)
   isClient       Boolean @default(true)
@@ -645,6 +646,9 @@ model User {
   isSuper        Boolean @default(false)
   isCreator      Boolean @default(false)
   isRoot         Boolean @default(false)
+  isHiit         Boolean @default(false)
+  isHiitTrainer  Boolean @default(false)
+  isPowerTrainer Boolean @default(false)
 
   flield1 String?
   flield2 String?
@@ -727,9 +731,37 @@ model Recipe {
 
   ingredients Ingredient[]
 
+  notes RecipeNote[]
+
+  calories Decimal
+  fat      Decimal
+  carbs    Decimal
+  protein  Decimal
+
+  isGluetenFree Boolean @default(false)
+  isVegan      Boolean  @default(false)
+  isVegetarian Boolean  @default(false)
+
+  isScalable Boolean @default(true)
+  
+  size Decimal
+  unit String
+
   isDeleted Boolean @default(false)
 
   flield1 String?
   flield2 String?
   flield3 String?
+}
+
+model RecipeNote {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  recipeId String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  note String
+
+  @@index([recipeId])
 }
