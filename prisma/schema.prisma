@@ -665,7 +665,7 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model Ingredient {
+model BaseIngredient {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
@@ -682,9 +682,50 @@ model Ingredient {
 
   isScalable Boolean @default(true)
 
+  ingredient Ingredient[]
+
   isGluetenFree Boolean @default(false)
   isVegan      Boolean  @default(false)
   isVegetarian Boolean  @default(false)
+
+  isDeleted Boolean @default(false)
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+}
+
+model Ingredient {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  baseIngredientId String
+  baseIngredient BaseIngredient @relation(fields: [baseIngredientId], references: [id], onDelete: Cascade)
+
+  recipeId String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  size Decimal
+
+  unit String
+
+  isScalable Boolean @default(true)
+
+  isDeleted Boolean @default(false)
+
+  flield1 String?
+  flield2 String?
+  flield3 String?
+  @@index([recipeId])
+}
+
+model Recipe {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  name String @unique
+
+  ingredients Ingredient[]
 
   isDeleted Boolean @default(false)
 
