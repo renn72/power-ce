@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input'
 import { Transition, Dialog } from '@headlessui/react'
 import { useSession } from 'next-auth/react'
 import { Fragment, useState } from 'react'
+import { LoadingPage } from '~/components/loading'
 import { api } from '~/utils/api'
 
 const women = [
@@ -227,9 +228,7 @@ const Records = () => {
 
   const isSuper = user?.isRecordEditor || false
 
-
-
-  const { data: _records } = api.records.getAll.useQuery()
+  const { data: _records, isLoading: recordsLoading } = api.records.getAll.useQuery()
 
   const records = _records?.map((r) => ({
     ...r,
@@ -239,6 +238,7 @@ const Records = () => {
   console.log(user)
 
   if (!user) return null
+  if (recordsLoading) return <LoadingPage />
 
   return (
     <div className='mb-32 flex flex-col gap-12 text-xl font-semibold'>
