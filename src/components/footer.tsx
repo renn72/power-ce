@@ -13,6 +13,8 @@ import {
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { useRouter } from 'next/router'
+
 const admin = [
   'user_2RB3u3X0pKDxnvmHraPW3RfwrAv',
   'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a',
@@ -24,6 +26,9 @@ const Footer = () => {
   const [, setDeloadModalIsOpen] = useAtom(deloadModalIsOpenAtom)
   const { data: session } = useSession()
   const userId = session?.user?.id || ''
+  const router = useRouter()
+
+  if (router.pathname === '/records-men' || router.pathname === '/records-women') return null
   return (
     <>
       <div className='flex items-center justify-between px-4 py-2 sm:px-6 lg:px-8'>

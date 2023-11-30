@@ -73,6 +73,9 @@ const Navbar = () => {
       !item.admin ||
       (item.admin && isUserAdmin && (!item.superAdmin || isUserSuperAdmin)),
   )
+
+  if (router.pathname === '/records-men' || router.pathname === '/records-women') return null
+
   return (
     <>
       <Disclosure
