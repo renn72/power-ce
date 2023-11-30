@@ -56,13 +56,13 @@ const Cell = ({
 }
 
 const CellWCHeading = ({ children }: { children: React.ReactNode }) => (
-  <div className='flex w-32 justify-center border border-gray-800 bg-yellow-500 px-4 py-2 text-gray-900 2xl:w-56 2xl:py-6'>
+  <div className='flex w-32 justify-center border border-gray-800 bg-yellow-500 px-4 py-2 text-gray-900 2xl:w-52 2xl:py-6'>
     {children}
   </div>
 )
 
 const CellWC = ({ children }: { children: React.ReactNode }) => (
-  <div className='flex w-32 justify-center border border-gray-400 px-4 py-2 2xl:w-56 2xl:py-6'>
+  <div className='flex w-32 justify-center border border-gray-400 px-4 py-2 2xl:w-52 2xl:py-6'>
     {children}
   </div>
 )
