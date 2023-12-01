@@ -2,6 +2,7 @@ import { LoadingPage } from '~/components/loading'
 import { api } from '~/utils/api'
 
 const women = [
+  '44',
   '48',
   '52',
   '56',
@@ -41,9 +42,9 @@ const Cell = ({
     <div className='flex w-72 cursor-pointer justify-center items-baseline border border-gray-400 px-1 py-2 2xl:w-[32rem] 2xl:py-4  font-extrabold tracking-tighter'>
         <div>
           {recordWeight.trim()}
-          <span className='text-2xl text-gray-400'>KG</span>
+          <span className='text-2xl text-gray-400'>{recordName != '' && 'KG'}</span>
         </div>
-        <div className='text-yellow-500'>/</div>
+        <div className='text-yellow-500'>{recordName != '' && '/'}</div>
         <div className='uppercase'>{recordName}</div>
     </div>
   )
