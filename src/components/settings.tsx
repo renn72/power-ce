@@ -1672,6 +1672,12 @@ const Settings = ({ userId }: { userId: string }) => {
                 field='isAdmin'
                 userId={userId}
               />
+                  <RoleToggle
+                    value={user.isPower}
+                    title='PowerLifter'
+                    field='isPower'
+                    userId={userId}
+                  />
               {session?.user?.isRoot && (
                 <div className='mt-16 flex flex-col gap-1'>
                   <RoleToggle
@@ -1703,12 +1709,6 @@ const Settings = ({ userId }: { userId: string }) => {
                     value={user.isHiitTrainer}
                     title='Hiit Trainer'
                     field='isHiitTrainer'
-                    userId={userId}
-                  />
-                  <RoleToggle
-                    value={user.isPower}
-                    title='PowerLifter'
-                    field='isPower'
                     userId={userId}
                   />
                   <RoleToggle
