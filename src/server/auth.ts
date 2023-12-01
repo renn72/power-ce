@@ -20,15 +20,20 @@ declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: DefaultSession['user'] & {
       id: string
-      // firstName: string
-      // lastName: string
-      // isDiet: boolean
-      // isPower: boolean
-      // isTrainer: boolean
-      // isClient: boolean
-      // isRecordEditor: boolean
-      // isAdmin: boolean
-      // isSuper: boolean
+      firstName: string
+      lastName: string
+      isDiet: boolean
+      isDietTrainer: boolean
+      isPower: boolean
+      isPowerTrainer: boolean
+      isTrainer: boolean
+      isClient: boolean
+      isRecordEditor: boolean
+      isAdmin: boolean
+      isSuper: boolean
+      isHiiT: boolean
+      isHiiTTrainer: boolean
+      isRoot: boolean
       // ...other properties
       // role: UserRole;
     }
@@ -65,12 +70,17 @@ export const authOptions: NextAuthOptions = {
         firstName: user.firstName,
         lastName: user.lastName,
         isDiet: user.isDiet,
+        isDietTrainer: user.isDietTrainer,
         isPower: user.isPower,
+        isPowerTrainer: user.isPowerTrainer,
         isTrainer: user.isTrainer,
         isClient: user.isClient,
         isRecordEditor: user.isRecordEditor,
         isAdmin: user.isAdmin,
         isSuper: user.isSuper,
+        isHiiT: user.isHiiT,
+        isHiiTTrainer: user.isHiiTTrainer,
+        isRoot: user.isRoot,
       },
     }),
   },
