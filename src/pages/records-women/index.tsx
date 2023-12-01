@@ -45,7 +45,7 @@ const Cell = ({
         <div className='flex gap-1 '>
           <div>
             {recordWeight}
-            <span className='text-sm text-gray-400'>kg</span>
+            <span className='text-2xl text-gray-400'>kg</span>
           </div>
           <div className='text-yellow-500'>/</div>
           <div>{recordName}</div>
