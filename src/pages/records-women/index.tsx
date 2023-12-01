@@ -45,10 +45,10 @@ const Cell = ({
         <div className='flex gap-1 '>
           <div>
             {recordWeight}
-            <span className='text-2xl text-gray-400'>kg</span>
+            <span className='text-2xl text-gray-400'>KG</span>
           </div>
           <div className='text-yellow-500'>/</div>
-          <div>{recordName}</div>
+          <div className='uppercase'>{recordName}</div>
         </div>
       )}
     </div>
@@ -85,7 +85,7 @@ const Records = () => {
   if (recordsLoading) return <LoadingPage />
 
   return (
-    <div className='flex flex-col gap-12 text-xl font-semibold 2xl:text-5xl'>
+    <div className='flex flex-col gap-12 text-xl font-semibold 2xl:text-5xl tracking-tighter'>
       <div className='flex flex-col gap-1'>
         <div className='flex w-fit items-baseline font-bold tracking-widest'>
           <CellWCHeading>WC</CellWCHeading>

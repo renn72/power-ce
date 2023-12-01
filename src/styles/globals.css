@@ -111,6 +111,10 @@ input[type='number'] {
   letter-spacing: -0.05em;
 }
 
+.text-5xxl {
+  font-size: 3.225rem;
+}
+
 .shadow-me {
   -webkit-text-stroke: 0.45px rgba(0, 0, 0, 0.2);
 }

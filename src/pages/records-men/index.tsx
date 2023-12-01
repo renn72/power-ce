@@ -38,33 +38,33 @@ const Cell = ({
   recordWeight: string
 }) => {
   return (
-    <div className='flex w-72 cursor-pointer justify-center gap-2 border border-gray-400 px-4 py-2 2xl:w-[32rem] 2xl:py-6'>
+    <div className='flex w-72 cursor-pointer justify-center gap-2 border border-gray-400 px-1 py-2 2xl:w-[32rem] 2xl:py-5  font-bold tracking-tighter'>
       <div className='flex gap-1 '>
         <div>
-          {recordWeight}
-          <span className='text-2xl text-gray-400'>kg</span>
+          {recordWeight.trim()}
+          <span className='text-2xl text-gray-400'>KG</span>
         </div>
         <div className='text-yellow-500'>/</div>
-        <div>{recordName}</div>
+        <div className='uppercase'>{recordName}</div>
       </div>
     </div>
   )
 }
 
 const CellWCHeading = ({ children }: { children: React.ReactNode }) => (
-  <div className='flex w-36 justify-center border border-gray-800 bg-yellow-500 px-3 py-2 text-gray-900 2xl:w-52 2xl:py-6'>
+  <div className='flex w-36 justify-center border border-gray-800 bg-yellow-500 px-1 py-2 text-gray-900 2xl:w-44 2xl:py-5  font-extrabold tracking-tight'>
     {children}
   </div>
 )
 
 const CellWC = ({ children }: { children: React.ReactNode }) => (
-  <div className='flex w-36 justify-center border border-gray-400 px-3 py-2 2xl:w-52 2xl:py-6'>
+  <div className='flex w-36 justify-center border border-gray-400 px-1 py-2 2xl:w-44 2xl:py-5  font-extrabold tracking-tight'>
     {children}
   </div>
 )
 
 const CellHeading = ({ children }: { children: React.ReactNode }) => (
-  <div className='flex w-72 justify-center border border-gray-800 bg-yellow-500  px-4 py-2 text-gray-900 2xl:w-[32rem] 2xl:py-6'>
+  <div className='flex w-72 justify-center border border-gray-800 bg-yellow-500  px-1 py-2 text-gray-900 2xl:w-[32rem] 2xl:py-5  font-extrabold tracking-tight'>
     {children}
   </div>
 )
@@ -81,7 +81,7 @@ const Records = () => {
   if (recordsLoading) return <LoadingPage />
 
   return (
-    <div className='flex flex-col gap-12 text-xl font-semibold 2xl:text-5xl'>
+    <div className='flex flex-col gap-12 font-semibold text-5xxl'>
       <div className='flex flex-col gap-1'>
         <div className='flex w-fit items-baseline font-bold tracking-widest'>
           <CellWCHeading>WC</CellWCHeading>
