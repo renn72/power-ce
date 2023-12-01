@@ -10,6 +10,7 @@ const Layout = (props: PropsWithChildren) => {
   const { data: session, status } = useSession()
   const user = session?.user
   const router = useRouter()
+   console.log(router.pathname)
 
   // if (status === 'loading') return <LoadingPage />
 
@@ -19,7 +20,7 @@ const Layout = (props: PropsWithChildren) => {
         <Navbar />
         {user ||
         router.pathname === '/records-men' ||
-        router.pathname === 'records-women' ? (
+        router.pathname === '/records-women' ? (
           <div className='grow'>{props.children}</div>
         ) : (
           <div className='flex h-full w-full grow items-center justify-center'>
