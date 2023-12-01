@@ -11,7 +11,7 @@ const Layout = (props: PropsWithChildren) => {
   const user = session?.user
   const router = useRouter()
 
-  if (status === 'loading') return <LoadingPage />
+  // if (status === 'loading') return <LoadingPage />
 
   return (
     <>
