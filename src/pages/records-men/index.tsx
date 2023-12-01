@@ -2,6 +2,7 @@ import { LoadingPage } from '~/components/loading'
 import { api } from '~/utils/api'
 
 const women = [
+  '44',
   '48',
   '52',
   '56',

@@ -1499,310 +1499,19 @@ const DeadOneRM = ({
   )
 }
 
-const AdminToggle = ({
+const RoleToggle = ({
   value,
   userId,
+  title,
+  field,
 }: {
   value: boolean
   userId: string
+  title: string
+  field: string
 }) => {
   const utils = api.useContext()
-  const { mutate } = api.settings.updateIsAdmin.useMutation({
-    onMutate: async (newData) => {
-      await utils.users.get.cancel({ userId: userId })
-      const previousData = utils.users.get.getData({
-        userId: userId,
-      })
-      if (!previousData) return { previousData }
-      utils.users.get.setData(
-        { userId: userId },
-        {
-          ...previousData,
-          isAdmin: newData.isAdmin,
-        },
-      )
-      return { previousData }
-    },
-    onError: (err, _newData, context) => {
-      console.log(err)
-      utils.users.get.setData(
-        { userId: userId || '' },
-        context?.previousData,
-      )
-    },
-  })
-  const onChange = () => {
-    mutate({ userId: userId, isAdmin: !value })
-  }
-
-  return (
-    <>
-      <div className='mb-2 flex items-center justify-start gap-4 text-lg text-gray-600 sm:gap-6'>
-        <label className={value ? `scale-110 text-gray-200 w-48` : `w-48`}>
-          Admin
-        </label>
-        <Switch
-          checked={value}
-          onChange={onChange}
-          className={`${value ? 'bg-gray-200' : 'bg-gray-600'}
-          relative inline-flex h-[24px] w-[64px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75  sm:h-[28px] sm:w-[74px]`}
-        >
-          <span
-            aria-hidden='true'
-            className={`${value ? 'translate-x-9' : 'translate-x-0'}
-            pointer-events-none inline-block h-[20px] w-[24px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out sm:h-[24px] sm:w-[34px]`}
-          />
-        </Switch>
-      </div>
-    </>
-  )
-}
-
-const RecordEditorToggle = ({
-  value,
-  userId,
-}: {
-  value: boolean
-  userId: string
-}) => {
-  const utils = api.useContext()
-  const { mutate } = api.settings.updateIsRecordEditor.useMutation({
-    onMutate: async (newData) => {
-      await utils.users.get.cancel({ userId: userId })
-      const previousData = utils.users.get.getData({
-        userId: userId,
-      })
-      if (!previousData) return { previousData }
-      utils.users.get.setData(
-        { userId: userId },
-        {
-          ...previousData,
-          isRecordEditor: newData.isRecordEditor,
-        },
-      )
-      return { previousData }
-    },
-    onError: (err, _newData, context) => {
-      console.log(err)
-      utils.users.get.setData(
-        { userId: userId || '' },
-        context?.previousData,
-      )
-    },
-  })
-  const onChange = () => {
-    mutate({ userId: userId, isRecordEditor: !value })
-  }
-
-  return (
-    <>
-      <div className='mb-2 flex items-center justify-start gap-4 text-lg text-gray-600 sm:gap-6'>
-        <label className={value ? `scale-110 text-gray-200 w-48` : `w-48`}>
-          Edit Record Table
-        </label>
-        <Switch
-          checked={value}
-          onChange={onChange}
-          className={`${value ? 'bg-gray-200' : 'bg-gray-600'}
-          relative inline-flex h-[24px] w-[64px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75  sm:h-[28px] sm:w-[74px]`}
-        >
-          <span
-            aria-hidden='true'
-            className={`${value ? 'translate-x-9' : 'translate-x-0'}
-            pointer-events-none inline-block h-[20px] w-[24px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out sm:h-[24px] sm:w-[34px]`}
-          />
-        </Switch>
-      </div>
-    </>
-  )
-}
-
-const TrainerToggle = ({
-  value,
-  userId,
-}: {
-  value: boolean
-  userId: string
-}) => {
-  const utils = api.useContext()
-  const { mutate } = api.settings.updateIsTrainer.useMutation({
-    onMutate: async (newData) => {
-      await utils.users.get.cancel({ userId: userId })
-      const previousData = utils.users.get.getData({
-        userId: userId,
-      })
-      if (!previousData) return { previousData }
-      utils.users.get.setData(
-        { userId: userId },
-        {
-          ...previousData,
-          isTrainer: newData.isTrainer,
-        },
-      )
-      return { previousData }
-    },
-    onError: (err, _newData, context) => {
-      console.log(err)
-      utils.users.get.setData(
-        { userId: userId || '' },
-        context?.previousData,
-      )
-    },
-  })
-  const onChange = () => {
-    mutate({ userId: userId, isTrainer: !value })
-  }
-
-  return (
-    <>
-      <div className='mb-2 flex items-center justify-start gap-4 text-lg text-gray-600 sm:gap-6'>
-        <label className={value ? `scale-110 text-gray-200 w-48` : `w-48`}>
-          Trainer
-        </label>
-        <Switch
-          checked={value}
-          onChange={onChange}
-          className={`${value ? 'bg-gray-200' : 'bg-gray-600'}
-          relative inline-flex h-[24px] w-[64px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75  sm:h-[28px] sm:w-[74px]`}
-        >
-          <span
-            aria-hidden='true'
-            className={`${value ? 'translate-x-9' : 'translate-x-0'}
-            pointer-events-none inline-block h-[20px] w-[24px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out sm:h-[24px] sm:w-[34px]`}
-          />
-        </Switch>
-      </div>
-    </>
-  )
-}
-
-const PowerToggle = ({
-  value,
-  userId,
-}: {
-  value: boolean
-  userId: string
-}) => {
-  const utils = api.useContext()
-  const { mutate } = api.settings.updateIsPower.useMutation({
-    onMutate: async (newData) => {
-      await utils.users.get.cancel({ userId: userId })
-      const previousData = utils.users.get.getData({
-        userId: userId,
-      })
-      if (!previousData) return { previousData }
-      utils.users.get.setData(
-        { userId: userId },
-        {
-          ...previousData,
-          isPower: newData.isPower,
-        },
-      )
-      return { previousData }
-    },
-    onError: (err, _newData, context) => {
-      console.log(err)
-      utils.users.get.setData(
-        { userId: userId || '' },
-        context?.previousData,
-      )
-    },
-  })
-  const onChange = () => {
-    mutate({ userId: userId, isPower: !value })
-  }
-
-  return (
-    <>
-      <div className='mb-2 flex items-center justify-start gap-4 text-lg text-gray-600 sm:gap-6'>
-        <label className={value ? `scale-110 text-gray-200 w-48` : `w-48`}>
-          Power Lifter
-        </label>
-        <Switch
-          checked={value}
-          onChange={onChange}
-          className={`${value ? 'bg-gray-200' : 'bg-gray-600'}
-          relative inline-flex h-[24px] w-[64px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75  sm:h-[28px] sm:w-[74px]`}
-        >
-          <span
-            aria-hidden='true'
-            className={`${value ? 'translate-x-9' : 'translate-x-0'}
-            pointer-events-none inline-block h-[20px] w-[24px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out sm:h-[24px] sm:w-[34px]`}
-          />
-        </Switch>
-      </div>
-    </>
-  )
-}
-
-const DietToggle = ({
-  value,
-  userId,
-}: {
-  value: boolean
-  userId: string
-}) => {
-  const utils = api.useContext()
-  const { mutate } = api.settings.updateIsDiet.useMutation({
-    onMutate: async (newData) => {
-      await utils.users.get.cancel({ userId: userId })
-      const previousData = utils.users.get.getData({
-        userId: userId,
-      })
-      if (!previousData) return { previousData }
-      utils.users.get.setData(
-        { userId: userId },
-        {
-          ...previousData,
-          isDiet: newData.isDiet,
-        },
-      )
-      return { previousData }
-    },
-    onError: (err, _newData, context) => {
-      console.log(err)
-      utils.users.get.setData(
-        { userId: userId || '' },
-        context?.previousData,
-      )
-    },
-  })
-  const onChange = () => {
-    mutate({ userId: userId, isDiet: !value })
-  }
-
-  return (
-    <>
-      <div className='mb-2 flex items-center justify-start gap-4 text-lg text-gray-600 sm:gap-6'>
-        <label className={value ? `scale-110 text-gray-200 w-48` : `w-48`}>
-          Nutrition
-        </label>
-        <Switch
-          checked={value}
-          onChange={onChange}
-          className={`${value ? 'bg-gray-200' : 'bg-gray-600'}
-          relative inline-flex h-[24px] w-[64px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75  sm:h-[28px] sm:w-[74px]`}
-        >
-          <span
-            aria-hidden='true'
-            className={`${value ? 'translate-x-9' : 'translate-x-0'}
-            pointer-events-none inline-block h-[20px] w-[24px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out sm:h-[24px] sm:w-[34px]`}
-          />
-        </Switch>
-      </div>
-    </>
-  )
-}
-
-const ClientToggle = ({
-  value,
-  userId,
-}: {
-  value: boolean
-  userId: string
-}) => {
-  const utils = api.useContext()
-  const { mutate } = api.settings.updateIsClient.useMutation({
+  const { mutate } = api.settings.updateRole.useMutation({
     onMutate: async (newData) => {
       await utils.users.get.cancel({ userId: userId })
       const previousData = utils.users.get.getData({
@@ -1815,7 +1524,7 @@ const ClientToggle = ({
         { userId: userId },
         {
           ...previousData,
-          isClient: newData.isClient,
+          [field]: newData.value,
         },
       )
 
@@ -1823,21 +1532,18 @@ const ClientToggle = ({
     },
     onError: (err, _newData, context) => {
       console.log(err)
-      utils.users.get.setData(
-        { userId: userId || '' },
-        context?.previousData,
-      )
+      utils.users.get.setData({ userId: userId || '' }, context?.previousData)
     },
   })
   const onChange = () => {
-    mutate({ userId: userId, isClient: !value })
+    mutate({ userId: userId, value: !value, role: field })
   }
 
   return (
     <>
       <div className='mb-2 flex items-center justify-start gap-4 text-lg text-gray-600 sm:gap-6'>
-        <label className={value ? `scale-110 text-gray-200 w-48` : `w-48`}>
-          Client
+        <label className={value ? `w-48 scale-110 text-gray-200` : `w-48`}>
+          {title}
         </label>
         <Switch
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -1868,6 +1574,8 @@ const Settings = ({ userId }: { userId: string }) => {
     api.settings.get.useQuery({
       userId: userId,
     })
+
+  console.log({ user })
 
   if (settingsLoading) return <LoadingPage />
   if (!user) return null
@@ -1945,31 +1653,78 @@ const Settings = ({ userId }: { userId: string }) => {
             />
           </div>
           {isAdmin && (
-            <div className='border border-gray-600 w-fit py-4 px-8 rounded-xl'>
-              <ClientToggle
+            <div className='w-fit rounded-xl border border-gray-600 px-8 py-4'>
+              <RoleToggle
                 value={user.isClient}
+                title='Client'
+                field='isClient'
                 userId={userId}
               />
-              <TrainerToggle
-                value={user.isTrainer}
-                userId={userId}
-              />
-              <PowerToggle
-                value={user.isPower}
-                userId={userId}
-              />
-              <DietToggle
-                value={user.isDiet}
-                userId={userId}
-              />
-              <RecordEditorToggle
+              <RoleToggle
                 value={user.isRecordEditor}
+                title='Edit Records'
+                field='isRecordEditor'
                 userId={userId}
               />
-              <AdminToggle
+              <RoleToggle
                 value={user.isAdmin}
+                title='Admin'
+                field='isAdmin'
                 userId={userId}
               />
+              {session?.user?.isRoot && (
+                <div className='mt-16 flex flex-col gap-1'>
+                  <RoleToggle
+                    value={user.isRoot}
+                    title='Root'
+                    field='isRoot'
+                    userId={userId}
+                  />
+                  <div className='mt-4' />
+                  <RoleToggle
+                    value={user.isDiet}
+                    title='Nutrition Client'
+                    field='isDiet'
+                    userId={userId}
+                  />
+                  <RoleToggle
+                    value={user.isDietTrainer}
+                    title='Dietitian'
+                    field='isDietTrainer'
+                    userId={userId}
+                  />
+                  <RoleToggle
+                    value={user.isHiit}
+                    title='Hiit Client'
+                    field='isHiit'
+                    userId={userId}
+                  />
+                  <RoleToggle
+                    value={user.isHiitTrainer}
+                    title='Hiit Trainer'
+                    field='isHiitTrainer'
+                    userId={userId}
+                  />
+                  <RoleToggle
+                    value={user.isPower}
+                    title='PowerLifter'
+                    field='isPower'
+                    userId={userId}
+                  />
+                  <RoleToggle
+                    value={user.isPowerTrainer}
+                    title='Power Lifting Trainer'
+                    field='isPowerTrainer'
+                    userId={userId}
+                  />
+                  <RoleToggle
+                    value={user.isSuper}
+                    title='Super'
+                    field='isSuper'
+                    userId={userId}
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>

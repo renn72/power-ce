@@ -115,11 +115,12 @@ export const settingsRouter = createTRPCRouter({
       return res
     }),
 
-  updateIsClient: privateProcedure
+  updateRole: privateProcedure
     .input(
       z.object({
         userId: z.string(),
-        isClient: z.boolean(),
+        role: z.string(),
+        value: z.boolean(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -128,102 +129,7 @@ export const settingsRouter = createTRPCRouter({
           id: input.userId,
         },
         data: {
-          isClient: input.isClient,
-        },
-      })
-      return res
-    }),
-
-  updateIsDiet: privateProcedure
-    .input(
-      z.object({
-        userId: z.string(),
-        isDiet: z.boolean(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const res = await ctx.prisma.user.update({
-        where: {
-          id: input.userId,
-        },
-        data: {
-          isDiet: input.isDiet,
-        },
-      })
-      return res
-    }),
-
-  updateIsPower: privateProcedure
-    .input(
-      z.object({
-        userId: z.string(),
-        isPower: z.boolean(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const res = await ctx.prisma.user.update({
-        where: {
-          id: input.userId,
-        },
-        data: {
-          isPower: input.isPower,
-        },
-      })
-      return res
-    }),
-
-  updateIsTrainer: privateProcedure
-    .input(
-      z.object({
-        userId: z.string(),
-        isTrainer: z.boolean(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const res = await ctx.prisma.user.update({
-        where: {
-          id: input.userId,
-        },
-        data: {
-          isTrainer: input.isTrainer,
-        },
-      })
-      return res
-    }),
-
-  updateIsRecordEditor: privateProcedure
-    .input(
-      z.object({
-        userId: z.string(),
-        isRecordEditor: z.boolean(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const res = await ctx.prisma.user.update({
-        where: {
-          id: input.userId,
-        },
-        data: {
-          isRecordEditor: input.isRecordEditor,
-        },
-      })
-      return res
-    }),
-
-  updateIsAdmin: privateProcedure
-    .input(
-      z.object({
-        userId: z.string(),
-        isAdmin: z.boolean(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const res = await ctx.prisma.user.update({
-        where: {
-          id: input.userId,
-        },
-        data: {
-          isAdmin: input.isAdmin,
+          [input.role]: input.value,
         },
       })
       return res
@@ -455,7 +361,6 @@ export const settingsRouter = createTRPCRouter({
       })
       return res
     }),
-    
 
   createUpdateSettings: privateProcedure
     .input(settingsSchema)

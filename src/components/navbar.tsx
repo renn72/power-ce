@@ -54,6 +54,12 @@ const nav = [
     name: 'Records',
     href: '/records',
   },
+  {
+    name: 'Comp Attempts',
+    href: '/comp-attempts',
+    superAdmin: true,
+    admin: true,
+  },
 ]
 
 const classNames = (...classes: string[]) => {
