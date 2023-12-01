@@ -57,7 +57,7 @@ const nav = [
   {
     name: 'Comp Attempts',
     href: '/comp-attempts',
-    superAdmin: true,
+    power: true,
     admin: true,
   },
 ]
@@ -74,13 +74,19 @@ const Navbar = () => {
   const router = useRouter()
   const isUserAdmin = user?.isAdmin
   const isUserSuperAdmin = user?.isSuper || false
+  const isPower = user?.isPower || false
   const navigation = nav.filter(
     (item) =>
       !item.admin ||
-      (item.admin && isUserAdmin && (!item.superAdmin || isUserSuperAdmin)),
+      (item.admin && isUserAdmin && (!item.superAdmin || isUserSuperAdmin)) ||
+      (item.power && isPower),
   )
 
-  if (router.pathname === '/records-men' || router.pathname === '/records-women') return null
+  if (
+    router.pathname === '/records-men' ||
+    router.pathname === '/records-women'
+  )
+    return null
 
   return (
     <>
