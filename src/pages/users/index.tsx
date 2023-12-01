@@ -20,6 +20,7 @@ import Settings from '~/components/settings'
 import { RefreshCcwIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import CompAttempts from '~/components/compAttempts'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -485,6 +486,7 @@ const Users = () => {
               <TabWrapper title='History' />
               <TabWrapper title='One RM' />
               <TabWrapper title='Competitions' />
+              <TabWrapper title='Lifts Calc' />
               <TabWrapper title='Open Powerlifting' />
               <TabWrapper title='Settings' />
             </Tab.List>
@@ -544,6 +546,10 @@ const Users = () => {
 
               <Tab.Panel>
                 <CompDate userId={userId} />
+              </Tab.Panel>
+
+              <Tab.Panel>
+                <CompAttempts userId={userId} />
               </Tab.Panel>
 
               <Tab.Panel>
