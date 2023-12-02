@@ -77,6 +77,26 @@ export const settingsRouter = createTRPCRouter({
       return res
     }),
 
+  updateCompLift: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        field: z.string(),
+        value: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.userProfile.update({
+        where: {
+          userId: input.userId,
+        },
+        data: {
+          [input.field]: input.value,
+        },
+      })
+      return res
+    }),
+
   updateLastName: privateProcedure
     .input(
       z.object({

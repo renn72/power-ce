@@ -173,8 +173,6 @@ const Warmup = ({ opener, round }: { opener: number; round: number }) => {
     return acc
   }, table[table.length - 1])
 
-  console.log('tableTarget', tableTarget)
-
   const range = () => {
     if (round === 1) return opener < 91 ? 'x 5-7' : 'x 8-10'
     if (round === 2) {
@@ -210,7 +208,7 @@ const Warmup = ({ opener, round }: { opener: number; round: number }) => {
     return null
   }
 
-  if (!tableTarget[round]) return null
+  if (!tableTarget || !tableTarget[round]) return null
 
   return (
     <div className='flex flex-row gap-6 text-lg'>
@@ -260,7 +258,31 @@ const LiftCell = ({
   )
 }
 
-const Lift = ({ lift, target }: { lift: string; target: number }) => {
+const Lift = ({
+  lift,
+  target,
+  p1_1,
+  p1_2,
+  p1_3,
+  p2_1,
+  p2_2,
+  p2_3,
+  p3_1,
+  p3_2,
+  p3_3,
+}: {
+  lift: string
+  target: number
+  p1_1: number
+  p1_2: number
+  p1_3: number
+  p2_1: number
+  p2_2: number
+  p2_3: number
+  p3_1: number
+  p3_2: number
+  p3_3: number
+}) => {
   const opener = Math.round((target * 0.91) / 2.5) * 2.5
   return (
     <div className='flex flex-col gap-4'>
@@ -268,23 +290,23 @@ const Lift = ({ lift, target }: { lift: string; target: number }) => {
       <LiftCell
         round='1st'
         lift={target}
-        p1={0.9}
-        p2={0.91}
-        p3={0.92}
+        p1={p1_1}
+        p2={p1_2}
+        p3={p1_3}
       />
       <LiftCell
         round='2nd'
         lift={target}
-        p1={0.95}
-        p2={0.96}
-        p3={0.97}
+        p1={p2_1}
+        p2={p2_2}
+        p3={p2_3}
       />
       <LiftCell
         round='3rd'
         lift={target}
-        p1={0.99}
-        p2={1}
-        p3={1.02}
+        p1={p3_1}
+        p2={p3_2}
+        p3={p3_3}
       />
       <h2 className='text-2xl font-bold'>Warmup</h2>
       <Warmup
@@ -330,8 +352,6 @@ const CompAttempts = ({ userId }: { userId: string }) => {
     userId: userId,
   })
 
-  console.log('userInfo', userInfo)
-
   if (!userInfo) return null
   if (!user) return null
 
@@ -346,18 +366,45 @@ const CompAttempts = ({ userId }: { userId: string }) => {
         <Lift
           lift='Squat'
           target={+squat}
+          p1_1={+userInfo.sp1_1}
+          p1_2={+userInfo.sp1_2}
+          p1_3={+userInfo.sp1_3}
+          p2_1={+userInfo.sp2_1}
+          p2_2={+userInfo.sp2_2}
+          p2_3={+userInfo.sp2_3}
+          p3_1={+userInfo.sp3_1}
+          p3_2={+userInfo.sp3_2}
+          p3_3={+userInfo.sp3_3}
         />
       )}
       {bench !== 0 && (
         <Lift
           lift='Bench'
           target={+bench}
+          p1_1={+userInfo.bp1_1}
+          p1_2={+userInfo.bp1_2}
+          p1_3={+userInfo.bp1_3}
+          p2_1={+userInfo.bp2_1}
+          p2_2={+userInfo.bp2_2}
+          p2_3={+userInfo.bp2_3}
+          p3_1={+userInfo.bp3_1}
+          p3_2={+userInfo.bp3_2}
+          p3_3={+userInfo.bp3_3}
         />
       )}
       {deadlift !== 0 && (
         <Lift
           lift='Deadlift'
           target={+deadlift}
+          p1_1={+userInfo.dp1_1}
+          p1_2={+userInfo.dp1_2}
+          p1_3={+userInfo.dp1_3}
+          p2_1={+userInfo.dp2_1}
+          p2_2={+userInfo.dp2_2}
+          p2_3={+userInfo.dp2_3}
+          p3_1={+userInfo.dp3_1}
+          p3_2={+userInfo.dp3_2}
+          p3_3={+userInfo.dp3_3}
         />
       )}
     </div>

@@ -530,6 +530,36 @@ model UserProfile {
   benchOneRepMax    Decimal?
   deadliftOneRepMax Decimal?
 
+  sp1_1 Decimal @default(0.9)
+  sp1_2 Decimal @default(0.91)
+  sp1_3 Decimal @default(0.92)
+  sp2_1 Decimal @default(0.95)
+  sp2_2 Decimal @default(0.96)
+  sp2_3 Decimal @default(0.97)
+  sp3_1 Decimal @default(0.99)
+  sp3_2 Decimal @default(1.0)
+  sp3_3 Decimal @default(1.02)
+
+  bp1_1 Decimal @default(0.9)
+  bp1_2 Decimal @default(0.91)
+  bp1_3 Decimal @default(0.92)
+  bp2_1 Decimal @default(0.95)
+  bp2_2 Decimal @default(0.96)
+  bp2_3 Decimal @default(0.97)
+  bp3_1 Decimal @default(0.99)
+  bp3_2 Decimal @default(1.0)
+  bp3_3 Decimal @default(1.02)
+
+  dp1_1 Decimal @default(0.9)
+  dp1_2 Decimal @default(0.91)
+  dp1_3 Decimal @default(0.92)
+  dp2_1 Decimal @default(0.95)
+  dp2_2 Decimal @default(0.96)
+  dp2_3 Decimal @default(0.97)
+  dp3_1 Decimal @default(0.99)
+  dp3_2 Decimal @default(1.0)
+  dp3_3 Decimal @default(1.02)
+
   fatAdjustment     Decimal?
   carbAdjustment    Decimal?
   proteinAdjustment Decimal?
@@ -554,7 +584,7 @@ model Record {
 
   gender String
 
-  name String
+  name   String
   weight Decimal
 
   userId String
@@ -689,8 +719,8 @@ model BaseIngredient {
   ingredient Ingredient[]
 
   isGluetenFree Boolean @default(false)
-  isVegan      Boolean  @default(false)
-  isVegetarian Boolean  @default(false)
+  isVegan       Boolean @default(false)
+  isVegetarian  Boolean @default(false)
 
   isDeleted Boolean @default(false)
 
@@ -704,7 +734,7 @@ model Ingredient {
   createdAt DateTime @default(now())
 
   baseIngredientId String
-  baseIngredient BaseIngredient @relation(fields: [baseIngredientId], references: [id], onDelete: Cascade)
+  baseIngredient   BaseIngredient @relation(fields: [baseIngredientId], references: [id], onDelete: Cascade)
 
   recipeId String
   recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
@@ -720,6 +750,7 @@ model Ingredient {
   flield1 String?
   flield2 String?
   flield3 String?
+
   @@index([recipeId])
 }
 
@@ -739,11 +770,11 @@ model Recipe {
   protein  Decimal
 
   isGluetenFree Boolean @default(false)
-  isVegan      Boolean  @default(false)
-  isVegetarian Boolean  @default(false)
+  isVegan       Boolean @default(false)
+  isVegetarian  Boolean @default(false)
 
   isScalable Boolean @default(true)
-  
+
   size Decimal
   unit String
 
