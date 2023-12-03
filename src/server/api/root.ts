@@ -14,6 +14,7 @@ import { setsRouter } from './routers/sets'
 import { warmupsRouter } from './routers/warmup'
 import { settingsRouter } from './routers/settings'
 import { recordsRouter } from './routers/records'
+import { compPlanRouter } from './routers/compPlan'
 
 /**
  * This is the primary router for your server.
@@ -36,6 +37,7 @@ export const appRouter = createTRPCRouter({
   warmups: warmupsRouter,
   settings: settingsRouter,
   records: recordsRouter,
+  plans: compPlanRouter,
 })
 
 // export type definition of API
