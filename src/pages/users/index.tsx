@@ -816,7 +816,7 @@ const Users = () => {
           defaultIndex={0}
         >
           <div className='flex w-full gap-4 lg:gap-16'>
-            <Tab.List className='flex w-36 flex-col divide-y divide-gray-600'>
+            <Tab.List className='flex w-36 flex-col divide-y divide-yellow-500'>
               <TabWrapper title='Overview' />
               <TabWrapper title='Program' />
               <TabWrapper title='History' />

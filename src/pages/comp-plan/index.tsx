@@ -1,5 +1,5 @@
 import { useSession } from 'next-auth/react'
-import CompAttempts from '~/components/compAttempts'
+import CompPlan from '~/components/compPlan'
 
 const Comp = () => {
   const { data: session } = useSession()
@@ -9,7 +9,7 @@ const Comp = () => {
 
   return (
   <>
-      <CompAttempts userId={user.id || ''} />
+      <CompPlan userId={user.id || ''} />
   </>
   )
 }

@@ -573,95 +573,32 @@ model UserProfile {
   @@index([userId])
 }
 
+model CompPlanValue {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  CompPlanId String
+  CompPlan   CompPlan @relation(fields: [CompPlanId], references: [id], onDelete: Cascade)
+
+  name String
+  value String
+
+  notes String?
+
+  isComplete Boolean @default(false)
+  @@index([CompPlanId])
+}
+
 model CompPlan {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
+
+  value CompPlanValue[]
 
   userId String
 
   name String
   date String
-
-  squat11 String
-  squat12 String
-  squat13 String
-  squat21 String
-  squat22 String
-  squat23 String
-  squat31 String
-  squat32 String
-  squat33 String
-
-  bench11 String
-  bench12 String
-  bench13 String
-  bench21 String
-  bench22 String
-  bench23 String
-  bench31 String
-  bench32 String
-  bench33 String
-
-  deadlift11 String
-  deadlift12 String
-  deadlift13 String
-  deadlift21 String
-  deadlift22 String
-  deadlift23 String
-  deadlift31 String
-  deadlift32 String
-  deadlift33 String
-
-  squatWarmupWeight1 String
-  squatWarmupRep1    String
-  squatWarmupWeight2 String
-  squatWarmupRep2    String
-  squatWarmupWeight3 String
-  squatWarmupRep3    String
-  squatWarmupWeight4 String
-  squatWarmupRep4    String
-  squatWarmupWeight5 String
-  squatWarmupRep5    String
-  squatWarmupWeight6 String
-  squatWarmupRep6    String
-  squatWarmupWeight7 String
-  squatWarmupRep7    String
-  squatWarmupWeight8 String
-  squatWarmupRep8    String
-
-  benchWarmupWeight1 String
-  benchWarmupRep1    String
-  benchWarmupWeight2 String
-  benchWarmupRep2    String
-  benchWarmupWeight3 String
-  benchWarmupRep3    String
-  benchWarmupWeight4 String
-  benchWarmupRep4    String
-  benchWarmupWeight5 String
-  benchWarmupRep5    String
-  benchWarmupWeight6 String
-  benchWarmupRep6    String
-  benchWarmupWeight7 String
-  benchWarmupRep7    String
-  benchWarmupWeight8 String
-  benchWarmupRep8    String
-
-  deadliftWarmupWeight1 String
-  deadliftWarmupRep1    String
-  deadliftWarmupWeight2 String
-  deadliftWarmupRep2    String
-  deadliftWarmupWeight3 String
-  deadliftWarmupRep3    String
-  deadliftWarmupWeight4 String
-  deadliftWarmupRep4    String
-  deadliftWarmupWeight5 String
-  deadliftWarmupRep5    String
-  deadliftWarmupWeight6 String
-  deadliftWarmupRep6    String
-  deadliftWarmupWeight7 String
-  deadliftWarmupRep7    String
-  deadliftWarmupWeight8 String
-  deadliftWarmupRep8    String
 
   isDeleted Boolean @default(false)
 }
