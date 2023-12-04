@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Fragment } from 'react'
 import { toast } from 'react-hot-toast'
 import { api } from '~/utils/api'
 import { useSession } from 'next-auth/react'
 
-import { Disclosure, Transition, Tab } from '@headlessui/react'
+import { Disclosure, Transition, Tab, Dialog } from '@headlessui/react'
 
 import { ChevronUpIcon } from '@heroicons/react/20/solid'
 import TemplateSelect from './templateSelect'
@@ -20,11 +20,327 @@ import Settings from '~/components/settings'
 import { RefreshCcwIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import CompAttempts from '~/components/compAttempts'
+import CompPlan from '~/components/compPlan'
 import Decimal from 'decimal.js'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
+}
+
+const SquatOneRM = ({
+  defaultValue,
+  userId,
+}: {
+  defaultValue: Decimal | number
+  userId: string
+}) => {
+  const user = { id: userId }
+  const [isOpen, setIsOpen] = useState(false)
+  const [value, setValue] = useState(
+    Number(defaultValue) == 0 ? undefined : Number(defaultValue),
+  )
+  const utils = api.useContext()
+  const { mutate } = api.settings.updateSquatOneRepMax.useMutation({
+    onMutate: async (newData) => {
+      if (!user) return
+      await utils.settings.get.cancel({ userId: user.id })
+      const previousData = utils.settings.get.getData({
+        userId: user.id,
+      })
+
+      if (!previousData) return
+
+      utils.settings.get.setData(
+        { userId: user.id },
+        {
+          ...previousData,
+          squatOneRepMax: new Decimal(newData.squatOneRepMax),
+        },
+      )
+
+      return { previousData }
+    },
+    onError: (err, newData, context) => {
+      console.log(err)
+      utils.settings.get.setData(
+        { userId: user?.id || '' },
+        context?.previousData,
+      )
+    },
+  })
+  return (
+    <div>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
+        <h4 className='text-xl'>Squat Target</h4>
+        <p className='h-8 text-base text-gray-400'>
+          {Number(defaultValue) == 0 ? '.' : `${Number(defaultValue)}kg`}
+        </p>
+      </div>
+      <ModalWrapper
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      >
+        <Input
+          type='number'
+          placeholder='Height'
+          className='bg-gray-900'
+          value={value}
+          onChange={(e) => {
+            setValue(+e.target.value)
+          }}
+        />
+        <div className='mt-4 flex justify-center gap-2'>
+          <Button
+            onClick={() => {
+              if (!value) return
+              mutate({ userId: user?.id || '', squatOneRepMax: value })
+              setIsOpen(false)
+            }}
+          >
+            Save
+          </Button>
+          <Button
+            onClick={() => {
+              setIsOpen(false)
+            }}
+          >
+            Cancel
+          </Button>
+        </div>
+      </ModalWrapper>
+    </div>
+  )
+}
+
+const BenchOneRM = ({
+  defaultValue,
+  userId,
+}: {
+  defaultValue: Decimal | number
+  userId: string
+}) => {
+  const user = { id: userId }
+  const [isOpen, setIsOpen] = useState(false)
+  const [value, setValue] = useState(
+    Number(defaultValue) == 0 ? undefined : Number(defaultValue),
+  )
+  const utils = api.useContext()
+  const { mutate } = api.settings.updateBenchOneRepMax.useMutation({
+    onMutate: async (newData) => {
+      if (!user) return
+      await utils.settings.get.cancel({ userId: user.id })
+      const previousData = utils.settings.get.getData({
+        userId: user.id,
+      })
+      if (!previousData) return
+
+      utils.settings.get.setData(
+        { userId: user.id },
+        {
+          ...previousData,
+          benchOneRepMax: new Decimal(newData.benchOneRepMax),
+        },
+      )
+
+      return { previousData }
+    },
+    onError: (err, newData, context) => {
+      console.log(err)
+      utils.settings.get.setData(
+        { userId: user?.id || '' },
+        context?.previousData,
+      )
+    },
+  })
+  return (
+    <div>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
+        <h4 className='text-xl'>Bench Target</h4>
+        <p className='h-8 text-base text-gray-400'>
+          {Number(defaultValue) == 0 ? '.' : `${Number(defaultValue)}kg`}
+        </p>
+      </div>
+      <ModalWrapper
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      >
+        <Input
+          type='number'
+          placeholder='Height'
+          className='bg-gray-900'
+          value={value}
+          onChange={(e) => {
+            setValue(+e.target.value)
+          }}
+        />
+        <div className='mt-4 flex justify-center gap-2'>
+          <Button
+            onClick={() => {
+              if (!value) return
+              mutate({ userId: user?.id || '', benchOneRepMax: value })
+              setIsOpen(false)
+            }}
+          >
+            Save
+          </Button>
+          <Button
+            onClick={() => {
+              setIsOpen(false)
+            }}
+          >
+            Cancel
+          </Button>
+        </div>
+      </ModalWrapper>
+    </div>
+  )
+}
+
+const DeadOneRM = ({
+  defaultValue,
+  userId,
+}: {
+  defaultValue: Decimal | number
+  userId: string
+}) => {
+  const user = { id: userId }
+  const [isOpen, setIsOpen] = useState(false)
+  const [value, setValue] = useState(
+    Number(defaultValue) == 0 ? undefined : Number(defaultValue),
+  )
+  const utils = api.useContext()
+  const { mutate } = api.settings.updateDeadliftOneRepMax.useMutation({
+    onMutate: async (newData) => {
+      if (!user) return
+      await utils.settings.get.cancel({ userId: user.id })
+      const previousData = utils.settings.get.getData({
+        userId: user.id,
+      })
+      if (!previousData) return
+
+      utils.settings.get.setData(
+        { userId: user.id },
+        {
+          ...previousData,
+          deadliftOneRepMax: new Decimal(newData.deadliftOneRepMax),
+        },
+      )
+
+      return { previousData }
+    },
+    onError: (err, newData, context) => {
+      console.log(err)
+      utils.settings.get.setData(
+        { userId: user?.id || '' },
+        context?.previousData,
+      )
+    },
+  })
+  return (
+    <div>
+      <div
+        className='w-fit cursor-pointer pr-8'
+        onClick={() => setIsOpen(true)}
+      >
+        <h4 className='text-xl'>Deadlift Target</h4>
+        <p className='h-8 text-base text-gray-400'>
+          {Number(defaultValue) == 0 ? '.' : `${Number(defaultValue)}kg`}
+        </p>
+      </div>
+      <ModalWrapper
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      >
+        <Input
+          type='number'
+          placeholder='Height'
+          className='bg-gray-900'
+          value={value}
+          onChange={(e) => {
+            setValue(+e.target.value)
+          }}
+        />
+        <div className='mt-4 flex justify-center gap-2'>
+          <Button
+            onClick={() => {
+              if (!value) return
+              mutate({ userId: user?.id || '', deadliftOneRepMax: value })
+              setIsOpen(false)
+            }}
+          >
+            Save
+          </Button>
+          <Button
+            onClick={() => {
+              setIsOpen(false)
+            }}
+          >
+            Cancel
+          </Button>
+        </div>
+      </ModalWrapper>
+    </div>
+  )
+}
+
+const ModalWrapper = ({
+  isOpen,
+  setIsOpen,
+  children,
+}: {
+  isOpen: boolean
+  setIsOpen: (args: boolean) => void
+  children: React.ReactNode
+}) => {
+  return (
+    <Transition
+      appear
+      show={isOpen}
+      as={Fragment}
+    >
+      <Dialog
+        as='div'
+        className='relative z-10'
+        onClose={() => setIsOpen(true)}
+      >
+        <Transition.Child
+          as={Fragment}
+          enter='ease-out duration-300'
+          enterFrom='opacity-0'
+          enterTo='opacity-100'
+          leave='ease-in duration-200'
+          leaveFrom='opacity-100'
+          leaveTo='opacity-0'
+        >
+          <div className='fixed inset-0 bg-black/50' />
+        </Transition.Child>
+
+        <div className='fixed inset-0 overflow-y-auto text-gray-200'>
+          <div className='flex min-h-full items-center justify-center p-4 text-center'>
+            <Transition.Child
+              as={Fragment}
+              enter='ease-out duration-300'
+              enterFrom='opacity-0 scale-95'
+              enterTo='opacity-100 scale-100'
+              leave='ease-in duration-200'
+              leaveFrom='opacity-100 scale-100'
+              leaveTo='opacity-0 scale-95'
+            >
+              <Dialog.Panel className='w-full max-w-md transform overflow-visible rounded-2xl bg-gray-900 p-6 text-left align-middle transition-all'>
+                {children}
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition>
+  )
 }
 
 const UserDisclosure = ({
@@ -449,6 +765,14 @@ const Users = () => {
   const { mutate: compPlanMutate } = api.plans.create.useMutation({
     onSuccess: (e) => {
       console.log('success', e)
+      void ctx.plans.get.invalidate({ userId: userId })
+    },
+  })
+
+  const { mutate: compPlanDelete } = api.plans.delete.useMutation({
+    onSuccess: (e) => {
+      console.log('success', e)
+      void ctx.plans.get.invalidate({ userId: userId })
     },
   })
 
@@ -475,6 +799,8 @@ const Users = () => {
     })
   }
 
+  const [planName, setPlanName] = useState<string>('')
+
   if (!user?.isAdmin) return <div>Not Authorized</div>
 
   return (
@@ -496,7 +822,7 @@ const Users = () => {
               <TabWrapper title='History' />
               <TabWrapper title='One RM' />
               <TabWrapper title='Competitions' />
-              <TabWrapper title='Lifts Calc' />
+              <TabWrapper title='Comp Plan' />
               <TabWrapper title='Open Powerlifting' />
               <TabWrapper title='Settings' />
             </Tab.List>
@@ -559,20 +885,53 @@ const Users = () => {
               </Tab.Panel>
 
               <Tab.Panel>
-                <Button
-                  onClick={() => {
-                    compPlanMutate({
-                      userId: userId,
-                      name: 'name',
-                      date: 'date',
-                      squat: 150,
-                      bench: 100,
-                      deadlift: 200,
-                    })
-                  }
-                  }
-                >Comp Plan</Button>
-                <CompAttempts userId={userId} />
+                <div className='flex flex-col gap-4'>
+                  <div className='flex gap-4'>
+                    <SquatOneRM
+                      userId={userId}
+                      defaultValue={userInfo?.squatOneRepMax || 0}
+                    />
+                    <BenchOneRM
+                      userId={userId}
+                      defaultValue={userInfo?.benchOneRepMax || 0}
+                    />
+                    <DeadOneRM
+                      userId={userId}
+                      defaultValue={userInfo?.deadliftOneRepMax || 0}
+                    />
+                  </div>
+                  <Input
+                    value={planName}
+                    onChange={(e) => setPlanName(e.target.value)}
+                    placeholder='Plan Name'
+                    className='w-64'
+                  />
+                  <Button
+                    className='w-48 text-lg'
+                    onClick={() => {
+                      compPlanMutate({
+                        userId: userId,
+                        name: planName,
+                        date: new Date().toISOString(),
+                        squat: Number(userInfo?.squatOneRepMax) || 0,
+                        bench: Number(userInfo?.benchOneRepMax) || 0,
+                        deadlift: Number(userInfo?.deadliftOneRepMax) || 0,
+                      })
+                    }}
+                  >
+                    Generate Plan
+                  </Button>
+                  <Button
+                    className='w-48 text-lg'
+                    onClick={() => {
+                      compPlanDelete({ userId: userId })
+                    }}
+                  >
+                    Delete Plan
+                  </Button>
+
+                  <CompPlan userId={userId} />
+                </div>
               </Tab.Panel>
 
               <Tab.Panel>

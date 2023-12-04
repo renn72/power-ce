@@ -25,8 +25,6 @@ import {
 } from '@heroicons/react/24/outline'
 import { LoadingPage } from '~/components/loading'
 import Decimal from 'decimal.js'
-import Link from 'next/link'
-import { Toggle } from '@/components/ui/toggle'
 
 const ModalWrapper = ({
   isOpen,

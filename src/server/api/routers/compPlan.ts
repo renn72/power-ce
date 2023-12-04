@@ -292,22 +292,96 @@ export const compPlanRouter = createTRPCRouter({
       const warmupBenches = warmup(benches[1] || 0)
       const warmupDeadlifts = warmup(deadlifts[1] || 0)
 
-      console.log(warmupSquats)
-      console.log(warmupBenches)
-      console.log(warmupDeadlifts)
+      await ctx.prisma.compPlan.deleteMany({
+        where: {
+          userId: input.userId,
+        },
+      })
 
-      console.log(squats)
-      console.log(benches)
-      console.log(deadlifts)
+      const plan = await ctx.prisma.compPlan.create({
+        data: {
+          name: input.name,
+          date: input.date,
+          userId: input.userId,
+          squat11: squats[0]?.toString() || '',
+          squat12: squats[1]?.toString() || '',
+          squat13: squats[2]?.toString() || '',
+          squat21: squats[3]?.toString() || '',
+          squat22: squats[4]?.toString() || '',
+          squat23: squats[5]?.toString() || '',
+          squat31: squats[6]?.toString() || '',
+          squat32: squats[7]?.toString() || '',
+          squat33: squats[8]?.toString() || '',
+          bench11: benches[0]?.toString() || '',
+          bench12: benches[1]?.toString() || '',
+          bench13: benches[2]?.toString() || '',
+          bench21: benches[3]?.toString() || '',
+          bench22: benches[4]?.toString() || '',
+          bench23: benches[5]?.toString() || '',
+          bench31: benches[6]?.toString() || '',
+          bench32: benches[7]?.toString() || '',
+          bench33: benches[8]?.toString() || '',
+          deadlift11: deadlifts[0]?.toString() || '',
+          deadlift12: deadlifts[1]?.toString() || '',
+          deadlift13: deadlifts[2]?.toString() || '',
+          deadlift21: deadlifts[3]?.toString() || '',
+          deadlift22: deadlifts[4]?.toString() || '',
+          deadlift23: deadlifts[5]?.toString() || '',
+          deadlift31: deadlifts[6]?.toString() || '',
+          deadlift32: deadlifts[7]?.toString() || '',
+          deadlift33: deadlifts[8]?.toString() || '',
+          squatWarmupWeight1: warmupSquats.weight[0]?.toString() || '',
+          squatWarmupWeight2: warmupSquats.weight[1]?.toString() || '',
+          squatWarmupWeight3: warmupSquats.weight[2]?.toString() || '',
+          squatWarmupWeight4: warmupSquats.weight[3]?.toString() || '',
+          squatWarmupWeight5: warmupSquats.weight[4]?.toString() || '',
+          squatWarmupWeight6: warmupSquats.weight[5]?.toString() || '',
+          squatWarmupWeight7: warmupSquats.weight[6]?.toString() || '',
+          squatWarmupWeight8: warmupSquats.weight[7]?.toString() || '',
+          squatWarmupRep1: warmupSquats.reps[0]?.toString() || '',
+          squatWarmupRep2: warmupSquats.reps[1]?.toString() || '',
+          squatWarmupRep3: warmupSquats.reps[2]?.toString() || '',
+          squatWarmupRep4: warmupSquats.reps[3]?.toString() || '',
+          squatWarmupRep5: warmupSquats.reps[4]?.toString() || '',
+          squatWarmupRep6: warmupSquats.reps[5]?.toString() || '',
+          squatWarmupRep7: warmupSquats.reps[6]?.toString() || '',
+          squatWarmupRep8: warmupSquats.reps[7]?.toString() || '',
+          benchWarmupWeight1: warmupBenches.weight[0]?.toString() || '',
+          benchWarmupWeight2: warmupBenches.weight[1]?.toString() || '',
+          benchWarmupWeight3: warmupBenches.weight[2]?.toString() || '',
+          benchWarmupWeight4: warmupBenches.weight[3]?.toString() || '',
+          benchWarmupWeight5: warmupBenches.weight[4]?.toString() || '',
+          benchWarmupWeight6: warmupBenches.weight[5]?.toString() || '',
+          benchWarmupWeight7: warmupBenches.weight[6]?.toString() || '',
+          benchWarmupWeight8: warmupBenches.weight[7]?.toString() || '',
+          benchWarmupRep1: warmupBenches.reps[0]?.toString() || '',
+          benchWarmupRep2: warmupBenches.reps[1]?.toString() || '',
+          benchWarmupRep3: warmupBenches.reps[2]?.toString() || '',
+          benchWarmupRep4: warmupBenches.reps[3]?.toString() || '',
+          benchWarmupRep5: warmupBenches.reps[4]?.toString() || '',
+          benchWarmupRep6: warmupBenches.reps[5]?.toString() || '',
+          benchWarmupRep7: warmupBenches.reps[6]?.toString() || '',
+          benchWarmupRep8: warmupBenches.reps[7]?.toString() || '',
+          deadliftWarmupWeight1: warmupDeadlifts.weight[0]?.toString() || '',
+          deadliftWarmupWeight2: warmupDeadlifts.weight[1]?.toString() || '',
+          deadliftWarmupWeight3: warmupDeadlifts.weight[2]?.toString() || '',
+          deadliftWarmupWeight4: warmupDeadlifts.weight[3]?.toString() || '',
+          deadliftWarmupWeight5: warmupDeadlifts.weight[4]?.toString() || '',
+          deadliftWarmupWeight6: warmupDeadlifts.weight[5]?.toString() || '',
+          deadliftWarmupWeight7: warmupDeadlifts.weight[6]?.toString() || '',
+          deadliftWarmupWeight8: warmupDeadlifts.weight[7]?.toString() || '',
+          deadliftWarmupRep1: warmupDeadlifts.reps[0]?.toString() || '',
+          deadliftWarmupRep2: warmupDeadlifts.reps[1]?.toString() || '',
+          deadliftWarmupRep3: warmupDeadlifts.reps[2]?.toString() || '',
+          deadliftWarmupRep4: warmupDeadlifts.reps[3]?.toString() || '',
+          deadliftWarmupRep5: warmupDeadlifts.reps[4]?.toString() || '',
+          deadliftWarmupRep6: warmupDeadlifts.reps[5]?.toString() || '',
+          deadliftWarmupRep7: warmupDeadlifts.reps[6]?.toString() || '',
+          deadliftWarmupRep8: warmupDeadlifts.reps[7]?.toString() || '',
+        },
+      })
 
-      return {
-        squats,
-        benches,
-        deadlifts,
-        warmupSquats,
-        warmupBenches,
-        warmupDeadlifts,
-      }
+      return plan
     }),
 
   delete: privateProcedure
