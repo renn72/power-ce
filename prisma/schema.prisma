@@ -585,6 +585,7 @@ model CompPlanValue {
 
   notes String?
 
+  isGoodLift Boolean?
   isComplete Boolean @default(false)
   @@index([CompPlanId])
 }

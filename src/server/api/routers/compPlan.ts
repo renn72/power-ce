@@ -277,6 +277,7 @@ export const compPlanRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         value: z.boolean(),
+        isGood: z.boolean().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -286,6 +287,7 @@ export const compPlanRouter = createTRPCRouter({
         },
         data: {
           isComplete: input.value,
+          isGoodLift: input?.isGood,
         },
       })
       return value
