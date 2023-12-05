@@ -55,8 +55,8 @@ const nav = [
     href: '/records',
   },
   {
-    name: 'Comp Attempts',
-    href: '/comp-attempts',
+    name: 'Comp Plan',
+    href: '/comp-plan',
     power: true,
     admin: true,
   },
