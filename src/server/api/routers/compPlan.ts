@@ -169,15 +169,15 @@ const roundLift = (lift: number, percent: number) => {
 }
 const lifts = (weight: number) => {
   return [
-    roundLift(weight, 0.9),
+    roundLift(weight, 0.9) === roundLift(weight, 0.91) ? roundLift(weight, 0.9) - 2.5 : roundLift(weight, 0.9),
     roundLift(weight, 0.91),
-    roundLift(weight, 0.92),
-    roundLift(weight, 0.95),
+    roundLift(weight, 0.92) === roundLift(weight, 0.91) ? roundLift(weight, 0.92) + 2.5 : roundLift(weight, 0.92),
+    roundLift(weight, 0.95) === roundLift(weight, 0.96) ? roundLift(weight, 0.95) - 2.5 : roundLift(weight, 0.95),
     roundLift(weight, 0.96),
-    roundLift(weight, 0.97),
-    roundLift(weight, 0.99),
+    roundLift(weight, 0.97) === roundLift(weight, 0.96) ? roundLift(weight, 0.97) + 2.5 : roundLift(weight, 0.97),
+    roundLift(weight, 0.99) === roundLift(weight, 1) ? roundLift(weight, 0.99) - 2.5 : roundLift(weight, 0.99),
     roundLift(weight, 1),
-    roundLift(weight, 1.02),
+    roundLift(weight, 1.02) === roundLift(weight, 1) ? roundLift(weight, 1.02) + 2.5 : roundLift(weight, 1.02),
   ]
 }
 const warmup = (opener: number) => {
@@ -196,64 +196,64 @@ const warmup = (opener: number) => {
     const round = idx + 1
 
     if (round === 1) {
-      opener < 91 ? reps.push('x 5-7') : reps.push('x 8-10')
+      opener < 91 ? reps.push('5-7') : reps.push('8-10')
     }
     if (round === 2) {
       if (opener < 91) {
-        reps.push('x 3-5')
+        reps.push('3-5')
         return
       }
       if (opener < 182) {
-        reps.push('x 4-7')
+        reps.push('4-7')
         return
       }
       if (opener < 273) {
-        reps.push('x 5-8')
+        reps.push('5-8')
         return
       }
-      reps.push('x 8')
+      reps.push('8')
     }
     if (round === 3) {
       if (opener < 91) {
-        reps.push('x 1')
+        reps.push('1')
         return
       }
       if (opener < 182) {
-        reps.push('x 3')
+        reps.push('3')
         return
       }
       if (opener < 273) {
-        reps.push('x 3-5')
+        reps.push('3-5')
         return
       }
-      reps.push('x 5')
+      reps.push('5')
     }
     if (round === 4) {
       if (opener < 114) {
-        reps.push('x 1')
+        reps.push('1')
         return
       }
       if (opener < 273) {
-        reps.push('x 2')
+        reps.push('2')
         return
       }
-      reps.push('x 3')
+      reps.push('3')
     }
     if (round === 5) {
       if (opener < 157) {
-        reps.push('x 1')
+        reps.push('1')
       } else {
-        reps.push('x 1-2')
+        reps.push('1-2')
       }
     }
     if (round === 6) {
-      reps.push('x 1')
+      reps.push('1')
     }
     if (round === 7) {
-      reps.push('x 1')
+      reps.push('1')
     }
     if (round === 8) {
-      reps.push('x 1')
+      reps.push('1')
     }
   })
   return {
@@ -271,6 +271,24 @@ export const compPlanRouter = createTRPCRouter({
         include: { value: true },
       })
       return plan
+    }),
+  complete: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        value: z.boolean(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const value = await ctx.prisma.compPlanValue.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          isComplete: input.value,
+        },
+      })
+      return value
     }),
   create: privateProcedure
     .input(
