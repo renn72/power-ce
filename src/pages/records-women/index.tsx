@@ -42,7 +42,7 @@ const Cell = ({
     <div className='flex w-72 cursor-pointer justify-center items-baseline border border-gray-400 px-1 py-[0.53rem] 2xl:w-[32rem] 2xl:py-4'>
         <div>
           {recordWeight.trim()}
-          <span className='text-2xl text-gray-400'>{recordName != '' && 'KG'}</span>
+          <span className='text-lg text-gray-400'>{recordName != '' && 'KG'}</span>
         </div>
         <div className='text-yellow-500'>{recordName != '' && '/'}</div>
         <div className='uppercase'>{recordName}</div>
