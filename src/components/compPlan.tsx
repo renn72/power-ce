@@ -168,7 +168,7 @@ const AttemptPanel = ({ lift, round }: { lift: string; round: number }) => {
   if (!plan) return null
   return (
     <div className='relative flex items-center justify-between px-8 py-4 text-xl font-semibold'>
-      <div className='text-5xl font-bold text-yellow-500'>{round}</div>
+      <div className='text-6xl font-bold text-yellow-500'>{round}</div>
       <RadioGroup
         value={checked}
         onChange={(e) => {
@@ -177,7 +177,7 @@ const AttemptPanel = ({ lift, round }: { lift: string; round: number }) => {
           setChecked(e)
         }}
       >
-        <div className='flex flex-col items-center text-4xl font-bold'>
+        <div className='flex flex-col items-center text-5xl font-bold'>
           <RadioOption
             value='1'
             lift={lift}
