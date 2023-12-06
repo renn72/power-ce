@@ -69,7 +69,9 @@ const Form = () => {
     },
   })
   const { mutate: blockUpdateMutate } = api.blocks.update.useMutation({
-    onSuccess: () => {
+    onSuccess: (e) => {
+      console.log('success', e)
+      setBlockId(e[1]?.id)
       setIsOpen(false)
       toast.success('Saved')
       void ctx.blocks.getAll.invalidate()
@@ -151,8 +153,6 @@ const Form = () => {
       })),
     }
 
-    console.log('block', block)
-
     blockCreateMutate(block)
   }
 
@@ -208,9 +208,6 @@ const Form = () => {
         })),
       })),
     }
-
-    console.log('block', JSON.stringify(block, null, 2))
-    console.log('data', JSON.stringify(data, null, 2))
 
     blockUpdateMutate(block)
   }
