@@ -119,6 +119,12 @@ input[type='number'] {
   font-size: 3.225rem;
 }
 
+.text-3xxl {
+  font-size: 1.755rem; /* 30px */
+  line-height: 2.25rem; /* 36px */
+  letter-spacing: -0.06em;
+}
+
 .shadow-me {
   -webkit-text-stroke: 0.45px rgba(0, 0, 0, 0.2);
 }

@@ -39,7 +39,7 @@ const Cell = ({
   recordWeight: string
 }) => {
   return (
-    <div className='flex w-72 cursor-pointer justify-center items-baseline border border-gray-400 px-1 py-2 2xl:w-[32rem] 2xl:py-4  font-extrabold tracking-tighter'>
+    <div className='flex w-72 cursor-pointer justify-center items-baseline border border-gray-400 px-1 py-[0.53rem] 2xl:w-[32rem] 2xl:py-4'>
         <div>
           {recordWeight.trim()}
           <span className='text-2xl text-gray-400'>{recordName != '' && 'KG'}</span>
@@ -51,19 +51,19 @@ const Cell = ({
 }
 
 const CellWCHeading = ({ children }: { children: React.ReactNode }) => (
-  <div className='flex w-40 justify-center border border-gray-800 bg-yellow-500 py-2 text-gray-900 2xl:w-48 2xl:py-4  font-extrabold tracking-tighter'>
+  <div className='flex w-[7.88rem] justify-center border border-gray-800 bg-yellow-500 px-1 py-[0.60rem] text-gray-900 2xl:w-40 2xl:py-4  font-extrabold tracking-tight'>
     {children}
   </div>
 )
 
 const CellWC = ({ children }: { children: React.ReactNode }) => (
-  <div className='flex w-40 justify-center border border-gray-400 py-2 2xl:w-48 2xl:py-4  font-extrabold tracking-tighter'>
+  <div className='flex w-[7.88rem] justify-center border border-gray-400 px-1 py-2 2xl:w-40 2xl:py-4  font-extrabold tracking-tight'>
     {children}
   </div>
 )
 
 const CellHeading = ({ children }: { children: React.ReactNode }) => (
-  <div className='flex w-72 justify-center border border-gray-800 bg-yellow-500  px-1 py-2 text-gray-900 2xl:w-[32rem] 2xl:py-4  font-extrabold tracking-tight'>
+  <div className='flex w-72 justify-center border border-gray-800 bg-yellow-500  px-1 py-[0.60rem] text-gray-900 2xl:w-[32rem] 2xl:py-4  font-extrabold tracking-tight'>
     {children}
   </div>
 )
@@ -80,7 +80,7 @@ const Records = () => {
   if (recordsLoading) return <LoadingPage />
 
   return (
-    <div className='flex flex-col gap-12 font-semibold text-5xxl'>
+    <div className='flex flex-col gap-12 font-semibold text-3xxl w-fit'>
       <div className='flex flex-col gap-1'>
         <div className='flex w-fit items-baseline font-bold tracking-widest'>
           <CellWCHeading>WC</CellWCHeading>
@@ -89,7 +89,7 @@ const Records = () => {
           <CellHeading>DEADLIFT</CellHeading>
           <CellHeading>TOTAL</CellHeading>
         </div>
-        <div className='w-fit border border-gray-200'>
+        <div className='w-fit border border-gray-200 font-bold'>
           {women.map((weight) => (
             <div
               className='flex'
