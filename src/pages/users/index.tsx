@@ -799,7 +799,7 @@ const Users = () => {
     })
   }
 
-  const [planName, setPlanName] = useState<string>('')
+  const [planName, setPlanName] = useState<string>('Powerlifting')
 
   if (!user?.isAdmin) return <div>Not Authorized</div>
 
@@ -930,7 +930,10 @@ const Users = () => {
                     Delete Plan
                   </Button>
 
-                  <CompPlan userId={userId} />
+                  <CompPlan
+                    userId={userId}
+                    isAdmin={true}
+                  />
                 </div>
               </Tab.Panel>
 

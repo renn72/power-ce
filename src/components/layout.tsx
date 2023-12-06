@@ -12,7 +12,7 @@ const Layout = (props: PropsWithChildren) => {
   const router = useRouter()
    console.log(router.pathname)
 
-  // if (status === 'loading') return <LoadingPage />
+  if (status === 'loading') return <LoadingPage />
 
   return (
     <>

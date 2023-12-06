@@ -1,9 +1,20 @@
 import { api } from '~/utils/api'
 import { LoadingPage } from './loading'
-import { Tab, RadioGroup } from '@headlessui/react'
-import { XMarkIcon } from '@heroicons/react/24/outline'
+import { Tab, RadioGroup, Transition, Dialog } from '@headlessui/react'
+import { PlusCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { CheckCircle, XCircle } from 'lucide-react'
-import { useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+
+const userIdAtom = atom('')
+const isAdminAtom = atom(false)
+
+const inputIdAtom = atom('')
+const inputValAtom = atom('')
+const inputIsOpenAtom = atom(false)
+const inputIsNotesAtom = atom(false)
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -13,15 +24,20 @@ const RadioOption = ({
   value,
   lift,
   round,
-  userId,
   isComplete,
 }: {
   value: string
   lift: string
   round: string
-  userId: string
   isComplete: boolean
 }) => {
+  const isAdmin = useAtomValue(isAdminAtom)
+  const userId = useAtomValue(userIdAtom)
+
+  const setIsOpen = useSetAtom(inputIsOpenAtom)
+  const setInputId = useSetAtom(inputIdAtom)
+  const setInputVal = useSetAtom(inputValAtom)
+
   const { data: plan } = api.plans.get.useQuery({
     userId: userId,
   })
@@ -33,7 +49,20 @@ const RadioOption = ({
           className={classNames(
             'p-2',
             checked && !isComplete ? 'scale-105 text-white' : 'text-gray-600',
+            isAdmin ? 'cursor-pointer' : '',
           )}
+          onClick={() => {
+            if (!isAdmin) return
+            setInputId(
+              plan.value?.find((v) => v.name === `${lift}${round}${value}`)
+                ?.id || '',
+            )
+            setInputVal(
+              plan.value?.find((v) => v.name === `${lift}${round}${value}`)
+                ?.value || '',
+            )
+            setIsOpen(true)
+          }}
         >
           <div
             className={classNames(
@@ -59,17 +88,11 @@ const RadioOption = ({
   )
 }
 
-const AttemptPanel = ({
-  lift,
-  userId,
-  round,
-}: {
-  lift: string
-  userId: string
-  round: number
-}) => {
+const AttemptPanel = ({ lift, round }: { lift: string; round: number }) => {
   const ctx = api.useContext()
   const [checked, setChecked] = useState('2')
+  const userId = useAtomValue(userIdAtom)
+  const isAdmin = useAtomValue(isAdminAtom)
 
   const { data: plan } = api.plans.get.useQuery({
     userId: userId,
@@ -150,6 +173,7 @@ const AttemptPanel = ({
         value={checked}
         onChange={(e) => {
           if (isComplete) return
+          if (isAdmin) return
           setChecked(e)
         }}
       >
@@ -158,54 +182,179 @@ const AttemptPanel = ({
             value='1'
             lift={lift}
             round={`${round}`}
-            userId={userId}
             isComplete={isComplete || false}
           />
           <RadioOption
             value='2'
             lift={lift}
             round={`${round}`}
-            userId={userId}
             isComplete={isComplete || false}
           />
           <RadioOption
             value='3'
             lift={lift}
             round={`${round}`}
-            userId={userId}
             isComplete={isComplete || false}
           />
         </div>
       </RadioGroup>
       <div className='flex flex-col gap-8'>
         <CheckCircle
-          className={classNames('h-8 w-8 text-gray-600')}
+          className={classNames(
+            'h-8 w-8 text-gray-600',
+            isAdmin ? 'hidden' : '',
+          )}
           onClick={() => {
+            if (isAdmin) return
             if (isComplete) return
             onCheck(true)
           }}
         />
         <XCircle
-          className={classNames('h-8 w-8 text-gray-600')}
+          className={classNames(
+            'h-8 w-8 text-gray-600',
+            isAdmin ? 'hidden' : '',
+          )}
           onClick={() => {
+            if (isAdmin) return
             if (isComplete) return
             onCheck(false)
           }}
         />
       </div>
       <XMarkIcon
-        className='absolute right-0 top-4 h-6 w-6 text-gray-400'
-        onClick={onClear}
+        className={classNames(
+          'absolute right-0 top-4 h-6 w-6 text-gray-400',
+          isAdmin ? 'hidden' : '',
+        )}
+        onClick={() => {
+          if (isAdmin) return
+          onClear()
+        }}
       />
     </div>
   )
 }
 
-const LiftPanel = ({ lift, userId }: { lift: string; userId: string }) => {
+const ModalWrapper = ({
+  isOpen,
+  setIsOpen,
+}: {
+  isOpen: boolean
+  setIsOpen: (args: boolean) => void
+}) => {
   const ctx = api.useContext()
+
+  const userId = useAtomValue(userIdAtom)
+  const value = useAtomValue(inputValAtom)
+  const setValue = useSetAtom(inputValAtom)
+  const id = useAtomValue(inputIdAtom)
+  const isNotes = useAtomValue(inputIsNotesAtom)
+
+  const { mutate } = api.plans.update.useMutation({
+    onSuccess: () => {
+      void ctx.plans.get.invalidate({ userId: userId })
+    },
+  })
+
+  const { mutate: mutateNotes } = api.plans.updateNotes.useMutation({
+    onSuccess: () => {
+      void ctx.plans.get.invalidate({ userId: userId })
+    },
+  })
+  return (
+    <Transition
+      appear
+      show={isOpen}
+      as={Fragment}
+    >
+      <Dialog
+        as='div'
+        className='relative z-10'
+        onClose={() => setIsOpen(true)}
+      >
+        <Transition.Child
+          as={Fragment}
+          enter='ease-out duration-300'
+          enterFrom='opacity-0'
+          enterTo='opacity-100'
+          leave='ease-in duration-200'
+          leaveFrom='opacity-100'
+          leaveTo='opacity-0'
+        >
+          <div className='fixed inset-0 bg-black/50' />
+        </Transition.Child>
+
+        <div className='fixed inset-0 overflow-y-auto text-gray-200'>
+          <div className='flex min-h-full items-center justify-center p-4 text-center'>
+            <Transition.Child
+              as={Fragment}
+              enter='ease-out duration-300'
+              enterFrom='opacity-0 scale-95'
+              enterTo='opacity-100 scale-100'
+              leave='ease-in duration-200'
+              leaveFrom='opacity-100 scale-100'
+              leaveTo='opacity-0 scale-95'
+            >
+              <Dialog.Panel className='w-full max-w-md transform overflow-visible rounded-2xl bg-gray-900 p-6 text-left align-middle transition-all'>
+                <Input
+                  className='bg-gray-900'
+                  value={value}
+                  onChange={(e) => {
+                    setValue(e.target.value)
+                  }}
+                />
+                <div className='mt-4 flex justify-center gap-2'>
+                  <Button
+                    onClick={() => {
+                      if (!value) return
+                      if (isNotes) {
+                        mutateNotes({ id: id, notes: value })
+                      } else {
+                        mutate({ id: id, value: value })
+                      }
+                      setIsOpen(false)
+                    }}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setIsOpen(false)
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition>
+  )
+}
+
+const LiftPanel = ({ lift }: { lift: string }) => {
+  const ctx = api.useContext()
+  const userId = useAtomValue(userIdAtom)
+  const isAdmin = useAtomValue(isAdminAtom)
+
+  const setInputId = useSetAtom(inputIdAtom)
+  const setInputVal = useSetAtom(inputValAtom)
+  const setInputIsOpen = useSetAtom(inputIsOpenAtom)
+  const setInputIsNotes = useSetAtom(inputIsNotesAtom)
+
   const { data: plan } = api.plans.get.useQuery({
     userId: userId,
   })
+
+  const { mutate: deleteWarmup } = api.plans.deleteValue.useMutation({
+    onSuccess: () => {
+      void ctx.plans.get.invalidate({ userId: userId })
+    },
+  })
+
   const { mutate: completeField } = api.plans.complete.useMutation({
     onMutate: async (newData) => {
       await ctx.plans.get.cancel({ userId: userId })
@@ -242,6 +391,8 @@ const LiftPanel = ({ lift, userId }: { lift: string; userId: string }) => {
     },
   })
 
+  console.log('plan', plan)
+
   if (!plan) return null
   return (
     <Tab.Panel>
@@ -251,7 +402,7 @@ const LiftPanel = ({ lift, userId }: { lift: string; userId: string }) => {
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <div
               className={classNames(
-                'grid grid-cols-7 items-center py-2 font-semibold',
+                'relative grid grid-cols-7 items-center py-2 font-semibold',
                 plan.value?.find((v) => v.name === `${lift}w${i}`)?.value === ''
                   ? 'hidden'
                   : '',
@@ -262,18 +413,53 @@ const LiftPanel = ({ lift, userId }: { lift: string; userId: string }) => {
               key={i}
             >
               <div className=''>{i}.</div>
-              <div className='col-span-2 place-self-start'>
+              <div
+                className={`col-span-2 place-self-start ${
+                  isAdmin ? 'cursor-pointer' : ''
+                }`}
+                onClick={() => {
+                  if (!isAdmin) return
+                  setInputIsNotes(false)
+                  setInputId(
+                    plan.value?.find((v) => v.name === `${lift}w${i}`)?.id ||
+                      '',
+                  )
+                  setInputVal(
+                    plan.value?.find((v) => v.name === `${lift}w${i}`)?.value ||
+                      '',
+                  )
+                  setInputIsOpen(true)
+                }}
+              >
                 {plan.value?.find((v) => v.name === `${lift}w${i}`)?.value}kg
               </div>
               <div className='place-self-center'>
                 <XMarkIcon className='h-7 w-7' />
               </div>
-              <div className='col-span-2 place-self-center'>
+              <div
+                className={`col-span-2 place-self-start ${
+                  isAdmin ? 'cursor-pointer px-4' : ''
+                }`}
+                onClick={() => {
+                  if (!isAdmin) return
+                  setInputIsNotes(true)
+                  setInputId(
+                    plan.value?.find((v) => v.name === `${lift}w${i}`)?.id ||
+                      '',
+                  )
+                  setInputVal(
+                    plan.value?.find((v) => v.name === `${lift}w${i}`)?.notes ||
+                      '',
+                  )
+                  setInputIsOpen(true)
+                }}
+              >
                 {plan.value?.find((v) => v.name === `${lift}w${i}`)?.notes}
               </div>
               <div
                 className='place-self-end'
                 onClick={() => {
+                  if (isAdmin) return
                   completeField({
                     id:
                       plan.value?.find((v) => v.name === `${lift}w${i}`)?.id ||
@@ -284,10 +470,34 @@ const LiftPanel = ({ lift, userId }: { lift: string; userId: string }) => {
                   })
                 }}
               >
-                <CheckCircle className='h-6 w-6' />
+                {!isAdmin && <CheckCircle className='h-6 w-6' />}
               </div>
+              {isAdmin && (
+                <div className='absolute right-0 top-3'>
+                  <XCircle
+                    className='h-6 w-6 cursor-pointer hover:text-red-500'
+                    onClick={() => {
+                      deleteWarmup({
+                        id:
+                          plan.value?.find((v) => v.name === `${lift}w${i}`)
+                            ?.id || '',
+                      })
+                    }}
+                  />
+                </div>
+              )}
             </div>
           ))}
+          {isAdmin && (
+            <div className='flex w-full justify-center py-2'>
+              <PlusCircleIcon
+                className='h-8 w-8 border-t-0 text-gray-200 cursor-pointer hover:text-yellow-500'
+                onClick={() => {
+                  console.log('add warmup')
+                }}
+              />
+            </div>
+          )}
         </div>
         <div className='flex flex-col gap-6'>
           <h2 className='text-3xl font-bold '>Attempts</h2>
@@ -296,7 +506,6 @@ const LiftPanel = ({ lift, userId }: { lift: string; userId: string }) => {
               <AttemptPanel
                 key={i}
                 lift={lift}
-                userId={userId}
                 round={i}
               />
             ))}
@@ -333,7 +542,18 @@ const CompPlan = ({
     userId: userId,
   })
 
-  console.log('plan', plan)
+  const setUserId = useSetAtom(userIdAtom)
+  const setAdmin = useSetAtom(isAdminAtom)
+
+  const inputId = useAtomValue(inputIdAtom)
+  const inputVal = useAtomValue(inputValAtom)
+  const inputIsOpen = useAtomValue(inputIsOpenAtom)
+  const setModalIsOpen = useSetAtom(inputIsOpenAtom)
+
+  useEffect(() => {
+    setUserId(userId)
+    setAdmin(isAdmin)
+  }, [userId, isAdmin])
 
   if (planLoading) return <LoadingPage />
   if (!plan) return null
@@ -347,21 +567,16 @@ const CompPlan = ({
             <TabWrapper title='Deadlift' />
           </Tab.List>
           <Tab.Panels className='w-full px-4 py-2 '>
-            <LiftPanel
-              lift='s'
-              userId={userId}
-            />
-            <LiftPanel
-              lift='b'
-              userId={userId}
-            />
-            <LiftPanel
-              lift='d'
-              userId={userId}
-            />
+            <LiftPanel lift='s' />
+            <LiftPanel lift='b' />
+            <LiftPanel lift='d' />
           </Tab.Panels>
         </div>
       </Tab.Group>
+      <ModalWrapper
+        isOpen={inputIsOpen}
+        setIsOpen={setModalIsOpen}
+      />
     </div>
   )
 }

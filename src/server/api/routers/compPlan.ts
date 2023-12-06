@@ -292,6 +292,56 @@ export const compPlanRouter = createTRPCRouter({
       })
       return value
     }),
+  update: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        value: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const value = await ctx.prisma.compPlanValue.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          value: input.value,
+        },
+      })
+      return value
+    }),
+  deleteValue: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const value = await ctx.prisma.compPlanValue.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          value: '',
+          notes: '',
+        },
+      })
+      return value
+    }),
+  updateNotes: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        notes: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const value = await ctx.prisma.compPlanValue.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          notes: input.notes,
+        },
+      })
+      return value
+    }),
   create: privateProcedure
     .input(
       z.object({
