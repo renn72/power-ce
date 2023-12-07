@@ -668,6 +668,60 @@ const TabWrapper = ({ title }: { title: string }) => (
     {title}
   </Tab>
 )
+
+const calculateOldWilks = (
+  bodyWeight: number,
+  weightLifted: number,
+  isFemale: boolean,
+) => {
+  const maleCoeff = [
+    -216.0475144, 16.2606339, -0.002388645, -0.00113732, 7.01863e-6, -1.291e-8,
+  ]
+  const femaleCoeff = [
+    594.31747775582, -27.23842536447, 0.82112226871, -0.00930733913,
+    4.731582e-5, -9.054e-8,
+  ]
+  let denominator = isFemale ? femaleCoeff[0] : maleCoeff[0]
+  let coeff = isFemale ? femaleCoeff : maleCoeff
+  let minbw = isFemale ? 26.51 : 40
+  let maxbw = isFemale ? 154.53 : 201.9
+  let bw = Math.min(Math.max(bodyWeight, minbw), maxbw)
+
+  for (let i = 1; i < coeff.length; i++) {
+    denominator += coeff[i] * Math.pow(bw, i)
+  }
+
+  let score = (500 / denominator) * weightLifted
+  return score.toFixed(2)
+}
+
+const calculateNewWilks = (
+  bodyWeight: number,
+  weightLifted: number,
+  isFemale: boolean,
+) => {
+  const maleCoeff = [
+    47.4617885411949, 8.47206137941125, 0.073694103462609, -1.39583381094385e-3,
+    7.07665973070743e-6, -1.20804336482315e-8,
+  ]
+  const femaleCoeff = [
+    -125.425539779509, 13.7121941940668, -0.0330725063103405,
+    -1.0504000506583e-3, 9.38773881462799e-6, -2.3334613884954e-8,
+  ]
+  let denominator = isFemale ? femaleCoeff[0] : maleCoeff[0]
+  let coeff = isFemale ? femaleCoeff : maleCoeff
+  let minbw = 40
+  let maxbw = isFemale ? 150.95 : 200.95
+  let bw = Math.min(Math.max(bodyWeight, minbw), maxbw)
+
+  for (let i = 1; i < coeff.length; i++) {
+    denominator += coeff[i] * Math.pow(bw, i)
+  }
+
+  let score = (600 / denominator) * weightLifted
+  return score.toFixed(2)
+}
+
 const calculateDOTS = (
   bodyWeight: number,
   weightLifted: number,
@@ -723,21 +777,9 @@ const CompPlan = ({
 
   const total = squat + bench + deadlift
 
-  const totalPound = total * 2.20462
-  const weightPound = weight * 2.20462
-
-  // calculate powerlifting DOTS
-
-  const a = -0.000001093
-  const b = 0.0007391293
-  const c = -0.1918759221
-  const d = 24.0900756
-  const e = -307.75076
-
-  const t = total
-  const w = weight
-
   const DOTS = calculateDOTS(weight, total, isFemale)
+  const oldWILKS = calculateOldWilks(weight, total, isFemale)
+  const newWILKS = calculateNewWilks(weight, total, isFemale)
 
   const setUserId = useSetAtom(userIdAtom)
   const setAdmin = useSetAtom(isAdminAtom)
@@ -755,7 +797,7 @@ const CompPlan = ({
   return (
     <div className='my-8 text-lg'>
       {weight ? (
-        <div>
+        <div className='px-6 flex gap-1 font-semibold'>
           {gender === null || gender === '' ? (
             <div>
               <div>missing gender</div>
@@ -764,6 +806,8 @@ const CompPlan = ({
             <div>
               <div>Total: {total}kg</div>
               <div>Dots: {DOTS}</div>
+              <div>Old WILKS: {oldWILKS}</div>
+              <div>New WILKS: {newWILKS}</div>
             </div>
           )}
         </div>
