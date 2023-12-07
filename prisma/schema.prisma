@@ -584,6 +584,7 @@ model CompPlanValue {
   value String
 
   notes String?
+  time  String?
 
   isGoodLift Boolean?
   isComplete Boolean @default(false)

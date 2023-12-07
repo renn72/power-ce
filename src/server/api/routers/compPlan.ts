@@ -180,7 +180,7 @@ const lifts = (weight: number) => {
     roundLift(weight, 1.02) === roundLift(weight, 1) ? roundLift(weight, 1.02) + 2.5 : roundLift(weight, 1.02),
   ]
 }
-const warmup = (opener: number) => {
+const warmup = (opener: number, lift : string) => {
   const tableTarget = table.reduce((acc, curr, idx, array) => {
     if (array[idx + 1]) {
       if (curr[0] && opener >= curr?.[0] && opener < array[idx + 1]?.[0]) {
@@ -191,14 +191,19 @@ const warmup = (opener: number) => {
   }, table[table.length - 1])
 
   const reps: string[] = []
+  const times: string[] = []
+
+  const time = lift === 's' ? '09' : lift === 'b' ? '12' : '14'
 
   tableTarget?.slice(1).forEach((_, idx) => {
     const round = idx + 1
 
     if (round === 1) {
       opener < 91 ? reps.push('5-7') : reps.push('8-10')
+      times.push(time + '00')
     }
     if (round === 2) {
+      times.push(time + '05')
       if (opener < 91) {
         reps.push('3-5')
         return
@@ -214,6 +219,7 @@ const warmup = (opener: number) => {
       reps.push('8')
     }
     if (round === 3) {
+      times.push(time + '10')
       if (opener < 91) {
         reps.push('1')
         return
@@ -229,6 +235,7 @@ const warmup = (opener: number) => {
       reps.push('5')
     }
     if (round === 4) {
+      times.push(time + '15')
       if (opener < 114) {
         reps.push('1')
         return
@@ -240,6 +247,7 @@ const warmup = (opener: number) => {
       reps.push('3')
     }
     if (round === 5) {
+      times.push(time + '20')
       if (opener < 157) {
         reps.push('1')
       } else {
@@ -247,18 +255,22 @@ const warmup = (opener: number) => {
       }
     }
     if (round === 6) {
+      times.push(time + '25')
       reps.push('1')
     }
     if (round === 7) {
+      times.push(time + '30')
       reps.push('1')
     }
     if (round === 8) {
+      times.push(time + '35')
       reps.push('1')
     }
   })
   return {
     weight: tableTarget?.slice(1) || [],
     reps: reps || [],
+    times: times || [],
   }
 }
 
@@ -342,6 +354,24 @@ export const compPlanRouter = createTRPCRouter({
       })
       return value
     }),
+  updateTime: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        time: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const value = await ctx.prisma.compPlanValue.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          time: input.time,
+        },
+      })
+      return value
+    }),
   create: privateProcedure
     .input(
       z.object({
@@ -359,9 +389,9 @@ export const compPlanRouter = createTRPCRouter({
       const squats = lifts(input.squat)
       const benches = lifts(input.bench)
       const deadlifts = lifts(input.deadlift)
-      const warmupSquats = warmup(squats[1] || 0)
-      const warmupBenches = warmup(benches[1] || 0)
-      const warmupDeadlifts = warmup(deadlifts[1] || 0)
+      const warmupSquats = warmup(squats[1] || 0, 's')
+      const warmupBenches = warmup(benches[1] || 0, 'b')
+      const warmupDeadlifts = warmup(deadlifts[1] || 0, 'd')
 
       await ctx.prisma.compPlan.deleteMany({
         where: {
@@ -383,7 +413,7 @@ export const compPlanRouter = createTRPCRouter({
                 },
                 {
                   name: 's12',
-                  value: squats[1]?.toString() || '',
+                  value: squats[0]?.toString() || '',
                 },
                 {
                   name: 's13',
@@ -489,121 +519,145 @@ export const compPlanRouter = createTRPCRouter({
                   name: 'sw1',
                   value: warmupSquats.weight[0]?.toString() || '',
                   notes: warmupSquats.reps[0],
+                  time: warmupSquats.times[0],
                 },
                 {
                   name: 'sw2',
                   value: warmupSquats.weight[1]?.toString() || '',
                   notes: warmupSquats.reps[1],
+                  time: warmupSquats.times[1],
                 },
                 {
                   name: 'sw3',
                   value: warmupSquats.weight[2]?.toString() || '',
                   notes: warmupSquats.reps[2],
+                  time: warmupSquats.times[2],
                 },
                 {
                   name: 'sw4',
                   value: warmupSquats.weight[3]?.toString() || '',
                   notes: warmupSquats.reps[3],
+                  time: warmupSquats.times[3],
                 },
                 {
                   name: 'sw5',
                   value: warmupSquats.weight[4]?.toString() || '',
                   notes: warmupSquats.reps[4],
+                  time: warmupSquats.times[4],
                 },
                 {
                   name: 'sw6',
                   value: warmupSquats.weight[5]?.toString() || '',
                   notes: warmupSquats.reps[5],
+                  time: warmupSquats.times[5],
                 },
                 {
                   name: 'sw7',
                   value: warmupSquats.weight[6]?.toString() || '',
                   notes: warmupSquats.reps[6],
+                  time: warmupSquats.times[6],
                 },
                 {
                   name: 'sw8',
                   value: warmupSquats.weight[7]?.toString() || '',
                   notes: warmupSquats.reps[7],
+                  time: warmupSquats.times[7],
                 },
                 {
                   name: 'bw1',
                   value: warmupBenches.weight[0]?.toString() || '',
                   notes: warmupBenches.reps[0],
+                  time: warmupBenches.times[0],
                 },
                 {
                   name: 'bw2',
                   value: warmupBenches.weight[1]?.toString() || '',
                   notes: warmupBenches.reps[1],
+                  time: warmupBenches.times[1],
                 },
                 {
                   name: 'bw3',
                   value: warmupBenches.weight[2]?.toString() || '',
                   notes: warmupBenches.reps[2],
+                  time: warmupBenches.times[2],
                 },
                 {
                   name: 'bw4',
                   value: warmupBenches.weight[3]?.toString() || '',
                   notes: warmupBenches.reps[3],
+                  time: warmupBenches.times[3],
                 },
                 {
                   name: 'bw5',
                   value: warmupBenches.weight[4]?.toString() || '',
                   notes: warmupBenches.reps[4],
+                  time: warmupBenches.times[4],
                 },
                 {
                   name: 'bw6',
                   value: warmupBenches.weight[5]?.toString() || '',
                   notes: warmupBenches.reps[5],
+                  time: warmupBenches.times[5],
                 },
                 {
                   name: 'bw7',
                   value: warmupBenches.weight[6]?.toString() || '',
                   notes: warmupBenches.reps[6],
+                  time: warmupBenches.times[6],
                 },
                 {
                   name: 'bw8',
                   value: warmupBenches.weight[7]?.toString() || '',
                   notes: warmupBenches.reps[7],
+                  time: warmupBenches.times[7],
                 },
                 {
                   name: 'dw1',
                   value: warmupDeadlifts.weight[0]?.toString() || '',
                   notes: warmupDeadlifts.reps[0],
+                  time: warmupDeadlifts.times[0],
                 },
                 {
                   name: 'dw2',
                   value: warmupDeadlifts.weight[1]?.toString() || '',
                   notes: warmupDeadlifts.reps[1],
+                  time: warmupDeadlifts.times[1],
                 },
                 {
                   name: 'dw3',
                   value: warmupDeadlifts.weight[2]?.toString() || '',
                   notes: warmupDeadlifts.reps[2],
+                  time: warmupDeadlifts.times[2],
                 },
                 {
                   name: 'dw4',
                   value: warmupDeadlifts.weight[3]?.toString() || '',
                   notes: warmupDeadlifts.reps[3],
+                  time: warmupDeadlifts.times[3],
                 },
                 {
                   name: 'dw5',
                   value: warmupDeadlifts.weight[4]?.toString() || '',
                   notes: warmupDeadlifts.reps[4],
+                  time: warmupDeadlifts.times[4],
                 },
                 {
                   name: 'dw6',
                   value: warmupDeadlifts.weight[5]?.toString() || '',
                   notes: warmupDeadlifts.reps[5],
+                  time: warmupDeadlifts.times[5],
                 },
                 {
                   name: 'dw7',
                   value: warmupDeadlifts.weight[6]?.toString() || '',
                   notes: warmupDeadlifts.reps[6],
+                  time: warmupDeadlifts.times[6],
                 },
                 {
                   name: 'dw8',
                   value: warmupDeadlifts.weight[7]?.toString() || '',
                   notes: warmupDeadlifts.reps[7],
+                  time: warmupDeadlifts.times[7],
                 },
               ],
             },

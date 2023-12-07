@@ -7,6 +7,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { toast } from 'react-hot-toast'
 
 const userIdAtom = atom('')
 const isAdminAtom = atom(false)
@@ -15,6 +16,10 @@ const inputIdAtom = atom('')
 const inputValAtom = atom('')
 const inputIsOpenAtom = atom(false)
 const inputIsNotesAtom = atom(false)
+
+const timeAtom1 = atom('')
+const timeAtom2 = atom('')
+const isTimeOpenAtom = atom(false)
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -236,6 +241,107 @@ const AttemptPanel = ({ lift, round }: { lift: string; round: number }) => {
   )
 }
 
+const TimeWrapper = () => {
+  const ctx = api.useContext()
+
+  const userId = useAtomValue(userIdAtom)
+  const isOpen = useAtomValue(isTimeOpenAtom)
+  const setIsOpen = useSetAtom(isTimeOpenAtom)
+  const id = useAtomValue(inputIdAtom)
+
+  const [value1, setValue1] = useAtom(timeAtom1)
+  const [value2, setValue2] = useAtom(timeAtom2)
+
+  const { mutate } = api.plans.updateTime.useMutation({
+    onSuccess: () => {
+      void ctx.plans.get.invalidate({ userId: userId })
+    },
+  })
+
+  return (
+    <Transition
+      appear
+      show={isOpen}
+      as={Fragment}
+    >
+      <Dialog
+        as='div'
+        className='relative z-10'
+        onClose={() => setIsOpen(true)}
+      >
+        <Transition.Child
+          as={Fragment}
+          enter='ease-out duration-300'
+          enterFrom='opacity-0'
+          enterTo='opacity-100'
+          leave='ease-in duration-200'
+          leaveFrom='opacity-100'
+          leaveTo='opacity-0'
+        >
+          <div className='fixed inset-0 bg-black/50' />
+        </Transition.Child>
+
+        <div className='fixed inset-0 overflow-y-auto text-gray-200'>
+          <div className='flex min-h-full items-center justify-center p-4 text-center'>
+            <Transition.Child
+              as={Fragment}
+              enter='ease-out duration-300'
+              enterFrom='opacity-0 scale-95'
+              enterTo='opacity-100 scale-100'
+              leave='ease-in duration-200'
+              leaveFrom='opacity-100 scale-100'
+              leaveTo='opacity-0 scale-95'
+            >
+              <Dialog.Panel className='w-full max-w-md transform overflow-visible rounded-2xl bg-gray-900 p-6 text-left align-middle transition-all'>
+                <div className='flex justify-center text-xl'>
+                  <Input
+                    className='w-12 bg-gray-900 text-xl'
+                    value={value1}
+                    onChange={(e) => {
+                      if (e.target.value.length > 2) return
+                      setValue1(e.target.value)
+                    }}
+                  />
+                  <span className='flex h-10 items-center py-2 text-xl'>:</span>
+                  <Input
+                    className='w-12 bg-gray-900 text-xl'
+                    value={value2}
+                    onChange={(e) => {
+                      if (e.target.value.length > 2) return
+                      setValue2(e.target.value)
+                    }}
+                  />
+                </div>
+                <div className='mt-4 flex justify-center gap-2'>
+                  <Button
+                    onClick={() => {
+                      if (value1.length == 1) {
+                        mutate({ id: id, time: '0' + value1 + value2 })
+                      } else {
+                        mutate({ id: id, time: value1 + value2 })
+                      }
+                      setIsOpen(false)
+                    }}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setIsOpen(false)
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition>
+  )
+}
+
 const ModalWrapper = ({
   isOpen,
   setIsOpen,
@@ -345,6 +451,10 @@ const LiftPanel = ({ lift }: { lift: string }) => {
   const setInputIsOpen = useSetAtom(inputIsOpenAtom)
   const setInputIsNotes = useSetAtom(inputIsNotesAtom)
 
+  const setIsTimeOpen = useSetAtom(isTimeOpenAtom)
+  const setValue1 = useSetAtom(timeAtom1)
+  const setValue2 = useSetAtom(timeAtom2)
+
   const { data: plan } = api.plans.get.useQuery({
     userId: userId,
   })
@@ -391,128 +501,156 @@ const LiftPanel = ({ lift }: { lift: string }) => {
     },
   })
 
-  console.log('plan', plan)
-
   if (!plan) return null
   return (
-    <Tab.Panel>
-      <div className='flex flex-col gap-8'>
-        <h2 className='text-3xl font-bold '>Warmup</h2>
-        <div className='flex flex-col divide-y divide-dashed divide-gray-600 rounded-xl border border-gray-800 p-4 text-xl'>
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div
-              className={classNames(
-                'relative grid grid-cols-7 items-center py-2 font-semibold',
-                plan.value?.find((v) => v.name === `${lift}w${i}`)?.value === ''
-                  ? 'hidden'
-                  : '',
-                plan.value?.find((v) => v.name === `${lift}w${i}`)?.isComplete
-                  ? 'text-yellow-500'
-                  : '',
-              )}
-              key={i}
-            >
-              <div className=''>{i}.</div>
+    <div>
+      <Tab.Panel>
+        <div className='flex flex-col gap-8'>
+          <h2 className='text-3xl font-bold '>Warmup</h2>
+          <div className='flex flex-col divide-y divide-dashed divide-gray-600 rounded-xl border border-gray-800 p-4 text-xl'>
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
               <div
-                className={`col-span-2 place-self-start ${
-                  isAdmin ? 'cursor-pointer' : ''
-                }`}
-                onClick={() => {
-                  if (!isAdmin) return
-                  setInputIsNotes(false)
-                  setInputId(
-                    plan.value?.find((v) => v.name === `${lift}w${i}`)?.id ||
-                      '',
-                  )
-                  setInputVal(
-                    plan.value?.find((v) => v.name === `${lift}w${i}`)?.value ||
-                      '',
-                  )
-                  setInputIsOpen(true)
-                }}
-              >
-                {plan.value?.find((v) => v.name === `${lift}w${i}`)?.value}kg
-              </div>
-              <div className='place-self-center'>
-                <XMarkIcon className='h-7 w-7' />
-              </div>
-              <div
-                className={`col-span-2 place-self-start ${
-                  isAdmin ? 'cursor-pointer px-4' : ''
-                }`}
-                onClick={() => {
-                  if (!isAdmin) return
-                  setInputIsNotes(true)
-                  setInputId(
-                    plan.value?.find((v) => v.name === `${lift}w${i}`)?.id ||
-                      '',
-                  )
-                  setInputVal(
-                    plan.value?.find((v) => v.name === `${lift}w${i}`)?.notes ||
-                      '',
-                  )
-                  setInputIsOpen(true)
-                }}
-              >
-                {plan.value?.find((v) => v.name === `${lift}w${i}`)?.notes}
-              </div>
-              <div
-                className='place-self-end'
-                onClick={() => {
-                  if (isAdmin) return
-                  completeField({
-                    id:
-                      plan.value?.find((v) => v.name === `${lift}w${i}`)?.id ||
-                      '',
-                    value:
-                      !plan.value?.find((v) => v.name === `${lift}w${i}`)
-                        ?.isComplete || false,
-                  })
-                }}
-              >
-                {!isAdmin && <CheckCircle className='h-6 w-6' />}
-              </div>
-              {isAdmin && (
-                <div className='absolute right-0 top-3'>
-                  <XCircle
-                    className='h-6 w-6 cursor-pointer hover:text-red-500'
-                    onClick={() => {
-                      deleteWarmup({
-                        id:
-                          plan.value?.find((v) => v.name === `${lift}w${i}`)
-                            ?.id || '',
-                      })
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-          ))}
-          {isAdmin && (
-            <div className='flex w-full justify-center py-2'>
-              <PlusCircleIcon
-                className='h-8 w-8 border-t-0 text-gray-200 cursor-pointer hover:text-yellow-500'
-                onClick={() => {
-                  console.log('add warmup')
-                }}
-              />
-            </div>
-          )}
-        </div>
-        <div className='flex flex-col gap-6'>
-          <h2 className='text-3xl font-bold '>Attempts</h2>
-          <div className='flex flex-col divide-y divide-dashed divide-gray-400 rounded-xl border border-gray-800 p-4'>
-            {[1, 2, 3].map((i) => (
-              <AttemptPanel
+                className={classNames(
+                  'relative grid grid-cols-8 items-center py-2 font-semibold',
+                  plan.value?.find((v) => v.name === `${lift}w${i}`)?.value ===
+                    ''
+                    ? 'hidden'
+                    : '',
+                  plan.value?.find((v) => v.name === `${lift}w${i}`)?.isComplete
+                    ? 'text-yellow-500'
+                    : '',
+                )}
                 key={i}
-                lift={lift}
-                round={i}
-              />
+              >
+                <div
+                  className='col-span-2 cursor-pointer'
+                  onClick={() => {
+                    setValue1(
+                      plan.value
+                        ?.find((v) => v.name === `${lift}w${i}`)
+                        ?.time?.slice(0, 2) || '',
+                    )
+                    setValue2(
+                      plan.value
+                        ?.find((v) => v.name === `${lift}w${i}`)
+                        ?.time?.slice(2) || '',
+                    )
+                    setInputId(
+                      plan.value?.find((v) => v.name === `${lift}w${i}`)?.id ||
+                        '',
+                    )
+                    setIsTimeOpen(true)
+                  }}
+                >
+                  {plan.value
+                    ?.find((v) => v.name === `${lift}w${i}`)
+                    ?.time?.slice(0, 2)}
+                  :
+                  {plan.value
+                    ?.find((v) => v.name === `${lift}w${i}`)
+                    ?.time?.slice(2)}
+                </div>
+                <div
+                  className={`col-span-2 place-self-center ${
+                    isAdmin ? 'cursor-pointer' : ''
+                  }`}
+                  onClick={() => {
+                    if (!isAdmin) return
+                    setInputIsNotes(false)
+                    setInputId(
+                      plan.value?.find((v) => v.name === `${lift}w${i}`)?.id ||
+                        '',
+                    )
+                    setInputVal(
+                      plan.value?.find((v) => v.name === `${lift}w${i}`)
+                        ?.value || '',
+                    )
+                    setInputIsOpen(true)
+                  }}
+                >
+                  {plan.value?.find((v) => v.name === `${lift}w${i}`)?.value}kg
+                </div>
+                <div className='place-self-end'>
+                  <XMarkIcon className='h-7 w-7' />
+                </div>
+                <div
+                  className={`col-span-2 place-self-center ${
+                    isAdmin ? 'cursor-pointer px-4' : ''
+                  }`}
+                  onClick={() => {
+                    if (!isAdmin) return
+                    setInputIsNotes(true)
+                    setInputId(
+                      plan.value?.find((v) => v.name === `${lift}w${i}`)?.id ||
+                        '',
+                    )
+                    setInputVal(
+                      plan.value?.find((v) => v.name === `${lift}w${i}`)
+                        ?.notes || '',
+                    )
+                    setInputIsOpen(true)
+                  }}
+                >
+                  {plan.value?.find((v) => v.name === `${lift}w${i}`)?.notes}
+                </div>
+                <div
+                  className='place-self-end'
+                  onClick={() => {
+                    if (isAdmin) return
+                    completeField({
+                      id:
+                        plan.value?.find((v) => v.name === `${lift}w${i}`)
+                          ?.id || '',
+                      value:
+                        !plan.value?.find((v) => v.name === `${lift}w${i}`)
+                          ?.isComplete || false,
+                    })
+                  }}
+                >
+                  {!isAdmin && <CheckCircle className='h-6 w-6' />}
+                </div>
+                {isAdmin && (
+                  <div className='absolute right-0 top-3'>
+                    <XCircle
+                      className='h-6 w-6 cursor-pointer hover:text-red-500'
+                      onClick={() => {
+                        deleteWarmup({
+                          id:
+                            plan.value?.find((v) => v.name === `${lift}w${i}`)
+                              ?.id || '',
+                        })
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
             ))}
+            {isAdmin && false && (
+              <div className='flex w-full justify-center py-2'>
+                <PlusCircleIcon
+                  className='h-8 w-8 cursor-pointer border-t-0 text-gray-200 hover:text-yellow-500'
+                  onClick={() => {
+                    console.log('add warmup')
+                  }}
+                />
+              </div>
+            )}
+          </div>
+          <div className='flex flex-col gap-6'>
+            <h2 className='text-3xl font-bold '>Attempts</h2>
+            <div className='flex flex-col divide-y divide-dashed divide-gray-400 rounded-xl border border-gray-800 p-4'>
+              {[1, 2, 3].map((i) => (
+                <AttemptPanel
+                  key={i}
+                  lift={lift}
+                  round={i}
+                />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </Tab.Panel>
+      </Tab.Panel>
+    </div>
   )
 }
 
@@ -530,6 +668,32 @@ const TabWrapper = ({ title }: { title: string }) => (
     {title}
   </Tab>
 )
+const calculateDOTS = (
+  bodyWeight: number,
+  weightLifted: number,
+  isFemale: boolean,
+) => {
+  const maleCoeff = [
+    -307.75076, 24.0900756, -0.1918759221, 0.0007391293, -0.000001093,
+  ]
+
+  const femaleCoeff = [
+    -57.96288, 13.6175032, -0.1126655495, 0.0005158568, -0.0000010706,
+  ]
+
+  let denominator = isFemale ? femaleCoeff[0] : maleCoeff[0]
+  if (!denominator) return '0.00'
+  const coeff = isFemale ? femaleCoeff : maleCoeff
+  const maxbw = isFemale ? 150 : 210
+  const bw = Math.min(Math.max(bodyWeight, 40), maxbw)
+
+  for (let i = 1; i < coeff.length; i++) {
+    denominator += coeff[i] * Math.pow(bw, i)
+  }
+
+  const score = (500 / denominator) * weightLifted
+  return score.toFixed(2)
+}
 
 const CompPlan = ({
   userId,
@@ -542,23 +706,72 @@ const CompPlan = ({
     userId: userId,
   })
 
+  const { data: settings } = api.settings.get.useQuery({
+    userId: userId,
+  })
+
+  console.log(settings)
+
+  const gender = settings?.gender
+  const isFemale = gender === 'female' ? true : false
+  const weight = Number(settings?.weight)
+  const squat = Number(plan?.value?.find((v) => v.name === 's32')?.value || '')
+  const bench = Number(plan?.value?.find((v) => v.name === 'b32')?.value || '')
+  const deadlift = Number(
+    plan?.value?.find((v) => v.name === 'd32')?.value || '',
+  )
+
+  const total = squat + bench + deadlift
+
+  const totalPound = total * 2.20462
+  const weightPound = weight * 2.20462
+
+  // calculate powerlifting DOTS
+
+  const a = -0.000001093
+  const b = 0.0007391293
+  const c = -0.1918759221
+  const d = 24.0900756
+  const e = -307.75076
+
+  const t = total
+  const w = weight
+
+  const DOTS = calculateDOTS(weight, total, isFemale)
+
   const setUserId = useSetAtom(userIdAtom)
   const setAdmin = useSetAtom(isAdminAtom)
 
-  const inputId = useAtomValue(inputIdAtom)
-  const inputVal = useAtomValue(inputValAtom)
   const inputIsOpen = useAtomValue(inputIsOpenAtom)
   const setModalIsOpen = useSetAtom(inputIsOpenAtom)
 
   useEffect(() => {
     setUserId(userId)
     setAdmin(isAdmin)
-  }, [userId, isAdmin])
+  }, [userId, isAdmin, setUserId, setAdmin])
 
   if (planLoading) return <LoadingPage />
   if (!plan) return null
   return (
     <div className='my-8 text-lg'>
+      {weight ? (
+        <div>
+          {gender === null || gender === '' ? (
+            <div>
+              <div>missing gender</div>
+            </div>
+          ) : (
+            <div>
+              <div>Total: {total}kg</div>
+              <div>Dots: {DOTS}</div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div>
+          <div>Add weight for user</div>
+        </div>
+      )}
       <Tab.Group defaultIndex={0}>
         <div className='flex w-full max-w-screen-md flex-col gap-4 lg:gap-16'>
           <Tab.List className='flex w-full justify-around text-2xl'>
@@ -577,6 +790,7 @@ const CompPlan = ({
         isOpen={inputIsOpen}
         setIsOpen={setModalIsOpen}
       />
+      <TimeWrapper />
     </div>
   )
 }
