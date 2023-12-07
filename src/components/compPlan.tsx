@@ -780,7 +780,7 @@ const CompPlan = ({
         true,
       )
     )
-      return Number(plan?.value?.find((v) => v.name === 's32')?.value || '')
+      return Number(plan?.value?.find((v) => v.name === 's12')?.value || '')
     return (
       squats?.reduce((acc, idx) => {
         if (!idx.isComplete) return acc
@@ -801,7 +801,7 @@ const CompPlan = ({
         true,
       )
     )
-      return Number(plan?.value?.find((v) => v.name === 'b32')?.value || '')
+      return Number(plan?.value?.find((v) => v.name === 'b12')?.value || '')
     return (
       benches?.reduce((acc, idx) => {
         if (!idx.isComplete) return acc
@@ -820,7 +820,7 @@ const CompPlan = ({
         true,
       )
     )
-      return Number(plan?.value?.find((v) => v.name === 'd32')?.value || '')
+      return Number(plan?.value?.find((v) => v.name === 'd12')?.value || '')
     return (
       deadlifts?.reduce((acc, idx) => {
         if (!idx.isComplete) return acc

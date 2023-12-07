@@ -120,9 +120,9 @@ input[type='number'] {
 }
 
 .text-3xxl {
-  font-size: 1.755rem; /* 30px */
+  font-size: 1.945rem; /* 30px */
   line-height: 2.25rem; /* 36px */
-  letter-spacing: -0.06em;
+  letter-spacing: -0.09em;
 }
 
 .shadow-me {
