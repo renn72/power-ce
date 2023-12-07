@@ -764,17 +764,75 @@ const CompPlan = ({
     userId: userId,
   })
 
-  console.log(settings)
+  console.log('plan', plan)
 
   const gender = settings?.gender
   const isFemale = gender === 'female' ? true : false
   const weight = Number(settings?.weight)
-  const squat = Number(plan?.value?.find((v) => v.name === 's32')?.value || '')
-  const bench = Number(plan?.value?.find((v) => v.name === 'b32')?.value || '')
-  const deadlift = Number(
-    plan?.value?.find((v) => v.name === 'd32')?.value || '',
-  )
-
+  const _squat = () => {
+    const squats = plan?.value?.filter(
+      (v) => v.name.includes('s') && !v.name.includes('sw'),
+    )
+    console.log('squats', squats)
+    if (
+      squats?.reduce(
+        (acc, idx) => (idx.isComplete && idx.isGoodLift ? false : acc),
+        true,
+      )
+    )
+      return Number(plan?.value?.find((v) => v.name === 's32')?.value || '')
+    return (
+      squats?.reduce((acc, idx) => {
+        if (!idx.isComplete) return acc
+        if (!idx.isGoodLift) return acc
+        if (Number(idx.value) > acc) return Number(idx.value)
+        return acc
+      }, 0) || 0
+    )
+  }
+  const _bench = () => {
+    const benches = plan?.value?.filter(
+      (v) => v.name.includes('b') && !v.name.includes('bw'),
+    )
+    console.log('benches', benches)
+    if (
+      benches?.reduce(
+        (acc, idx) => (idx.isComplete && idx.isGoodLift ? false : acc),
+        true,
+      )
+    )
+      return Number(plan?.value?.find((v) => v.name === 'b32')?.value || '')
+    return (
+      benches?.reduce((acc, idx) => {
+        if (!idx.isComplete) return acc
+        if (!idx.isGoodLift) return acc
+        if (Number(idx.value) > acc) return Number(idx.value)
+        return acc
+      }, 0) || 0
+    )
+  }
+  const _deadlift = () => {
+    const deadlifts = plan?.value?.filter((v) => v.name.includes('d'))
+    console.log('deadlifts', deadlifts)
+    if (
+      deadlifts?.reduce(
+        (acc, idx) => (idx.isComplete && idx.isGoodLift ? false : acc),
+        true,
+      )
+    )
+      return Number(plan?.value?.find((v) => v.name === 'd32')?.value || '')
+    return (
+      deadlifts?.reduce((acc, idx) => {
+        if (!idx.isComplete) return acc
+        if (!idx.isGoodLift) return acc
+        if (Number(idx.value) > acc) return Number(idx.value)
+        return acc
+      }, 0) || 0
+    )
+  }
+  const squat = _squat()
+  const bench = _bench()
+  const deadlift = _deadlift()
   const total = squat + bench + deadlift
 
   const DOTS = calculateDOTS(weight, total, isFemale)
@@ -797,7 +855,7 @@ const CompPlan = ({
   return (
     <div className='my-8 text-lg'>
       {weight ? (
-        <div className='px-6 flex gap-1 font-semibold'>
+        <div className='flex gap-1 px-6 font-semibold'>
           {gender === null || gender === '' ? (
             <div>
               <div>missing gender</div>
