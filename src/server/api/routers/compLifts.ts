@@ -130,11 +130,6 @@ export const compLiftsRouter = createTRPCRouter({
           userId: input.userId,
         },
       })
-      console.log('res', res)
-
-      console.log('data', data)
-
-      console.log('json', json)
 
       await Promise.all(
         json.map(async (e) => {
@@ -144,8 +139,6 @@ export const compLiftsRouter = createTRPCRouter({
           ) {
             return
           }
-
-          console.log('e', e)
 
           if (e.Name !== '') {
             await ctx.prisma.compLift.create({

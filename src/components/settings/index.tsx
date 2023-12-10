@@ -102,7 +102,7 @@ const Settings = ({ userId }: { userId: string }) => {
       <div className='mb-8 flex justify-center '>
         <div className='flex w-full flex-col gap-2 px-4 py-2'>
           <div className='flex items-center justify-between text-yellow-500'>
-            <div className='flex gap-1 text-2xl font-semibold text-yellow-500'>
+            <div className='flex hidden gap-1 text-2xl font-semibold text-yellow-500'>
               {user.firstName} {user.lastName}
             </div>
           </div>
@@ -142,20 +142,6 @@ const Settings = ({ userId }: { userId: string }) => {
             userId={userId}
             defaultValue={userSettings?.gender || ''}
           />
-          <div className='flex flex-col gap-0'>
-            <SquatOneRM
-              userId={userId}
-              defaultValue={userSettings?.squatOneRepMax || 0}
-            />
-            <BenchOneRM
-              userId={userId}
-              defaultValue={userSettings?.benchOneRepMax || 0}
-            />
-            <DeadOneRM
-              userId={userId}
-              defaultValue={userSettings?.deadliftOneRepMax || 0}
-            />
-          </div>
           {isAdmin && (
             <div className='w-fit rounded-xl border border-gray-600 px-8 py-4'>
               <RoleToggle
