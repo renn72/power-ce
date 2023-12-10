@@ -839,6 +839,14 @@ const CompPlan = ({
   const bench = _bench()
   const deadlift = _deadlift()
   const total = squat + bench + deadlift
+  const targetTotal =
+    Number(settings?.squatOneRepMax || 0) +
+    Number(settings?.benchOneRepMax || 0) +
+    Number(settings?.deadliftOneRepMax || 0)
+
+  const targetDOTS = calculateDOTS(weight, targetTotal, isFemale)
+  const targetOldWILKS = calculateOldWilks(weight, targetTotal, isFemale)
+  const targetNewWILKS = calculateNewWilks(weight, targetTotal, isFemale)
 
   const DOTS = calculateDOTS(weight, total, isFemale)
   const oldWILKS = calculateOldWilks(weight, total, isFemale)
@@ -859,7 +867,7 @@ const CompPlan = ({
   if (!plan) return null
   return (
     <div className='my-4 text-lg'>
-      <div className='flex flex-col gap-2 mb-4 max-w-xl'>
+      <div className='mb-4 flex max-w-xl flex-col gap-2'>
         <div className='flex justify-around gap-1'>
           <SquatOneRM
             defaultValue={settings?.squatOneRepMax || 0}
@@ -892,11 +900,21 @@ const CompPlan = ({
               <div>missing gender</div>
             </div>
           ) : (
-            <div>
-              <div>Total: {total}kg</div>
-              <div>Dots: {DOTS}</div>
-              <div>Old WILKS: {oldWILKS}</div>
-              <div>New WILKS: {newWILKS}</div>
+            <div className='flex justify-between text-base w-full font-medium'>
+              <div>
+                <div>Target</div>
+                <div>Total: {targetTotal}kg</div>
+                <div>Dots: {targetDOTS}</div>
+                <div>WILKS-1: {targetOldWILKS}</div>
+                <div>WILKS-2: {targetNewWILKS}</div>
+              </div>
+              <div>
+                <div>Running Totals</div>
+                <div>Total: {total}kg</div>
+                <div>Dots: {DOTS}</div>
+                <div>WILKS-1: {oldWILKS}</div>
+                <div>WILKS-2: {newWILKS}</div>
+              </div>
             </div>
           )}
         </div>
