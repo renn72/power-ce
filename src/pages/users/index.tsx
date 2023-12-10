@@ -594,16 +594,15 @@ const OpenPowerlifting = ({ userId }: { userId: string }) => {
     api.compLift.getCompLifts.useQuery({
       userId: userId,
     })
-  const { data: addressData, isLoading: addressDataLoading } =
+  const { data: addressData, } =
     api.compLift.getAddress.useQuery({
       userId: userId,
     })
 
   const { mutate: setOpenPowerliftingData } =
     api.compLift.setOpenPower.useMutation({
-      onSuccess: (data) => {
-        console.log(data)
-        void ctx.compLift.getCompLifts.invalidate()
+      onSuccess: (_data) => {
+        void ctx.compLift.getCompLifts.invalidate({ userId: userId })
         setIsOpen(false)
       },
     })
@@ -625,16 +624,18 @@ const OpenPowerlifting = ({ userId }: { userId: string }) => {
   return (
     <div className='flex flex-col gap-8'>
       <div className='flex gap-24'>
-        <div className='text-xl font-semibold capitalize text-yellow-500'>
+        <div className='text-xl p-2 font-semibold capitalize text-yellow-500'>
           Competitions
         </div>
-        <RefreshCcwIcon
-          className='h-6 w-6 cursor-pointer p-1 text-yellow-400 hover:animate-spin hover:text-yellow-500 '
+        <div
+          className='p-2'
           onClick={() => {
             setIsOpen(true)
             setOpenPowerliftingData({ userId: userId })
           }}
-        />
+        >
+          <RefreshCcwIcon className='cursor-pointer text-yellow-400 h-6 w-6 hover:animate-spin hover:text-yellow-500 ' />
+        </div>
       </div>
       <div className='flex max-w-[800px] flex-col gap-0 space-y-2 divide-y divide-dashed divide-gray-400'>
         {compLifts?.map((comp) => (
