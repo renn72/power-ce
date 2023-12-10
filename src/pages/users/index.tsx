@@ -966,24 +966,6 @@ const Users = () => {
 
               <Tab.Panel>
                 <div className='flex flex-col gap-4'>
-                  <div className='flex gap-4'>
-                    <SquatOneRM
-                      userId={userId}
-                      defaultValue={userInfo?.squatOneRepMax || 0}
-                    />
-                    <BenchOneRM
-                      userId={userId}
-                      defaultValue={userInfo?.benchOneRepMax || 0}
-                    />
-                    <DeadOneRM
-                      userId={userId}
-                      defaultValue={userInfo?.deadliftOneRepMax || 0}
-                    />
-                    <Weight
-                      userId={userId}
-                      defaultValue={userInfo?.weight || 0}
-                    />
-                  </div>
                   <Input
                     value={planName}
                     onChange={(e) => setPlanName(e.target.value)}

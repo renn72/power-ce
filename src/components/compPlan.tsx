@@ -8,6 +8,11 @@ import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { toast } from 'react-hot-toast'
+import SquatOneRM from './settings/squatOneRM'
+import BenchOneRM from './settings/benchOneRM'
+import DeadOneRM from './settings/deadOneRM'
+import Weight from './settings/weight'
+import Gender from './settings/gender'
 
 const userIdAtom = atom('')
 const isAdminAtom = atom(false)
@@ -853,7 +858,33 @@ const CompPlan = ({
   if (planLoading) return <LoadingPage />
   if (!plan) return null
   return (
-    <div className='my-8 text-lg'>
+    <div className='my-4 text-lg'>
+      <div className='flex flex-col gap-2 mb-4 max-w-xl'>
+        <div className='flex justify-around gap-1'>
+          <SquatOneRM
+            defaultValue={settings?.squatOneRepMax || 0}
+            userId={userId}
+          />
+          <BenchOneRM
+            defaultValue={settings?.benchOneRepMax || 0}
+            userId={userId}
+          />
+          <DeadOneRM
+            defaultValue={settings?.deadliftOneRepMax || 0}
+            userId={userId}
+          />
+        </div>
+        <div className='flex justify-around gap-1'>
+          <Weight
+            defaultValue={settings?.weight || 0}
+            userId={userId}
+          />
+          <Gender
+            defaultValue={settings?.gender || ''}
+            userId={userId}
+          />
+        </div>
+      </div>
       {weight ? (
         <div className='flex gap-1 px-6 font-semibold'>
           {gender === null || gender === '' ? (
