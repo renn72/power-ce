@@ -81,8 +81,8 @@ const Records = () => {
 
   return (
     <div className='flex flex-col gap-12 font-semibold text-3xxl w-fit'>
-      <div className='flex flex-col gap-1'>
-        <div className='flex w-fit items-baseline font-bold tracking-widest'>
+      <div className='flex flex-col'>
+        <div className='flex w-fit items-baseline font-bold tracking-widest border border-gray-800'>
           <CellWCHeading>WC</CellWCHeading>
           <CellHeading>SQUAT</CellHeading>
           <CellHeading>BENCH</CellHeading>
