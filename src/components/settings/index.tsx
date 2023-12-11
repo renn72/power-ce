@@ -92,8 +92,6 @@ const Settings = ({ userId }: { userId: string }) => {
       userId: userId,
     })
 
-  console.log({ user })
-
   if (settingsLoading) return <LoadingPage />
   if (!user) return null
 

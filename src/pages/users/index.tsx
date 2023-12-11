@@ -902,6 +902,7 @@ const Users = () => {
               <TabWrapper title='Program' />
               <TabWrapper title='History' />
               <TabWrapper title='One RM' />
+              <TabWrapper title='RPE Chart' />
               <TabWrapper title='Competitions' />
               <TabWrapper title='Comp Plan' />
               <TabWrapper title='Open Powerlifting' />
@@ -959,6 +960,10 @@ const Users = () => {
 
               <Tab.Panel>
                 <OneRMCard userId={userId} />
+              </Tab.Panel>
+
+              <Tab.Panel>
+                RPE Chart
               </Tab.Panel>
 
               <Tab.Panel>
