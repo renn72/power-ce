@@ -22,8 +22,8 @@ const Email = ({ name, userId }: { name: string; userId: string }) => {
         className='w-fit cursor-pointer pr-8'
         onClick={() => setIsOpen(true)}
       >
-        <h4 className='text-xl'>Email</h4>
-        <p className='h-8 text-base text-gray-400'>
+        <h4 className='text-2xl'>Email</h4>
+        <p className='h-8 text-xl text-gray-400'>
           {name == '' ? '...' : name}
         </p>
       </div>
@@ -32,8 +32,8 @@ const Email = ({ name, userId }: { name: string; userId: string }) => {
         setIsOpen={setIsOpen}
       >
         <Input
-          placeholder='Height'
-          className='bg-gray-900'
+          placeholder='email'
+          className='bg-gray-900 text-xl tracking-tighter'
           value={value}
           onChange={(e) => {
             setValue(e.target.value)
@@ -41,6 +41,7 @@ const Email = ({ name, userId }: { name: string; userId: string }) => {
         />
         <div className='mt-4 flex justify-center gap-2'>
           <Button
+            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28 font-bold'
             onClick={() => {
               if (!value) return
               mutate({ userId: userId, email: value })
@@ -50,6 +51,7 @@ const Email = ({ name, userId }: { name: string; userId: string }) => {
             Save
           </Button>
           <Button
+            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28 font-bold'
             onClick={() => {
               setIsOpen(false)
             }}
