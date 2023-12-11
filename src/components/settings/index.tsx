@@ -130,10 +130,6 @@ const Settings = ({ userId }: { userId: string }) => {
             userId={userId}
             defaultValue={userSettings?.targetWeight || 0}
           />
-          <WeightGoal
-            userId={userId}
-            defaultValue={userSettings?.weightGoal || ''}
-          />
           <DOB
             userId={userId}
             defaultValue={userSettings?.DOB || null}
