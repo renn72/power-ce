@@ -50,8 +50,8 @@ const Height = ({
         className='w-fit cursor-pointer pr-8'
         onClick={() => setIsOpen(true)}
       >
-        <h4 className='text-xl'>Height</h4>
-        <p className='h-8 text-base text-gray-400'>
+        <h4 className='text-2xl'>Height</h4>
+        <p className='h-8 text-xl text-gray-400'>
           {Number(height || null)}cm
         </p>
       </div>
@@ -62,7 +62,7 @@ const Height = ({
         <Input
           type='number'
           placeholder='Height'
-          className='bg-gray-900'
+          className='bg-gray-900 text-2xl'
           value={value}
           onChange={(e) => {
             setValue(+e.target.value)
@@ -70,6 +70,7 @@ const Height = ({
         />
         <div className='mt-4 flex justify-center gap-2'>
           <Button
+            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28 font-bold'
             onClick={() => {
               if (!value) return
               mutate({ userId: userId, height: value })
@@ -79,6 +80,7 @@ const Height = ({
             Save
           </Button>
           <Button
+            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28 font-bold'
             onClick={() => {
               setIsOpen(false)
             }}
