@@ -45,6 +45,7 @@ const FirstName = ({ name, userId }: { name: string; userId: string }) => {
         />
         <div className='mt-4 flex justify-center gap-2'>
           <Button
+            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28'
             onClick={() => {
               if (!value) return
               mutate({ userId: userId, firstName: value })
@@ -54,6 +55,7 @@ const FirstName = ({ name, userId }: { name: string; userId: string }) => {
             Save
           </Button>
           <Button
+            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28'
             onClick={() => {
               setIsOpen(false)
             }}
