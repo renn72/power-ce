@@ -22,7 +22,11 @@ import {
   XIcon,
 } from 'lucide-react'
 
-import { checkWeight, checkPercentWeight } from '~/utils/program-card/utils'
+import {
+  checkWeight,
+  checkPercentWeight,
+  calcRPEWeight,
+} from '~/utils/program-card/utils'
 import { useRouter } from 'next/router'
 import { Button } from '@/components/ui/button'
 
@@ -130,7 +134,15 @@ const ExerciseModal = ({
   })
 
   const [weights, setWeights] = useState<number | null>(() => {
-    if (exercise.weightType == 'onerm' && exercise?.onerm) {
+    if (exercise.weightType == 'weight' && exercise?.weightBottom) {
+      return +exercise?.weightBottom
+    }
+
+    return null
+  })
+
+  useEffect(() => {
+    if (exercise.weightType == 'onerm' && exercise?.onerm && userCoreOneRM) {
       const res = checkWeight(
         exercise.lift,
         +exercise?.onerm,
@@ -139,14 +151,20 @@ const ExerciseModal = ({
         day,
         userCoreOneRM,
       )
-      return res ? +res : 0
+      setWeights(res ? +res : 0)
     }
-    if (exercise.weightType == 'weight' && exercise?.weightBottom) {
-      return +exercise?.weightBottom
-    }
+    if (exercise.weightType == 'rpe' && exercise?.reps && userCoreOneRM) {
 
-    return null
-  })
+      const res = calcRPEWeight(
+        Number(exercise.targetRpe),
+        +exercise?.reps,
+        userCoreOneRM,
+        exercise.lift,
+        selectedEnergy,
+      )
+      setWeights(res ? +res : 0)
+    }
+  }, [setWeights, exercise, userCoreOneRM])
 
   const [e1rm, setE1rm] = useState<number[]>([0])
   const [notes, setNotes] = useState<string>(() => exercise?.field2 || '')
@@ -159,6 +177,7 @@ const ExerciseModal = ({
         console.log('id', newExercise)
         await utils.blocks.get.cancel({ id: programId })
         const previousProgram = utils.blocks.get.getData({ id: programId })
+        if (!previousProgram) return
 
         utils.blocks.get.setData(
           { id: programId },
@@ -199,6 +218,7 @@ const ExerciseModal = ({
       console.log('id', newDay)
       await utils.blocks.get.cancel({ id: programId })
       const previousProgram = utils.blocks.get.getData({ id: programId })
+      if (!previousProgram) return
 
       utils.blocks.get.setData(
         { id: programId },
@@ -233,6 +253,7 @@ const ExerciseModal = ({
       console.log('id', newSet)
       await utils.blocks.get.cancel({ id: programId })
       const previousProgram = utils.blocks.get.getData({ id: programId })
+      if (!previousProgram) return
 
       utils.blocks.get.setData(
         { id: programId },
@@ -290,6 +311,8 @@ const ExerciseModal = ({
       console.log('id', newSet)
       await utils.blocks.get.cancel({ id: programId })
       const previousProgram = utils.blocks.get.getData({ id: programId })
+
+      if (!previousProgram) return
 
       utils.blocks.get.setData(
         { id: programId },
@@ -368,13 +391,13 @@ const ExerciseModal = ({
     console.log('isDayDone', isDayDone)
 
     if (!day.isComplete && isDayDone) {
-      updateDayComplete({ id: day.id, isComplete: true })
+      updateDayComplete({ id: day.id, isComplete: true, programId: programId })
     }
   }
 
   useEffect(() => {
     const index = 8 - (+rpe - 6) / 0.5
-    if (rpeTable[index]) setE1rm(rpeTable[index])
+    if (rpeTable?.[index]) setE1rm(rpeTable[index])
   }, [weights, rpe])
 
   const isSS = exercise.ss && exercise.ss.length > 0
@@ -861,8 +884,7 @@ const ExerciseModal = ({
                                   <div>
                                     {(
                                       +weights /
-                                      (e1rm[Number(exercise.reps) - 1] ||
-                                        0 / 100)
+                                      (e1rm?.[Number(exercise?.reps) - 1] / 100 || 0)
                                     )?.toFixed(0)}
                                     kg
                                   </div>
@@ -1016,6 +1038,8 @@ const Day = () => {
       await utils.blocks.get.cancel({ id: programId })
       const previousProgram = utils.blocks.get.getData({ id: programId })
 
+      if (!previousProgram) return
+
       utils.blocks.get.setData(
         { id: programId },
         {
@@ -1051,6 +1075,7 @@ const Day = () => {
       if (!programId) return
       await utils.blocks.get.cancel({ id: programId })
       const previousProgram = utils.blocks.get.getData({ id: programId })
+      if (!previousProgram) return
 
       utils.blocks.get.setData(
         { id: programId },
@@ -1118,7 +1143,11 @@ const Day = () => {
             <div className='mx-12 flex items-center justify-between'>
               <Button
                 onClick={() => {
-                  updateDayComplete({ id: day.id, isComplete: true, programId: program.id })
+                  updateDayComplete({
+                    id: day.id,
+                    isComplete: true,
+                    programId: program.id,
+                  })
                 }}
                 className='w-32'
               >
@@ -1179,16 +1208,16 @@ const Day = () => {
           </RadioGroup>
           {day.warmupTemplateId == '' && day.warmupTemplateId == null ? null : (
             <div className='p-1'>
-              <h2 className='ml-1 text-lg font-semibold capitalize'>
-                {warmup?.name}
+              <h2 className='ml-1 text-xl font-bold capitalize text-yellow-500'>
+                Warmup
               </h2>
               <div className='mx-4 flex flex-col'>
                 {warmup?.warmups.map((w) => (
                   <div
                     key={w.id}
-                    className='flex items-center justify-between gap-2'
+                    className='flex items-center justify-between'
                   >
-                    <div className='capitalize'>{w.name}</div>
+                    <div className='w-24 capitalize'>{w.name}</div>
                     <div className='text-sm font-light text-gray-400'>
                       {w?.notes}
                     </div>
