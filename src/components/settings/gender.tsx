@@ -47,8 +47,8 @@ const Gender = ({
         className='w-fit cursor-pointer pr-8'
         onClick={() => setIsOpen(true)}
       >
-        <h4 className='text-xl'>Gender</h4>
-        <p className='h-8 text-base capitalize text-gray-400'>
+        <h4 className='text-2xl'>Gender</h4>
+        <p className='h-8 text-xl capitalize text-gray-400'>
           {defaultValue == '' ? '...' : defaultValue}
         </p>
       </div>
@@ -60,7 +60,7 @@ const Gender = ({
           value={value}
           onChange={(e) => setValue(e)}
         >
-          <div className='z-1 relative'>
+          <div className='z-1 relative text-2xl'>
             <Listbox.Button className='relative h-10 w-full cursor-default border-b border-gray-600 pl-3 pr-10 text-left capitalize shadow-md hover:border-white focus:outline-none md:w-[230px] md:px-2 '>
               <span
                 className={`block truncate ${
@@ -114,6 +114,7 @@ const Gender = ({
         </Listbox>
         <div className='mt-4 flex justify-center gap-2'>
           <Button
+            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28 font-bold'
             onClick={() => {
               if (!value) return
               mutate({ userId: userId, gender: value })
@@ -123,6 +124,7 @@ const Gender = ({
             Save
           </Button>
           <Button
+            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28 font-bold'
             onClick={() => {
               mutate({ userId: userId, gender: '' })
               setValue('')
@@ -133,6 +135,7 @@ const Gender = ({
           </Button>
 
           <Button
+            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28 font-bold'
             onClick={() => {
               setIsOpen(false)
             }}
