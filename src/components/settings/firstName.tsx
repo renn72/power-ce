@@ -37,7 +37,7 @@ const FirstName = ({ name, userId }: { name: string; userId: string }) => {
       >
         <Input
           placeholder='Height'
-          className='bg-gray-900 text-xl'
+          className='bg-gray-900 text-2xl'
           value={value}
           onChange={(e) => {
             setValue(e.target.value)
@@ -45,7 +45,7 @@ const FirstName = ({ name, userId }: { name: string; userId: string }) => {
         />
         <div className='mt-4 flex justify-center gap-2'>
           <Button
-            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28'
+            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28 font-bold'
             onClick={() => {
               if (!value) return
               mutate({ userId: userId, firstName: value })
@@ -55,7 +55,7 @@ const FirstName = ({ name, userId }: { name: string; userId: string }) => {
             Save
           </Button>
           <Button
-            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28'
+            className='bg-yellow-400 text-gray-900 text-xl h-fit w-28'
             onClick={() => {
               setIsOpen(false)
             }}
