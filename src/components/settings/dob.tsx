@@ -63,8 +63,8 @@ const DOB = ({
         className='w-fit cursor-pointer pr-8'
         onClick={() => setIsOpen(true)}
       >
-        <h4 className='text-xl'>DOB</h4>
-        <p className='h-8 text-base text-gray-400'>
+        <h4 className='text-2xl'>DOB</h4>
+        <p className='h-8 text-xl text-gray-400'>
           {defaultValue == null
             ? '...'
             : new Date(defaultValue).toLocaleDateString('en-AU', {
@@ -87,7 +87,7 @@ const DOB = ({
               <Button
                 onClick={() => setPopoverOpen(true)}
                 className={cn(
-                  'col-span-2 w-full items-center justify-start rounded-none border-0 border-b border-gray-600 px-1 text-left text-gray-200 hover:border-gray-200 md:w-[230px] md:px-2 ',
+                  'col-span-2 w-full text-xl items-center justify-start rounded-none border-0 border-b border-gray-600 px-1 text-left text-gray-200 hover:border-gray-200 md:w-[230px] md:px-2 ',
                   !value && 'text-gray-600',
                 )}
               >
@@ -132,6 +132,7 @@ const DOB = ({
         </div>
         <div className='mt-4 flex justify-center gap-2'>
           <Button
+            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28 font-bold'
             onClick={() => {
               if (!value) return
               mutate({ userId: user?.id || '', DOB: value })
@@ -141,6 +142,7 @@ const DOB = ({
             Save
           </Button>
           <Button
+            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28 font-bold'
             onClick={() => {
               setIsOpen(false)
             }}
