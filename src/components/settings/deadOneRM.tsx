@@ -55,8 +55,8 @@ const DeadOneRM = ({
         className='w-fit cursor-pointer pr-8 flex flex-col items-center'
         onClick={() => setIsOpen(true)}
       >
-        <h4 className='text-xl'>Deadlift</h4>
-        <p className='h-8 text-base text-gray-400'>
+        <h4 className='text-2xl'>Deadlift</h4>
+        <p className='h-8 text-xl text-gray-400'>
           {Number(defaultValue) == 0 ? '.' : `${Number(defaultValue)}kg`}
         </p>
       </div>
@@ -66,8 +66,8 @@ const DeadOneRM = ({
       >
         <Input
           type='number'
-          placeholder='Height'
-          className='bg-gray-900'
+          placeholder='dead'
+          className='bg-gray-900 text-2xl'
           value={value}
           onChange={(e) => {
             setValue(+e.target.value)
@@ -75,6 +75,7 @@ const DeadOneRM = ({
         />
         <div className='mt-4 flex justify-center gap-2'>
           <Button
+            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28 font-bold'
             onClick={() => {
               if (!value) return
               mutate({ userId: user?.id || '', deadliftOneRepMax: value })
@@ -84,6 +85,7 @@ const DeadOneRM = ({
             Save
           </Button>
           <Button
+            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28 font-bold'
             onClick={() => {
               setIsOpen(false)
             }}
