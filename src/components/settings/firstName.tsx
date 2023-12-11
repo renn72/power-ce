@@ -36,7 +36,7 @@ const FirstName = ({ name, userId }: { name: string; userId: string }) => {
         setIsOpen={setIsOpen}
       >
         <Input
-          placeholder='Height'
+          placeholder='...'
           className='bg-gray-900 text-2xl'
           value={value}
           onChange={(e) => {
@@ -55,7 +55,7 @@ const FirstName = ({ name, userId }: { name: string; userId: string }) => {
             Save
           </Button>
           <Button
-            className='bg-yellow-400 text-gray-900 text-xl h-fit w-28'
+            className='bg-yellow-400 text-gray-900 text-lg h-fit w-28 font-bold'
             onClick={() => {
               setIsOpen(false)
             }}
