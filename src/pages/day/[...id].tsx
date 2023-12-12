@@ -163,7 +163,7 @@ const ExerciseModal = ({
       )
       setWeights(res ? +res : 0)
     }
-  }, [setWeights, exercise, userCoreOneRM])
+  }, [setWeights, userCoreOneRM])
 
   const [e1rm, setE1rm] = useState<number[]>([0])
   const [notes, setNotes] = useState<string>(() => exercise?.field2 || '')
@@ -927,13 +927,13 @@ const ExerciseModal = ({
                                 />
                               </div>
                             </AnimatePresence>
-                            <div className='flex w-full items-center justify-start gap-3 text-xl font-medium md:gap-4 '>
+                            <div className='flex w-full overflow-scroll items-center justify-start gap-3 text-xl font-medium md:gap-4 '>
                               {exercise.set
                                 .filter((s) => s.isComplete)
                                 .map((set) => (
                                   <div
                                     key={set.id}
-                                    className='flex flex-col items-center justify-center gap-1'
+                                    className='flex flex-col items-center justify-center gap-1 shrink-0'
                                   >
                                     <div
                                       className='flex flex-col gap-1'
@@ -947,7 +947,7 @@ const ExerciseModal = ({
                                       </div>
                                     </div>
                                     <div className=''>
-                                      <div className='flex flex-col items-center text-xs tracking-tighter text-gray-400'>
+                                      <div className='flex flex-col items-center text-sm tracking-tighter text-gray-400'>
                                         <div>RPE:{set.rpe}</div>
                                         {!isSS && (
                                           <div
@@ -958,8 +958,8 @@ const ExerciseModal = ({
                                                 : ''
                                             }
                                           >
-                                            W:
-                                            {set.weight === 0 ? '' : set.weight}
+                                            W:{` `}
+                                            <span className='font-bold text-base text-gray-200'>{set.weight === 0 ? '' : `${set.weight}kg`}</span>
                                           </div>
                                         )}
                                         {set.estiamtedOnerm != 0 && (
