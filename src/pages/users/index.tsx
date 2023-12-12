@@ -22,10 +22,23 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import CompPlan from '~/components/compPlan'
 import Decimal from 'decimal.js'
+import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
+
+const rpeChart = [
+  [10, 100.0, 95.5, 92.2, 89.2, 86.3, 83.7, 81.1, 78.6, 76.2, 73.9, 70.7, 68.0],
+  [9.5, 97.8, 93.9, 90.7, 87.8, 85.0, 82.4, 79.9, 77.4, 75.1, 72.3, 69.4, 66.7],
+  [9, 95.5, 92.2, 89.2, 86.3, 83.7, 81.1, 78.6, 76.2, 73.9, 70.7, 68.0, 65.3],
+  [8.5, 93.9, 90.7, 87.8, 85.0, 82.4, 79.9, 77.4, 75.1, 72.3, 69.4, 66.7, 64.0],
+  [8, 92.9, 89.2, 86.3, 83.7, 81.1, 78.6, 76.2, 73.9, 70.7, 68.0, 65.3, 62.6],
+  [7.5, 90.7, 87.8, 85.0, 82.4, 79.9, 77.4, 75.1, 72.3, 69.4, 66.7, 64.0, 61.3],
+  [7, 89.2, 86.3, 83.7, 81.1, 78.6, 76.2, 73.9, 70.7, 68.0, 65.3, 62.6, 59.9],
+  [6.5, 87.8, 85.0, 82.4, 79.9, 77.4, 75.1, 72.3, 69.4, 66.7, 64.0, 61.3, 58.6],
+  [6, 86.3, 83.7, 81.1, 78.6, 76.2, 73.9, 70.7, 68.0, 65.3, 62.6, 59.9, 57.4],
+]
 
 const Weight = ({
   defaultValue,
@@ -594,10 +607,9 @@ const OpenPowerlifting = ({ userId }: { userId: string }) => {
     api.compLift.getCompLifts.useQuery({
       userId: userId,
     })
-  const { data: addressData, } =
-    api.compLift.getAddress.useQuery({
-      userId: userId,
-    })
+  const { data: addressData } = api.compLift.getAddress.useQuery({
+    userId: userId,
+  })
 
   const { mutate: setOpenPowerliftingData } =
     api.compLift.setOpenPower.useMutation({
@@ -624,7 +636,7 @@ const OpenPowerlifting = ({ userId }: { userId: string }) => {
   return (
     <div className='flex flex-col gap-8'>
       <div className='flex gap-24'>
-        <div className='text-xl p-2 font-semibold capitalize text-yellow-500'>
+        <div className='p-2 text-xl font-semibold capitalize text-yellow-500'>
           Competitions
         </div>
         <div
@@ -634,7 +646,7 @@ const OpenPowerlifting = ({ userId }: { userId: string }) => {
             setOpenPowerliftingData({ userId: userId })
           }}
         >
-          <RefreshCcwIcon className='cursor-pointer text-yellow-400 h-6 w-6 hover:animate-spin hover:text-yellow-500 ' />
+          <RefreshCcwIcon className='h-6 w-6 cursor-pointer text-yellow-400 hover:animate-spin hover:text-yellow-500 ' />
         </div>
       </div>
       <div className='flex max-w-[800px] flex-col gap-0 space-y-2 divide-y divide-dashed divide-gray-400'>
@@ -964,6 +976,42 @@ const Users = () => {
 
               <Tab.Panel>
                 RPE Chart
+                <div className='flex gap-2 py-2'>
+                  {
+                    ['', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'].map(
+                      (num) => (
+                        <div
+                          key={num}
+                          className='w-20 text-3xl font-bold flex justify-center text-yellow-500'
+                        >
+                          {num}
+                        </div>
+                      ),
+                    )
+                  }
+
+                </div>
+                <div className='flex flex-col gap-2 text-xl'>
+                  {rpeChart.map((rpe, idx) => (
+                    <div
+                      key={idx}
+                      className='flex w-full justify-between items-center'
+                    >
+                      <div className='w-20 text-3xl font-bold flex justify-center text-yellow-500'>{rpe?.[0]}</div>
+                      <div className='flex w-full gap-2'>
+                        {rpe.map((percent, idx) => (
+                          <div key={percent}>
+                            {idx === 0 ? null : (
+                              <div className='flex flex-col py-4 border border-gray-600 rounded-xl items-center w-20 hover:bg-gray-900 cursor-pointer'>
+                                <div>{percent}</div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </Tab.Panel>
 
               <Tab.Panel>

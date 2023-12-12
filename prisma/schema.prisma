@@ -12,6 +12,18 @@ datasource db {
   relationMode = "prisma"
 }
 
+model RPEIndex {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId String
+
+  name String
+  value Decimal
+
+  isDeleted Boolean @default(false)
+}
+
 model CompDate {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
