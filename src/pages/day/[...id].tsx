@@ -154,7 +154,6 @@ const ExerciseModal = ({
       setWeights(res ? +res : 0)
     }
     if (exercise.weightType == 'rpe' && exercise?.reps && userCoreOneRM) {
-
       const res = calcRPEWeight(
         Number(exercise.targetRpe),
         +exercise?.reps,
@@ -522,10 +521,10 @@ const ExerciseModal = ({
                           </div>
                         ) : (
                           <div>
-                            <div className='relative flex w-full items-end gap-3 text-gray-400 md:gap-8'>
-                              <div className='flex items-center gap-1'>
+                            <div className='relative flex w-full items-end gap-3 px-1 text-gray-400 md:gap-8'>
+                              <div className='flex items-start gap-1'>
                                 <h3>{exercise.sets}</h3>
-                                <XIcon />
+                                <h3>X</h3>
                                 <h3>{exercise.reps}</h3>
                                 <h3>
                                   {exercise.repUnit ? exercise.repUnit : ''}
@@ -665,15 +664,14 @@ const ExerciseModal = ({
                                     <h4>{exercise?.weightTop && '-'}</h4>
                                     <h4>
                                       {exercise?.weightTop &&
-                                        checkWeight(
+                                        `${checkWeight(
                                           'weight',
                                           +exercise?.weightTop,
                                           null,
                                           selectedEnergy,
                                           day,
                                           userCoreOneRM,
-                                        )}
-                                      kg
+                                        )}kg`}
                                     </h4>
                                   </div>
                                 )}
@@ -884,7 +882,8 @@ const ExerciseModal = ({
                                   <div>
                                     {(
                                       +weights /
-                                      (e1rm?.[Number(exercise?.reps) - 1] / 100 || 0)
+                                      (e1rm?.[Number(exercise?.reps) - 1] /
+                                        100 || 0)
                                     )?.toFixed(0)}
                                     kg
                                   </div>
