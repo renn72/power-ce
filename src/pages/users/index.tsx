@@ -21,8 +21,7 @@ import { RefreshCcwIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import CompPlan from '~/components/compPlan'
-import Decimal from 'decimal.js'
-import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
+import ModalWrapper from '~/components/settings/modalWrapper'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -39,402 +38,6 @@ const rpeChart = [
   [6.5, 87.8, 85.0, 82.4, 79.9, 77.4, 75.1, 72.3, 69.4, 66.7, 64.0, 61.3, 58.6],
   [6, 86.3, 83.7, 81.1, 78.6, 76.2, 73.9, 70.7, 68.0, 65.3, 62.6, 59.9, 57.4],
 ]
-
-const Weight = ({
-  defaultValue,
-  userId,
-}: {
-  defaultValue: Decimal | number
-  userId: string
-}) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [value, setValue] = useState(
-    Number(defaultValue) == 0 ? undefined : Number(defaultValue),
-  )
-  const utils = api.useContext()
-  const { mutate } = api.settings.updateWeight.useMutation({
-    onMutate: async (newData) => {
-      await utils.settings.get.cancel({ userId: userId })
-      const previousData = utils.settings.get.getData({
-        userId: userId,
-      })
-
-      utils.settings.get.setData(
-        { userId: userId },
-        {
-          ...previousData,
-          weight: new Decimal(newData.weight),
-        },
-      )
-
-      return { previousData }
-    },
-    onError: (err, newData, context) => {
-      console.log(err)
-      utils.settings.get.setData({ userId: userId }, context?.previousData)
-    },
-  })
-  return (
-    <div>
-      <div
-        className='w-fit cursor-pointer pr-8'
-        onClick={() => setIsOpen(true)}
-      >
-        <h4 className='text-xl'>Weight</h4>
-        <p className='h-8 text-base text-gray-400'>
-          {Number(defaultValue || null)}kg
-        </p>
-      </div>
-      <ModalWrapper
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-      >
-        <Input
-          type='number'
-          placeholder='Height'
-          className='bg-gray-900'
-          value={value}
-          onChange={(e) => {
-            setValue(+e.target.value)
-          }}
-        />
-        <div className='mt-4 flex justify-center gap-2'>
-          <Button
-            onClick={() => {
-              if (!value) return
-              mutate({ userId: userId, weight: value })
-              setIsOpen(false)
-            }}
-          >
-            Save
-          </Button>
-          <Button
-            onClick={() => {
-              setIsOpen(false)
-            }}
-          >
-            Cancel
-          </Button>
-        </div>
-      </ModalWrapper>
-    </div>
-  )
-}
-const SquatOneRM = ({
-  defaultValue,
-  userId,
-}: {
-  defaultValue: Decimal | number
-  userId: string
-}) => {
-  const user = { id: userId }
-  const [isOpen, setIsOpen] = useState(false)
-  const [value, setValue] = useState(
-    Number(defaultValue) == 0 ? undefined : Number(defaultValue),
-  )
-  const utils = api.useContext()
-  const { mutate } = api.settings.updateSquatOneRepMax.useMutation({
-    onMutate: async (newData) => {
-      if (!user) return
-      await utils.settings.get.cancel({ userId: user.id })
-      const previousData = utils.settings.get.getData({
-        userId: user.id,
-      })
-
-      if (!previousData) return
-
-      utils.settings.get.setData(
-        { userId: user.id },
-        {
-          ...previousData,
-          squatOneRepMax: new Decimal(newData.squatOneRepMax),
-        },
-      )
-
-      return { previousData }
-    },
-    onError: (err, newData, context) => {
-      console.log(err)
-      utils.settings.get.setData(
-        { userId: user?.id || '' },
-        context?.previousData,
-      )
-    },
-  })
-  return (
-    <div>
-      <div
-        className='w-fit cursor-pointer pr-8'
-        onClick={() => setIsOpen(true)}
-      >
-        <h4 className='text-xl'>Squat Target</h4>
-        <p className='h-8 text-base text-gray-400'>
-          {Number(defaultValue) == 0 ? '.' : `${Number(defaultValue)}kg`}
-        </p>
-      </div>
-      <ModalWrapper
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-      >
-        <Input
-          type='number'
-          placeholder='Height'
-          className='bg-gray-900'
-          value={value}
-          onChange={(e) => {
-            setValue(+e.target.value)
-          }}
-        />
-        <div className='mt-4 flex justify-center gap-2'>
-          <Button
-            onClick={() => {
-              if (!value) return
-              mutate({ userId: user?.id || '', squatOneRepMax: value })
-              setIsOpen(false)
-            }}
-          >
-            Save
-          </Button>
-          <Button
-            onClick={() => {
-              setIsOpen(false)
-            }}
-          >
-            Cancel
-          </Button>
-        </div>
-      </ModalWrapper>
-    </div>
-  )
-}
-
-const BenchOneRM = ({
-  defaultValue,
-  userId,
-}: {
-  defaultValue: Decimal | number
-  userId: string
-}) => {
-  const user = { id: userId }
-  const [isOpen, setIsOpen] = useState(false)
-  const [value, setValue] = useState(
-    Number(defaultValue) == 0 ? undefined : Number(defaultValue),
-  )
-  const utils = api.useContext()
-  const { mutate } = api.settings.updateBenchOneRepMax.useMutation({
-    onMutate: async (newData) => {
-      if (!user) return
-      await utils.settings.get.cancel({ userId: user.id })
-      const previousData = utils.settings.get.getData({
-        userId: user.id,
-      })
-      if (!previousData) return
-
-      utils.settings.get.setData(
-        { userId: user.id },
-        {
-          ...previousData,
-          benchOneRepMax: new Decimal(newData.benchOneRepMax),
-        },
-      )
-
-      return { previousData }
-    },
-    onError: (err, newData, context) => {
-      console.log(err)
-      utils.settings.get.setData(
-        { userId: user?.id || '' },
-        context?.previousData,
-      )
-    },
-  })
-  return (
-    <div>
-      <div
-        className='w-fit cursor-pointer pr-8'
-        onClick={() => setIsOpen(true)}
-      >
-        <h4 className='text-xl'>Bench Target</h4>
-        <p className='h-8 text-base text-gray-400'>
-          {Number(defaultValue) == 0 ? '.' : `${Number(defaultValue)}kg`}
-        </p>
-      </div>
-      <ModalWrapper
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-      >
-        <Input
-          type='number'
-          placeholder='Height'
-          className='bg-gray-900'
-          value={value}
-          onChange={(e) => {
-            setValue(+e.target.value)
-          }}
-        />
-        <div className='mt-4 flex justify-center gap-2'>
-          <Button
-            onClick={() => {
-              if (!value) return
-              mutate({ userId: user?.id || '', benchOneRepMax: value })
-              setIsOpen(false)
-            }}
-          >
-            Save
-          </Button>
-          <Button
-            onClick={() => {
-              setIsOpen(false)
-            }}
-          >
-            Cancel
-          </Button>
-        </div>
-      </ModalWrapper>
-    </div>
-  )
-}
-
-const DeadOneRM = ({
-  defaultValue,
-  userId,
-}: {
-  defaultValue: Decimal | number
-  userId: string
-}) => {
-  const user = { id: userId }
-  const [isOpen, setIsOpen] = useState(false)
-  const [value, setValue] = useState(
-    Number(defaultValue) == 0 ? undefined : Number(defaultValue),
-  )
-  const utils = api.useContext()
-  const { mutate } = api.settings.updateDeadliftOneRepMax.useMutation({
-    onMutate: async (newData) => {
-      if (!user) return
-      await utils.settings.get.cancel({ userId: user.id })
-      const previousData = utils.settings.get.getData({
-        userId: user.id,
-      })
-      if (!previousData) return
-
-      utils.settings.get.setData(
-        { userId: user.id },
-        {
-          ...previousData,
-          deadliftOneRepMax: new Decimal(newData.deadliftOneRepMax),
-        },
-      )
-
-      return { previousData }
-    },
-    onError: (err, newData, context) => {
-      console.log(err)
-      utils.settings.get.setData(
-        { userId: user?.id || '' },
-        context?.previousData,
-      )
-    },
-  })
-  return (
-    <div>
-      <div
-        className='w-fit cursor-pointer pr-8'
-        onClick={() => setIsOpen(true)}
-      >
-        <h4 className='text-xl'>Deadlift Target</h4>
-        <p className='h-8 text-base text-gray-400'>
-          {Number(defaultValue) == 0 ? '.' : `${Number(defaultValue)}kg`}
-        </p>
-      </div>
-      <ModalWrapper
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-      >
-        <Input
-          type='number'
-          placeholder='Height'
-          className='bg-gray-900'
-          value={value}
-          onChange={(e) => {
-            setValue(+e.target.value)
-          }}
-        />
-        <div className='mt-4 flex justify-center gap-2'>
-          <Button
-            onClick={() => {
-              if (!value) return
-              mutate({ userId: user?.id || '', deadliftOneRepMax: value })
-              setIsOpen(false)
-            }}
-          >
-            Save
-          </Button>
-          <Button
-            onClick={() => {
-              setIsOpen(false)
-            }}
-          >
-            Cancel
-          </Button>
-        </div>
-      </ModalWrapper>
-    </div>
-  )
-}
-
-const ModalWrapper = ({
-  isOpen,
-  setIsOpen,
-  children,
-}: {
-  isOpen: boolean
-  setIsOpen: (args: boolean) => void
-  children: React.ReactNode
-}) => {
-  return (
-    <Transition
-      appear
-      show={isOpen}
-      as={Fragment}
-    >
-      <Dialog
-        as='div'
-        className='relative z-10'
-        onClose={() => setIsOpen(true)}
-      >
-        <Transition.Child
-          as={Fragment}
-          enter='ease-out duration-300'
-          enterFrom='opacity-0'
-          enterTo='opacity-100'
-          leave='ease-in duration-200'
-          leaveFrom='opacity-100'
-          leaveTo='opacity-0'
-        >
-          <div className='fixed inset-0 bg-black/50' />
-        </Transition.Child>
-
-        <div className='fixed inset-0 overflow-y-auto text-gray-200'>
-          <div className='flex min-h-full items-center justify-center p-4 text-center'>
-            <Transition.Child
-              as={Fragment}
-              enter='ease-out duration-300'
-              enterFrom='opacity-0 scale-95'
-              enterTo='opacity-100 scale-100'
-              leave='ease-in duration-200'
-              leaveFrom='opacity-100 scale-100'
-              leaveTo='opacity-0 scale-95'
-            >
-              <Dialog.Panel className='w-full max-w-md transform overflow-visible rounded-2xl bg-gray-900 p-6 text-left align-middle transition-all'>
-                {children}
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition>
-  )
-}
 
 const UserDisclosure = ({
   userId,
@@ -745,6 +348,10 @@ const Users = () => {
   const [userId, setUserId] = useState<string>(() => user?.id || '')
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
+  const [isRpeModalOpen, setIsRpeModalOpen] = useState<boolean>(false)
+  const [rpeModalValue, setRpeModalValue] = useState<string>('')
+  const [rpeModalKey, setRpeModalKey] = useState<string>('')
+
   const ctx = api.useContext()
 
   api.users.getAllUsers.useQuery()
@@ -977,32 +584,49 @@ const Users = () => {
               <Tab.Panel>
                 RPE Chart
                 <div className='flex gap-2 py-2'>
-                  {
-                    ['', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'].map(
-                      (num) => (
-                        <div
-                          key={num}
-                          className='w-20 text-3xl font-bold flex justify-center text-yellow-500'
-                        >
-                          {num}
-                        </div>
-                      ),
-                    )
-                  }
-
+                  {[
+                    '',
+                    '1',
+                    '2',
+                    '3',
+                    '4',
+                    '5',
+                    '6',
+                    '7',
+                    '8',
+                    '9',
+                    '10',
+                    '11',
+                    '12',
+                  ].map((num) => (
+                    <div
+                      key={num}
+                      className='flex w-20 justify-center text-3xl font-bold text-yellow-500'
+                    >
+                      {num}
+                    </div>
+                  ))}
                 </div>
                 <div className='flex flex-col gap-2 text-xl'>
                   {rpeChart.map((rpe, idx) => (
                     <div
                       key={idx}
-                      className='flex w-full justify-between items-center'
+                      className='flex w-full items-center justify-between'
                     >
-                      <div className='w-20 text-3xl font-bold flex justify-center text-yellow-500'>{rpe?.[0]}</div>
+                      <div className='flex w-20 justify-center text-3xl font-bold text-yellow-500'>
+                        {rpe?.[0]}
+                      </div>
                       <div className='flex w-full gap-2'>
-                        {rpe.map((percent, idx) => (
+                        {rpe.map((percent, i) => (
                           <div key={percent}>
-                            {idx === 0 ? null : (
-                              <div className='flex flex-col py-4 border border-gray-600 rounded-xl items-center w-20 hover:bg-gray-900 cursor-pointer'>
+                            {i === 0 ? null : (
+                              <div
+                                onClick={() => {
+                                  setRpeModalKey(`${idx}-${i}`)
+                                  setRpeModalValue(percent.toString())
+                                  setIsRpeModalOpen(true)}}
+                                className='flex w-20 cursor-pointer flex-col items-center rounded-xl border border-gray-600 py-4 hover:bg-gray-900'
+                              >
                                 <div>{percent}</div>
                               </div>
                             )}
@@ -1012,6 +636,38 @@ const Users = () => {
                     </div>
                   ))}
                 </div>
+                <ModalWrapper
+                  isOpen={isRpeModalOpen}
+                  setIsOpen={setIsRpeModalOpen}
+                >
+                  <Input
+                    placeholder='...'
+                    className='bg-gray-900 text-2xl'
+                    value={rpeModalValue}
+                    onChange={(e) => {
+                      setRpeModalValue(e.target.value)
+                    }}
+                  />
+                  <div className='mt-4 flex justify-center gap-2'>
+                    <Button
+                      className='h-fit w-28 bg-yellow-400 text-lg font-bold text-gray-900'
+                      onClick={() => {
+                        console.log('rpeModalKey', rpeModalKey)
+                        console.log('rpeModalValue', rpeModalValue)
+                      }}
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      className='h-fit w-28 bg-yellow-400 text-lg font-bold text-gray-900'
+                      onClick={() => {
+                        setIsRpeModalOpen(false)
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </ModalWrapper>
               </Tab.Panel>
 
               <Tab.Panel>
