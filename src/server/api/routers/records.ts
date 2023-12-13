@@ -18,7 +18,7 @@ export const recordsRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
     const records = await ctx.prisma.record.findMany({
       orderBy: {
-        date: 'asc',
+        weight: 'asc',
       },
     })
 
