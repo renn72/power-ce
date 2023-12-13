@@ -1,6 +1,6 @@
 import getWeight from '~/utils/getWeight'
 
-import { Prisma, OneRepMax } from '@prisma/client'
+import { Prisma, OneRepMax, RPEIndex } from '@prisma/client'
 
 const dayWithExercise = Prisma.validator<Prisma.DayArgs>()({
   include: {
@@ -101,6 +101,7 @@ export const calcRPEWeight = (
   userCoreOneRM: OneRepMax[],
   lift: string,
   selectedEnergy: string | null,
+  rpeData: RPEIndex[] | undefined,
 ) => {
   let energyAdjust = 1
   if (selectedEnergy === 'B') energyAdjust = 0.98
@@ -123,8 +124,18 @@ export const calcRPEWeight = (
   if (rpe === 7) rpeIndex = 6
   if (rpe === 6.5) rpeIndex = 7
 
-  const percent = rpeChart?.[rpeIndex]?.[reps - 1] || 0
+  let percent = 100
 
-  const res = Math.round((((+oneRM * percent) / 100) * energyAdjust) / 2.5) * 2.5
+  const rpeChartNum = Number(rpeData?.find((r) => r.name === `${rpeIndex}-${reps}`)?.value) || 0
+
+  if (rpeChartNum !== 0) {
+    percent =
+      Number(rpeData?.find((r) => r.name === `${rpeIndex}-${reps}`)?.value) || 0
+  } else {
+    percent = rpeChart?.[rpeIndex]?.[reps - 1] || 0
+  }
+
+  const res =
+    Math.round((((+oneRM * percent) / 100) * energyAdjust) / 2.5) * 2.5
   return res
 }

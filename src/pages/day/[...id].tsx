@@ -128,6 +128,7 @@ const ExerciseModal = ({
   const { data: userCoreOneRM } = api.oneRepMax.getUserCoreLifts.useQuery({
     userId: userId,
   })
+  const { data: rpeData } = api.rpe.getAll.useQuery(userId)
 
   const { data: program } = api.blocks.get.useQuery({
     id: programId,
@@ -154,16 +155,18 @@ const ExerciseModal = ({
       setWeights(res ? +res : 0)
     }
     if (exercise.weightType == 'rpe' && exercise?.reps && userCoreOneRM) {
+      console.log(exercise.reps, exercise.targetRpe)
       const res = calcRPEWeight(
         Number(exercise.targetRpe),
         +exercise?.reps,
         userCoreOneRM,
         exercise.lift,
         selectedEnergy,
+        rpeData,
       )
       setWeights(res ? +res : 0)
     }
-  }, [setWeights, userCoreOneRM])
+  }, [setWeights, userCoreOneRM, rpeData])
 
   const [e1rm, setE1rm] = useState<number[]>([0])
   const [notes, setNotes] = useState<string>(() => exercise?.field2 || '')
@@ -890,7 +893,7 @@ const ExerciseModal = ({
                                 ) : null}
                               </div>
                             )}
-                          <div className='mx-4 max-w-[90vw] overflow-clip'>
+                          <div className='mx-4 max-w-[90vw] overflow-x-clip'>
                             <AnimatePresence>
                               <div className='flex h-36 items-center gap-3 text-xl font-medium md:gap-4'>
                                 <MinusIcon
@@ -927,7 +930,7 @@ const ExerciseModal = ({
                                 />
                               </div>
                             </AnimatePresence>
-                            <div className='flex w-full overflow-scroll items-center justify-start gap-3 text-xl font-medium md:gap-4 '>
+                            <div className='flex overflow-x-clip items-center justify-start gap-3 text-xl font-medium'>
                               {exercise.set
                                 .filter((s) => s.isComplete)
                                 .map((set) => (
@@ -1120,6 +1123,7 @@ const Day = () => {
 
   return (
     <>
+      <div className='max-w-lg'>
       {day.isRestDay ? (
         <div>Rest Day</div>
       ) : (
@@ -1253,6 +1257,7 @@ const Day = () => {
           </div>
         </div>
       )}
+      </div>
 
       <Transition
         appear
