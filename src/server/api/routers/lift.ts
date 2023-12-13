@@ -1,6 +1,3 @@
-
-import { clerkClient, } from '@clerk/nextjs/server'
-import { TRPCError, } from '@trpc/server'
 import { z, } from 'zod'
 
 import {
@@ -11,7 +8,7 @@ import {
 export const liftRouter = createTRPCRouter({
 
   getAll: privateProcedure.query(async ({ ctx, }) => {
-    const userId = ctx.userId
+    const userId = ctx.userId || ''
     const lifts = await ctx.prisma.lifts.findMany({ where: { userId: userId, },})
     return lifts
   }),
@@ -30,7 +27,7 @@ export const liftRouter = createTRPCRouter({
       ctx, input,
     }) => {
 
-      const userId = ctx.userId
+      const userId = ctx.userId || ''
 
       const lift = await ctx.prisma.lift.create({
         data: {

@@ -22,6 +22,8 @@ model RPEIndex {
   value Decimal
 
   isDeleted Boolean @default(false)
+
+  @@unique([userId, name], name: "userId_name")
 }
 
 model CompDate {

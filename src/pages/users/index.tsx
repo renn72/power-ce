@@ -476,6 +476,17 @@ const Users = () => {
     },
   })
 
+  const { data: rpeData } = api.rpe.getAll.useQuery(userId)
+  console.log('rpeData', rpeData)
+
+  const { mutate: rpeUpdate } = api.rpe.create.useMutation({
+    onSuccess: () => {
+      toast.success('Saved')
+      void ctx.rpe.getAll.invalidate(userId)
+      setIsRpeModalOpen(false)
+    },
+  })
+
   const onSelectSecondaryTemplate = (template: string, userId: string) => {
     console.log('template', template)
     console.log('userId', userId)
@@ -601,7 +612,7 @@ const Users = () => {
                   ].map((num) => (
                     <div
                       key={num}
-                      className='flex w-20 justify-center text-3xl font-bold text-yellow-500'
+                      className='flex w-24 justify-center text-3xl font-bold text-yellow-500'
                     >
                       {num}
                     </div>
@@ -613,7 +624,7 @@ const Users = () => {
                       key={idx}
                       className='flex w-full items-center justify-between'
                     >
-                      <div className='flex w-20 justify-center text-3xl font-bold text-yellow-500'>
+                      <div className='flex w-24 justify-center text-3xl font-bold text-yellow-500'>
                         {rpe?.[0]}
                       </div>
                       <div className='flex w-full gap-2'>
@@ -623,11 +634,42 @@ const Users = () => {
                               <div
                                 onClick={() => {
                                   setRpeModalKey(`${idx}-${i}`)
-                                  setRpeModalValue(percent.toString())
-                                  setIsRpeModalOpen(true)}}
-                                className='flex w-20 cursor-pointer flex-col items-center rounded-xl border border-gray-600 py-4 hover:bg-gray-900'
+                                  setRpeModalValue(
+                                    rpeData &&
+                                      rpeData.find(
+                                        (r) => r.name === `${idx}-${i}`,
+                                      )
+                                      ? Number(
+                                          rpeData?.find(
+                                            (r) => r.name === `${idx}-${i}`,
+                                          )?.value,
+                                        ).toFixed(1)
+                                      : percent.toFixed(1),
+                                  )
+                                  setIsRpeModalOpen(true)
+                                }}
+                                className='flex w-24 cursor-pointer flex-col items-center rounded-xl border border-gray-600 py-4 hover:bg-gray-900 relative'
                               >
-                                <div>{percent}</div>
+                                <div>
+                                  {rpeData &&
+                                  rpeData.find(
+                                    (r) => r.name === `${idx}-${i}`,
+                                  ) ? (
+                                    <div className=''>
+                                      {Number(
+                                        rpeData?.find(
+                                          (r) => r.name === `${idx}-${i}`,
+                                        )?.value,
+                                      ).toFixed(1)}
+                                      %
+                                      <span className='absolute right-1 top-1 text-3xl text-yellow-500'>
+                                        *
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    <div>{percent.toFixed(1)}%</div>
+                                  )}
+                                </div>
                               </div>
                             )}
                           </div>
@@ -654,6 +696,11 @@ const Users = () => {
                       onClick={() => {
                         console.log('rpeModalKey', rpeModalKey)
                         console.log('rpeModalValue', rpeModalValue)
+                        rpeUpdate({
+                          userId: userId,
+                          name: rpeModalKey,
+                          value: Number(rpeModalValue),
+                        })
                       }}
                     >
                       Save
