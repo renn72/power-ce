@@ -191,9 +191,9 @@ const Cell = ({
             {recordNames?.map((r, idx) => (
               <div
                 key={idx}
-                className='flex items-center justify-between py-2 font-semibold lg:justify-start lg:gap-2'
+                className='flex items-center py-2 font-semibold gap-1 justify-start lg:gap-2 relative'
               >
-                <div className='w-28 font-light tracking-tighter text-gray-400 lg:w-36'>
+                <div className='w-24 font-normal tracking-tighter text-sm text-gray-400 lg:w-36'>
                   {r.date.toLocaleString('en-AU', {
                     year: 'numeric',
                     month: 'short',
@@ -208,7 +208,7 @@ const Cell = ({
                 <div>{r.name}</div>
                 {isAuth && (
                     <XMarkIcon
-                      className='h-6 w-6 cursor-pointer text-gray-300 hover:text-red-500 lg:ml-8'
+                      className='h-6 w-6 cursor-pointer text-gray-300 hover:text-red-500 hover:scale-125 lg:ml-8 absolute right-0'
                       onClick={() => {
                         deleteRecord({
                           id: r.id,
