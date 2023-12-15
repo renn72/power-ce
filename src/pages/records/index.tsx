@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Transition, Dialog } from '@headlessui/react'
+import { Transition, Dialog, Switch } from '@headlessui/react'
 import { useSession } from 'next-auth/react'
 import { Fragment, useState } from 'react'
 import { LoadingPage } from '~/components/loading'
@@ -182,7 +182,7 @@ const Cell = ({
         setIsOpen={setIsOpen}
       >
         <div className='flex flex-col gap-2 py-2'>
-          <h2 className='mb-4 flex gap-2 text-2xl font-semibold'>
+          <h2 className='mb-4 flex gap-2 text-2xl font-bold text-yellow-500'>
             <div>{gender === 'm' ? 'Men' : 'Women'}</div>
             <div>{wc}kg</div>
             <div className='capitalize'>{lift}</div>
@@ -191,9 +191,9 @@ const Cell = ({
             {recordNames?.map((r, idx) => (
               <div
                 key={idx}
-                className='flex items-center py-2 font-semibold gap-1 justify-start lg:gap-2 relative'
+                className='relative flex items-center justify-start gap-1 py-2 font-semibold lg:gap-2'
               >
-                <div className='w-24 font-normal tracking-tighter text-sm text-gray-400 lg:w-36'>
+                <div className='w-24 text-sm font-normal tracking-tighter text-gray-400 lg:w-36'>
                   {r.date.toLocaleString('en-AU', {
                     year: 'numeric',
                     month: 'short',
@@ -207,14 +207,14 @@ const Cell = ({
                 <div className='text-yellow-500'>/</div>
                 <div>{r.name}</div>
                 {isAuth && (
-                    <XMarkIcon
-                      className='h-6 w-6 cursor-pointer text-gray-300 hover:text-red-500 hover:scale-125 lg:ml-8 absolute right-0'
-                      onClick={() => {
-                        deleteRecord({
-                          id: r.id,
-                        })
-                      }}
-                    />
+                  <XMarkIcon
+                    className='absolute right-0 h-6 w-6 cursor-pointer text-gray-300 hover:scale-125 hover:text-red-500 lg:ml-8'
+                    onClick={() => {
+                      deleteRecord({
+                        id: r.id,
+                      })
+                    }}
+                  />
                 )}
               </div>
             ))}
@@ -319,7 +319,9 @@ const Records = () => {
   const user = session?.user
   const userId = session?.user?.id || ''
 
-  const isSuper = user?.isRecordEditor || false
+  const [isAdmin, setIsAdmin] = useState(false)
+  const isEditor = user?.isRecordEditor || false
+  const isSuper = isEditor && isAdmin
 
   const { data: _records, isLoading: recordsLoading } =
     api.records.getAll.useQuery()
@@ -334,6 +336,23 @@ const Records = () => {
 
   return (
     <div className='mb-32 flex flex-col gap-12 text-xl font-semibold 2xl:text-4xl'>
+      {isEditor && (
+        <div className='flex items-center gap-4'>
+          <div>Admin</div>
+          <Switch
+            checked={isAdmin}
+            onChange={setIsAdmin}
+            className={`${isAdmin ? 'bg-gray-200' : 'bg-gray-600'}
+          relative inline-flex h-[24px] w-[64px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75  sm:h-[28px] sm:w-[74px]`}
+          >
+            <span
+              aria-hidden='true'
+              className={`${isAdmin ? 'translate-x-9' : 'translate-x-0'}
+            pointer-events-none inline-block h-[20px] w-[24px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out sm:h-[24px] sm:w-[34px]`}
+            />
+          </Switch>
+        </div>
+      )}
       <div className='flex flex-col gap-1'>
         <h1>Men</h1>
         <div className='flex w-fit items-baseline font-bold tracking-widest'>
