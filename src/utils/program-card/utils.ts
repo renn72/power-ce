@@ -20,7 +20,7 @@ export const checkWeight = (
   index: number | null,
   selectedEnergy: string | null,
   day: Day | null,
-  userCoreOneRM: OneRepMax[],
+  userCoreOneRM: OneRepMax[] | undefined,
 ) => {
   if (!lift || !onerm) return ''
   let energyAdjust = 1
@@ -41,7 +41,7 @@ export const checkWeight = (
   }
 
   if (lift == 'weight') {
-    return getWeight(+onerm, 100 * energyAdjust)
+    return getWeight(+onerm, 100 * energyAdjust) || ''
   }
 
   if (index) {
@@ -49,7 +49,7 @@ export const checkWeight = (
     const rmWeight = rm?.map((s) => s.estiamtedOnerm) || []
     const w = rmWeight[rmWeight.length - 1]
 
-    if (w) return getWeight(+w, onerm * energyAdjust)
+    if (w) return getWeight(+w, onerm * energyAdjust) || ''
   }
 
   const w = userCoreOneRM?.find(
@@ -58,7 +58,7 @@ export const checkWeight = (
 
   if (!w) return ''
 
-  return getWeight(+w, onerm * energyAdjust)
+  return getWeight(+w, onerm * energyAdjust) || ''
 }
 
 export const checkPercentWeight = (
