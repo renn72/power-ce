@@ -1,13 +1,13 @@
 import { Prisma } from '@prisma/client'
 import { ChevronUpIcon } from '@heroicons/react/24/outline'
-import { useState, useEffect, } from 'react'
+import { useState, useEffect } from 'react'
 import { api } from '~/utils/api'
 import {
   checkWeight,
   checkPercentWeight,
   calcRPEWeight,
 } from '~/utils/program-card/utils'
-import { Transition, RadioGroup, Disclosure, } from '@headlessui/react'
+import { Transition, RadioGroup, Disclosure } from '@headlessui/react'
 import { Input } from '@/components/ui/input'
 import { rpe as rpeTable } from '~/store/defaultValues'
 import {
@@ -18,9 +18,18 @@ import {
   XIcon,
 } from 'lucide-react'
 import { NumericFormat } from 'react-number-format'
-import { AnimatePresence, } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 import SetsModal from './setsModal'
+import { Card, CardContent } from '@/components/ui/card'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel'
+import { type CarouselApi } from '@/components/ui/carousel'
 
 const exerciseWithSetSS = Prisma.validator<Prisma.ExerciseArgs>()({
   include: {
@@ -42,6 +51,61 @@ const dayWithExercise = Prisma.validator<Prisma.DayArgs>()({
 type Day = Prisma.DayGetPayload<typeof dayWithExercise>
 type Exercise = Prisma.ExerciseGetPayload<typeof exerciseWithSetSS>
 
+const rpeValues = ['6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10']
+
+const RpeSelect = ({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: (arg0: string) => void
+}) => {
+  const [api, setApi] = useState<CarouselApi>()
+  console.log(value)
+
+  useEffect(() => {
+    if (!api) {
+      return
+    }
+
+    api.on('settle', () => {
+      console.log('settle', api.selectedScrollSnap())
+      onChange(rpeValues[api.selectedScrollSnap() as number] || '')
+    })
+  }, [api])
+
+
+  return (
+    <div className='flex flex-col items-center px-12 py-2'>
+      <h2 className='text-2xl font-semibold'>RPE</h2>
+      <Carousel
+        className='w-16'
+        setApi={setApi}
+        opts={{
+          startIndex: rpeValues.indexOf(value),
+          align: 'center',
+        }}
+      >
+        <CarouselContent>
+          {rpeValues.map((i, index) => (
+            <CarouselItem key={index}>
+              <div className='p-1'>
+                <Card className='rounded-full border-0 bg-yellow-500'>
+                  <CardContent className='flex aspect-square items-center justify-center p-2'>
+                    <span className='text-2xl font-semibold'>{i}</span>
+                  </CardContent>
+                </Card>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious className='border-0' />
+        <CarouselNext className='border-0' />
+      </Carousel>
+    </div>
+  )
+}
+
 const ExerciseModal = ({
   exercise,
   selectedEnergy,
@@ -62,10 +126,12 @@ const ExerciseModal = ({
   const [rpe, setRpe] = useState('8')
   const [exerciseSets, setExerciseSets] = useState(Number(exercise.sets) || 0)
 
-  const { data: userCoreOneRM, isLoading : userRMLoading } = api.oneRepMax.getUserCoreLifts.useQuery({
-    userId: userId,
-  })
-  const { data: rpeData, isLoading : rpeLoading } = api.rpe.getAll.useQuery(userId)
+  const { data: userCoreOneRM, isLoading: userRMLoading } =
+    api.oneRepMax.getUserCoreLifts.useQuery({
+      userId: userId,
+    })
+  const { data: rpeData, isLoading: rpeLoading } =
+    api.rpe.getAll.useQuery(userId)
 
   const { data: program } = api.blocks.get.useQuery({
     id: programId,
@@ -103,7 +169,7 @@ const ExerciseModal = ({
       )
       setWeights(res ? +res : 0)
     }
-  }, [setWeights, userRMLoading, rpeLoading ])
+  }, [setWeights, userRMLoading, rpeLoading])
 
   const [e1rm, setE1rm] = useState<number[]>([0])
   const [notes, setNotes] = useState<string>(() => exercise?.flield2 || '')
@@ -513,9 +579,11 @@ const ExerciseModal = ({
                                   <div className=''>
                                     {exercise.estimatedOnermIndex ? (
                                       <div>
-                                        {Number(day.exercise[
-                                          exercise.estimatedOnermIndex - 1
-                                        ]?.set[0]?.weight) > 0 && (
+                                        {Number(
+                                          day.exercise[
+                                            exercise.estimatedOnermIndex - 1
+                                          ]?.set[0]?.weight,
+                                        ) > 0 && (
                                           <div className='flex'>
                                             {exercise.onerm && (
                                               <h4>
@@ -604,14 +672,16 @@ const ExerciseModal = ({
                                     <h4>{exercise?.weightTop && '-'}</h4>
                                     <h4>
                                       {exercise?.weightTop &&
-                                        `${checkWeight(
-                                          'weight',
-                                          +exercise?.weightTop,
-                                          null,
-                                          selectedEnergy,
-                                          day,
-                                          userCoreOneRM,
-                                        ) ||  ''}kg`}
+                                        `${
+                                          checkWeight(
+                                            'weight',
+                                            +exercise?.weightTop,
+                                            null,
+                                            selectedEnergy,
+                                            day,
+                                            userCoreOneRM,
+                                          ) || ''
+                                        }kg`}
                                     </h4>
                                   </div>
                                 )}
@@ -749,6 +819,10 @@ const ExerciseModal = ({
                             }, 0)}{' '}
                             / {exerciseSets}
                           </div>
+                          <RpeSelect
+                            value={rpe}
+                            onChange={setRpe}
+                          />
                           <RadioGroup
                             value={rpe}
                             onChange={setRpe}
@@ -867,13 +941,13 @@ const ExerciseModal = ({
                                 />
                               </div>
                             </AnimatePresence>
-                            <div className='flex overflow-x-clip items-center justify-start gap-3 text-xl font-medium'>
+                            <div className='flex items-center justify-start gap-3 overflow-x-clip text-xl font-medium'>
                               {exercise.set
                                 .filter((s) => s.isComplete)
                                 .map((set) => (
                                   <div
                                     key={set.id}
-                                    className='flex flex-col items-center justify-center gap-1 shrink-0'
+                                    className='flex shrink-0 flex-col items-center justify-center gap-1'
                                   >
                                     <div
                                       className='flex flex-col gap-1'
@@ -899,7 +973,11 @@ const ExerciseModal = ({
                                             }
                                           >
                                             W:{` `}
-                                            <span className='font-bold text-base text-gray-200'>{Number(set.weight) === 0 ? '' : `${Number(set.weight)}kg`}</span>
+                                            <span className='text-base font-bold text-gray-200'>
+                                              {Number(set.weight) === 0
+                                                ? ''
+                                                : `${Number(set.weight)}kg`}
+                                            </span>
                                           </div>
                                         )}
                                         {Number(set.estiamtedOnerm) != 0 && (
