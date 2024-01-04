@@ -61,7 +61,6 @@ const RpeSelect = ({
   onChange: (arg0: string) => void
 }) => {
   const [api, setApi] = useState<CarouselApi>()
-  console.log(value)
 
   useEffect(() => {
     if (!api) {
@@ -69,7 +68,6 @@ const RpeSelect = ({
     }
 
     api.on('settle', () => {
-      console.log('settle', api.selectedScrollSnap())
       onChange(rpeValues[api.selectedScrollSnap() as number] || '')
     })
   }, [api])
@@ -823,62 +821,6 @@ const ExerciseModal = ({
                             value={rpe}
                             onChange={setRpe}
                           />
-                          <RadioGroup
-                            value={rpe}
-                            onChange={setRpe}
-                          >
-                            <div
-                              className={`mx-1 grid grid-cols-9 items-center justify-between gap-1 md:mx-6  md:grid-cols-10 md:p-2`}
-                            >
-                              <RadioGroup.Label className='col-span-9 text-center text-xl font-medium md:col-span-1 md:text-left'>
-                                RPE
-                              </RadioGroup.Label>
-                              {[
-                                '6',
-                                '6.5',
-                                '7',
-                                '7.5',
-                                '8',
-                                '8.5',
-                                '9',
-                                '9.5',
-                                '10',
-                              ].map((energy) => (
-                                <RadioGroup.Option
-                                  key={energy}
-                                  value={energy}
-                                  className={({ active, checked }) => `${
-                                    active ? '' : ''
-                                  }
-                                            ${
-                                              checked
-                                                ? 'bg-yellow-500 font-bold text-white'
-                                                : 'bg-gray-800 text-gray-200'
-                                            }
-                                                relative flex h-8 w-8 cursor-pointer items-center justify-center rounded-full shadow-md focus:outline-none `}
-                                >
-                                  {({ checked }) => (
-                                    <>
-                                      <div className='flex w-full items-center justify-center text-xs'>
-                                        <RadioGroup.Label
-                                          as='p'
-                                          className={`font-semibold tracking-tighter first-letter:text-lg md:mt-[3px] ${
-                                            checked
-                                              ? 'text-gray-900'
-                                              : 'text-gray-300'
-                                          } ${
-                                            energy === '10' ? 'text-lg' : ''
-                                          }`}
-                                        >
-                                          {energy}
-                                        </RadioGroup.Label>
-                                      </div>
-                                    </>
-                                  )}
-                                </RadioGroup.Option>
-                              ))}
-                            </div>
-                          </RadioGroup>
 
                           {exercise.lift &&
                             exercise.lift !== 'unlinked' &&
