@@ -461,8 +461,8 @@ const ExerciseModal = ({
                   </a>
                 )}
               </div>
-              <div className='text-xl grid w-full text-muted-foreground grid-cols-16 gap-0 tracking-tighter'>
-                <div className='flex gap-1 font-bold place-self-center'>
+              <div className='grid w-full grid-cols-16 gap-0 text-xl tracking-tighter text-muted-foreground'>
+                <div className='flex gap-1 place-self-center font-bold'>
                   <div>{s.reps}</div>
                   {s.repUnit ? <div>s.repUnit</div> : null}
                 </div>
@@ -470,15 +470,15 @@ const ExerciseModal = ({
                   size={20}
                   className='self-center'
                 />
-                <div className='col-span-11 place-self-start font-semibold'>{s.name}</div>
-                <div className='col-span-3 justify-self-center self-start font-light '>
+                <div className='col-span-11 place-self-start font-semibold'>
+                  {s.name}
+                </div>
+                <div className='col-span-3 self-start justify-self-center font-light '>
                   {s.weightType === 'rpe' && (
-                    <div className='flex gap-0 justify-end'>
+                    <div className='flex justify-end gap-0'>
                       <h4>RPE</h4>
                       <h4>-</h4>
-                      <h4 className=''>
-                        {s?.targetRpe && +s?.targetRpe}
-                      </h4>
+                      <h4 className=''>{s?.targetRpe && +s?.targetRpe}</h4>
                     </div>
                   )}
                   {s.weightType === 'weight' && (
@@ -734,7 +734,9 @@ const ExerciseModal = ({
           <>
             <div className='flex flex-col justify-start gap-2 overflow-hidden '>
               <div className='flex flex-col gap-0'>
-                <Disclosure.Button className={`w-full text-xl ${open ? 'pb-0' : 'py-2'}`}>
+                <Disclosure.Button
+                  className={`w-full text-xl ${open ? 'pb-0' : 'py-2'}`}
+                >
                   <div className='flex flex-col gap-0'>
                     <div className='flex w-full flex-col '>
                       <ExerciseHeader open={open} />
@@ -756,9 +758,15 @@ const ExerciseModal = ({
                 >
                   <Disclosure.Panel>
                     <div className='flex flex-col gap-2'>
-                      <div className='text-lg text-gray-400 text-center'>
-                        {exercise?.notes}
-                      </div>
+                      {exercise?.notes && (
+                        <div className='flex flex-col items-center'>
+                          <MinusIcon className='h-6 w-6' />
+                          <div className='text-center text-xl text-gray-400'>
+                            {exercise?.notes}
+                          </div>
+                          <MinusIcon className='h-6 w-6' />
+                        </div>
+                      )}
                       {exercise.sets && (
                         <div className='flex flex-col gap-2 md:gap-6'>
                           {isSS ? null : (
@@ -816,7 +824,7 @@ const ExerciseModal = ({
                                 e1rm[Number(exercise?.reps) - 1] || 0 / 100,
                               )
                             )?.toFixed(0) && (
-                              <div className='mx-1 flex gap-2 px-2 md:mx-6 justify-center items-baseline text-muted-foreground'>
+                              <div className='mx-1 flex items-baseline justify-center gap-2 px-2 text-muted-foreground md:mx-6'>
                                 <div className='text-sm'>E1RM</div>
                                 {weights &&
                                 weights !== 0 &&
@@ -832,7 +840,7 @@ const ExerciseModal = ({
                                 ) : null}
                               </div>
                             )}
-                          <div className='flex w-full justify-center gap-4 text-2xl font-bold md:gap-6 mt-4'>
+                          <div className='mt-4 flex w-full justify-center gap-4 text-2xl font-bold md:gap-6'>
                             {exercise.set.reduce((acc, curr) => {
                               return acc + (curr.isComplete ? 1 : 0)
                             }, 0)}{' '}
