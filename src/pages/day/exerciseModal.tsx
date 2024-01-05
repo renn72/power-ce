@@ -406,7 +406,7 @@ const ExerciseModal = ({
 
   const ExerciseHeader = ({ open }: { open: boolean }) => {
     return (
-      <div className='grid grid-cols-5'>
+      <div className='grid grid-cols-9 items-center'>
         <ChevronUpIcon
           className={`${
             open ? 'rotate-180 transform' : ''
@@ -415,7 +415,7 @@ const ExerciseModal = ({
         <div
           className={`${
             exercise.isComplete ? 'text-yellow-500' : 'text-white'
-          }  col-span-3 text-xl font-medium first-letter:text-2xl first-letter:font-bold first-letter:uppercase `}
+          }  col-span-7 text-2xl font-medium first-letter:text-3xl first-letter:font-bold first-letter:uppercase `}
         >
           {isSS ? 'Super set' : exercise.name}
         </div>
@@ -461,22 +461,22 @@ const ExerciseModal = ({
                   </a>
                 )}
               </div>
-              <div className='text-md grid w-full grid-cols-15 gap-0 tracking-tight'>
-                <div className='col-span-10 place-self-start'>{s.name}</div>
+              <div className='text-xl grid w-full text-muted-foreground grid-cols-16 gap-0 tracking-tighter'>
+                <div className='flex gap-1 font-bold place-self-center'>
+                  <div>{s.reps}</div>
+                  {s.repUnit ? <div>s.repUnit</div> : null}
+                </div>
                 <XIcon
                   size={20}
                   className='self-center'
                 />
-                <div className='flex gap-1'>
-                  <div>{s.reps}</div>
-                  {s.repUnit ? <div>s.repUnit</div> : null}
-                </div>
-                <div className='col-span-3 place-self-center'>
+                <div className='col-span-11 place-self-start font-semibold'>{s.name}</div>
+                <div className='col-span-3 justify-self-center self-start font-light '>
                   {s.weightType === 'rpe' && (
-                    <div className='flex items-baseline gap-0'>
+                    <div className='flex gap-0 justify-end'>
                       <h4>RPE</h4>
                       <h4>-</h4>
-                      <h4 className='flex items-baseline justify-center font-semibold'>
+                      <h4 className=''>
                         {s?.targetRpe && +s?.targetRpe}
                       </h4>
                     </div>
@@ -526,10 +526,10 @@ const ExerciseModal = ({
   const ExerciseHeaderN = ({ open }: { open: boolean }) => {
     return (
       <>
-        <div className='relative flex w-full items-baseline justify-center gap-3 px-1 text-lg font-medium text-gray-400 md:gap-8'>
-          <div className='flex items-baseline gap-1 text-xl font-bold'>
+        <div className='relative flex w-full items-baseline justify-center gap-3 px-1 text-xl font-medium text-gray-400 md:gap-8'>
+          <div className='flex items-baseline gap-1 text-2xl font-bold'>
             <h3>{exercise.sets}</h3>
-            <h3 className='text-base font-medium'>X</h3>
+            <h3 className='text-sm font-medium'>X</h3>
             <h3>{exercise.reps}</h3>
             <h3>{exercise.repUnit ? exercise.repUnit : ''}</h3>
           </div>
@@ -734,7 +734,7 @@ const ExerciseModal = ({
           <>
             <div className='flex flex-col justify-start gap-2 overflow-hidden '>
               <div className='flex flex-col gap-0'>
-                <Disclosure.Button className={`w-full text-lg md:text-xl ${open ? 'pb-0' : 'py-2'}`}>
+                <Disclosure.Button className={`w-full text-xl ${open ? 'pb-0' : 'py-2'}`}>
                   <div className='flex flex-col gap-0'>
                     <div className='flex w-full flex-col '>
                       <ExerciseHeader open={open} />
