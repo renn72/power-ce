@@ -5,10 +5,7 @@ import { api } from '~/utils/api'
 import { useSession } from 'next-auth/react'
 
 import { Transition, RadioGroup, Dialog } from '@headlessui/react'
-import {
-  HomeIcon,
-  PlaySquare,
-} from 'lucide-react'
+import { HomeIcon, PlaySquare } from 'lucide-react'
 
 import { useRouter } from 'next/router'
 import { Button } from '@/components/ui/button'
@@ -152,139 +149,148 @@ const Day = () => {
   return (
     <>
       <div className='max-w-lg'>
-      {day.isRestDay ? (
-        <div>Rest Day</div>
-      ) : (
-        <div className='flex flex-col gap-6'>
-          <h2
-            className={`text-xl font-bold ${
-              day.isComplete ? 'text-green-500' : ''
-            }`}
-          ></h2>
-          {day?.isComplete ? (
-            <div
-              onClick={() => {
-                // updateDayComplete({ id: day.id, isComplete: false, programId: programId  })
-              }}
-              className={`flex items-center justify-center gap-2 text-xl font-bold text-yellow-500`}
-            >
-              Completed
-            </div>
-          ) : (
-            <div className='mx-12 flex items-center justify-between'>
-              <Button
+        {day.isRestDay ? (
+          <div>Rest Day</div>
+        ) : (
+          <div className='flex flex-col gap-6 px-1'>
+            <h2
+              className={`text-xl font-bold ${
+                day.isComplete ? 'text-green-500' : ''
+              }`}
+            ></h2>
+            {day?.isComplete ? (
+              <div
                 onClick={() => {
-                  updateDayComplete({
-                    id: day.id,
-                    isComplete: true,
-                    programId: program.id,
-                  })
+                  // updateDayComplete({ id: day.id, isComplete: false, programId: programId  })
                 }}
-                className='w-32'
+                className={`flex items-center justify-center gap-2 text-xl font-bold text-yellow-500`}
               >
-                Complete
-              </Button>
-              <HomeIcon
-                className='h-6 w-6 text-gray-200'
-                onClick={() => {
-                  void router.push(`/`)
-                }}
-              />
-            </div>
-          )}
-          <RadioGroup
-            value={selectedEngery}
-            onChange={onSetEnergy}
-            className='w-full'
-          >
-            <div
-              className={`flex w-full items-center justify-around gap-2 text-xl`}
+                Completed
+              </div>
+            ) : (
+              <div className='mx-12 flex items-center justify-between'>
+                <Button
+                  onClick={() => {
+                    updateDayComplete({
+                      id: day.id,
+                      isComplete: true,
+                      programId: program.id,
+                    })
+                  }}
+                  className='w-32'
+                >
+                  Complete
+                </Button>
+                <HomeIcon
+                  className='h-6 w-6 text-gray-200'
+                  onClick={() => {
+                    void router.push(`/`)
+                  }}
+                />
+              </div>
+            )}
+            <RadioGroup
+              value={selectedEngery}
+              onChange={onSetEnergy}
+              className='w-full'
             >
-              <RadioGroup.Label className='tracking-tighter'>
-                Energy Level
-              </RadioGroup.Label>
-              {['A', 'B', 'C', 'D'].map((energy) => (
-                <RadioGroup.Option
-                  key={energy}
-                  value={energy}
-                  className={({ active, checked }) => `${active ? '' : ''}
+              <div
+                className={`flex w-full items-center justify-around gap-2 text-xl`}
+              >
+                <RadioGroup.Label className='tracking-tighter'>
+                  Energy Level
+                </RadioGroup.Label>
+                {['A', 'B', 'C', 'D'].map((energy) => (
+                  <RadioGroup.Option
+                    key={energy}
+                    value={energy}
+                    className={({ active, checked }) => `${active ? '' : ''}
                               ${
                                 checked
                                   ? 'bg-yellow-500 font-extrabold text-black'
                                   : 'bg-gray-900 text-gray-700'
                               }
                                   relative flex h-8 w-8 cursor-pointer rounded-lg shadow-md focus:outline-none`}
-                >
-                  {({ checked }) => (
-                    <>
-                      <div className='flex w-full items-center justify-center'>
-                        <div className='flex items-center'>
-                          <div className=''>
-                            <RadioGroup.Label
-                              as='p'
-                              className={`${
-                                checked ? 'text-black' : 'text-gray-400'
-                              }`}
-                            >
-                              {energy}
-                            </RadioGroup.Label>
+                  >
+                    {({ checked }) => (
+                      <>
+                        <div className='flex w-full items-center justify-center'>
+                          <div className='flex items-center'>
+                            <div className=''>
+                              <RadioGroup.Label
+                                as='p'
+                                className={`${
+                                  checked ? 'text-black' : 'text-gray-400'
+                                }`}
+                              >
+                                {energy}
+                              </RadioGroup.Label>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </>
-                  )}
-                </RadioGroup.Option>
-              ))}
-            </div>
-          </RadioGroup>
-          {day.warmupTemplateId == '' && day.warmupTemplateId == null ? null : (
-            <div className='p-1'>
-              <h2 className='ml-1 text-xl font-bold capitalize text-yellow-500'>
-                Warmup
-              </h2>
-              <div className='mx-4 flex flex-col'>
-                {warmup?.warmups.map((w) => (
-                  <div
-                    key={w.id}
-                    className='flex items-center justify-between'
-                  >
-                    <div className='w-24 capitalize'>{w.name}</div>
-                    <div className='text-sm font-light text-gray-400'>
-                      {w?.notes}
-                    </div>
-                    <div className='w-8'>
-                      {w.link && (
-                        <a>
-                          <PlaySquare className='h-6 w-6 text-yellow-500' />
-                        </a>
-                      )}
-                    </div>
-                  </div>
+                      </>
+                    )}
+                  </RadioGroup.Option>
                 ))}
               </div>
-            </div>
-          )}
-          <div className='flex w-full flex-col gap-6 divide-y divide-dashed divide-gray-600 pb-16 md:p-2'>
-            {day?.exercise?.map((exercise, idx) => (
-              <div
-                key={exercise.id}
-                className=''
-              >
-                <ExerciseModal
-                  programId={program.id}
-                  exercise={exercise}
-                  idx={idx}
-                  selectedEnergy={selectedEngery}
-                  day={day}
-                  userId={userId}
-                  setIsOpen={setIsOpen}
-                  setExerciseToDelete={setExerciseToDelete}
-                />
+            </RadioGroup>
+            {day.warmupTemplateId == '' &&
+            day.warmupTemplateId == null ? null : (
+              <div className='flex w-full flex-col items-center justify-center px-4 py-1'>
+                <h2 className='ml-1 text-xl font-bold capitalize text-yellow-500'>
+                  Warmup
+                </h2>
+                <div className='mx-4 flex w-full flex-col items-center justify-center'>
+                  {warmup?.warmups.map((w) => (
+                    <div
+                      key={w.id}
+                      className='relative grid w-full grid-cols-2 justify-items-center'
+                    >
+                      <div className='text-lg font-medium capitalize tracking-tight'>
+                        {w.name}
+                      </div>
+                      <div className='text-base text-gray-400'>{w?.notes}</div>
+                      <div className='absolute -right-4 top-1/2 -translate-y-1/2'>
+                        {w.link && (
+                          <a
+                            href={w.link}
+                            rel='noreferrer'
+                            target='_blank'
+                          >
+                            <PlaySquare
+                              size={30}
+                              fill='#EAB308'
+                              color='black'
+                            />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
+            )}
+            <div className='flex w-full flex-col gap-0 divide-y divide-dashed divide-gray-600 pb-16 md:p-2'>
+              {day?.exercise?.map((exercise, idx) => (
+                <div
+                  key={exercise.id}
+                  className=''
+                >
+                  <ExerciseModal
+                    programId={program.id}
+                    exercise={exercise}
+                    idx={idx}
+                    selectedEnergy={selectedEngery}
+                    day={day}
+                    userId={userId}
+                    setIsOpen={setIsOpen}
+                    setExerciseToDelete={setExerciseToDelete}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
       </div>
 
       <Transition
@@ -320,15 +326,17 @@ const Day = () => {
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className='transform overflow-hidden rounded-md bg-black p-8 text-left align-middle text-gray-200 transition-all md:min-h-[600px] md:p-4'>
+                <Dialog.Panel className='transform overflow-hidden rounded-md bg-black p-8 text-left align-middle text-gray-200 transition-all md:max-h-[600px] md:p-4'>
                   <Dialog.Title
                     as='h3'
-                    className='flex items-center justify-center text-base font-medium leading-6 md:text-lg'
+                    className='flex items-center justify-center text-base text-xl font-medium leading-6'
                   >
                     delete?
                   </Dialog.Title>
                   <div className='mt-2 flex justify-between gap-6'>
                     <Button
+                      variant='secondary'
+                      size='md'
                       onClick={() => {
                         setIsOpen(false)
                         setExerciseToDelete('')
@@ -338,6 +346,8 @@ const Day = () => {
                       Yes
                     </Button>
                     <Button
+                      variant='secondary'
+                      size='md'
                       onClick={() => {
                         setExerciseToDelete('')
                         setIsOpen(false)
