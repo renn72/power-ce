@@ -53,7 +53,7 @@ const SetsModal = ({
                 <div className=''></div>
               )}
               <div
-                className={`flex h-12 min-w-[3rem] cursor-pointer items-center justify-center rounded-full bg-gray-800 text-2xl font-semibold hover:scale-105`}
+                className={`flex h-14 w-14 min-w-[3rem] cursor-pointer items-center justify-center rounded-full bg-gray-800 text-2xl font-bold hover:scale-105`}
                 onClick={(e) => {
                   e.stopPropagation()
                   onSetDoneWrapper()
@@ -79,7 +79,7 @@ const SetsModal = ({
               onDeleteSet(set.id)
             }}
           >
-            <div className='flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-accent text-2xl font-bold tracking-tight text-black'>
+            <div className='flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-accent text-2xl font-extrabold tracking-tight text-black'>
               {isSS ? 'SS' : set.rep}
             </div>
           </div>

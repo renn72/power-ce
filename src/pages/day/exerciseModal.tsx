@@ -76,7 +76,7 @@ const RpeSelect = ({
     <div className='flex flex-col items-center px-12 py-2'>
       <h2 className='text-2xl font-semibold'>RPE</h2>
       <Carousel
-        className='w-16'
+        className='w-28'
         setApi={setApi}
         opts={{
           startIndex: rpeValues.indexOf(value),
@@ -86,8 +86,8 @@ const RpeSelect = ({
         <CarouselContent>
           {rpeValues.map((i, index) => (
             <CarouselItem key={index}>
-              <div className='p-1'>
-                <Card className='rounded-full border-0 bg-yellow-500'>
+              <div className='p-1 flex justify-center'>
+                <Card className='rounded-full border-0 bg-yellow-500 w-16'>
                   <CardContent className='flex aspect-square items-center justify-center p-2'>
                     <span className='text-3xl font-bold'>{i}</span>
                   </CardContent>
@@ -162,7 +162,7 @@ const ExerciseSets = ({
                     <CarouselItem
                       key={setIdx}
                       className={`basis-1/4 ${
-                        exercise.ss.length > 0 ? '' : 'min-h-24'
+                        exercise.ss.length > 0 ? '' : 'min-h-28'
                       }`}
                     >
                       <SetsModal
