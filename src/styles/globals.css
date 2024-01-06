@@ -86,7 +86,7 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility !important;
     /* -webkit-text-stroke: 0.45px rgba(0, 0, 0, 0.1); */
-    text-shadow: #000 0px 1px 1px !important;
+    /* text-shadow: #000 0px 1px 1px !important; */
   }
 }
 

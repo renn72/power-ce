@@ -18,7 +18,6 @@ import {
   XIcon,
 } from 'lucide-react'
 import { NumericFormat } from 'react-number-format'
-import { AnimatePresence } from 'framer-motion'
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 import SetsModal from './setsModal'
 import { Card, CardContent } from '@/components/ui/card'
@@ -30,6 +29,7 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel'
 import { type CarouselApi } from '@/components/ui/carousel'
+import { Button } from '@/components/ui/button'
 
 const exerciseWithSetSS = Prisma.validator<Prisma.ExerciseArgs>()({
   include: {
@@ -89,12 +89,120 @@ const RpeSelect = ({
               <div className='p-1'>
                 <Card className='rounded-full border-0 bg-yellow-500'>
                   <CardContent className='flex aspect-square items-center justify-center p-2'>
-                    <span className='text-2xl font-semibold'>{i}</span>
+                    <span className='text-3xl font-bold'>{i}</span>
                   </CardContent>
                 </Card>
               </div>
             </CarouselItem>
           ))}
+        </CarouselContent>
+        <CarouselPrevious className='border-0' />
+        <CarouselNext className='border-0' />
+      </Carousel>
+    </div>
+  )
+}
+
+const ExerciseSets = ({
+  exercise,
+  onSetDone,
+  onDeleteSet,
+  exerciseSets,
+  setExerciseSets,
+}: {
+  exercise: Exercise
+  onSetDone: (reps: number) => void
+  onDeleteSet: (setId: string) => void
+  exerciseSets: number
+  setExerciseSets: (arg0: number) => void
+}) => {
+  const [api, setApi] = useState<CarouselApi>()
+  // const [finished, setFinished] = useState(() =>
+  //   exercise.set.reduce((acc, curr) => {
+  //     return acc + (curr.isComplete ? 1 : 0)
+  //   }, 0),
+  // )
+
+  const finished = exercise.set.reduce((acc, curr) => {
+    return acc + (curr.isComplete ? 1 : 0)
+  }, 0)
+
+  console.log('finished', finished)
+
+  useEffect(() => {
+    if (!api) {
+      return
+    }
+    console.log('effect')
+
+    api.scrollTo(finished - 1, false)
+  }, [finished])
+
+  console.log(exercise)
+
+  return (
+    <div className='px-12'>
+      <Carousel
+        className='w-full'
+        setApi={setApi}
+        opts={{
+          align: 'center',
+        }}
+      >
+        <CarouselContent>
+          {[
+            ...Array(
+              exerciseSets - exercise.set.length <= 0 ? 0 : exerciseSets,
+            ).keys(),
+          ].map((_, setIdx) => (
+            <>
+              {exercise.isComplete ? (
+                <>
+                  {exercise?.set[setIdx]?.isComplete && (
+                    <CarouselItem
+                      key={setIdx}
+                      className={`basis-1/4 ${
+                        exercise.ss.length > 0 ? '' : 'min-h-24'
+                      }`}
+                    >
+                      <SetsModal
+                        exercise={exercise}
+                        onSetDone={onSetDone}
+                        set={exercise.set[setIdx]}
+                        onDeleteSet={onDeleteSet}
+                      />
+                    </CarouselItem>
+                  )}
+                </>
+              ) : (
+                <CarouselItem
+                  key={setIdx}
+                  className={`basis-1/4 ${
+                    exercise.ss.length > 0 ? '' : 'min-h-24'
+                  }`}
+                >
+                  <SetsModal
+                    exercise={exercise}
+                    onSetDone={onSetDone}
+                    isComplete={exercise.isComplete}
+                    set={exercise.set[setIdx]}
+                    onDeleteSet={onDeleteSet}
+                  />
+                </CarouselItem>
+              )}
+            </>
+          ))}
+          {exercise.isComplete ? null : (
+            <CarouselItem
+              key={exerciseSets + 1}
+              className='flex basis-1/4 items-center justify-center'
+            >
+              <PlusIcon
+                onClick={() => setExerciseSets((e) => e + 1)}
+                className='mt-1 h-12 w-12 flex-shrink-0 cursor-pointer text-gray-400'
+              />
+            </CarouselItem>
+          )}
         </CarouselContent>
         <CarouselPrevious className='border-0' />
         <CarouselNext className='border-0' />
@@ -727,6 +835,101 @@ const ExerciseModal = ({
     )
   }
 
+  const ExerciseNotes = () => {
+    return (
+      <>
+        {exercise?.notes && (
+          <div className='flex flex-col items-center'>
+            <MinusIcon className='h-6 w-6' />
+            <div className='text-center text-xl text-gray-400'>
+              {exercise?.notes}
+            </div>
+            <MinusIcon className='h-6 w-6' />
+          </div>
+        )}
+      </>
+    )
+  }
+
+  const ExerciseWeight = () => {
+    return (
+      <div className='flex w-full items-center justify-center gap-4 text-2xl font-bold md:gap-6'>
+        <div
+          className='h-8 w-8 cursor-pointer rounded-full text-center'
+          onClick={(e) => {
+            e.stopPropagation()
+            if (weights && weights > 0) {
+              setWeights(+weights - 2.5)
+            }
+          }}
+        >
+          -
+        </div>
+        <div className='relative flex w-44 items-center text-center '>
+          <NumericFormat
+            className='w-full rounded-lg border border-gray-400 bg-black p-6 text-center text-4xl font-bold placeholder-gray-600  md:text-2xl'
+            value={weights}
+            placeholder='kg'
+            decimalScale={2}
+            onChange={(e) => setWeights(+e.target.value)}
+          />
+          {weights && weights !== 0 ? (
+            <span className='absolute right-5 text-base text-gray-400'>kg</span>
+          ) : null}
+        </div>
+        <div
+          className='h-8 w-8 cursor-pointer rounded-full text-center'
+          onClick={(e) => {
+            e.stopPropagation()
+            if (weights) {
+              setWeights(+weights + 2.5)
+            } else {
+              setWeights(2.5)
+            }
+          }}
+        >
+          +
+        </div>
+      </div>
+    )
+  }
+
+  const E1RM = () => {
+    return (
+      <>
+        {exercise.lift &&
+          exercise.lift !== 'unlinked' &&
+          (
+            Number(weights) /
+            Number(e1rm[Number(exercise?.reps) - 1] || 0 / 100)
+          )?.toFixed(0) && (
+            <div className='mx-1 flex items-baseline justify-center gap-2 px-2 text-muted-foreground md:mx-6'>
+              <div className='text-sm'>E1RM</div>
+              {weights && weights !== 0 && e1rm[Number(exercise.reps) - 1] ? (
+                <div>
+                  {(
+                    +weights / (e1rm?.[Number(exercise?.reps) - 1] / 100 || 0)
+                  )?.toFixed(0)}
+                  kg
+                </div>
+              ) : null}
+            </div>
+          )}
+      </>
+    )
+  }
+
+  const ExerciseCount = () => {
+    return (
+      <div className='mt-4 flex w-full justify-center gap-4 text-2xl font-bold md:gap-6'>
+        {exercise.set.reduce((acc, curr) => {
+          return acc + (curr.isComplete ? 1 : 0)
+        }, 0)}{' '}
+        / {exerciseSets}
+      </div>
+    )
+  }
+
   return (
     <div>
       <Disclosure>
@@ -758,185 +961,23 @@ const ExerciseModal = ({
                 >
                   <Disclosure.Panel>
                     <div className='flex flex-col gap-2'>
-                      {exercise?.notes && (
-                        <div className='flex flex-col items-center'>
-                          <MinusIcon className='h-6 w-6' />
-                          <div className='text-center text-xl text-gray-400'>
-                            {exercise?.notes}
-                          </div>
-                          <MinusIcon className='h-6 w-6' />
-                        </div>
-                      )}
+                      <ExerciseNotes />
                       {exercise.sets && (
-                        <div className='flex flex-col gap-2 md:gap-6'>
-                          {isSS ? null : (
-                            <div className='flex w-full items-center justify-center gap-4 text-2xl font-bold md:gap-6'>
-                              <div
-                                className='h-8 w-8 cursor-pointer rounded-full text-center'
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  if (weights && weights > 0) {
-                                    setWeights(+weights - 2.5)
-                                  }
-                                }}
-                              >
-                                -
-                              </div>
-                              <div className='relative flex w-44 items-center text-center '>
-                                <NumericFormat
-                                  className='w-full rounded-lg border border-gray-400 bg-black p-6 text-center text-4xl font-bold placeholder-gray-600  md:text-2xl'
-                                  value={weights}
-                                  placeholder='kg'
-                                  decimalScale={2}
-                                  onChange={(e) => setWeights(+e.target.value)}
-                                />
-                                {weights && weights !== 0 ? (
-                                  <span className='absolute right-5 text-base text-gray-400'>
-                                    kg
-                                  </span>
-                                ) : null}
-                              </div>
-                              <div
-                                className='h-8 w-8 cursor-pointer rounded-full text-center'
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  if (weights) {
-                                    setWeights(+weights + 2.5)
-                                  } else {
-                                    setWeights(2.5)
-                                  }
-                                }}
-                              >
-                                +
-                              </div>
-                            </div>
-                          )}
-
+                        <div className='mb-6 flex flex-col gap-2 md:gap-6'>
+                          {isSS ? null : <ExerciseWeight />}
                           <RpeSelect
                             value={rpe}
                             onChange={setRpe}
                           />
-                          {exercise.lift &&
-                            exercise.lift !== 'unlinked' &&
-                            (
-                              Number(weights) /
-                              Number(
-                                e1rm[Number(exercise?.reps) - 1] || 0 / 100,
-                              )
-                            )?.toFixed(0) && (
-                              <div className='mx-1 flex items-baseline justify-center gap-2 px-2 text-muted-foreground md:mx-6'>
-                                <div className='text-sm'>E1RM</div>
-                                {weights &&
-                                weights !== 0 &&
-                                e1rm[Number(exercise.reps) - 1] ? (
-                                  <div>
-                                    {(
-                                      +weights /
-                                      (e1rm?.[Number(exercise?.reps) - 1] /
-                                        100 || 0)
-                                    )?.toFixed(0)}
-                                    kg
-                                  </div>
-                                ) : null}
-                              </div>
-                            )}
-                          <div className='mt-4 flex w-full justify-center gap-4 text-2xl font-bold md:gap-6'>
-                            {exercise.set.reduce((acc, curr) => {
-                              return acc + (curr.isComplete ? 1 : 0)
-                            }, 0)}{' '}
-                            / {exerciseSets}
-                          </div>
-
-                          <div className='mx-4 max-w-[90vw] overflow-x-clip'>
-                            <AnimatePresence>
-                              <div className='flex h-36 items-center gap-3 text-xl font-medium md:gap-4'>
-                                <MinusIcon
-                                  onClick={() =>
-                                    setExerciseSets((e) => (e > 1 ? e - 1 : e))
-                                  }
-                                  className={`h-8 w-8 flex-shrink-0 cursor-pointer text-gray-400 ${
-                                    exerciseSets - exercise.set.length <= 0
-                                      ? 'hidden'
-                                      : ''
-                                  }`}
-                                />
-                                {[
-                                  ...Array(
-                                    exerciseSets - exercise.set.length <= 0
-                                      ? 0
-                                      : exerciseSets - exercise.set.length,
-                                  ).keys(),
-                                ].map((_, setIdx) => (
-                                  <div
-                                    key={setIdx}
-                                    className=''
-                                  >
-                                    <SetsModal
-                                      exercise={exercise}
-                                      onSetDone={onSetDone}
-                                      isComplete={exercise.isComplete}
-                                    />
-                                  </div>
-                                ))}
-                                <PlusIcon
-                                  onClick={() => setExerciseSets((e) => e + 1)}
-                                  className='h-8 w-8 flex-shrink-0 cursor-pointer text-gray-400'
-                                />
-                              </div>
-                            </AnimatePresence>
-                            <div className='flex items-center justify-start gap-3 overflow-x-clip text-xl font-medium'>
-                              {exercise.set
-                                .filter((s) => s.isComplete)
-                                .map((set) => (
-                                  <div
-                                    key={set.id}
-                                    className='flex shrink-0 flex-col items-center justify-center gap-1'
-                                  >
-                                    <div
-                                      className='flex flex-col gap-1'
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        onDeleteSet(set.id)
-                                      }}
-                                    >
-                                      <div className='flex h-12 min-w-[1rem] cursor-pointer items-center justify-center rounded-full bg-black text-2xl font-bold text-yellow-500'>
-                                        {isSS ? 'SS' : set.rep}
-                                      </div>
-                                    </div>
-                                    <div className=''>
-                                      <div className='flex flex-col items-center text-sm tracking-tighter text-gray-400'>
-                                        <div>RPE:{Number(set.rpe)}</div>
-                                        {!isSS && (
-                                          <div
-                                            className={
-                                              Number(set.weight) == 0 &&
-                                              exercise.lift != 'unlinked'
-                                                ? 'text-red-500'
-                                                : ''
-                                            }
-                                          >
-                                            W:{` `}
-                                            <span className='text-base font-bold text-gray-200'>
-                                              {Number(set.weight) === 0
-                                                ? ''
-                                                : `${Number(set.weight)}kg`}
-                                            </span>
-                                          </div>
-                                        )}
-                                        {Number(set.estiamtedOnerm) != 0 && (
-                                          <div>
-                                            E:
-                                            {Number(set.estiamtedOnerm) === 0
-                                              ? ''
-                                              : Number(set.estiamtedOnerm)}
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))}
-                            </div>
-                          </div>
+                          <E1RM />
+                          <ExerciseCount />
+                          <ExerciseSets
+                            exercise={exercise}
+                            onSetDone={onSetDone}
+                            onDeleteSet={onDeleteSet}
+                            exerciseSets={exerciseSets}
+                            setExerciseSets={setExerciseSets}
+                          />
 
                           <Input
                             value={notes}
@@ -944,6 +985,39 @@ const ExerciseModal = ({
                             placeholder='Notes'
                             className='w-full'
                           />
+                          {exercise.isComplete ? (
+                            <Button
+                              onClick={() => {
+                                updateExerciseComplete({
+                                  id: exercise.id,
+                                  isComplete: false,
+                                  notes: notes,
+                                })
+                              }}
+                              className='mx-auto w-36'
+                              size='lg'
+                              variant='secondary'
+                            >
+                              Start
+                            </Button>
+                          ) : (
+                            <Disclosure.Button>
+                              <Button
+                                onClick={() => {
+                                  updateExerciseComplete({
+                                    id: exercise.id,
+                                    isComplete: true,
+                                    notes: notes,
+                                  })
+                                }}
+                                className='mx-auto w-36'
+                                size='lg'
+                                variant='secondary'
+                              >
+                                Finish
+                              </Button>
+                            </Disclosure.Button>
+                          )}
                         </div>
                       )}
                     </div>
