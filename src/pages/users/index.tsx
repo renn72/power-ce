@@ -17,11 +17,13 @@ import UserSelect from './userSelect'
 import CountDown from '~/components/countDown'
 import TrainerSelect from './trainerSelect'
 import Settings from '~/components/settings'
-import { RefreshCcwIcon } from 'lucide-react'
+import { ChevronsLeft, RefreshCcwIcon, ChevronsRight } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import CompPlan from '~/components/compPlan'
 import ModalWrapper from '~/components/settings/modalWrapper'
+
+import UserProgramCheck from './userProgramCheck'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -425,6 +427,7 @@ const Users = () => {
     })
 
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
+  api.users.getAllUsersProfiles.useQuery()
 
   const { data: activeProgram } = api.blocks.getUserActiveProgram.useQuery({
     userId: userId,
@@ -520,7 +523,7 @@ const Users = () => {
         isOpen={isOpen}
         setIsOpen={setIsOpen}
       />
-      <main className='flex h-full min-w-[1500px] flex-col items-center justify-center gap-8 px-2 py-3 sm:px-6 md:mt-6 '>
+      <main className=' relative flex h-full min-w-[1500px] flex-col items-center justify-center gap-8 px-2 py-3 sm:px-6 md:mt-6 '>
         <UserSelect onSelectUser={setUserId} />
         <Tab.Group
           vertical
@@ -648,7 +651,7 @@ const Users = () => {
                                   )
                                   setIsRpeModalOpen(true)
                                 }}
-                                className='flex w-24 cursor-pointer flex-col items-center rounded-xl border border-gray-600 py-4 hover:bg-gray-900 relative'
+                                className='relative flex w-24 cursor-pointer flex-col items-center rounded-xl border border-gray-600 py-4 hover:bg-gray-900'
                               >
                                 <div>
                                   {rpeData &&
@@ -771,6 +774,7 @@ const Users = () => {
           </div>
         </Tab.Group>
       </main>
+      <UserProgramCheck />
     </>
   )
 }

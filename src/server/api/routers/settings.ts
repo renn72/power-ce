@@ -142,6 +142,51 @@ export const settingsRouter = createTRPCRouter({
       })
       return res
     }),
+  updateChecked: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        value: z.boolean(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.userProfile.update({
+        where: {
+          userId: input.userId,
+        },
+        data: {
+          isChecked: input.value,
+        },
+      })
+      return res
+    }),
+  clearChecked: privateProcedure
+    .mutation(async ({ ctx, }) => {
+      const res = await ctx.prisma.userProfile.updateMany({
+        data: {
+          isChecked: false,
+        },
+      })
+      return res
+    }),
+  updateProgramInterval: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        value: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.prisma.userProfile.update({
+        where: {
+          userId: input.userId,
+        },
+        data: {
+          programInterval: input.value,
+        },
+      })
+      return res
+    }),
 
   updateRole: privateProcedure
     .input(

@@ -66,7 +66,7 @@ const Day = () => {
       const previousProgram = utils.blocks.get.getData({ id: programId })
 
       if (!previousProgram) return
-
+ 
       utils.blocks.get.setData(
         { id: programId },
         {

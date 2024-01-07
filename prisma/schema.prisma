@@ -524,7 +524,7 @@ model UserProfile {
   createdAt DateTime @default(now())
 
   userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   DOB    DateTime?
   gender String?
@@ -543,6 +543,9 @@ model UserProfile {
   squatOneRepMax    Decimal?
   benchOneRepMax    Decimal?
   deadliftOneRepMax Decimal?
+
+  programInterval String?
+  isChecked      Boolean @default(false)
 
   sp1_1 Decimal @default(0.9)
   sp1_2 Decimal @default(0.91)
