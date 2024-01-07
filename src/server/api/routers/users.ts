@@ -37,6 +37,17 @@ export const usersRouter = createTRPCRouter({
       return res
     }),
 
+  delete: privateProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const id = input.userId
+      const res = await ctx.prisma.user.delete({
+        where: { id },
+      })
+
+      return res
+    }),
+
   getTrainer: privateProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {

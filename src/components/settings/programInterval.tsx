@@ -17,7 +17,7 @@ const ProgramInterval = ({ name, userId }: { name: string; userId: string }) => 
     },
   })
   return (
-    <div>
+    <div className='col-span-2'>
       <div
         className='w-fit cursor-pointer pr-8'
         onClick={() => setIsOpen(true)}

@@ -9,12 +9,9 @@ import Email from './email'
 import Height from './height'
 import Weight from './weight'
 import TargetWeight from './targetWeight'
-import WeightGoal from './weightGoal'
 import DOB from './dob'
 import Gender from './gender'
-import SquatOneRM from './squatOneRM'
-import BenchOneRM from './benchOneRM'
-import DeadOneRM from './deadOneRM'
+import Delete from './delete'
 
 const RoleToggle = ({
   value,
@@ -137,7 +134,7 @@ const Settings = ({ userId }: { userId: string }) => {
             defaultValue={userSettings?.gender || ''}
           />
           {isAdmin && (
-            <div className='w-fit rounded-xl border border-gray-600 px-8 py-4'>
+            <div className='w-fit rounded-xl border border-gray-600 px-8 py-4 flex flex-col'>
               <RoleToggle
                 value={user.isClient}
                 title='Client'
@@ -209,6 +206,11 @@ const Settings = ({ userId }: { userId: string }) => {
                   />
                 </div>
               )}
+          <Delete
+            userId={userId}
+            defaultValue={userSettings?.gender || ''}
+          />
+
             </div>
           )}
         </div>

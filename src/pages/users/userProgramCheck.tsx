@@ -50,14 +50,14 @@ const UserTemplate = ({ user }: { user: User }) => {
     <>
       <div
         key={user.id}
-        className='grid grid-cols-5 items-center text-lg'
+        className='grid grid-cols-6 items-center text-lg'
       >
         <ProgramInterval
           name={user.userProfiles[0]?.programInterval || ''}
           userId={user.id}
         />
         <div
-          className={`col-span-3 capitalize tracking-tighter text-foreground ${
+          className={`col-span-3 capitalize tracking-tighter text-foreground overflow-hidden ${
             isChecked ? 'font-semibold text-yellow-500' : ''
           } `}
         >
@@ -91,7 +91,7 @@ const UserProgramCheck = () => {
         <ChevronsLeft
           size={48}
           strokeWidth={2}
-          className='absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-200 hidden md:block'
+          className='absolute right-0 top-1/2 hidden -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-200 md:block'
         />
       </SheetTrigger>
       <SheetContent
