@@ -480,7 +480,6 @@ const Users = () => {
   })
 
   const { data: rpeData } = api.rpe.getAll.useQuery(userId)
-  console.log('rpeData', rpeData)
 
   const { mutate: rpeUpdate } = api.rpe.create.useMutation({
     onSuccess: () => {

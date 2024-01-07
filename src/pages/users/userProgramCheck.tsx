@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/sheet'
 import { api } from '~/utils/api'
 import { Checkbox } from '@/components/ui/checkbox'
-import { useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import ProgramInterval from '~/components/settings/programInterval'
 import { Button } from '@/components/ui/button'
@@ -85,8 +84,6 @@ const UserProgramCheck = () => {
       void utils.users.getAllUsersProfiles.invalidate()
     },
   })
-
-  console.log(users)
 
   return (
     <Sheet modal={false}>
