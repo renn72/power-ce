@@ -2,7 +2,7 @@ import { clerkClient } from '@clerk/nextjs/server'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-import { createTRPCRouter, privateProcedure } from '~/server/api/trpc'
+import { createTRPCRouter, privateProcedure, publicProcedure } from '~/server/api/trpc'
 
 export const usersRouter = createTRPCRouter({
   getSuperAdmin: privateProcedure.query(async ({ ctx }) => {
@@ -26,7 +26,7 @@ export const usersRouter = createTRPCRouter({
     })
     return res
   }),
-  get: privateProcedure
+  get: publicProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
       const id = input.userId
