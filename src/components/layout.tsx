@@ -11,10 +11,10 @@ import { api } from '~/utils/api'
 const Layout = (props: PropsWithChildren) => {
   const { data: session, status } = useSession()
   const userId = session?.user?.id || ''
-  const { data: user } = api.users.get.useQuery({ userId: userId })
+  const { data: user, isLoading: userLoading } = api.users.get.useQuery({ userId: userId })
   const router = useRouter()
 
-  if (status === 'loading') return <LoadingPage />
+  if (status === 'loading' || userLoading) return <LoadingPage />
 
   return (
     <>
