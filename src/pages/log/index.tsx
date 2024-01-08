@@ -4,8 +4,9 @@ import { api } from '~/utils/api'
 import { getDate, getTime } from '~/utils/utils'
 
 const Log = () => {
-  const { data: sesion } = useSession()
-  const user = sesion?.user
+  const { data: session } = useSession()
+  const userId = session?.user?.id || ''
+  const { data: user } = api.users.get.useQuery({ userId: userId })
   const { data: sets, isLoading: setsLoading } =
     api.blocks.getLogSets.useQuery()
   const { data: users, isLoading: usersLoading } =

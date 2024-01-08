@@ -3,11 +3,14 @@ import { useState } from 'react'
 import CompPlan from '~/components/compPlan'
 import UserSelect from './userSelect'
 
+import { api } from '~/utils/api'
+
 const Comp = () => {
   const { data: session } = useSession()
-  const user = session?.user
+  const currentUserId = session?.user?.id || ''
+  const { data: user } = api.users.get.useQuery({ userId: currentUserId })
   const isAdmin = user?.isAdmin
-  const [userId, setUserId] = useState(user?.id || '')
+  const [userId, setUserId] = useState(currentUserId)
 
   if (!user) return null
 

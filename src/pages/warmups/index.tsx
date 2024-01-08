@@ -26,7 +26,8 @@ export const defaultValues = {
 
 const Warmups = () => {
   const { data: session } = useSession()
-  const user = session?.user
+  const userId = session?.user?.id || ''
+  const { data: user } = api.users.get.useQuery({ userId: userId })
 
   const formMethods = useForm({ defaultValues })
   const {

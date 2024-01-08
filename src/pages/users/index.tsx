@@ -346,8 +346,8 @@ const TabWrapper = ({ title }: { title: string }) => (
 
 const Users = () => {
   const { data: session } = useSession()
-  const user = session?.user
-  const [userId, setUserId] = useState<string>(() => user?.id || '')
+  const { data: user } = api.users.get.useQuery({ userId: session?.user?.id || '' })
+  const [userId, setUserId] = useState<string>(() => session?.user?.id || '')
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const [isRpeModalOpen, setIsRpeModalOpen] = useState<boolean>(false)

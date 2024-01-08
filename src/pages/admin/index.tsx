@@ -7,7 +7,8 @@ import { api } from '~/utils/api'
 
 const Admin = () => {
   const { data: session} = useSession()
-  const user = session?.user
+  const userId = session?.user?.id || ''
+  const { data: user } = api.users.get.useQuery({ userId: userId })
   const ctx = api.useContext()
   const { data: allTemplates, isLoading: allTemplatesLoading } =
     api.blocks.getAllBlockTitlesAdmin.useQuery()

@@ -14,7 +14,8 @@ const Templates: NextPage = () => {
   } = api.blocks.getAll.useQuery()
 
   const { data: session } = useSession()
-  const user = session?.user
+  const userId = session?.user?.id || ''
+  const { data: user } = api.users.get.useQuery({ userId: userId })
 
   if (blocksLoading) {
     return (

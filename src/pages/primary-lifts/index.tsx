@@ -10,7 +10,8 @@ import { useSession } from 'next-auth/react'
 
 const PrimaryLifts: NextPage = () => {
   const { data: session } = useSession()
-  const user = session?.user
+  const userId = session?.user?.id || ''
+  const { data: user } = api.users.get.useQuery({ userId: userId })
   const [value, setValue] = useState('')
 
   const { data: primaryLifts, isLoading: primaryLiftsLoading } =

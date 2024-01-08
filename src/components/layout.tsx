@@ -6,11 +6,13 @@ import { useSession, signIn } from 'next-auth/react'
 import { LoadingPage } from './loading'
 import { useRouter } from 'next/router'
 
+import { api } from '~/utils/api'
+
 const Layout = (props: PropsWithChildren) => {
   const { data: session, status } = useSession()
-  const user = session?.user
+  const userId = session?.user?.id || ''
+  const { data: user } = api.users.get.useQuery({ userId: userId })
   const router = useRouter()
-   console.log(router.pathname)
 
   if (status === 'loading') return <LoadingPage />
 

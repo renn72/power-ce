@@ -64,10 +64,8 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
 
 const Home: NextPage = () => {
   const { data: session } = useSession()
-  const user = session?.user
   const userId = session?.user?.id || ''
-
-  console.log('session', session)
+  const { data: user } = api.users.get.useQuery({ userId: userId })
 
   // const userId = user?.id || ''
   // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam
@@ -182,12 +180,14 @@ const Home: NextPage = () => {
             userId={userId}
           />
         </div>
-        <Link href={'/records'}>
+        <Link href={'/records'} className='w-fit'>
           <Button className='h-8 w-36 rounded bg-yellow-400 p-0 font-bold text-gray-900 hover:bg-yellow-500'>
             CE Records
           </Button>
         </Link>
-        <div className='text-xl capitalize text-yellow-500 mt-10'>Competitions</div>
+        <div className='mt-10 text-xl capitalize text-yellow-500'>
+          Competitions
+        </div>
         <div className='flex max-w-[800px] flex-col gap-0 space-y-2 divide-y divide-dashed divide-gray-400'>
           {compLifts?.map((comp) => (
             <div
@@ -257,11 +257,6 @@ const Home: NextPage = () => {
               Save
             </Button>
           </div>
-        </div>
-        <div className='hidden'>
-          <Button onClick={() => setOpenPowerliftingData({ userId: userId })}>
-            Set Open Powerlifting Data
-          </Button>
         </div>
       </main>
     </>

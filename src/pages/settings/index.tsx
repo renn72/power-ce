@@ -4,10 +4,9 @@ import Settings from '~/components/settings'
 
 const SettingsPage = () => {
   const { data: session } = useSession()
-  const user = session?.user
   const userId = session?.user.id || ''
 
-  if (!user) return <div>Login</div>
+  if (!userId) return <div>Login</div>
 
   return (
     <>

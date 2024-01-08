@@ -79,10 +79,14 @@ const RoleToggle = ({
 
 const Settings = ({ userId }: { userId: string }) => {
   const { data: session } = useSession()
-  const isAdmin = session?.user?.isAdmin
-  const { data: user } = api.users.get.useQuery({
-    userId: userId,
+  const currentUserId = session?.user?.id || ''
+  const { data: currentUser } = api.users.get.useQuery({
+    userId: currentUserId,
   })
+  const isAdmin = currentUser?.isAdmin
+  const isRoot = currentUser?.isRoot
+
+  const { data: user } = api.users.get.useQuery({ userId: userId })
 
   const { data: userSettings, isLoading: settingsLoading } =
     api.settings.get.useQuery({
@@ -134,7 +138,7 @@ const Settings = ({ userId }: { userId: string }) => {
             defaultValue={userSettings?.gender || ''}
           />
           {isAdmin && (
-            <div className='w-fit rounded-xl border border-gray-600 px-8 py-4 flex flex-col'>
+            <div className='flex w-fit flex-col rounded-xl border border-gray-600 px-8 py-4'>
               <RoleToggle
                 value={user.isClient}
                 title='Client'
@@ -159,7 +163,7 @@ const Settings = ({ userId }: { userId: string }) => {
                 field='isPower'
                 userId={userId}
               />
-              {session?.user?.isRoot && (
+              {isRoot && (
                 <div className='mt-16 flex flex-col gap-1'>
                   <RoleToggle
                     value={user.isRoot}
@@ -204,13 +208,12 @@ const Settings = ({ userId }: { userId: string }) => {
                     field='isSuper'
                     userId={userId}
                   />
+                  <Delete
+                    userId={userId}
+                    defaultValue={userSettings?.gender || ''}
+                  />
                 </div>
               )}
-          <Delete
-            userId={userId}
-            defaultValue={userSettings?.gender || ''}
-          />
-
             </div>
           )}
         </div>

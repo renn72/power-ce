@@ -4,8 +4,10 @@ import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
+  DefaultUser,
 } from 'next-auth'
 import EmailProvider from 'next-auth/providers/email'
+import AppleProvider from 'next-auth/providers/apple'
 
 import { env } from '~/env.mjs'
 import { db } from '~/server/db'
@@ -20,39 +22,35 @@ declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: DefaultSession['user'] & {
       id: string
-      firstName: string
-      lastName: string
-      isDiet: boolean
-      isDietTrainer: boolean
-      isPower: boolean
-      isPowerTrainer: boolean
-      isTrainer: boolean
-      isClient: boolean
-      isRecordEditor: boolean
-      isAdmin: boolean
-      isSuper: boolean
-      isHiiT: boolean
-      isHiiTTrainer: boolean
-      isRoot: boolean
+      // isDiet: boolean
+      // isDietTrainer: boolean
+      // isPower: boolean
+      // isPowerTrainer: boolean
+      // isTrainer: boolean
+      // isClient: boolean
+      // isRecordEditor: boolean
+      // isAdmin: boolean
+      // isSuper: boolean
+      // isHiiT: boolean
+      // isHiiTTrainer: boolean
+      // isRoot: boolean
       // ...other properties
       // role: UserRole;
     }
   }
 
-  // interface User {
-  //     id: string
-  //     firstName: string
-  //     lastName: string
-  //     isDiet: boolean
-  //     isPower: boolean
-  //     isTrainer: boolean
-  //     isClient: boolean
-  //     isRecordEditor: boolean
-  //     isAdmin: boolean
-  //     isSuper: boolean
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User extends DefaultUser {
+    id: string
+    // isDiet: boolean
+    // isPower: boolean
+    // isTrainer: boolean
+    // isClient: boolean
+    // isRecordEditor: boolean
+    // isAdmin: boolean
+    // isSuper: boolean
+    // ...other properties
+    // role: UserRole;
+  }
 }
 
 /**
@@ -62,30 +60,41 @@ declare module 'next-auth' {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        isDiet: user.isDiet,
-        isDietTrainer: user.isDietTrainer,
-        isPower: user.isPower,
-        isPowerTrainer: user.isPowerTrainer,
-        isTrainer: user.isTrainer,
-        isClient: user.isClient,
-        isRecordEditor: user.isRecordEditor,
-        isAdmin: user.isAdmin,
-        isSuper: user.isSuper,
-        isHiiT: user.isHiiT,
-        isHiiTTrainer: user.isHiiTTrainer,
-        isRoot: user.isRoot,
-      },
-    }),
+    async session({ session, token }) {
+      if (token) {
+        session.user = {
+          id: token.sub as string,
+        }
+      }
+      return session
+    },
+    // session: ({ session, token }) => ({
+    //   ...session,
+    //   user: {
+    //     ...session.user,
+    //     id: token.sub,
+    //     firstName: session.user.firstName,
+    //     // lastName: token.lastName,
+    //     // isDiet: token.isDiet,
+    //     // isDietTrainer: token.isDietTrainer,
+    //     // isPower: token.isPower,
+    //     // isPowerTrainer: token.isPowerTrainer,
+    //     // isTrainer: token.isTrainer,
+    //     // isClient: token.isClient,
+    //     // isRecordEditor: token.isRecordEditor,
+    //     // isAdmin: token.isAdmin,
+    //     // isSuper: token.isSuper,
+    //     // isHiiT: token.isHiiT,
+    //     // isHiiTTrainer: token.isHiiTTrainer,
+    //     // isRoot: token.isRoot,
+    //   },
+    // }),
   },
   secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(db),
+  session: {
+    strategy: 'jwt',
+  },
   providers: [
     EmailProvider({
       server: {
