@@ -94,6 +94,7 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
   session: {
     strategy: 'jwt',
+    maxAge: 90 * 24 * 60 * 60, // 30 days
   },
   providers: [
     EmailProvider({
