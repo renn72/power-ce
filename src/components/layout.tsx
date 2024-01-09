@@ -18,7 +18,7 @@ const Layout = (props: PropsWithChildren) => {
   return (
     <>
       <div className='flex min-h-screen w-full flex-col overflow-auto bg-black text-gray-200'>
-        {userId != '' ||
+        {false ||
         router.pathname === '/records-men' ||
         router.pathname === '/records-women' ? (
           <>
@@ -28,12 +28,7 @@ const Layout = (props: PropsWithChildren) => {
           </>
         ) : (
           <div className='flex h-full w-full grow items-center justify-center'>
-            <button
-              className='rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20'
-              onClick={() => void signIn()}
-            >
-              Sign in
-            </button>
+              Please check back shortly
           </div>
         )}
       </div>
