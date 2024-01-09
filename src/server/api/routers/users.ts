@@ -31,12 +31,60 @@ export const usersRouter = createTRPCRouter({
     })
     return res
   }),
+  logSignIn: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        location: z.string().optional(),
+        url: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const id = input.userId
+      const location = input.location || ''
+      const url = input.url || ''
+
+      const user = await ctx.prisma.user.findUnique({
+        where: { id },
+      })
+
+      const res = await ctx.prisma.log.create({
+        data: {
+          location: location,
+          action: 'signin',
+          userId: id,
+          url: url,
+          response: JSON.stringify(user),
+        },
+      })
+
+      return res
+    }),
+ 
   isUser: publicProcedure
-    .input(z.object({ userId: z.string(), location: z.string().optional() }))
+    .input(
+      z.object({
+        userId: z.string(),
+        location: z.string().optional(),
+        url: z.string().optional(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       const id = input.userId
+      const location = input.location || ''
+      const url = input.url || ''
       const res = await ctx.prisma.user.findUnique({
         where: { id },
+      })
+
+      await ctx.prisma.log.create({
+        data: {
+          location: location,
+          action: 'is user',
+          userId: id,
+          url: url,
+          response: JSON.stringify(res),
+        },
       })
 
       if (!res) {
