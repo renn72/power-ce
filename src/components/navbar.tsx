@@ -68,7 +68,7 @@ const classNames = (...classes: string[]) => {
 const Navbar = () => {
   const { data: session } = useSession()
   const userId = session?.user?.id || ''
-  const { data: user } = api.users.get.useQuery({ userId: userId, action: 'navbar' })
+  const { data: user } = api.users.get.useQuery({ userId: userId, location: 'navbar' })
 
   // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam
   const router = useRouter()

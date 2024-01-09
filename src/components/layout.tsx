@@ -11,14 +11,17 @@ import { api } from '~/utils/api'
 const Layout = (props: PropsWithChildren) => {
   const { data: session, status } = useSession()
   const userId = session?.user?.id || ''
+  const { data: isUser, isLoading: userLoading } = api.users.isUser.useQuery({
+    userId: userId,
+  })
   const router = useRouter()
 
-  if (status === 'loading') return <LoadingPage />
+  if (status === 'loading' || userLoading) return <LoadingPage />
 
   return (
     <>
       <div className='flex min-h-screen w-full flex-col overflow-auto bg-black text-gray-200'>
-        {false ||
+        {isUser ||
         router.pathname === '/records-men' ||
         router.pathname === '/records-women' ? (
           <>
@@ -28,7 +31,12 @@ const Layout = (props: PropsWithChildren) => {
           </>
         ) : (
           <div className='flex h-full w-full grow items-center justify-center'>
-              Please check back shortly
+            <button
+              className='rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20'
+              onClick={() => void signIn()}
+            >
+              Sign in
+            </button>
           </div>
         )}
       </div>

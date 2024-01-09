@@ -1,4 +1,5 @@
 import { clerkClient } from '@clerk/nextjs/server'
+import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
 import {
@@ -29,6 +30,19 @@ export const usersRouter = createTRPCRouter({
     })
     return res
   }),
+  isUser: publicProcedure
+    .input(z.object({ userId: z.string(), location: z.string().optional() }))
+    .query(async ({ ctx, input }) => {
+      const id = input.userId
+      const res = await ctx.prisma.user.findUnique({
+        where: { id },
+      })
+
+      if (!res) {
+        return false
+      }
+      return true
+    }),
   get: privateProcedure
     .input(z.object({ userId: z.string(), location: z.string().optional() }))
     .query(async ({ ctx, input }) => {
