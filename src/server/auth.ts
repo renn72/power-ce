@@ -4,12 +4,10 @@ import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
-  DefaultUser,
+  type DefaultUser,
 } from 'next-auth'
 import EmailProvider from 'next-auth/providers/email'
-import AppleProvider from 'next-auth/providers/apple'
 
-import { env } from '~/env.mjs'
 import { db } from '~/server/db'
 
 /**
@@ -94,7 +92,7 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
   session: {
     strategy: 'jwt',
-    maxAge: 90 * 24 * 60 * 60, // 30 days
+    maxAge: 90 * 24 * 60 * 60, // 90 days
   },
   providers: [
     EmailProvider({

@@ -519,6 +519,19 @@ model DailyLog {
   @@index([userId])
 }
 
+model Log {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId String
+  action String
+  location String
+  response Json
+
+  flield1 String?
+  flield2 String?
+}
+
 model UserProfile {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
