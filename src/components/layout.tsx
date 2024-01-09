@@ -10,7 +10,6 @@ import { api } from '~/utils/api'
 
 const Layout = (props: PropsWithChildren) => {
   const { data: session, status } = useSession()
-  console.log(session)
   const userId = session?.user?.id || ''
   const { data: isUser, isLoading: userLoading } = api.users.isUser.useQuery({
     userId: userId,
