@@ -66,6 +66,7 @@
     "jotai": "^2.2.0",
     "lucide-react": "^0.252.0",
     "next": "^14.0.1",
+    "next-absolute-url": "^1.2.2",
     "next-auth": "^4.24.5",
     "nodemailer": "^6.9.7",
     "papaparse": "^5.4.1",

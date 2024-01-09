@@ -26,6 +26,7 @@ import { db } from '~/server/db'
 
 interface CreateContextOptions {
   session: Session | null
+  req: any
 }
 
 /**
@@ -43,6 +44,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
     session: opts.session,
     prisma: db,
     userId: opts.session?.user?.id ?? null,
+    req: opts.req
   }
 }
 
@@ -60,6 +62,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   return createInnerTRPCContext({
     session,
+    req,
   })
 }
 

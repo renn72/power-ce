@@ -1,6 +1,7 @@
 import { clerkClient } from '@clerk/nextjs/server'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
+import absoluteUrl from 'next-absolute-url'
 
 import {
   createTRPCRouter,
@@ -44,10 +45,22 @@ export const usersRouter = createTRPCRouter({
       return true
     }),
   get: privateProcedure
-    .input(z.object({ userId: z.string(), location: z.string().optional() }))
+    .input(
+      z.object({
+        userId: z.string(),
+        location: z.string().optional(),
+        url: z.string().optional(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
+      const req = ctx.req
+      const { origin } = absoluteUrl(req) as string
+      console.log('origin', origin)
       let id = input.userId
       const location = input.location || 'nil'
+      const url = input.url
+        ? (origin as string) + input.url
+        : (origin as string)
       const res = await ctx.prisma.user.findUnique({
         where: { id },
       })
@@ -64,6 +77,7 @@ export const usersRouter = createTRPCRouter({
           location: location,
           action: 'get user',
           userId: id,
+          url: url,
           response: JSON.stringify(res),
         },
       })

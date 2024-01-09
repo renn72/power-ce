@@ -10,6 +10,7 @@ import { Disclosure } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
 
+
 const nav = [
   {
     name: 'Dashboard',
@@ -68,10 +69,11 @@ const classNames = (...classes: string[]) => {
 const Navbar = () => {
   const { data: session } = useSession()
   const userId = session?.user?.id || ''
-  const { data: user } = api.users.get.useQuery({ userId: userId, location: 'navbar' })
+  const router = useRouter()
+  console.log('router.pathname', router.pathname)
+  const { data: user } = api.users.get.useQuery({ userId: userId, location: 'navbar', url: router.pathname })
 
   // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam
-  const router = useRouter()
   const isUserAdmin = user?.isAdmin
   const isUserSuperAdmin = user?.isSuper || false
   const isPower = user?.isPower || false

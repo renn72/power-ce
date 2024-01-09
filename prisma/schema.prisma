@@ -526,6 +526,7 @@ model Log {
   userId String
   action String
   location String
+  url String?
   response Json
 
   flield1 String?
