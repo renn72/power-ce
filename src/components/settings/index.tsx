@@ -82,11 +82,12 @@ const Settings = ({ userId }: { userId: string }) => {
   const currentUserId = session?.user?.id || ''
   const { data: currentUser } = api.users.get.useQuery({
     userId: currentUserId,
+    location: 'settings_isAdmin',
   })
   const isAdmin = currentUser?.isAdmin
   const isRoot = currentUser?.isRoot
 
-  const { data: user } = api.users.get.useQuery({ userId: userId })
+  const { data: user } = api.users.get.useQuery({ userId: userId, location: 'settings_user' })
 
   const { data: userSettings, isLoading: settingsLoading } =
     api.settings.get.useQuery({
