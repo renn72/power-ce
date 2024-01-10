@@ -2,7 +2,7 @@ import type { PropsWithChildren } from 'react'
 import Navbar from './navbar'
 import Footer from './footer'
 
-import { useSession, signIn } from 'next-auth/react'
+import { useSession, signIn, } from 'next-auth/react'
 import { LoadingPage } from './loading'
 import { useRouter } from 'next/router'
 
@@ -10,13 +10,17 @@ import { api } from '~/utils/api'
 
 const Layout = (props: PropsWithChildren) => {
   const { data: session, status } = useSession()
+  console.log(status)
+
   const userId = session?.user?.id || ''
   const router = useRouter()
   const { data: isUser, isLoading: userLoading } = api.users.isUser.useQuery({
     userId: userId,
-    location: 'layout',
+    location: status,
     url: router.pathname,
   })
+
+  console.log(isUser)
 
   const { mutate: logUser } = api.users.logSignIn.useMutation()
 
@@ -25,7 +29,7 @@ const Layout = (props: PropsWithChildren) => {
   return (
     <>
       <div className='flex min-h-screen w-full flex-col overflow-auto bg-black text-gray-200'>
-        {isUser ||
+        {status === 'authenticated' ||
         router.pathname === '/records-men' ||
         router.pathname === '/records-women' ? (
           <>
