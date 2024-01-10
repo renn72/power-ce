@@ -70,7 +70,6 @@ const Navbar = () => {
   const { data: session } = useSession()
   const userId = session?.user?.id || ''
   const router = useRouter()
-  console.log('router.pathname', router.pathname)
   const { data: user, isLoading } = api.users.get.useQuery({ userId: userId, location: 'navbar', url: router.pathname })
 
   if (isLoading) return null

@@ -10,7 +10,6 @@ import { api } from '~/utils/api'
 
 const Layout = (props: PropsWithChildren) => {
   const { data: session, status } = useSession()
-  console.log(status)
 
   const userId = session?.user?.id || ''
   const router = useRouter()
