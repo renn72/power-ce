@@ -7,7 +7,7 @@ import {
   checkPercentWeight,
   calcRPEWeight,
 } from '~/utils/program-card/utils'
-import { Transition, RadioGroup, Disclosure } from '@headlessui/react'
+import { Transition, Disclosure } from '@headlessui/react'
 import { Input } from '@/components/ui/input'
 import { rpe as rpeTable } from '~/store/defaultValues'
 import {
@@ -53,6 +53,55 @@ type Exercise = Prisma.ExerciseGetPayload<typeof exerciseWithSetSS>
 
 const rpeValues = ['6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10']
 
+const ExerciseWeight = ({
+  setWeights,
+  weights,
+}: {
+  setWeights: (arg0: number) => void
+  weights: number | null
+}) => {
+  return (
+    <div className='flex w-full items-center justify-center gap-4 text-2xl font-bold md:gap-6'>
+      <div
+        className='h-8 w-8 cursor-pointer rounded-full text-center'
+        onClick={(e) => {
+          e.stopPropagation()
+          if (weights && weights > 0) {
+            setWeights(+weights - 2.5)
+          }
+        }}
+      >
+        -
+      </div>
+      <div className='relative flex w-44 items-center text-center '>
+        <NumericFormat
+          className='w-full rounded-lg border border-gray-400 bg-black p-6 text-center text-4xl font-bold placeholder-gray-600  md:text-2xl'
+          value={weights}
+          placeholder='kg'
+          decimalScale={2}
+          onChange={(e) => setWeights(+e.target.value)}
+        />
+        {weights && weights !== 0 ? (
+          <span className='absolute right-5 text-base text-gray-400'>kg</span>
+        ) : null}
+      </div>
+      <div
+        className='h-8 w-8 cursor-pointer rounded-full text-center'
+        onClick={(e) => {
+          e.stopPropagation()
+          if (weights) {
+            setWeights(+weights + 2.5)
+          } else {
+            setWeights(2.5)
+          }
+        }}
+      >
+        +
+      </div>
+    </div>
+  )
+}
+
 const RpeSelect = ({
   value,
   onChange,
@@ -86,8 +135,8 @@ const RpeSelect = ({
         <CarouselContent>
           {rpeValues.map((i, index) => (
             <CarouselItem key={index}>
-              <div className='p-1 flex justify-center'>
-                <Card className='rounded-full border-0 bg-yellow-500 w-16'>
+              <div className='flex justify-center p-1'>
+                <Card className='w-16 rounded-full border-0 bg-yellow-500'>
                   <CardContent className='flex aspect-square items-center justify-center p-2'>
                     <span className='text-3xl font-bold'>{i}</span>
                   </CardContent>
@@ -207,6 +256,48 @@ const ExerciseSets = ({
         <CarouselPrevious className='border-0' />
         <CarouselNext className='border-0' />
       </Carousel>
+    </div>
+  )
+}
+
+const ExerciseHeader = ({
+  open,
+  exercise,
+  isSS,
+  setIsOpen,
+  setExerciseToDelete,
+}: {
+  open: boolean
+  exercise: Exercise
+  isSS: boolean
+  setIsOpen: (arg0: boolean) => void
+  setExerciseToDelete: (arg0: string) => void
+}) => {
+  return (
+    <div className='grid grid-cols-9 items-center'>
+      <ChevronUpIcon
+        className={`${
+          open ? 'rotate-180 transform' : ''
+        } h-6 w-8 text-gray-300 `}
+      />
+      <div
+        className={`${
+          exercise.isComplete ? 'text-yellow-500' : 'text-white'
+        }  col-span-7 text-2xl font-medium first-letter:text-3xl first-letter:font-bold first-letter:uppercase `}
+      >
+        {isSS ? 'Super set' : exercise.name}
+      </div>
+      <div className='justify-self-end'>
+        {exercise.isComplete ? null : (
+          <XIcon
+            onClick={() => {
+              setIsOpen(true)
+              setExerciseToDelete(exercise.id)
+            }}
+            className='h-7 w-7 text-gray-600'
+          />
+        )}
+      </div>
     </div>
   )
 }
@@ -511,36 +602,6 @@ const ExerciseModal = ({
   }, [weights, rpe])
 
   const isSS = exercise.ss && exercise.ss.length > 0
-
-  const ExerciseHeader = ({ open }: { open: boolean }) => {
-    return (
-      <div className='grid grid-cols-9 items-center'>
-        <ChevronUpIcon
-          className={`${
-            open ? 'rotate-180 transform' : ''
-          } h-6 w-8 text-gray-300 `}
-        />
-        <div
-          className={`${
-            exercise.isComplete ? 'text-yellow-500' : 'text-white'
-          }  col-span-7 text-2xl font-medium first-letter:text-3xl first-letter:font-bold first-letter:uppercase `}
-        >
-          {isSS ? 'Super set' : exercise.name}
-        </div>
-        <div className='justify-self-end'>
-          {exercise.isComplete ? null : (
-            <XIcon
-              onClick={() => {
-                setIsOpen(true)
-                setExerciseToDelete(exercise.id)
-              }}
-              className='h-7 w-7 text-gray-600'
-            />
-          )}
-        </div>
-      </div>
-    )
-  }
 
   const ExerciseHeaderSS = ({ open }: { open: boolean }) => {
     return (
@@ -851,49 +912,6 @@ const ExerciseModal = ({
     )
   }
 
-  const ExerciseWeight = () => {
-    return (
-      <div className='flex w-full items-center justify-center gap-4 text-2xl font-bold md:gap-6'>
-        <div
-          className='h-8 w-8 cursor-pointer rounded-full text-center'
-          onClick={(e) => {
-            e.stopPropagation()
-            if (weights && weights > 0) {
-              setWeights(+weights - 2.5)
-            }
-          }}
-        >
-          -
-        </div>
-        <div className='relative flex w-44 items-center text-center '>
-          <NumericFormat
-            className='w-full rounded-lg border border-gray-400 bg-black p-6 text-center text-4xl font-bold placeholder-gray-600  md:text-2xl'
-            value={weights}
-            placeholder='kg'
-            decimalScale={2}
-            onChange={(e) => setWeights(+e.target.value)}
-          />
-          {weights && weights !== 0 ? (
-            <span className='absolute right-5 text-base text-gray-400'>kg</span>
-          ) : null}
-        </div>
-        <div
-          className='h-8 w-8 cursor-pointer rounded-full text-center'
-          onClick={(e) => {
-            e.stopPropagation()
-            if (weights) {
-              setWeights(+weights + 2.5)
-            } else {
-              setWeights(2.5)
-            }
-          }}
-        >
-          +
-        </div>
-      </div>
-    )
-  }
-
   const E1RM = () => {
     return (
       <>
@@ -942,7 +960,13 @@ const ExerciseModal = ({
                 >
                   <div className='flex flex-col gap-0'>
                     <div className='flex w-full flex-col '>
-                      <ExerciseHeader open={open} />
+                      <ExerciseHeader
+                        open={open}
+                        exercise={exercise}
+                        isSS={isSS}
+                        setIsOpen={setIsOpen}
+                        setExerciseToDelete={setExerciseToDelete}
+                      />
                       {isSS ? (
                         <ExerciseHeaderSS open={open} />
                       ) : (
@@ -964,7 +988,12 @@ const ExerciseModal = ({
                       <ExerciseNotes />
                       {exercise.sets && (
                         <div className='mb-6 flex flex-col gap-2 md:gap-6'>
-                          {isSS ? null : <ExerciseWeight />}
+                          {isSS ? null : (
+                            <ExerciseWeight
+                              weights={weights}
+                              setWeights={setWeights}
+                            />
+                          )}
                           <RpeSelect
                             value={rpe}
                             onChange={setRpe}
@@ -998,7 +1027,7 @@ const ExerciseModal = ({
                               size='lg'
                               variant='secondary'
                             >
-                              Start
+                              Re-Start
                             </Button>
                           ) : (
                             <Disclosure.Button>
