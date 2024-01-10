@@ -36,14 +36,12 @@ const Admin = () => {
     },
   })
 
-  console.log({ allTemplates, allPrograms, allUsers })
-
   if (allTemplatesLoading || allProgramsLoading) return <div>Loading...</div>
 
   if (!allTemplates || !allPrograms || !allUsers) return null
 
   if (!user) return <div>Login</div>
-  if (!user.isSuper) return <div>Not Authorized</div>
+  if (!user.isAdmin) return <div>Not Authorized</div>
 
   return (
     <div>
@@ -93,7 +91,7 @@ const Admin = () => {
                 <Button
                   className='text-red-500 font-black'
                   onClick={() => {
-                    undeleteHardTemplate({ id: template.id })
+                    deleteTemplate({ id: template.id })
                   }}
                 >
                   Permantent Delete
