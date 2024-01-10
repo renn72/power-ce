@@ -79,7 +79,7 @@ const Home: NextPage = () => {
   // const userId = 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv' //mitch
   // const userId = 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a' //me
 
-  const ctx = api.useContext()
+  const ctx = api.useUtils()
 
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
   const { data: addressData, isLoading: addressDataLoading } =

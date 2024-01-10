@@ -7,11 +7,11 @@ export function capitaliseString(str: string | null) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-export function classNames(...classes) {
+export function classNames(...classes : string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-export function getDate(date: string | null) {
+export function getDate(date: string | null | Date) {
   if (!date) return ''
   const d = new Date(+date)
   return d.toLocaleDateString('en-AU', {

@@ -1,7 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { useSession } from 'next-auth/react'
 import React from 'react'
-import ProgramCard from '~/components/programCard'
+
+import { getDate} from '~/utils/utils'
 
 import { api } from '~/utils/api'
 
@@ -9,7 +10,7 @@ const Admin = () => {
   const { data: session} = useSession()
   const userId = session?.user?.id || ''
   const { data: user } = api.users.get.useQuery({ userId: userId })
-  const ctx = api.useContext()
+  const ctx = api.useUtils()
   const { data: allTemplates, isLoading: allTemplatesLoading } =
     api.blocks.getAllBlockTitlesAdmin.useQuery()
   const { data: allPrograms, isLoading: allProgramsLoading } =
@@ -49,15 +50,14 @@ const Admin = () => {
       <h1>Admin</h1>
       <div className='mb-12'>
         <h2 className='mb-8 text-3xl font-bold'>Templates</h2>
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-1'>
           {allTemplates
             ?.filter((t) => t.isDeleted !== true)
             .map((template) => (
               <div
-                className='flex items-baseline gap-4 text-xl'
+                className='flex items-baseline gap-4 text-lg'
                 key={template.id}
               >
-                <div className='w-72 overflow-hidden'>{template.name}</div>
                 <Button
                   className='text-red-500'
                   onClick={() => {
@@ -66,6 +66,7 @@ const Admin = () => {
                 >
                   Delete
                 </Button>
+                <div className='w-72 overflow-hidden'>{template.name}</div>
               </div>
             ))}
         </div>
@@ -77,7 +78,7 @@ const Admin = () => {
             ?.filter((t) => t.isDeleted === true)
             .map((template) => (
               <div
-                className='flex items-baseline gap-4 text-xl'
+                className='flex items-baseline gap-4 text-lg'
                 key={template.id}
               >
                 <div className='w-72 overflow-hidden'>{template.name}</div>
@@ -89,6 +90,14 @@ const Admin = () => {
                 >
                   UnDelete
                 </Button>
+                <Button
+                  className='text-red-500 font-black'
+                  onClick={() => {
+                    undeleteHardTemplate({ id: template.id })
+                  }}
+                >
+                  Permantent Delete
+                </Button>
               </div>
             ))}
         </div>
@@ -98,7 +107,7 @@ const Admin = () => {
         <div className='flex flex-col gap-8 '>
           {allUsers?.map((user) => (
             <div
-              className='flex flex-col gap-4'
+              className='flex flex-col gap-1'
               key={user.id}
             >
               <div className='text-xl font-bold'>
@@ -110,14 +119,15 @@ const Admin = () => {
                 )
                 .map((program) => (
                   <div
-                    className='flex items-baseline gap-4 text-xl'
+                    className='grid grid-cols-6 items-baseline gap-4 text-xl max-w-2xl'
                     key={program.id}
                   >
-                    <div className='flex items-baseline gap-4'>
-                      <ProgramCard
-                        programId={program.id}
-                        isAdmin={true}
-                      />
+                      <h2 className='col-span-2'>
+                        {program.name}
+                      </h2>
+                      <h2 className='col-span-2'>
+                        {getDate(program.createdAt)}
+                      </h2>
                       <div className='text-green-600'>
                         {program.isProgramActive ? 'Active' : null}
                       </div>
@@ -129,7 +139,6 @@ const Admin = () => {
                       >
                         Delete
                       </Button>
-                    </div>
                   </div>
                 ))}
             </div>
