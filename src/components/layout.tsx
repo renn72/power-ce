@@ -13,13 +13,11 @@ const Layout = (props: PropsWithChildren) => {
 
   const userId = session?.user?.id || ''
   const router = useRouter()
-  const { data: isUser, isLoading: userLoading } = api.users.isUser.useQuery({
+  const { isLoading: userLoading } = api.users.isUser.useQuery({
     userId: userId,
     location: status,
     url: router.pathname,
   })
-
-  console.log(isUser)
 
   const { mutate: logUser } = api.users.logSignIn.useMutation()
 
