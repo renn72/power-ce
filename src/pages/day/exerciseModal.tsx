@@ -13,8 +13,10 @@ import { rpe as rpeTable } from '~/store/defaultValues'
 import {
   ArrowDownToLine,
   ArrowUpToLine,
+  Minus,
   PauseOctagonIcon,
   PlaySquare,
+  Plus,
   XIcon,
 } from 'lucide-react'
 import { NumericFormat } from 'react-number-format'
@@ -53,6 +55,71 @@ type Exercise = Prisma.ExerciseGetPayload<typeof exerciseWithSetSS>
 
 const rpeValues = ['6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10']
 
+const E1RM = ({
+  exercise,
+  weights,
+  e1rm,
+}: {
+  exercise: Exercise
+  weights: number | null
+  e1rm: number[]
+}) => {
+  return (
+    <>
+      {exercise.lift &&
+        exercise.lift !== 'unlinked' &&
+        (
+          Number(weights) / Number(e1rm[Number(exercise?.reps) - 1] || 0 / 100)
+        )?.toFixed(0) && (
+          <div className='mx-1 flex text-2xl font-semibold items-baseline justify-center gap-2 px-2 text-muted-foreground md:mx-6'>
+            <div className='text-lg font-medium'>E1RM</div>
+            {weights && weights !== 0 && e1rm[Number(exercise.reps) - 1] ? (
+              <div>
+                {(
+                  Number(weights) / (e1rm?.[Number(exercise?.reps) - 1] / 100 || 0)
+                )?.toFixed(0)}
+                kg
+              </div>
+            ) : null}
+          </div>
+        )}
+    </>
+  )
+}
+
+const ExerciseNotes = ({ exercise }: { exercise: Exercise }) => {
+  return (
+    <>
+      {exercise?.notes && (
+        <div className='flex flex-col items-center'>
+          <MinusIcon className='h-6 w-6' />
+          <div className='text-center text-xl text-gray-400'>
+            {exercise?.notes}
+          </div>
+          <MinusIcon className='h-6 w-6' />
+        </div>
+      )}
+    </>
+  )
+}
+
+const ExerciseCount = ({
+  exercise,
+  exerciseSets,
+}: {
+  exercise: Exercise
+  exerciseSets: number
+}) => {
+  return (
+    <div className='mt-4 flex w-full justify-center gap-4 text-2xl font-bold md:gap-6'>
+      {exercise.set.reduce((acc, curr) => {
+        return acc + (curr.isComplete ? 1 : 0)
+      }, 0)}{' '}
+      / {exerciseSets}
+    </div>
+  )
+}
+
 const ExerciseWeight = ({
   setWeights,
   weights,
@@ -62,31 +129,33 @@ const ExerciseWeight = ({
 }) => {
   return (
     <div className='flex w-full items-center justify-center gap-4 text-2xl font-bold md:gap-6'>
-      <div
-        className='h-8 w-8 cursor-pointer rounded-full text-center'
+      <Minus
+        size={36}
+        strokeWidth={4}
+        className='cursor-pointer'
         onClick={(e) => {
           e.stopPropagation()
           if (weights && weights > 0) {
             setWeights(+weights - 2.5)
           }
         }}
-      >
-        -
-      </div>
-      <div className='relative flex w-44 items-center text-center '>
+      />
+      <div className='relative flex w-44 text-center '>
         <NumericFormat
-          className='w-full rounded-lg border border-gray-400 bg-black p-6 text-center text-4xl font-bold placeholder-gray-600  md:text-2xl'
+          className='w-full rounded-3xl border-8 border-gray-800 bg-black p-6 text-center text-5xl font-bold placeholder-gray-600'
           value={weights}
           placeholder='kg'
           decimalScale={2}
           onChange={(e) => setWeights(+e.target.value)}
         />
         {weights && weights !== 0 ? (
-          <span className='absolute right-5 text-base text-gray-400'>kg</span>
+          <span className='absolute right-5 text-base text-gray-400 bottom-10'>kg</span>
         ) : null}
       </div>
-      <div
-        className='h-8 w-8 cursor-pointer rounded-full text-center'
+      <Plus
+        size={36}
+        strokeWidth={4}
+        className='cursor-pointer'
         onClick={(e) => {
           e.stopPropagation()
           if (weights) {
@@ -95,9 +164,7 @@ const ExerciseWeight = ({
             setWeights(2.5)
           }
         }}
-      >
-        +
-      </div>
+      />
     </div>
   )
 }
@@ -187,8 +254,6 @@ const ExerciseSets = ({
     api.scrollTo(finished - 1, false)
   }, [finished])
 
-  console.log(exercise)
-
   return (
     <div className='px-12'>
       <Carousel
@@ -201,7 +266,7 @@ const ExerciseSets = ({
         <CarouselContent>
           {[
             ...Array(
-              exerciseSets - exercise.set.length <= 0 ? 0 : exerciseSets,
+              exerciseSets,
             ).keys(),
           ].map((_, setIdx) => (
             <>
@@ -896,58 +961,6 @@ const ExerciseModal = ({
     )
   }
 
-  const ExerciseNotes = () => {
-    return (
-      <>
-        {exercise?.notes && (
-          <div className='flex flex-col items-center'>
-            <MinusIcon className='h-6 w-6' />
-            <div className='text-center text-xl text-gray-400'>
-              {exercise?.notes}
-            </div>
-            <MinusIcon className='h-6 w-6' />
-          </div>
-        )}
-      </>
-    )
-  }
-
-  const E1RM = () => {
-    return (
-      <>
-        {exercise.lift &&
-          exercise.lift !== 'unlinked' &&
-          (
-            Number(weights) /
-            Number(e1rm[Number(exercise?.reps) - 1] || 0 / 100)
-          )?.toFixed(0) && (
-            <div className='mx-1 flex items-baseline justify-center gap-2 px-2 text-muted-foreground md:mx-6'>
-              <div className='text-sm'>E1RM</div>
-              {weights && weights !== 0 && e1rm[Number(exercise.reps) - 1] ? (
-                <div>
-                  {(
-                    +weights / (e1rm?.[Number(exercise?.reps) - 1] / 100 || 0)
-                  )?.toFixed(0)}
-                  kg
-                </div>
-              ) : null}
-            </div>
-          )}
-      </>
-    )
-  }
-
-  const ExerciseCount = () => {
-    return (
-      <div className='mt-4 flex w-full justify-center gap-4 text-2xl font-bold md:gap-6'>
-        {exercise.set.reduce((acc, curr) => {
-          return acc + (curr.isComplete ? 1 : 0)
-        }, 0)}{' '}
-        / {exerciseSets}
-      </div>
-    )
-  }
-
   return (
     <div>
       <Disclosure>
@@ -985,9 +998,9 @@ const ExerciseModal = ({
                 >
                   <Disclosure.Panel>
                     <div className='flex flex-col gap-2'>
-                      <ExerciseNotes />
+                      <ExerciseNotes exercise={exercise} />
                       {exercise.sets && (
-                        <div className='mb-6 flex flex-col gap-2 md:gap-6'>
+                        <div className='mb-6 flex flex-col gap-1'>
                           {isSS ? null : (
                             <ExerciseWeight
                               weights={weights}
@@ -998,8 +1011,15 @@ const ExerciseModal = ({
                             value={rpe}
                             onChange={setRpe}
                           />
-                          <E1RM />
-                          <ExerciseCount />
+                          <E1RM
+                            exercise={exercise}
+                            weights={weights}
+                            e1rm={e1rm}
+                          />
+                          <ExerciseCount
+                            exercise={exercise}
+                            exerciseSets={exerciseSets}
+                          />
                           <ExerciseSets
                             exercise={exercise}
                             onSetDone={onSetDone}

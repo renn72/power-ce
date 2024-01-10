@@ -528,6 +528,7 @@ model Log {
   location String
   url String?
   response Json
+  request Json?
 
   flield1 String?
   flield2 String?

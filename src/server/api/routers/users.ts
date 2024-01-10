@@ -40,6 +40,7 @@ export const usersRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const req = ctx.req
       const id = input.userId
       const location = input.location || ''
       const url = input.url || ''
@@ -55,12 +56,13 @@ export const usersRouter = createTRPCRouter({
           userId: id,
           url: url,
           response: JSON.stringify(user),
+          request: JSON.stringify(req),
         },
       })
 
       return res
     }),
- 
+
   isUser: publicProcedure
     .input(
       z.object({
@@ -71,12 +73,10 @@ export const usersRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const req = ctx.req
-      const { origin } = absoluteUrl(req) as string
+      console.log(req.headers)
       const id = input.userId
       const location = input.location || ''
       const url = input.url
-        ? (origin as string) + input.url
-        : (origin as string)
       const res = await ctx.prisma.user.findUnique({
         where: { id },
       })
@@ -88,6 +88,7 @@ export const usersRouter = createTRPCRouter({
           userId: id,
           url: url,
           response: JSON.stringify(res),
+          request: JSON.stringify(req.headers),
         },
       })
 
@@ -106,12 +107,9 @@ export const usersRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const req = ctx.req
-      const { origin } = absoluteUrl(req) as string
       let id = input.userId
       const location = input.location || 'nil'
       const url = input.url
-        ? (origin as string) + input.url
-        : (origin as string)
       const res = await ctx.prisma.user.findUnique({
         where: { id },
       })
@@ -120,7 +118,7 @@ export const usersRouter = createTRPCRouter({
         id = 'me'
       }
       if (id === 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv') {
-        id = 'me'
+        id = 'mitch'
       }
 
       await ctx.prisma.log.create({
@@ -130,6 +128,7 @@ export const usersRouter = createTRPCRouter({
           userId: id,
           url: url,
           response: JSON.stringify(res),
+          // request: JSON.stringify(req),
         },
       })
 
