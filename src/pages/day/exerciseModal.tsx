@@ -140,16 +140,16 @@ const ExerciseWeight = ({
           }
         }}
       />
-      <div className='relative flex w-44 text-center '>
+      <div className='relative flex w-56 text-center'>
         <NumericFormat
-          className='w-full rounded-3xl border-8 border-gray-800 bg-black p-6 text-center text-5xl font-bold placeholder-gray-600'
+          className='w-full rounded-3xl border-8 border-gray-800 bg-black p-6 text-center text-5xl tracking-tighter font-bold placeholder-gray-600'
           value={weights}
           placeholder='kg'
           decimalScale={2}
           onChange={(e) => setWeights(+e.target.value)}
         />
         {weights && weights !== 0 ? (
-          <span className='absolute right-5 text-base text-gray-400 bottom-10'>kg</span>
+          <span className='absolute right-4 text-base text-gray-400 bottom-10'>kg</span>
         ) : null}
       </div>
       <Plus
