@@ -159,6 +159,7 @@ export const blocksRouter = createTRPCRouter({
   getLogSets: privateProcedure.query(async ({ ctx }) => {
     const sets = await ctx.prisma.set.findMany({
       orderBy: { flield1: 'desc' },
+      take: 200,
       where: {
         isComplete: true,
       },
