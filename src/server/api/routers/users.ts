@@ -56,7 +56,7 @@ export const usersRouter = createTRPCRouter({
           userId: id,
           url: url,
           response: JSON.stringify(user),
-          request: JSON.stringify(req),
+          request: JSON.stringify(req.headers),
         },
       })
 

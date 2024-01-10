@@ -111,7 +111,7 @@ const ExerciseCount = ({
   exerciseSets: number
 }) => {
   return (
-    <div className='mt-4 flex w-full justify-center gap-4 text-2xl font-bold md:gap-6'>
+    <div className='mt-4 flex w-full justify-center gap-4 text-3xl font-bold md:gap-6'>
       {exercise.set.reduce((acc, curr) => {
         return acc + (curr.isComplete ? 1 : 0)
       }, 0)}{' '}
