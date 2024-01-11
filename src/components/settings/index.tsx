@@ -24,18 +24,19 @@ const RoleToggle = ({
   title: string
   field: string
 }) => {
-  const utils = api.useContext()
+  const utils = api.useUtils()
   const { mutate } = api.settings.updateRole.useMutation({
     onMutate: async (newData) => {
-      await utils.users.get.cancel({ userId: userId })
+      await utils.users.get.cancel({ userId: userId, location: 'settings' })
       const previousData = utils.users.get.getData({
         userId: userId,
+        location: 'settings',
       })
 
       if (!previousData) return { previousData }
 
       utils.users.get.setData(
-        { userId: userId },
+        { userId: userId, location: 'settings' },
         {
           ...previousData,
           [field]: newData.value,
@@ -87,7 +88,10 @@ const Settings = ({ userId }: { userId: string }) => {
   const isAdmin = currentUser?.isAdmin
   const isRoot = currentUser?.isRoot
 
-  const { data: user } = api.users.get.useQuery({ userId: userId, location: 'settings_user' })
+  const { data: user } = api.users.get.useQuery({
+    userId: userId,
+    location: 'settings',
+  })
 
   const { data: userSettings, isLoading: settingsLoading } =
     api.settings.get.useQuery({
