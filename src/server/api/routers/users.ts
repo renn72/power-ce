@@ -73,7 +73,6 @@ export const usersRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const req = ctx.req
-      console.log(req.headers)
       let id = input.userId
       const location = input.location || ''
       const url = input.url
@@ -120,7 +119,6 @@ export const usersRouter = createTRPCRouter({
       console.log(req.headers)
       let id = input.userId
       const location = input.location || 'nil'
-      const url = input.url
       const res = await ctx.prisma.user.findUnique({
         where: { id },
       })
