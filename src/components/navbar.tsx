@@ -60,6 +60,7 @@ const nav = [
     name: 'AdminLog',
     href: '/adminLog',
     superAdmin: true,
+    admin: true,
   },
 ]
 
