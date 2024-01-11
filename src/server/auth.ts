@@ -58,7 +58,7 @@ declare module 'next-auth' {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    async session({ session, token }) {
+    session: ({ session, token }) => {
       if (token) {
         session.user = {
           id: token.sub as string,
@@ -66,27 +66,13 @@ export const authOptions: NextAuthOptions = {
       }
       return session
     },
-    // session: ({ session, token }) => ({
-    //   ...session,
-    //   user: {
-    //     ...session.user,
-    //     id: token.sub,
-    //     firstName: session.user.firstName,
-    //     // lastName: token.lastName,
-    //     // isDiet: token.isDiet,
-    //     // isDietTrainer: token.isDietTrainer,
-    //     // isPower: token.isPower,
-    //     // isPowerTrainer: token.isPowerTrainer,
-    //     // isTrainer: token.isTrainer,
-    //     // isClient: token.isClient,
-    //     // isRecordEditor: token.isRecordEditor,
-    //     // isAdmin: token.isAdmin,
-    //     // isSuper: token.isSuper,
-    //     // isHiiT: token.isHiiT,
-    //     // isHiiTTrainer: token.isHiiTTrainer,
-    //     // isRoot: token.isRoot,
-    //   },
-    // }),
+    jwt: ({ token, user }) => {
+      if (user) {
+        token.sub = user.id
+        console.log('jwt token', token)
+      }
+      return token
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(db),
