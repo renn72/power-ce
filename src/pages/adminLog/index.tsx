@@ -8,7 +8,7 @@ const Log = ({ log }: { log: Log }) => {
   const request = JSON.parse(log?.request)
   console.log(request)
   return (
-    <div className='flex gap-1'>
+    <div className='flex gap-1 border-b border-gray-700'>
       <div>{getTime(log.createdAt)},</div>
       <div>{getDateShort(log.createdAt)}</div>
       <div>{log.url}</div>
@@ -41,16 +41,9 @@ const AdminLog = () => {
   return (
     <>
       <h1>AdminLog</h1>
-      <div className='flex flex-col divide-y divide-gray-400'>
+      <div className='flex flex-col w-full'>
         {log?.map((l) => (
-          <>
-            {l.userId === 'david' ? null : (
-              <Log
-                key={l.id}
-                log={l}
-              />
-            )}
-          </>
+          <div key={l.id}>{l.userId === 'david' ? null : <Log log={l} />}</div>
         ))}
       </div>
     </>
