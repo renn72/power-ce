@@ -16,6 +16,7 @@ import { settingsRouter } from './routers/settings'
 import { recordsRouter } from './routers/records'
 import { compPlanRouter } from './routers/compPlan'
 import { rpeRouter } from './routers/rpe'
+import { adminLogRouter } from './routers/adminLog'
 
 /**
  * This is the primary router for your server.
@@ -40,6 +41,7 @@ export const appRouter = createTRPCRouter({
   records: recordsRouter,
   plans: compPlanRouter,
   rpe: rpeRouter,
+  adminLog: adminLogRouter,
 })
 
 // export type definition of API

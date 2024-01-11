@@ -30,3 +30,23 @@ export function getTime(date: string | null) {
     minute: 'numeric',
   })
 }
+
+export function getTime24(date: string | null | Date) {
+  if (!date) return ''
+  const d = new Date(+date)
+  return d.toLocaleTimeString('en-AU', {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: false,
+  })
+}
+
+export function getDateShort(date: string | null | Date) {
+  if (!date) return ''
+  const d = new Date(+date)
+  return d.toLocaleDateString('en-AU', {
+    day: 'numeric',
+    month: 'short',
+  })
+}
+

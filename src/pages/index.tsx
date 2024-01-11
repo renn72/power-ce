@@ -79,7 +79,6 @@ const Home: NextPage = () => {
   // const userId = 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a' //me
 
   const ctx = api.useUtils()
-
   const user = ctx.users.get.getData({ userId: userId, location: 'base' })
 
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
