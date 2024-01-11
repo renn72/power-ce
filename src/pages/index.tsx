@@ -65,7 +65,6 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
 const Home: NextPage = () => {
   const { data: session } = useSession()
   const userId = session?.user?.id || ''
-  const { data: user } = api.users.get.useQuery({ userId: userId, location: 'home' })
 
   // const userId = user?.id || ''
   // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam
@@ -80,6 +79,8 @@ const Home: NextPage = () => {
   // const userId = 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a' //me
 
   const ctx = api.useUtils()
+
+  const user = ctx.users.get.getData({ userId: userId, location: 'base' })
 
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
   const { data: addressData, isLoading: addressDataLoading } =

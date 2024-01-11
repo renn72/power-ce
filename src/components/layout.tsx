@@ -2,18 +2,38 @@ import type { PropsWithChildren } from 'react'
 import Navbar from './navbar'
 import Footer from './footer'
 
-import { useSession, signIn, } from 'next-auth/react'
+import { useSession, signIn } from 'next-auth/react'
 import { LoadingPage } from './loading'
 import { useRouter } from 'next/router'
 
 import { api } from '~/utils/api'
+
+const LayoutAuth = (props: PropsWithChildren) => {
+  const { data: session } = useSession()
+
+  const userId = session?.user?.id || ''
+  const { data: user, isLoading: userLoading } = api.users.get.useQuery({
+    userId: userId,
+    location: 'base',
+  })
+
+  if (userLoading) return <LoadingPage />
+
+  return (
+    <>
+      <Navbar user={user || null} />
+      <div className='grow'>{props.children}</div>
+      <Footer />
+    </>
+  )
+}
 
 const Layout = (props: PropsWithChildren) => {
   const { data: session, status } = useSession()
 
   const userId = session?.user?.id || ''
   const router = useRouter()
-  const { isLoading: userLoading } = api.users.isUser.useQuery({
+  const { isLoading: isUserLoading } = api.users.isUser.useQuery({
     userId: userId,
     location: status,
     url: router.pathname,
@@ -21,7 +41,7 @@ const Layout = (props: PropsWithChildren) => {
 
   const { mutate: logUser } = api.users.logSignIn.useMutation()
 
-  if (status === 'loading' || userLoading) return <LoadingPage />
+  if (status === 'loading' || isUserLoading) return <LoadingPage />
 
   return (
     <>
@@ -30,9 +50,7 @@ const Layout = (props: PropsWithChildren) => {
         router.pathname === '/records-men' ||
         router.pathname === '/records-women' ? (
           <>
-            <Navbar />
-            <div className='grow'>{props.children}</div>
-            <Footer />
+            <LayoutAuth>{props.children}</LayoutAuth>
           </>
         ) : (
           <div className='flex h-full w-full grow items-center justify-center'>

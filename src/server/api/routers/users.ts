@@ -74,12 +74,22 @@ export const usersRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const req = ctx.req
       console.log(req.headers)
-      const id = input.userId
+      let id = input.userId
       const location = input.location || ''
       const url = input.url
       const res = await ctx.prisma.user.findUnique({
         where: { id },
       })
+      if (id === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') {
+        id = 'david'
+      }
+      if (id === 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv') {
+        id = 'mitch'
+      }
+
+      if (location === 'loading') {
+        return false
+      }
 
       await ctx.prisma.log.create({
         data: {
@@ -107,6 +117,7 @@ export const usersRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const req = ctx.req
+      console.log(req.headers)
       let id = input.userId
       const location = input.location || 'nil'
       const url = input.url
@@ -115,7 +126,7 @@ export const usersRouter = createTRPCRouter({
       })
 
       if (id === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') {
-        id = 'me'
+        id = 'david'
       }
       if (id === 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv') {
         id = 'mitch'
@@ -126,9 +137,9 @@ export const usersRouter = createTRPCRouter({
           location: location,
           action: 'get user',
           userId: id,
-          url: url,
+          url: req.headers.referer,
           response: JSON.stringify(res),
-          // request: JSON.stringify(req),
+          request: JSON.stringify(req.headers),
         },
       })
 

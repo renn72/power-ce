@@ -1,15 +1,11 @@
 import Link from 'next/link'
 
 import { useRouter } from 'next/router'
-
-import { useSession } from 'next-auth/react'
-
-import { api } from '~/utils/api'
+import { type User } from '@prisma/client'
 
 import { Disclosure } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
-
 
 const nav = [
   {
@@ -60,20 +56,19 @@ const nav = [
     power: true,
     admin: true,
   },
+  {
+    name: 'AdminLog',
+    href: '/adminLog',
+    superAdmin: true,
+  },
 ]
 
 const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(' ')
 }
-const Navbar = () => {
-  const { data: session } = useSession()
-  const userId = session?.user?.id || ''
+const Navbar = ({ user }: { user: User | null }) => {
   const router = useRouter()
-  const { data: user, isLoading } = api.users.get.useQuery({ userId: userId, location: 'navbar', url: router.pathname })
 
-  if (isLoading) return null
-
-  // const userId = 'user_2UhBMdOLkQUazMBwmEWw0g6DQ1v' //sam
   const isUserAdmin = user?.isAdmin
   const isUserSuperAdmin = user?.isSuper || false
   const isPower = user?.isPower || false
@@ -87,8 +82,9 @@ const Navbar = () => {
   if (
     router.pathname === '/records-men' ||
     router.pathname === '/records-women'
-  )
+  ) {
     return null
+  }
 
   return (
     <>
