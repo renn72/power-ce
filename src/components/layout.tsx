@@ -59,7 +59,7 @@ const Layout = (props: PropsWithChildren) => {
               onClick={() => {
                 logUser({
                   userId: userId,
-                  location: 'layout',
+                  location: 'SignIn',
                   url: router.pathname,
                 })
                 void signIn()
