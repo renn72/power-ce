@@ -43,7 +43,6 @@ export const usersRouter = createTRPCRouter({
       const req = ctx.req
       const id = input.userId
       const location = input.location || ''
-      const url = input.url || ''
 
       const user = await ctx.prisma.user.findUnique({
         where: { id },
@@ -54,7 +53,7 @@ export const usersRouter = createTRPCRouter({
           location: location,
           action: 'signin',
           userId: id,
-          url: url,
+          url: req.headers.referer,
           response: JSON.stringify(user),
           request: JSON.stringify(req.headers),
         },
