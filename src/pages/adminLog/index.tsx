@@ -8,7 +8,8 @@ const Log = ({ log }: { log: Log }) => {
   const request = JSON.parse(log?.request)
   const response = JSON.parse(log?.response)
   console.log(request)
-  return (
+  const reg = /iPhone/
+   return (
     <div className='flex gap-1 border-b border-gray-700'>
       <div>{getTime(log.createdAt)},</div>
       <div>{getDateShort(log.createdAt)}</div>
@@ -17,11 +18,16 @@ const Log = ({ log }: { log: Log }) => {
         {` `}
         {response?.lastName}
       </div>
-      <div>{log?.url.slice(8, 28)}{log?.url.length > 28 ? '...' : ''}</div>
-      <div className={`${log.location == 'SignIn' ? 'text-yellow-400' : ''}`}>{log.location}</div>
+      <div>
+        {log?.url.slice(8, 28)}
+        {log?.url.length > 28 ? '...' : ''}
+      </div>
+      <div className={`${log.location == 'SignIn' ? 'text-yellow-400' : ''}`}>
+        {log.location}
+      </div>
       <div>{log.action}</div>
       <div>{request?.['x-real-ip']}</div>
-      <div>{request?.['user-agent'].slice(10, 50)}</div>
+      <div>{request?.['user-agent'].match(reg)}</div>
     </div>
   )
 }
@@ -47,7 +53,7 @@ const AdminLog = () => {
   return (
     <>
       <h1>AdminLog</h1>
-      <div className='flex w-full flex-col text-sm tracking-tighter'>
+      <div className='flex w-full flex-col text-sm md:text-lg tracking-tighter gap-0 md:gap-1'>
         {log?.map((l) => (
           <div key={l.id}>
             {l.userId === 'david' ||

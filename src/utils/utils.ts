@@ -37,6 +37,7 @@ export function getTime24(date: string | null | Date) {
   return d.toLocaleTimeString('en-AU', {
     hour: 'numeric',
     minute: 'numeric',
+    second: 'numeric',
     hour12: false,
   })
 }
