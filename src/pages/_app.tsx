@@ -27,7 +27,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
             <title>Power CE</title>
             <meta
               name='description'
-              content='Piwer Lifting App'
+              content='Power Lifting App'
             />
             <link
               rel='icon'
