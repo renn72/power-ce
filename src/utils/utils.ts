@@ -46,7 +46,7 @@ export function getDateShort(date: string | null | Date) {
   const d = new Date(+date)
   return d.toLocaleDateString('en-AU', {
     day: 'numeric',
-    month: 'short',
+    month: 'numeric',
   })
 }
 
