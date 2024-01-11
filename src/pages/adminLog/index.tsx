@@ -21,6 +21,7 @@ const Log = ({ log }: { log: Log }) => {
       <div>{log.location}</div>
       <div>{log.action}</div>
       <div>{request?.['x-real-ip']}</div>
+      <div>{request?.['user-agent'].slice(10, 50)}</div>
     </div>
   )
 }
