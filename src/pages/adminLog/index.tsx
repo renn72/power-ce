@@ -7,26 +7,35 @@ import { getDateShort, getTime24 as getTime } from '~/utils/utils'
 const Log = ({ log }: { log: Log }) => {
   const request = JSON.parse(log?.request)
   const response = JSON.parse(log?.response)
-  console.log(request)
+  console.log({log : log?.location})
   const reg = /iPhone/
+  const location = log.location == 'authenticated' ? 'auth' : log.location == 'unauthenticated' ? 'unauth' : log.location
    return (
-    <div className='flex gap-1 border-b border-gray-700'>
-      <div>{getTime(log.createdAt)},</div>
-      <div>{getDateShort(log.createdAt)}</div>
-      <div className='font-semibold'>
+    <div className='grid grid-cols-12 gap-1 border-b border-gray-700'>
+      <div className={`${log.location == 'SignIn' ? 'text-yellow-500 font-medium' : ''}`}>
+        {log.action}</div>
+      <div
+        className='col-span-2'
+      >{getTime(log.createdAt)}-{getDateShort(log.createdAt)}</div>
+      <div className='font-semibold col-span-2'>
         {response?.firstName}
         {` `}
         {response?.lastName}
       </div>
-      <div>
-        {log?.url.slice(8, 28)}
-        {log?.url.length > 28 ? '...' : ''}
+      <div
+        className='col-span-2'
+      >
+        {log?.url.slice(23, 32)}
+        {log?.url.length > 32 ? '...' : ''}
       </div>
-      <div className={`${log.location == 'SignIn' ? 'text-yellow-400' : ''}`}>
-        {log.location}
+      <div 
+        className={`${location == 'unauth' ? 'text-red-600' : ''}`}
+      >
+        {location}
       </div>
-      <div>{log.action}</div>
-      <div>{request?.['x-real-ip']}</div>
+      <div
+        className='col-span-2'
+      >{request?.['x-real-ip']}</div>
       <div>{request?.['user-agent'].match(reg)}</div>
     </div>
   )
@@ -53,7 +62,7 @@ const AdminLog = () => {
   return (
     <>
       <h1>AdminLog</h1>
-      <div className='flex w-full flex-col text-sm md:text-lg tracking-tighter gap-0 md:gap-1'>
+      <div className='flex w-full flex-col text-sm md:text-lg tracking-tighter gap-0 min-w-max '>
         {log?.map((l) => (
           <div key={l.id}>
             {l.userId === 'david' ||
