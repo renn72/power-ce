@@ -43,7 +43,7 @@ const AdminLog = () => {
       <h1>AdminLog</h1>
       <div className='flex flex-col w-full'>
         {log?.map((l) => (
-          <div key={l.id}>{l.userId === 'david' ? null : <Log log={l} />}</div>
+          <div key={l.id}>{l.userId === 'david' || l.location === 'settings' || l.location === 'settings_user' || l.userId === 'mitch' ? null : <Log log={l} />}</div>
         ))}
       </div>
     </>

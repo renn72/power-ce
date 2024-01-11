@@ -88,6 +88,10 @@ export const usersRouter = createTRPCRouter({
         return false
       }
 
+      if (req.headers.referer?.includes('localhost')) {
+        return true
+      }
+
       await ctx.prisma.log.create({
         data: {
           location: location,
@@ -126,6 +130,9 @@ export const usersRouter = createTRPCRouter({
       }
       if (id === 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv') {
         id = 'mitch'
+      }
+      if (req.headers.referer?.includes('localhost')) {
+        return res
       }
 
       await ctx.prisma.log.create({
