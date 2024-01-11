@@ -51,7 +51,7 @@ export const usersRouter = createTRPCRouter({
       const res = await ctx.prisma.log.create({
         data: {
           location: location,
-          action: 'signin',
+          action: 'signIn',
           userId: id,
           url: req.headers.referer,
           response: JSON.stringify(user),
@@ -95,7 +95,7 @@ export const usersRouter = createTRPCRouter({
       await ctx.prisma.log.create({
         data: {
           location: location,
-          action: 'is user',
+          action: 'isUser',
           userId: id,
           url: req.headers.referer,
           response: JSON.stringify(res),
@@ -138,7 +138,7 @@ export const usersRouter = createTRPCRouter({
       await ctx.prisma.log.create({
         data: {
           location: location,
-          action: 'get user',
+          action: 'getUser',
           userId: id,
           url: req.headers.referer,
           response: JSON.stringify(res),
