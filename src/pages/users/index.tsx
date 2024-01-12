@@ -585,7 +585,7 @@ const Users = () => {
                 />
                 <h2
                   className='text-3xl font-semibold my-6'
-                >Next Program</h2>
+                >Next Program2</h2>
                 <ProgramView
                   userId={userId}
                   isAdmin={true}
