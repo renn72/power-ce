@@ -637,7 +637,7 @@ const ExerciseModal = ({
       setReps: exercise.reps ? Number(exercise.reps) : 0,
     })
 
-    const isDone = exercise.set.length === exerciseSets
+    const isDone = exercise.set.length + 1 === exerciseSets
 
     if (!exercise.isComplete && isDone) {
       updateExerciseComplete({
@@ -656,7 +656,7 @@ const ExerciseModal = ({
 
     console.log('isDayDone', isDayDone)
 
-    if (!day.isComplete && isDayDone) {
+    if (!day.isComplete && isDayDone && isDone) {
       updateDayComplete({ id: day.id, isComplete: true, programId: programId })
     }
   }
