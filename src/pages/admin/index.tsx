@@ -130,12 +130,13 @@ const Admin = () => {
                         {program.isProgramActive ? 'Active' : null}
                       </div>
                       <Button
-                        className='text-red-500'
+                        size='lg'
+                        className='text-red-500 w-fit'
                         onClick={() => {
-                          deleteSoftTemplate({ id: program.id })
+                          deleteTemplate({ id: program.id })
                         }}
                       >
-                        Delete
+                        Permantent Delete
                       </Button>
                   </div>
                 ))}

@@ -101,7 +101,7 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
           ref={parent}
           className='mb-12 flex flex-col gap-6'
         >
-          <div className={`flex gap-2 items-center ${isRest ? 'hidden' : ''}`}>
+          <div className={`flex items-center gap-2 ${isRest ? 'hidden' : ''}`}>
             <Controller
               control={control}
               name={`week.${weekIdx}.day.${dayIdx}.warmupTemplateId`}
@@ -109,7 +109,10 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
               render={({ field: { onChange, value } }) => (
                 <Listbox
                   value={value as string}
-                  onChange={onChange}
+                  onChange={(e) => {
+                    onChange(e)
+                    console.log(e)
+                  }}
                 >
                   <div className='relative h-full w-80 overflow-visible text-xs sm:text-base'>
                     <div className='flex items-center gap-4'>
@@ -178,7 +181,7 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
               onClick={() =>
                 formMethods.setValue(
                   `week.${weekIdx}.day.${dayIdx}.warmupTemplateId`,
-                  ''
+                  '',
                 )
               }
             />

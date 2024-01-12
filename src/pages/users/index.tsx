@@ -583,6 +583,14 @@ const Users = () => {
                   isAdmin={true}
                   programId={activeProgram?.id || ''}
                 />
+                <h2
+                  className='text-3xl font-semibold my-6'
+                >Next Program</h2>
+                <ProgramView
+                  userId={userId}
+                  isAdmin={true}
+                  programId={secondaryProgram?.id || ''}
+                />
               </Tab.Panel>
 
               <Tab.Panel>

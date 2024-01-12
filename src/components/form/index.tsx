@@ -213,6 +213,7 @@ const Form = () => {
   }
 
   const onError = (errors, e) => {
+    toast.error('Error')
     console.log('error', errors, e)
   }
 

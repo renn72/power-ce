@@ -29,12 +29,12 @@ const Day = () => {
   const { data: session } = useSession()
   const userId = session?.user.id || ''
 
-  const ctx = api.useContext()
+  const ctx = api.useUtils()
   const router = useRouter()
   const [programId, dayId] = (router.query.id as string[]) || ['', '']
   const [isOpen, setIsOpen] = useState(false)
   const [exerciseToDelete, setExerciseToDelete] = useState<string>('')
-  const utils = api.useContext()
+  const utils = api.useUtils()
 
   const { data: program, isLoading: programLoading } = api.blocks.get.useQuery({
     id: programId || '',
@@ -47,6 +47,13 @@ const Day = () => {
     .map((week) => week.day)
     .flat()
     .find((day) => day.id === dayId)
+
+  const weekNumber = program?.week.findIndex((w) =>
+    w.day.find((d) => d.id === dayId),
+  )
+  const dayNumber = program?.week[weekNumber]?.day?.findIndex(
+    (d) => d.id === dayId,
+  )
 
   const warmup = allWarmups?.find((w) => w.id === day?.warmupTemplateId)
 
@@ -126,6 +133,9 @@ const Day = () => {
       )
       return { previousProgram }
     },
+    onSuccess: () => {
+      void ctx.blocks.getUserActiveProgramFull.invalidate({ userId: userId })
+    },
     onError: (err, _newExercise, context) => {
       console.log('err', err)
       if (!programId) return
@@ -153,6 +163,8 @@ const Day = () => {
           <div>Rest Day</div>
         ) : (
           <div className='flex flex-col gap-6 px-1'>
+              <h2>Week:{Number(weekNumber) + 1}</h2>
+              <h2>Day:{Number(dayNumber) + 1}</h2>
             <h2
               className={`text-xl font-bold ${
                 day.isComplete ? 'text-green-500' : ''
@@ -161,7 +173,7 @@ const Day = () => {
             {day?.isComplete ? (
               <div
                 onClick={() => {
-                  // updateDayComplete({ id: day.id, isComplete: false, programId: programId  })
+                  updateDayComplete({ id: day.id, isComplete: false, programId: program.id  })
                 }}
                 className={`flex items-center justify-center gap-2 text-xl font-bold text-yellow-500`}
               >
