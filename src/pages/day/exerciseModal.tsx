@@ -508,6 +508,9 @@ const ExerciseModal = ({
       )
       return { previousProgram }
     },
+    onSuccess: () => {
+      void utils.blocks.getUserActiveProgramFull.invalidate()
+    },
     onError: (err, _newExercise, context) => {
       console.log('err', err)
       utils.blocks.get.setData({ id: programId }, context?.previousProgram)
