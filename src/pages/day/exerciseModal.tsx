@@ -71,12 +71,13 @@ const E1RM = ({
         (
           Number(weights) / Number(e1rm[Number(exercise?.reps) - 1] || 0 / 100)
         )?.toFixed(0) && (
-          <div className='mx-1 flex text-2xl font-semibold items-baseline justify-center gap-2 px-2 text-muted-foreground md:mx-6'>
+          <div className='mx-1 flex items-baseline justify-center gap-2 px-2 text-2xl font-semibold text-muted-foreground md:mx-6'>
             <div className='text-lg font-medium'>E1RM</div>
             {weights && weights !== 0 && e1rm[Number(exercise.reps) - 1] ? (
               <div>
                 {(
-                  Number(weights) / (e1rm?.[Number(exercise?.reps) - 1] / 100 || 0)
+                  Number(weights) /
+                  (e1rm?.[Number(exercise?.reps) - 1] / 100 || 0)
                 )?.toFixed(0)}
                 kg
               </div>
@@ -142,14 +143,16 @@ const ExerciseWeight = ({
       />
       <div className='relative flex w-56 text-center'>
         <NumericFormat
-          className='w-full rounded-3xl border-8 border-gray-800 bg-black p-6 text-center text-5xl tracking-tighter font-bold placeholder-gray-600'
+          className='w-full rounded-3xl border-8 border-gray-800 bg-black p-6 text-center text-5xl font-bold tracking-tighter placeholder-gray-600'
           value={weights}
           placeholder='kg'
           decimalScale={2}
           onChange={(e) => setWeights(+e.target.value)}
         />
         {weights && weights !== 0 ? (
-          <span className='absolute right-4 text-base text-gray-400 bottom-10'>kg</span>
+          <span className='absolute bottom-10 right-4 text-base text-gray-400'>
+            kg
+          </span>
         ) : null}
       </div>
       <Plus
@@ -264,11 +267,7 @@ const ExerciseSets = ({
         }}
       >
         <CarouselContent>
-          {[
-            ...Array(
-              exerciseSets,
-            ).keys(),
-          ].map((_, setIdx) => (
+          {[...Array(exerciseSets).keys()].map((_, setIdx) => (
             <>
               {exercise.isComplete ? (
                 <>
@@ -435,9 +434,30 @@ const ExerciseModal = ({
   const [e1rm, setE1rm] = useState<number[]>([0])
   const [notes, setNotes] = useState<string>(() => exercise?.flield2 || '')
 
-  const utils = api.useContext()
+  const utils = api.useUtils()
 
-  const { mutate: updateExerciseComplete } =
+  const updateExerciseComplete = (props: {
+    id: string
+    isComplete: boolean
+    notes: string
+  }) => {
+    updateExerciseCompleteMutate(props)
+
+    const isDayDone = day.exercise.reduce((acc, curr) => {
+      if (curr.id === exercise.id) {
+        return acc
+      }
+      return curr.isComplete ? acc : false
+    }, true)
+
+    console.log('isDayDone', isDayDone)
+
+    if (!day.isComplete && isDayDone) {
+      updateDayComplete({ id: day.id, isComplete: true, programId: programId })
+    }
+  }
+
+  const { mutate: updateExerciseCompleteMutate } =
     api.programs.completeExercise.useMutation({
       onMutate: async (newExercise) => {
         console.log('id', newExercise)
