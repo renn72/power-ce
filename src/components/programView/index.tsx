@@ -16,7 +16,6 @@ import {
   ArrowDownToLine,
   ArrowUpToLine,
   GitCommit,
-  PauseCircleIcon,
   PauseOctagonIcon,
   PlaySquare,
   Zap,
@@ -76,15 +75,23 @@ const ExerciseView = ({
           <div className='flex flex-col gap-1 py-2 hover:rounded-md hover:bg-gray-900'>
             <div>
               <div className='flex justify-between text-lg'>
-                <h3 className='font-semibold capitalize text-yellow-500'>
-                  {exercise.name}
+                <h3
+                  className={`capitalize ${
+                    exercise.isComplete
+                      ? 'font-bold text-green-500'
+                      : 'font-semibold text-yellow-500 '
+                  }`}
+                >
+                  <div
+                    className={`${exercise?.sets > exercise.set.length ? 'text-orange-500' : '' }`}
+                  >{isSS ? 'Super Set' : exercise.name}</div>
                 </h3>
                 <StarIcon className='h-5 w-5 text-yellow-500' />
               </div>
-              <h3 className='text-xxs capitalize leading-none text-gray-600'>
-                {exercise.lift}
-              </h3>
             </div>
+            <h4 className='text-xs font-light text-gray-400'>
+              {getDate(exercise.flield1)}
+            </h4>
             <div className='mr-5 flex justify-between text-lg tracking-tight'>
               <div className='flex gap-4 '>
                 <h3>{exercise.sets}</h3>
@@ -175,9 +182,6 @@ const ExerciseView = ({
                 <div className='mb-4 text-sm'>{exercise.flield2}</div>
               </h4>
             )}
-            <h4 className='text-xs font-light text-gray-400'>
-              {getDate(exercise.flield1)}
-            </h4>
           </div>
         ) : (
           <div
@@ -362,7 +366,7 @@ const ProgramView = ({
     id: programId,
   })
 
-  const ctx = api.useContext()
+  const ctx = api.useUtils()
 
   const { data: allWarmups, isLoading: warmupsLoading } =
     api.warmups.getAll.useQuery()
