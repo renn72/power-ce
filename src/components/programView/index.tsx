@@ -83,8 +83,16 @@ const ExerciseView = ({
                   }`}
                 >
                   <div
-                    className={`${exercise?.sets > exercise.set.length ? 'text-orange-500' : '' }`}
-                  >{isSS ? 'Super Set' : exercise.name}</div>
+                    className={`${
+                      Number(exercise?.sets) > exercise.set.length
+                        ? 'text-orange-500'
+                        : Number(exercise?.sets) < exercise.set.length
+                        ? 'text-indigo-400'
+                        : ''
+                    }`}
+                  >
+                    {isSS ? 'Super Set' : exercise.name}
+                  </div>
                 </h3>
                 <StarIcon className='h-5 w-5 text-yellow-500' />
               </div>
