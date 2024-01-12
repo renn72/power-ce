@@ -57,7 +57,6 @@ const Layout = (props: PropsWithChildren) => {
           </>
         ) : (
           <div className='flex flex-col h-full w-full grow items-center justify-center'>
-              Sry having issues with the login server
             <button
               className='rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20'
               onClick={() => {
