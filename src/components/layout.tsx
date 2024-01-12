@@ -7,6 +7,7 @@ import { LoadingPage } from './loading'
 import { useRouter } from 'next/router'
 
 import { api } from '~/utils/api'
+import { Toaster } from '@/components/ui/sonner'
 
 const LayoutAuth = (props: PropsWithChildren) => {
   const { data: session } = useSession()
@@ -24,6 +25,7 @@ const LayoutAuth = (props: PropsWithChildren) => {
       <Navbar user={user || null} />
       <div className='grow'>{props.children}</div>
       <Footer />
+      <Toaster />
     </>
   )
 }

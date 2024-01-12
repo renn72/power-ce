@@ -78,7 +78,7 @@ export const usersRouter = createTRPCRouter({
         where: { id },
       })
       if (id === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') {
-        id = 'david'
+        return true
       }
       if (id === 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv') {
         id = 'mitch'
@@ -127,7 +127,7 @@ export const usersRouter = createTRPCRouter({
       })
 
       if (id === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') {
-        id = 'david'
+        return res
       }
       if (id === 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv') {
         id = 'mitch'

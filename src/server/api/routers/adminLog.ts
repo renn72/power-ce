@@ -13,14 +13,9 @@ export const adminLogRouter = createTRPCRouter({
 
     return records
   }),
-  delete: privateProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const record = await ctx.prisma.record.delete({
-        where: {
-          id: input.id,
-        },
-      })
+  deleteAll: privateProcedure
+    .mutation(async ({ ctx, }) => {
+      const record = await ctx.prisma.log.deleteMany()
 
       return record
     }),
