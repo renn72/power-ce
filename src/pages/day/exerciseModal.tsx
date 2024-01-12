@@ -637,7 +637,7 @@ const ExerciseModal = ({
       setReps: exercise.reps ? Number(exercise.reps) : 0,
     })
 
-    const isDone = exercise.set.length + 1 === exerciseSets
+    const isDone = exercise.set.length === exerciseSets
 
     if (!exercise.isComplete && isDone) {
       updateExerciseComplete({
