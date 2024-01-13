@@ -16,7 +16,7 @@ interface Response {
   lastName: string
 }
 
-const Log = ({ log }: { log: Log }) => {
+const Log = ({ log, idx }: { log: Log; idx: number }) => {
   const request = JSON.parse(log?.request as string) as Request // eslint-disable-line
   const response = JSON.parse(log?.response as string) as Response // eslint-disable-line
   const reg = /iPhone/
@@ -27,8 +27,13 @@ const Log = ({ log }: { log: Log }) => {
       : log.location == 'unauthenticated'
       ? 'unauth'
       : log.location
+
+  console.log(idx, log)
+  console.log({request, response})
+
   return (
-    <div className='grid grid-cols-12 gap-1 border-b border-gray-700'>
+    <div className='grid grid-cols-13 gap-1 border-b border-gray-700'>
+      <div>{idx}</div>
       <div
         className={`${
           log.location == 'SignIn' ? 'font-medium text-yellow-500' : ''
@@ -83,24 +88,27 @@ const AdminLog = () => {
 
   return (
     <>
-      <div className='text-lg font-semibold'>
-          Size: {log?.length}
-      </div>
+      <div className='text-lg font-semibold'>Size: {log?.length}</div>
       <Button
         onClick={() => {
           clearLog()
           toast.success('Log Cleared')
         }}
         className='mb-10'
-      >Clear Log</Button>
+      >
+        Clear Log
+      </Button>
       <div className='flex w-full min-w-max flex-col gap-0 text-xs tracking-tighter md:text-base '>
-        {log?.map((l) => (
+        {log?.map((l, idx) => (
           <div key={l.id}>
             {l.userId === 'david' ||
             l.location === 'settings' ||
             l.location === 'settings_user' ||
             l.userId === 'mitch' ? null : (
-              <Log log={l} />
+              <Log
+                log={l}
+                idx={idx}
+              />
             )}
           </div>
         ))}
