@@ -41,7 +41,7 @@ interface CreateContextOptions {
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
-  console.log('createInnerTRPCContext', opts.req)
+  console.log('createInnerTRPCContext', opts.req?.cookie)
   return {
     session: opts.session,
     prisma: db,
