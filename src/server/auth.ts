@@ -10,6 +10,8 @@ import EmailProvider from 'next-auth/providers/email'
 import DiscordProvider from 'next-auth/providers/discord'
 import GoogleProvider from 'next-auth/providers/google'
 
+import type { Adapter } from 'next-auth/adapters';
+
 import { db } from '~/server/db'
 
 /**
@@ -20,7 +22,7 @@ import { db } from '~/server/db'
  */
 declare module 'next-auth' {
   interface Session extends DefaultSession {
-    user: DefaultSession['user'] & {
+    user: {
       id: string
     }
   }
@@ -54,7 +56,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-  adapter: PrismaAdapter(db),
+  adapter: PrismaAdapter(db) as Adapter,
   session: {
     strategy: 'jwt',
     maxAge: 90 * 24 * 60 * 60, // 90 days
