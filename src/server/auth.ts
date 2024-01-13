@@ -58,8 +58,6 @@ export const authOptions: NextAuthOptions = {
       return Promise.resolve(token)
     },
   },
-  debug: true,
-
   secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(db) as Adapter,
   session: {
