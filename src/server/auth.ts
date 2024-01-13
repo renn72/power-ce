@@ -64,6 +64,7 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
     maxAge: 90 * 24 * 60 * 60, // 90 days
   },
+  debug: true,
   providers: [
     EmailProvider({
       server: {
