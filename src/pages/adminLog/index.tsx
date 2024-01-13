@@ -85,7 +85,6 @@ const AdminLog = () => {
   }
 
   if (logLoading) return <h1>Loading...</h1>
-
   return (
     <>
       <div className='text-lg font-semibold'>Size: {log?.length}</div>
@@ -103,8 +102,7 @@ const AdminLog = () => {
           <div key={l.id}>
             {l.userId === 'david' ||
             l.location === 'settings' ||
-            l.location === 'settings_user' ||
-            l.userId === 'mitch' ? null : (
+            l.location === 'settings_user' ? null : (
               <Log
                 log={l}
                 idx={idx}
