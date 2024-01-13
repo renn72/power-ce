@@ -13,6 +13,9 @@ import DOB from './dob'
 import Gender from './gender'
 import Delete from './delete'
 
+import { signOut, signIn } from 'next-auth/react'
+import { Button } from '@/components/ui/button'
+
 const RoleToggle = ({
   value,
   userId,
@@ -104,12 +107,21 @@ const Settings = ({ userId }: { userId: string }) => {
   return (
     <>
       <div className='mb-8 flex justify-center '>
-        <div className='flex w-full flex-col gap-2 px-4 py-2'>
-          <div className='flex items-center justify-between text-yellow-500'>
-            <div className='flex hidden gap-1 text-2xl font-semibold text-yellow-500'>
-              {user.firstName} {user.lastName}
-            </div>
-          </div>
+        <div className='relative flex w-full flex-col gap-2 px-4 py-2'>
+          <Button
+            size='sm'
+            className='absolute right-3 top-1 w-fit'
+            onClick={() => signIn()}
+          >
+            Add Sign In Method
+          </Button>
+          <Button
+            size='sm'
+            className='absolute right-3 top-12 w-fit'
+            onClick={() => signOut()}
+          >
+            Sign Out
+          </Button>
           <FirstName
             userId={userId}
             name={user.firstName || ''}

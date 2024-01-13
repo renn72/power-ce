@@ -7,6 +7,8 @@ import {
   type DefaultUser,
 } from 'next-auth'
 import EmailProvider from 'next-auth/providers/email'
+import DiscordProvider from 'next-auth/providers/discord'
+import GoogleProvider from 'next-auth/providers/google'
 
 import { db } from '~/server/db'
 
@@ -20,34 +22,11 @@ declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: DefaultSession['user'] & {
       id: string
-      // isDiet: boolean
-      // isDietTrainer: boolean
-      // isPower: boolean
-      // isPowerTrainer: boolean
-      // isTrainer: boolean
-      // isClient: boolean
-      // isRecordEditor: boolean
-      // isAdmin: boolean
-      // isSuper: boolean
-      // isHiiT: boolean
-      // isHiiTTrainer: boolean
-      // isRoot: boolean
-      // ...other properties
-      // role: UserRole;
     }
   }
 
   interface User extends DefaultUser {
     id: string
-    // isDiet: boolean
-    // isPower: boolean
-    // isTrainer: boolean
-    // isClient: boolean
-    // isRecordEditor: boolean
-    // isAdmin: boolean
-    // isSuper: boolean
-    // ...other properties
-    // role: UserRole;
   }
 }
 
@@ -91,6 +70,14 @@ export const authOptions: NextAuthOptions = {
         },
       },
       from: process.env.EMAIL_FROM,
+    }),
+    DiscordProvider({
+      clientId: process.env.DISCORD_CLIENT_ID,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET,
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
 }

@@ -93,7 +93,7 @@ const AdminLog = () => {
         }}
         className='mb-10'
       >Clear Log</Button>
-      <div className='flex w-full min-w-max flex-col gap-0 text-sm tracking-tighter md:text-lg '>
+      <div className='flex w-full min-w-max flex-col gap-0 text-xs tracking-tighter md:text-base '>
         {log?.map((l) => (
           <div key={l.id}>
             {l.userId === 'david' ||

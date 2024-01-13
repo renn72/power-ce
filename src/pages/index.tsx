@@ -13,6 +13,10 @@ import { LoadingPage, LoadingSpinner } from '~/components/loading'
 import { getDate } from '~/utils/utils'
 import { Cog8ToothIcon } from '@heroicons/react/20/solid'
 
+import discordIcon from '~/../public/discord.svg'
+import Image from 'next/image'
+import { BellRing } from 'lucide-react'
+
 const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
   api.users.getAllUsers.useQuery()
@@ -145,7 +149,7 @@ const Home: NextPage = () => {
     <>
       <main className='flex h-full flex-col gap-6 px-2  font-semibold'>
         <div className='flex  flex-col gap-4 lg:items-start '>
-          <div className='flex  w-full flex-col gap-1 lg:items-start '>
+          <div className='flex  w-full flex-col gap-2 lg:items-start '>
             <div className='flex w-full items-center justify-between'>
               <h1 className='text-2xl'>Profile</h1>
               <Link href='/settings'>
@@ -180,7 +184,28 @@ const Home: NextPage = () => {
             userId={userId}
           />
         </div>
-        <Link href={'/records'} className='w-fit'>
+        <a
+          href='https://discord.gg/hHNCnmVmNW'
+          target='_blank'
+          rel='noreferrer'
+          className='flex items-center gap-4 text-xl underline underline-offset-4 relative w-fit'
+        >
+          <Image
+            height={20}
+            src={discordIcon}
+            alt='discord'
+            priority
+          />
+          <span>Discord Channel</span>
+          <BellRing 
+            size={8}
+            strokeWidth={4}
+            className='text-yellow-400 absolute -top-1 -right-3 animate-bounce z-10' />
+        </a>
+        <Link
+          href={'/records'}
+          className='w-fit'
+        >
           <Button className='h-8 w-36 rounded bg-yellow-400 p-0 font-bold text-gray-900 hover:bg-yellow-500'>
             CE Records
           </Button>
