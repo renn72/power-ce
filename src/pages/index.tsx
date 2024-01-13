@@ -194,7 +194,6 @@ const Home: NextPage = () => {
             height={20}
             src={discordIcon}
             alt='discord'
-            priority
           />
           <span>Discord Channel</span>
           <BellRing 
