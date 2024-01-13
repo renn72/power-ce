@@ -40,13 +40,14 @@ declare module 'next-auth' {
 export const authOptions: NextAuthOptions = {
   callbacks: {
     session: async ({ session, token }) => {
-      console.log('session token', token)
-      console.log('session session', session)
       if (token) {
         session.user = {
+          ...session.user,
           id: token.sub as string,
         }
       }
+      console.log('session token', token)
+      console.log('session session', session)
       return Promise.resolve(session)
     },
     jwt: async ({ token, user }) => {
