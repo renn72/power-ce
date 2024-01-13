@@ -47,16 +47,18 @@ export const authOptions: NextAuthOptions = {
           id: token.sub as string,
         }
       }
-      return session
+      return Promise.resolve(session)
     },
     jwt: async ({ token, user }) => {
       if (user) {
         token.sub = user.id
         console.log('jwt token', token)
       }
-      return token
+      return Promise.resolve(token)
     },
   },
+  debug: true,
+
   secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(db) as Adapter,
   session: {
