@@ -40,7 +40,7 @@ declare module 'next-auth' {
 export const authOptions: NextAuthOptions = {
   callbacks: {
     session: async ({ session, token }) => {
-      if (token) {
+      if (session.user && token) {
         session.user = {
           ...session.user,
           id: token.sub as string,
