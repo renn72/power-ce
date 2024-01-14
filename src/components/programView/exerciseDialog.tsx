@@ -356,21 +356,23 @@ const FormSS = ({
 }
 
 const ExerciseDialog = ({
+  programId,
   exerciseId,
   closeModal,
   userId,
 }: {
+  programId: string
   exerciseId: string
   closeModal: () => void
   userId: string
 }) => {
-  const ctx = api.useContext()
-  const { data: programData } = api.blocks.getUserActiveProgramFull.useQuery({
-    userId: userId,
+  const ctx = api.useUtils()
+  const { data: programData } = api.blocks.get.useQuery({
+    id: programId,
   })
   console.log('programData', programData)
 
-  const { data: exerciset, isLoading } = api.blocks.getExercise.useQuery({
+  const { data: exercise, isLoading } = api.blocks.getExercise.useQuery({
     id: exerciseId,
   })
   const [testWeight, setTestWeight] = useState<number | null>(null)
@@ -389,7 +391,7 @@ const ExerciseDialog = ({
       },
     })
 
-  const exercise = programData.week
+  const _exercise = programData?.week
     .find((week) =>
       week.day.find((day) =>
         day.exercise.find((exercise) => exercise.id === exerciseId),
@@ -525,7 +527,7 @@ const ExerciseDialog = ({
                   name={`exercise.isSS`}
                   defaultValue={exercise.ss && exercise.ss.length > 0}
                   render={({ field: { onChange, value } }) => (
-                    <div className='absolute left-36 top-[29px] flex items-center gap-2'>
+                    <div className='absolute right-36 top-[29px] flex items-center gap-2'>
                       <Checkbox
                         id='isSS'
                         checked={value as boolean}

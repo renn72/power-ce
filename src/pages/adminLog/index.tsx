@@ -102,8 +102,7 @@ const AdminLog = () => {
           <div key={l.id}>
             {l.userId === 'david' ||
             l.location === 'settings' ||
-            l.location === 'settings_user' ||
-              idx > 200 ? null : (
+            l.location === 'settings_user' ? null : (
               <Log
                 log={l}
                 idx={idx}

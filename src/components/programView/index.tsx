@@ -598,6 +598,7 @@ grid-cols-1 lg:grid-cols-5 2xl:${
                   >
                     <Dialog.Panel className='w-full max-w-7xl transform overflow-visible rounded-2xl border border-gray-800 bg-black p-6 text-left align-middle shadow-xl transition-all'>
                       <ExerciseDialog
+                        programId={programId}
                         exerciseId={exerciseId}
                         closeModal={closeModal}
                         userId={userId}
