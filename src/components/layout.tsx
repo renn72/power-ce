@@ -6,6 +6,7 @@ import { useSession, signIn } from 'next-auth/react'
 import { LoadingPage } from './loading'
 import { useRouter } from 'next/router'
 
+import Cookies from 'js-cookie'
 
 import { api } from '~/utils/api'
 import { Toaster } from '@/components/ui/sonner'
@@ -18,6 +19,7 @@ const LayoutAuth = (props: PropsWithChildren) => {
     userId: userId,
     location: 'base',
   })
+
 
   if (userLoading) return <LoadingPage />
 

@@ -53,7 +53,7 @@ export const usersRouter = createTRPCRouter({
           location: location,
           action: 'signIn',
           userId: id,
-          url: req.headers.referer,
+          url: input.url || 'noCookie',
           response: JSON.stringify(user),
           request: JSON.stringify(req.headers),
         },

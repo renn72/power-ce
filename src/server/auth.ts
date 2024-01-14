@@ -10,7 +10,7 @@ import EmailProvider from 'next-auth/providers/email'
 import DiscordProvider from 'next-auth/providers/discord'
 import GoogleProvider from 'next-auth/providers/google'
 
-import type { Adapter } from 'next-auth/adapters';
+import type { Adapter } from 'next-auth/adapters'
 
 import { db } from '~/server/db'
 
@@ -65,6 +65,27 @@ export const authOptions: NextAuthOptions = {
     maxAge: 90 * 24 * 60 * 60, // 90 days
   },
   debug: true,
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: false,
+        sameSite: 'none',
+        path: '/',
+        secure: true,
+      },
+    },
+    state: {
+      name: `next-auth.state`,
+      options: {
+        httpOnly: true,
+        sameSite: 'none',
+        path: '/',
+        secure: true,
+        maxAge: 900,
+      },
+    },
+  },
   providers: [
     EmailProvider({
       server: {

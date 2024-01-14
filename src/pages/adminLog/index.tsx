@@ -50,8 +50,8 @@ const Log = ({ log, idx }: { log: Log; idx: number }) => {
         {response?.lastName}
       </div>
       <div className='col-span-2'>
-        {url.slice(23, 32)}
-        {url.length > 32 ? '...' : ''}
+        {url.slice(22, 36)}
+        {url.length > 36 ? '...' : ''}
       </div>
       <div className={`${location == 'unauth' ? 'text-red-600' : ''}`}>
         {location}
@@ -102,7 +102,8 @@ const AdminLog = () => {
           <div key={l.id}>
             {l.userId === 'david' ||
             l.location === 'settings' ||
-            l.location === 'settings_user' ? null : (
+            l.location === 'settings_user' ||
+              idx > 200 ? null : (
               <Log
                 log={l}
                 idx={idx}
