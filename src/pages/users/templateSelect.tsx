@@ -13,39 +13,41 @@ import {
 
 import { useSession } from 'next-auth/react'
 
+import ModalWrapper from '~/components/settings/modalWrapper'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+
 const TemplateSelect = ({
-  onSelectTemplate,
   onSetTemplate,
   onClearTemplate,
   userId,
   isCurrent,
 }: {
-  onSelectTemplate: (arg0: string, arg1: string) => void
-  onSetTemplate: (arg0: string, arg1: string) => void
+  onSetTemplate: (templateId: string, userId: string, name: string) => void
   onClearTemplate: (arg0: string) => void
   userId: string
   isCurrent: boolean
 }) => {
-  const [template, setTemplate] = useState('')
+  const [templateId, setTemplateId] = useState('')
   const [isSet, setIsSet] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const [name, setName] = useState('')
 
   const { data: session } = useSession()
   const user = session?.user
   const trainerId = user?.id || ''
 
-  const ctx = api.useContext()
+  const ctx = api.useUtils()
 
   const { data: blocksData, isLoading: blocksLoading } =
     api.blocks.getAllBlockTitles.useQuery()
   const { data: currentProgram } = api.blocks.getUserActiveProgramFull.useQuery(
     { userId: userId },
   )
-  console.log('currentProgram', currentProgram)
 
   const { data: secondProgram } = api.blocks.getUserSecondaryProgram.useQuery({
     userId: userId,
   })
-  console.log('secondProgram', secondProgram)
 
   const workoutCount = () => {
     if (!currentProgram) return ''
@@ -113,42 +115,43 @@ const TemplateSelect = ({
   const wrapperOnClearTemplate = (userId: string) => {
     onClearTemplate(userId)
     setIsSet(false)
-    setTemplate('')
+    setTemplateId('')
     void ctx.blocks.getUserActiveProgramFull.invalidate({ userId: userId })
     void ctx.blocks.getUserSecondaryProgram.invalidate({ userId: userId })
-  }
-
-  const onSetLocalTemplate = (template: string) => {
-    setTemplate(template)
-    onSelectTemplate(template, userId)
   }
 
   useEffect(() => {
     if (isCurrent) {
       if (!currentProgram) {
         setIsSet(false)
-        setTemplate('')
+        setTemplateId('')
         return
       }
-      const templateName = currentProgram?.name
-      if (!templateName) return
+      const templateId = currentProgram?.id
+      if (!templateId) return
       setIsSet(true)
-      setTemplate(templateName)
+      setTemplateId(templateId)
+      setName(currentProgram.name)
     } else {
       if (!secondProgram) {
         setIsSet(false)
-        setTemplate('')
+        setTemplateId('')
         return
       }
-      const templateName = secondProgram?.name
-      if (!templateName) return
+      const templateId = secondProgram?.id
+      if (!templateId) return
       setIsSet(true)
-      setTemplate(templateName)
+      setTemplateId(templateId)
+      setName(secondProgram.name)
     }
   }, [currentProgram, secondProgram])
 
-  const onSetTemplateWrapper = (template: string, userId: string) => {
-    onSetTemplate(template, userId)
+  const onSetTemplateWrapper = (
+    templateId: string,
+    userId: string,
+    name: string,
+  ) => {
+    onSetTemplate(templateId, userId, name)
   }
 
   if (blocksLoading) return <div>loading</div>
@@ -158,12 +161,22 @@ const TemplateSelect = ({
         b.trainerId === trainerId ||
         trainerId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a',
     )
-    ?.map((block) => block.name)
+    ?.map((block) => {
+      return {
+        name: block.name,
+        id: block.id,
+      }
+    })
+
+  console.log('blocksTitle', blocksTitle)
 
   // if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
+  console.log('templateId', templateId)
+
+  const currentTitle = isCurrent ? currentProgram?.name : secondProgram?.name
 
   return (
-    <div className='mx-1 mx-2 flex flex-row items-center gap-6'>
+    <div className='mx-2 flex flex-row items-center gap-6'>
       <div className='flex flex-row justify-normal gap-6 '>
         <div className='flex w-64 items-end text-lg font-semibold'>
           <div className='text-xl font-bold tracking-tighter text-yellow-500'>
@@ -178,12 +191,17 @@ const TemplateSelect = ({
           <div className='flex items-center justify-start gap-2'>
             <div className='flex flex-col justify-center text-base font-bold'>
               <Listbox
-                value={template}
-                onChange={(e) => onSetLocalTemplate(e)}
+                value={templateId}
+                onChange={(e) => {
+                  console.log(e)
+                  setTemplateId(e)
+                }}
               >
                 <div className='z-1 relative'>
                   <Listbox.Button className='relative h-10  w-60 cursor-default border-b border-gray-600 pl-3 pr-10 text-left shadow-md hover:border-white focus:outline-none '>
-                    <span className='block truncate'>{template}</span>
+                    <span className='block truncate'>
+                      {blocksTitle?.filter((b) => b.id === templateId)?.[0]?.name || currentTitle }
+                    </span>
                     <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
                       <ChevronUpDownIcon
                         className='h-5 w-5'
@@ -198,7 +216,7 @@ const TemplateSelect = ({
                     leaveTo='opacity-0'
                   >
                     <Listbox.Options className='absolute z-10 mt-1 max-h-[32rem] w-80 overflow-auto border border-gray-600 bg-black py-1 shadow-lg md:w-80 '>
-                      {blocksTitle?.map((templateName, Idx) => (
+                      {blocksTitle?.map((template, Idx) => (
                         <Listbox.Option
                           key={Idx}
                           className={({ active }) =>
@@ -208,12 +226,12 @@ const TemplateSelect = ({
                                 : 'text-gray-200'
                             }`
                           }
-                          value={templateName}
+                          value={template.id}
                         >
                           {({ selected }) => (
                             <>
                               <span className={`block truncate`}>
-                                {templateName}
+                                {template.name}
                               </span>
                               {selected ? (
                                 <span className='absolute inset-y-0 left-0 flex items-center pl-1'>
@@ -235,7 +253,9 @@ const TemplateSelect = ({
             <div className='ml-4 flex items-end justify-start gap-2'>
               <PencilSquareIcon
                 className='h-8 w-8 text-gray-400 hover:text-green-600 md:w-8'
-                onClick={() => onSetTemplateWrapper(template, userId)}
+                onClick={() => {
+                  setIsOpen(true)
+                }}
               />
               <XCircleIcon
                 className='col-span-1 h-8 w-8 text-gray-400 hover:text-red-600 md:w-8'
@@ -256,6 +276,38 @@ const TemplateSelect = ({
       >
         {isCurrent && countDown()}
       </div>
+      <ModalWrapper
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      >
+        <div className='text-2xl font-bold text-yellow-500'>Set Name</div>
+        <Input
+          className='bg-gray-900 text-xl font-medium'
+          value={name}
+          onChange={(e) => {
+            setName(e.target.value)
+          }}
+        />
+        <div className='mt-4 flex justify-center gap-2'>
+          <Button
+            className='h-fit w-28 bg-yellow-400 text-lg font-bold text-gray-900'
+            onClick={() => {
+              setIsOpen(false)
+              onSetTemplateWrapper(templateId, userId, name)
+            }}
+          >
+            Save
+          </Button>
+          <Button
+            className='h-fit w-28 bg-yellow-400 text-lg font-bold text-gray-900'
+            onClick={() => {
+              setIsOpen(false)
+            }}
+          >
+            Cancel
+          </Button>
+        </div>
+      </ModalWrapper>
     </div>
   )
 }

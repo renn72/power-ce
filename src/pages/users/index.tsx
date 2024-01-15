@@ -438,19 +438,13 @@ const Users = () => {
       userId: userId,
     })
 
-  const onSelectTemplate = (template: string, userId: string) => {
-    console.log('template', template)
-    console.log('userId', userId)
-  }
-
   const onClearTemplate = (userId: string) => {
     console.log('userId', userId)
     setIsOpen(true)
     userProgramRemoveMutate({ userId: userId })
   }
 
-  const onSetTemplate = (template: string, userId: string) => {
-    const templateId = blocksData?.find((block) => block.name === template)?.id
+  const onSetTemplate = (templateId: string, userId: string, name: string) => {
     if (!templateId) return
     setIsOpen(true)
     userProgramCreateMutate({
@@ -458,6 +452,7 @@ const Users = () => {
       templateId: templateId,
       programId: '',
       isProgramActive: true,
+      name: name,
     })
   }
 
@@ -489,19 +484,13 @@ const Users = () => {
     },
   })
 
-  const onSelectSecondaryTemplate = (template: string, userId: string) => {
-    console.log('template', template)
-    console.log('userId', userId)
-  }
-
   const onClearSecondaryTemplate = (userId: string) => {
     console.log('userId', userId)
     setIsOpen(true)
     userProgramRemoveSecondaryMutate({ userId: userId })
   }
 
-  const onSetSecondaryTemplate = (template: string, userId: string) => {
-    const templateId = blocksData?.find((block) => block.name === template)?.id
+  const onSetSecondaryTemplate = (templateId: string, userId: string, name: string) => {
     if (!templateId) return
     setIsOpen(true)
     userProgramCreateSecondaryMutate({
@@ -509,6 +498,7 @@ const Users = () => {
       templateId: templateId,
       programId: '',
       isProgramActive: true,
+      name: name,
     })
   }
 
@@ -565,14 +555,12 @@ const Users = () => {
 
               <Tab.Panel>
                 <TemplateSelect
-                  onSelectTemplate={onSelectTemplate}
                   onSetTemplate={onSetTemplate}
                   onClearTemplate={onClearTemplate}
                   userId={userId}
                   isCurrent={true}
                 />
                 <TemplateSelect
-                  onSelectTemplate={onSelectSecondaryTemplate}
                   onSetTemplate={onSetSecondaryTemplate}
                   onClearTemplate={onClearSecondaryTemplate}
                   userId={userId}

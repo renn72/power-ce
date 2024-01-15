@@ -46,7 +46,7 @@ const ModalWrapper = ({
               leaveTo='opacity-0 scale-95'
             >
               <Dialog.Panel className='w-full max-w-md transform overflow-visible rounded-2xl bg-gray-900 p-6 text-left align-middle transition-all'>
-                <>{children}</>
+                {children}
               </Dialog.Panel>
             </Transition.Child>
           </div>

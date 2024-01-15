@@ -52,6 +52,7 @@ const programSchema = z.object({
   templateId: z.string(),
   programId: z.string().optional(),
   isProgramActive: z.boolean(),
+  name: z.string().min(0).max(280).optional(),
 })
 
 export const userProgramsRouter = createTRPCRouter({
@@ -102,7 +103,7 @@ export const userProgramsRouter = createTRPCRouter({
 
       const program = await ctx.prisma.block.create({
         data: {
-          name: block.name,
+          name: input.name || block.name,
           isProgram: true,
           isSecondary: false,
           userIdOfProgram: input.userId,
@@ -222,7 +223,7 @@ export const userProgramsRouter = createTRPCRouter({
 
       const program = await ctx.prisma.block.create({
         data: {
-          name: block.name,
+          name: input.name || block.name,
           isProgram: true,
           userIdOfProgram: input.userId,
           isProgramActive: false,
