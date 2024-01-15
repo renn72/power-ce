@@ -70,7 +70,7 @@ export const authOptions: NextAuthOptions = {
       name: `next-auth.session-token`,
       options: {
         httpOnly: false,
-        sameSite: 'none',
+        // sameSite: 'none',
         path: '/',
         secure: true,
       },

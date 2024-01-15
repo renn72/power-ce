@@ -21,18 +21,21 @@ const Admin = () => {
     onSuccess: () => {
       void ctx.blocks.getAllBlockTitles.invalidate()
       void ctx.blocks.getAllProgramTitles.invalidate()
+      void ctx.blocks.getAllBlockTitlesAdmin.invalidate()
     },
   })
   const { mutate: deleteTemplate } = api.blocks.hardDelete.useMutation({
     onSuccess: () => {
       void ctx.blocks.getAllBlockTitles.invalidate()
       void ctx.blocks.getAllProgramTitles.invalidate()
+      void ctx.blocks.getAllBlockTitlesAdmin.invalidate()
     },
   })
   const { mutate: undeleteSoftTemplate } = api.blocks.softUnDelete.useMutation({
     onSuccess: () => {
       void ctx.blocks.getAllBlockTitles.invalidate()
       void ctx.blocks.getAllProgramTitles.invalidate()
+      void ctx.blocks.getAllBlockTitlesAdmin.invalidate()
     },
   })
 

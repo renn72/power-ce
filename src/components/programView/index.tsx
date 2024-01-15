@@ -116,7 +116,11 @@ const ExerciseView = ({
                           {exercise.onerm ? (
                             checkWeight(exercise.lift, exercise?.onerm)
                           ) : (
-                            <div className='text-red-500'>Missing %</div>
+                            <>
+                              {isAdmin && (
+                                <div className='text-red-500'>No %</div>
+                              )}
+                            </>
                           )}
                         </h4>
                         <h4>{exercise.onermTop && '-'}</h4>
@@ -127,7 +131,11 @@ const ExerciseView = ({
                         </h4>
                       </div>
                     ) : (
-                      <div className='text-red-500'>Missing 1rm</div>
+                            <>
+                              {isAdmin && (
+                                <div className='text-red-500'>No 1RM</div>
+                              )}
+                            </>
                     )}
                   </div>
                 )}
@@ -145,7 +153,11 @@ const ExerciseView = ({
                       {exercise?.weightBottom ? (
                         +exercise?.weightBottom
                       ) : (
-                        <div className='text-red-500'>Missing W</div>
+                            <>
+                              {isAdmin && (
+                                <div className='text-red-500'>No W</div>
+                              )}
+                            </>
                       )}
                     </h4>
                     <h4>{exercise?.weightTop && '-'}</h4>

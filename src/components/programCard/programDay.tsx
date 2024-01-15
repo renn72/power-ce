@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react'
+import { useState, Fragment, useEffect } from 'react'
 import { Prisma } from '@prisma/client'
 import { api } from '~/utils/api'
 
@@ -12,7 +12,6 @@ import DayModal from './dayModal'
 import getWeight from '~/utils/getWeight'
 import { PlaySquare } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 
 const dayWithExercise = Prisma.validator<Prisma.DayArgs>()({
   include: {
@@ -121,11 +120,7 @@ const ProgramDay = ({
     setIsOpen(false)
   }
 
-  const openModal = () => {
-    setIsOpen(true)
-  }
-
-  const ctx = api.useContext()
+  const ctx = api.useUtils()
 
   const { mutate: updateDayEnergy } = api.programs.updateDayEnergy.useMutation({
     onSuccess: () => {
@@ -143,15 +138,14 @@ const ProgramDay = ({
       energyRating: e,
     })
   }
-
-  const router = useRouter()
+  console.log('mobile', window.innerWidth > 768)
 
   const isDayOpen = dayIdx === openDay && weekIdx === openWeek
 
   return (
     <>
       <div className='flex flex-col gap-4'>
-        <Disclosure defaultOpen={isDayOpen}>
+        <Disclosure defaultOpen={isDayOpen || window.innerWidth > 768}>
           {({ open }) => (
             <div className='flex flex-col md:gap-8'>
               <div className='flex flex-col sm:flex-row md:gap-6'>
