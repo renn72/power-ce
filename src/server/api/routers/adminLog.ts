@@ -9,6 +9,7 @@ export const adminLogRouter = createTRPCRouter({
       orderBy: {
         createdAt: 'desc',
       },
+      take: 500,
     })
 
     return records
