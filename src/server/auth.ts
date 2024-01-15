@@ -79,7 +79,7 @@ export const authOptions: NextAuthOptions = {
       name: `next-auth.state`,
       options: {
         httpOnly: true,
-        sameSite: 'none',
+        // sameSite: 'none',
         path: '/',
         secure: true,
         maxAge: 900,
