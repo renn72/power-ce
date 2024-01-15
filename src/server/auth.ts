@@ -67,7 +67,7 @@ export const authOptions: NextAuthOptions = {
   debug: true,
   cookies: {
     sessionToken: {
-      name: `next-auth.session-token`,
+      name: `${process.env.NODE_ENV === 'production' ? '_Secure-' : ''}next-auth.session-token`,
       options: {
         httpOnly: false,
         // sameSite: 'none',
@@ -76,7 +76,7 @@ export const authOptions: NextAuthOptions = {
       },
     },
     state: {
-      name: `next-auth.state`,
+      name: `${process.env.NODE_ENV === 'production' ? '_Secure-' : ''}next-auth.state`,
       options: {
         httpOnly: true,
         // sameSite: 'none',

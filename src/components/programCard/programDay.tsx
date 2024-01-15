@@ -1,5 +1,6 @@
 import { useState, Fragment, useEffect } from 'react'
 import { Prisma } from '@prisma/client'
+import { type OneRepMax } from '@prisma/client'
 import { api } from '~/utils/api'
 
 import { Dialog, Transition, RadioGroup, Disclosure } from '@headlessui/react'
@@ -26,6 +27,77 @@ const dayWithExercise = Prisma.validator<Prisma.DayArgs>()({
 
 type Day = Prisma.DayGetPayload<typeof dayWithExercise>
 
+const checkWeight = (
+  lift: string | null,
+  onerm: number | null,
+  index: number | null,
+  selectedEngery: string,
+  day: Day,
+  userCoreOneRM: OneRepMax[] | undefined,
+) => {
+  if (!lift || !onerm) return ''
+  let energyAdjust = 1
+  if (+onerm < 100) {
+    if (selectedEngery === 'B') energyAdjust = 0.95
+    if (selectedEngery === 'C') energyAdjust = 0.9
+    if (selectedEngery === 'D') energyAdjust = 0.85
+  }
+  if (+onerm >= 100 && +onerm < 200) {
+    if (selectedEngery === 'B') energyAdjust = 0.97
+    if (selectedEngery === 'C') energyAdjust = 0.94
+    if (selectedEngery === 'D') energyAdjust = 0.91
+  }
+  if (+onerm >= 200) {
+    if (selectedEngery === 'B') energyAdjust = 0.985
+    if (selectedEngery === 'C') energyAdjust = 0.97
+    if (selectedEngery === 'D') energyAdjust = 0.95
+  }
+
+  if (lift == 'weight') {
+    return getWeight(+onerm, 100 * energyAdjust)
+  }
+
+  if (index) {
+    const rm = day?.exercise[index - 1]?.set.filter((s) => s.isComplete)
+    const rmWeight = rm?.map((s) => s.estiamtedOnerm)
+    if (!rmWeight) return ''
+    const w = rmWeight[rmWeight.length - 1]
+
+    if (w) return getWeight(+w, onerm * energyAdjust)
+  }
+
+  const w = userCoreOneRM?.find(
+    (coreLift) => coreLift?.lift === lift.toLowerCase(),
+  )?.weight
+
+  if (!w) return ''
+
+  return getWeight(+w, onerm * energyAdjust)
+}
+
+const checkPercentWeight = (
+  estimatedOnermIndex: number | null,
+  percent: number | null,
+  day: Day,
+  selectedEngery: string,
+) => {
+  if (!estimatedOnermIndex || !percent) return ''
+
+  if (!day?.exercise[estimatedOnermIndex - 1]?.set[0]?.weight) return ''
+
+  let energyAdjust = 1
+  if (selectedEngery === 'B') energyAdjust = 0.98
+  if (selectedEngery === 'C') energyAdjust = 0.96
+  if (selectedEngery === 'D') energyAdjust = 0.94
+
+  const weight = day?.exercise[estimatedOnermIndex - 1]?.set[0]?.weight
+  if (!weight) return ''
+  // const res = Math.round((weight * (onerm / 100)) / 2.5) * 2.5
+  return `${
+    Math.round((((+weight * percent) / 100) * energyAdjust) / 2.5) * 2.5
+  }`
+}
+
 const ProgramDay = ({
   day,
   dayIdx,
@@ -49,72 +121,6 @@ const ProgramDay = ({
   const { data: userCoreOneRM } = api.oneRepMax.getUserCoreLifts.useQuery({
     userId: userId || '',
   })
-
-  const checkWeight = (
-    lift: string | null,
-    onerm: number | null,
-    index: number | null,
-  ) => {
-    if (!lift || !onerm) return ''
-    let energyAdjust = 1
-    if (+onerm < 100) {
-      if (selectedEngery === 'B') energyAdjust = 0.95
-      if (selectedEngery === 'C') energyAdjust = 0.9
-      if (selectedEngery === 'D') energyAdjust = 0.85
-    }
-    if (+onerm >= 100 && +onerm < 200) {
-      if (selectedEngery === 'B') energyAdjust = 0.97
-      if (selectedEngery === 'C') energyAdjust = 0.94
-      if (selectedEngery === 'D') energyAdjust = 0.91
-    }
-    if (+onerm >= 200) {
-      if (selectedEngery === 'B') energyAdjust = 0.985
-      if (selectedEngery === 'C') energyAdjust = 0.97
-      if (selectedEngery === 'D') energyAdjust = 0.95
-    }
-
-    if (lift == 'weight') {
-      return getWeight(+onerm, 100 * energyAdjust)
-    }
-
-    if (index) {
-      const rm = day?.exercise[index - 1]?.set.filter((s) => s.isComplete)
-      const rmWeight = rm?.map((s) => s.estiamtedOnerm)
-      if (!rmWeight) return ''
-      const w = rmWeight[rmWeight.length - 1]
-
-      if (w) return getWeight(+w, onerm * energyAdjust)
-    }
-
-    const w = userCoreOneRM?.find(
-      (coreLift) => coreLift?.lift === lift.toLowerCase(),
-    )?.weight
-
-    if (!w) return ''
-
-    return getWeight(+w, onerm * energyAdjust)
-  }
-
-  const checkPercentWeight = (
-    estimatedOnermIndex: number | null,
-    percent: number | null,
-  ) => {
-    if (!estimatedOnermIndex || !percent) return ''
-
-    if (!day?.exercise[estimatedOnermIndex - 1]?.set[0]?.weight) return ''
-
-    let energyAdjust = 1
-    if (selectedEngery === 'B') energyAdjust = 0.98
-    if (selectedEngery === 'C') energyAdjust = 0.96
-    if (selectedEngery === 'D') energyAdjust = 0.94
-
-    const weight = day?.exercise[estimatedOnermIndex - 1]?.set[0]?.weight
-    if (!weight) return ''
-    // const res = Math.round((weight * (onerm / 100)) / 2.5) * 2.5
-    return `${
-      Math.round((((+weight * percent) / 100) * energyAdjust) / 2.5) * 2.5
-    }`
-  }
 
   const closeModal = () => {
     setIsOpen(false)
@@ -254,6 +260,8 @@ const ProgramDay = ({
                                                   {checkPercentWeight(
                                                     exercise.estimatedOnermIndex,
                                                     +exercise?.onerm,
+                                                    day,
+                                                    selectedEngery,
                                                   )}
                                                 </h4>
                                               )}
@@ -263,6 +271,8 @@ const ProgramDay = ({
                                                   {checkPercentWeight(
                                                     exercise.estimatedOnermIndex,
                                                     +exercise?.onermTop,
+                                                    day,
+                                                    selectedEngery,
                                                   )}
                                                 </h4>
                                               )}
@@ -289,6 +299,9 @@ const ProgramDay = ({
                                                     exercise.lift,
                                                     +exercise?.onerm,
                                                     exercise.estimatedOnermIndex,
+                                                    selectedEngery,
+                                                    day,
+                                                    userCoreOneRM,
                                                   )}
                                                 </h4>
                                               )}
@@ -299,6 +312,9 @@ const ProgramDay = ({
                                                     exercise.lift,
                                                     +exercise?.onermTop,
                                                     exercise.estimatedOnermIndex,
+                                                    selectedEngery,
+                                                    day,
+                                                    userCoreOneRM,
                                                   )}
                                                 </h4>
                                               )}
@@ -314,6 +330,9 @@ const ProgramDay = ({
                                                 exercise.lift,
                                                 +exercise?.onerm,
                                                 null,
+                                                selectedEngery,
+                                                day,
+                                                userCoreOneRM,
                                               )}
                                             </h4>
                                           )}
@@ -324,6 +343,9 @@ const ProgramDay = ({
                                                 exercise.lift,
                                                 +exercise?.onermTop,
                                                 null,
+                                                selectedEngery,
+                                                day,
+                                                userCoreOneRM,
                                               )}
                                             </h4>
                                           )}
@@ -350,6 +372,9 @@ const ProgramDay = ({
                                             'weight',
                                             +exercise?.weightBottom,
                                             null,
+                                            selectedEngery,
+                                            day,
+                                            userCoreOneRM,
                                           )}
                                       </h4>
                                       <h4>{exercise?.weightTop && '-'}</h4>
@@ -359,6 +384,9 @@ const ProgramDay = ({
                                             'weight',
                                             +exercise?.weightTop,
                                             null,
+                                            selectedEngery,
+                                            day,
+                                            userCoreOneRM,
                                           )}
                                         kg
                                       </h4>
