@@ -138,7 +138,6 @@ const ProgramDay = ({
       energyRating: e,
     })
   }
-  console.log('mobile', window.innerWidth > 768)
 
   const isDayOpen = dayIdx === openDay && weekIdx === openWeek
 

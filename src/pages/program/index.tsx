@@ -28,8 +28,6 @@ const Program: NextPage = () => {
   const { data: programs, isLoading: programsLoading } =
     api.blocks.getAllUserProgramsTitles.useQuery({ userId: userId })
 
-  console.log('programs', programs)
-
   if (programsLoading || !user) return <LoadingPage />
 
   if (!user) return <div>Login</div>
