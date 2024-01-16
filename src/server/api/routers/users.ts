@@ -92,8 +92,6 @@ export const usersRouter = createTRPCRouter({
         return true
       }
 
-    console.log('isUser', location)
-
       await ctx.prisma.log.create({
         data: {
           location: location,
