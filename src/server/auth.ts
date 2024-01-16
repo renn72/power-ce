@@ -46,14 +46,11 @@ export const authOptions: NextAuthOptions = {
           id: token.sub as string,
         }
       }
-      console.log('session token', token)
-      console.log('session session', session)
       return Promise.resolve(session)
     },
     jwt: async ({ token, user }) => {
       if (user) {
         token.sub = user.id
-        console.log('jwt token', token)
       }
       return Promise.resolve(token)
     },
