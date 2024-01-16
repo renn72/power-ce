@@ -8,6 +8,40 @@ const userWithProfile = Prisma.validator<Prisma.UserDefaultArgs>()({
 
 export type User = Prisma.UserGetPayload<typeof userWithProfile>
 
+const DayWithAll = Prisma.validator<Prisma.DayDefaultArgs>()({
+  include: {
+    exercise: {
+      include: {
+        set: true,
+        ss: true,
+      },
+    },
+  },
+})
+
+export type PrismaDay = Prisma.DayGetPayload<typeof DayWithAll>
+
+const BlockWithAll = Prisma.validator<Prisma.BlockDefaultArgs>()({
+  include: {
+    week: {
+      include: {
+        day: {
+          include: {
+            exercise: {
+              include: {
+                set: true,
+                ss: true,
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+})
+
+export type PrismaBlock = Prisma.BlockGetPayload<typeof BlockWithAll>
+
 export type Set = {
   id: string
   rep: string | number | null

@@ -354,7 +354,7 @@ const Users = () => {
   const [rpeModalValue, setRpeModalValue] = useState<string>('')
   const [rpeModalKey, setRpeModalKey] = useState<string>('')
 
-  const ctx = api.useContext()
+  const ctx = api.useUtils()
 
   api.users.getAllUsers.useQuery()
 
