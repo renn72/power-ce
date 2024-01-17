@@ -1,25 +1,32 @@
-import { api } from '~/utils/api'
+import { type NextPage, } from 'next'
+import React from 'react'
 import { useSession } from 'next-auth/react'
 
-import ProgramDisplay from '~/components/programDisplay'
+import Form from './form'
 
-const Templates2 = () => {
+import { api, } from '~/utils/api'
+import { LoadingPage, } from '~/components/loading'
+
+const Templates: NextPage = () => {
+
   const { data: session } = useSession()
   const userId = session?.user?.id || ''
   const ctx = api.useUtils()
   const user = ctx.users.get.getData({ userId: userId, location: 'base' })
-  const { data: activeProgram } = api.blocks.getUserActiveProgram.useQuery({
-    userId: userId,
-  })
+
+  if (!user) return <div>Login</div>
+  if (!user.isAdmin) return <div>Not Authorized</div>
+
   return (
-    <div className='w-full'>
-      <ProgramDisplay
-        userId={userId}
-        isAdmin={true}
-        programId={activeProgram?.id || ''}
-      />
-    </div>
+    <>
+        <main className='h-full flex flex-col justify-center items-center text-sm sm:text-base font-semibold'>
+          <div className='flex flex-col w-full justify-center items-center '>
+            <Form />
+          </div>
+        </main>
+    </>
   )
 }
 
-export default Templates2
+export default Templates
+

@@ -42,6 +42,23 @@ const BlockWithAll = Prisma.validator<Prisma.BlockDefaultArgs>()({
 
 export type PrismaBlock = Prisma.BlockGetPayload<typeof BlockWithAll>
 
+const WeekWithAll = Prisma.validator<Prisma.WeekDefaultArgs>()({
+  include: {
+        day: {
+          include: {
+            exercise: {
+              include: {
+                set: true,
+                ss: true,
+              },
+            },
+          },
+        },
+      },
+})
+
+export type PrismaWeek = Prisma.WeekGetPayload<typeof WeekWithAll>
+
 export type Set = {
   id: string
   rep: string | number | null
