@@ -117,33 +117,33 @@ export const usersRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const req = ctx.req
-      let id = input.userId
-      const location = input.location || 'nil'
+      // const req = ctx.req
+      // let id = input.userId
+      // const location = input.location || 'nil'
       const res = await ctx.prisma.user.findUnique({
-        where: { id },
+        where: { id: input.userId },
       })
 
-      if (id === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') {
-        return res
-      }
-      if (id === 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv') {
-        id = 'mitch'
-      }
-      if (req.headers.referer?.includes('localhost')) {
-        return res
-      }
-
-      await ctx.prisma.log.create({
-        data: {
-          location: location,
-          action: 'getUser',
-          userId: id,
-          url: req.headers.referer,
-          response: JSON.stringify(res),
-          request: JSON.stringify(req.headers),
-        },
-      })
+      // if (id === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') {
+      //   return res
+      // }
+      // if (id === 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv') {
+      //   id = 'mitch'
+      // }
+      // if (req.headers.referer?.includes('localhost')) {
+      //   return res
+      // }
+      //
+      // await ctx.prisma.log.create({
+      //   data: {
+      //     location: location,
+      //     action: 'getUser',
+      //     userId: id,
+      //     url: req.headers.referer,
+      //     response: JSON.stringify(res),
+      //     request: JSON.stringify(req.headers),
+      //   },
+      // })
 
       return res
     }),
