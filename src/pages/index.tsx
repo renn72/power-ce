@@ -50,12 +50,18 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
 
   return (
     <>
-      <div className='flex flex-col gap-0 items-center'>
-        <div className='text-2xl font-semibold capitalize text-yellow-500'>{lift}</div>
-          <div> Estiamted 1rm</div>
-          <div className={`${estOnerm?.estimatedOnerm == 0 ? 'hidden' : 'text-xl font-bold'}`}>
-            {estOnerm?.estimatedOnerm}kg
-          </div>
+      <div className='flex flex-col items-center gap-0'>
+        <div className='text-2xl font-semibold capitalize text-yellow-500'>
+          {lift}
+        </div>
+        <div> Estiamted 1rm</div>
+        <div
+          className={`${
+            estOnerm?.estimatedOnerm == 0 ? 'hidden' : 'text-xl font-bold'
+          }`}
+        >
+          {estOnerm?.estimatedOnerm}kg
+        </div>
         <div className='text-sm text-gray-400'>
           {getDate(estOnerm?.flield1 || '')}
         </div>
@@ -145,12 +151,16 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <main className='flex h-full w-full flex-col items-center gap-16 px-2 font-semibold lg:items-start'>
+      <main className='flex h-full w-full flex-col items-center gap-20 px-2 font-semibold lg:items-start'>
         <div className='flex  w-full flex-col items-center gap-8 lg:items-start '>
           <div className='flex w-full items-center justify-between'>
-            <div className='flex gap-2 tracking-tighter text-2xl'>
-              <div>{user?.firstName}</div>
-              <div>{user?.lastName}</div>
+            <div className='flex gap-2 text-2xl tracking-tighter'>
+              <div
+                className='hidden'
+              >{user?.firstName}</div>
+              <div
+                className='hidden'
+              >{user?.lastName}</div>
             </div>
             <Link href='/settings'>
               <Cog8ToothIcon className='h-6 w-6 text-yellow-400' />
@@ -160,7 +170,7 @@ const Home: NextPage = () => {
             <Link href={`/day/${currentProgram.id}/${defaultOpen}`}>
               <Button
                 size='lg'
-                className='rounded bg-yellow-400 font-bold text-gray-900 hover:bg-yellow-500'
+                className='rounded text-xl bg-yellow-400 font-bold text-gray-900 hover:bg-yellow-500'
               >
                 Current Program
               </Button>
@@ -187,14 +197,16 @@ const Home: NextPage = () => {
         >
           <Button
             size='lg'
-            className='rounded bg-yellow-400 font-bold text-gray-900 hover:bg-yellow-500'
+            className='rounded bg-yellow-400 text-xl font-bold text-gray-900 hover:bg-yellow-500'
           >
             CE Records
           </Button>
         </Link>
-        <div className='mt-10 text-xl capitalize text-yellow-500'>
-          Competitions
-        </div>
+        {compLifts && compLifts?.length > 0 && (
+          <div className='mt-10 text-xl capitalize text-yellow-500'>
+            Competitions
+          </div>
+        )}
         <div className='flex max-w-[800px] flex-col gap-0 space-y-2 divide-y divide-dashed divide-gray-400'>
           {compLifts?.map((comp) => (
             <div
