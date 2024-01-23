@@ -50,14 +50,12 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
 
   return (
     <>
-      <div className='flex flex-col gap-0'>
-        <div className='text-xl capitalize text-yellow-500'>{lift}</div>
-        <div className='flex gap-2'>
-          <div> Estiamted 1rm:</div>
-          <div className={`${estOnerm?.estimatedOnerm == 0 ? 'hidden' : ''}`}>
+      <div className='flex flex-col gap-0 items-center'>
+        <div className='text-2xl font-semibold capitalize text-yellow-500'>{lift}</div>
+          <div> Estiamted 1rm</div>
+          <div className={`${estOnerm?.estimatedOnerm == 0 ? 'hidden' : 'text-xl font-bold'}`}>
             {estOnerm?.estimatedOnerm}kg
           </div>
-        </div>
         <div className='text-sm text-gray-400'>
           {getDate(estOnerm?.flield1 || '')}
         </div>
@@ -147,24 +145,23 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <main className='flex h-full flex-col gap-6 px-2  font-semibold'>
-        <div className='flex  flex-col gap-4 lg:items-start '>
-          <div className='flex  w-full flex-col gap-2 lg:items-start '>
-            <div className='flex w-full items-center justify-between'>
-              <h1 className='text-2xl'>Profile</h1>
-              <Link href='/settings'>
-                <Cog8ToothIcon className='h-6 w-6 text-yellow-400' />
-              </Link>
-            </div>
-            <div className='flex flex-col gap-0 text-sm text-gray-400'></div>
-            <div className='flex gap-1 text-xl'>
+      <main className='flex h-full w-full flex-col items-center gap-16 px-2 font-semibold lg:items-start'>
+        <div className='flex  w-full flex-col items-center gap-8 lg:items-start '>
+          <div className='flex w-full items-center justify-between'>
+            <div className='flex gap-2 tracking-tighter text-2xl'>
               <div>{user?.firstName}</div>
               <div>{user?.lastName}</div>
             </div>
+            <Link href='/settings'>
+              <Cog8ToothIcon className='h-6 w-6 text-yellow-400' />
+            </Link>
           </div>
           {currentProgram && defaultOpen && (
             <Link href={`/day/${currentProgram.id}/${defaultOpen}`}>
-              <Button className='h-8 w-36 rounded bg-yellow-400 p-0 font-bold text-gray-900 hover:bg-yellow-500'>
+              <Button
+                size='lg'
+                className='rounded bg-yellow-400 font-bold text-gray-900 hover:bg-yellow-500'
+              >
                 Current Program
               </Button>
             </Link>
@@ -184,28 +181,14 @@ const Home: NextPage = () => {
             userId={userId}
           />
         </div>
-        <a
-          href='https://discord.gg/hHNCnmVmNW'
-          target='_blank'
-          rel='noreferrer'
-          className='flex items-center gap-4 text-xl underline underline-offset-4 relative w-fit'
-        >
-          <Image
-            height={20}
-            src={discordIcon}
-            alt='discord'
-          />
-          <span>Discord Channel</span>
-          <BellRing 
-            size={8}
-            strokeWidth={4}
-            className='text-yellow-400 absolute -top-1 -right-3 animate-bounce z-10' />
-        </a>
         <Link
           href={'/records'}
           className='w-fit'
         >
-          <Button className='h-8 w-36 rounded bg-yellow-400 p-0 font-bold text-gray-900 hover:bg-yellow-500'>
+          <Button
+            size='lg'
+            className='rounded bg-yellow-400 font-bold text-gray-900 hover:bg-yellow-500'
+          >
             CE Records
           </Button>
         </Link>
@@ -282,6 +265,24 @@ const Home: NextPage = () => {
             </Button>
           </div>
         </div>
+        <a
+          href='https://discord.gg/hHNCnmVmNW'
+          target='_blank'
+          rel='noreferrer'
+          className='relative flex w-fit items-center gap-4 text-xl underline underline-offset-4'
+        >
+          <Image
+            height={20}
+            src={discordIcon}
+            alt='discord'
+          />
+          <span>Discord Channel</span>
+          <BellRing
+            size={8}
+            strokeWidth={4}
+            className='absolute -right-3 -top-1 z-10 animate-bounce text-yellow-400'
+          />
+        </a>
       </main>
     </>
   )
