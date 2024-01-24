@@ -4,7 +4,12 @@ import { useSession } from 'next-auth/react'
 
 import { ErrorMessage } from '@hookform/error-message'
 
-import { useForm, FormProvider, useFieldArray } from 'react-hook-form'
+import {
+  useForm,
+  FormProvider,
+  useFieldArray,
+  useFormContext,
+} from 'react-hook-form'
 
 import { toast } from 'react-hot-toast'
 
@@ -17,8 +22,8 @@ import { useAutoAnimate } from '@formkit/auto-animate/react'
 
 import { Switch, Tab } from '@headlessui/react'
 
-import FormWeekData from '~/components/form/formWeekData'
 import TemplateSelect from '~/components/form/templateSelect'
+import FormWeek from './formWeek'
 
 import { defaultValues } from '~/store/defaultValues'
 import { type Block } from '~/store/types'
@@ -380,7 +385,7 @@ const Form = () => {
               ref={parent}
               className='flex w-full flex-col items-center gap-1 sm:gap-8'
             >
-              <div className='flex min-h-[80vh] w-full max-w-[1600px] flex-col items-center gap-2 p-1 sm:gap-8 sm:p-4 '>
+              <div className='flex min-h-[80vh] w-full flex-col items-center gap-2 p-1 sm:gap-8 sm:p-4 '>
                 {/* template select */}
                 <div className='flex w-full flex-col items-center  gap-2 md:flex-row '>
                   <TemplateSelect onSelectTemplate={onSelectTemplate} />
@@ -442,56 +447,12 @@ const Form = () => {
                 />
 
                 <div className='flex w-full flex-col gap-8 '>
-                  {weekField.fields.map((week, weekIndex) => {
-                    console.log(week)
-                    return (
-                      <div key={week.id}>
-                        <h1 className='mb-2 text-2xl font-bold'>
-                          Week {weekIndex + 1}
-                        </h1>
-                        <div className='flex'>
-                          {week.day.map((day, dayIndex) => (
-                            <div
-                              key={day?.id || dayIndex}
-                              className={cn(
-                                'p-2 hover:rounded-md hover:bg-gray-900/70',
-                                day.isRestDay === true ? 'shrink' : 'shrink',
-                              )}
-                            >
-                              {day.isRestDay ? (
-                                <div className='min-w-20'>
-                                  <h2 className='mb-2 text-xl font-bold'>
-                                    Day {dayIndex + 1}
-                                  </h2>
-                                  <h2 className='pt-2 font-normal text-gray-400'>
-                                    Rest Day
-                                  </h2>
-                                </div>
-                              ) : (
-                                <div className='flex flex-col gap-2 text-base'>
-                                  <h2 className={`flex-bold flex text-2xl`}>
-                                    Day {dayIndex + 1}
-                                  </h2>
-                                  <div className='flex flex-col divide-y divide-dashed divide-gray-600'>
-                                    {day.exercise.map(
-                                      (exercise, exerciseIdx) => (
-                                        <div
-                                          key={exerciseIdx}
-                                          className='flex flex-col gap-2'
-                                        >
-                                          {exerciseIdx}
-                                        </div>
-                                      ),
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )
-                  })}
+                  {weekField.fields.map((week, weekIndex) => (
+                    <FormWeek
+                      key={week.id}
+                      weekIdx={weekIndex}
+                    />
+                  ))}
 
                   <div className='mt-12 flex items-center justify-center gap-2'></div>
                 </div>
