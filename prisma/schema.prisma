@@ -262,6 +262,7 @@ model Exercise {
   day Day @relation(fields: [dayId], references: [id], onDelete: Cascade)
 
   ss SuperSet[]
+  isSS Boolean?
 
   notes    String? @db.Text
   htmlLink String?
