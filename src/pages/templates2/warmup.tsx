@@ -8,24 +8,16 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline'
 
-import { Button } from '@/components/ui/button'
-import { Switch, Listbox, Transition } from '@headlessui/react'
-import { type Block, PrismaBlock } from '~/store/types'
-import { type Set, SuperSet as SS } from '@prisma/client'
-
-import { useAutoAnimate } from '@formkit/auto-animate/react'
-
-import { Fragment, useEffect } from 'react'
-import { LoadingSpinner } from '~/components/loading'
-
+import { Listbox, Transition } from '@headlessui/react'
+import { type PrismaBlock } from '~/store/types'
 import { cn } from '@/lib/utils'
-import ExerciseView from '~/components/exerciseView'
-import { useSession } from 'next-auth/react'
+
+import { Fragment } from 'react'
 
 const Warmup = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
   const formMethods = useFormContext<PrismaBlock>()
   const { control, watch, getValues } = formMethods
-  const utils = api.useContext()
+  const utils = api.useUtils()
   const warmups = utils.warmups.getAll.getData()
   const isRest: boolean = watch(`week.${weekIdx}.day.${dayIdx}.isRestDay`)
   return (
