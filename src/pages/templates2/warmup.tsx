@@ -1,18 +1,17 @@
-import { useFieldArray, useFormContext, Controller } from 'react-hook-form'
+import { useFormContext, Controller } from 'react-hook-form'
 
 import { api } from '~/utils/api'
 
 import {
   CheckIcon,
   ChevronUpDownIcon,
-  PlusCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
 
 import { Button } from '@/components/ui/button'
 import { Switch, Listbox, Transition } from '@headlessui/react'
 import { type Block, PrismaBlock } from '~/store/types'
-import { type Set, SS } from '@prisma/client'
+import { type Set, SuperSet as SS } from '@prisma/client'
 
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 
@@ -27,7 +26,7 @@ const Warmup = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
   const formMethods = useFormContext<PrismaBlock>()
   const { control, watch, getValues } = formMethods
   const utils = api.useContext()
-  const warmups = utils.get.warmups.getAll.useQuery()
+  const warmups = utils.warmups.getAll.getData()
   const isRest: boolean = watch(`week.${weekIdx}.day.${dayIdx}.isRestDay`)
   return (
     <div className={`flex items-center gap-2 ${isRest ? 'hidden' : ''}`}>
