@@ -8,7 +8,6 @@ import {
   useForm,
   FormProvider,
   useFieldArray,
-  useFormContext,
 } from 'react-hook-form'
 
 import { toast } from 'react-hot-toast'
@@ -18,22 +17,17 @@ import { api } from '~/utils/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-import { useAutoAnimate } from '@formkit/auto-animate/react'
+import { Switch, } from '@headlessui/react'
 
-import { Switch, Tab } from '@headlessui/react'
-
-import TemplateSelect from '~/components/form/templateSelect'
+import TemplateSelect from './templateSelect'
 import FormWeek from './formWeek'
 
 import { defaultValues } from '~/store/defaultValues'
 import { type Block } from '~/store/types'
 import { type BlockData } from '~/store/types'
 
-import { classNames } from '~/utils/utils'
-import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
+import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { LoadingWrapper } from '~/components/loading'
-
-import { cn } from '@/lib/utils'
 
 export const selectedTemplateAtom = atom('')
 export const isSuperAdminAtom = atom(false)
@@ -350,7 +344,6 @@ const Form = () => {
     weekField.remove(weekField.fields.length - 1)
   }
 
-  const [parent] = useAutoAnimate(/* optional config */)
 
   return (
     <>
@@ -359,18 +352,18 @@ const Form = () => {
         setIsOpen={setIsOpen}
       />
       {isMe ? (
-        <div className='flex items-center gap-1'>
+        <div className='flex items-center gap-1 text-sm'>
           Super
           <Switch
             checked={isSuperAdmin}
             onChange={setIsSuperAdmin}
             className={`${isSuperAdmin ? 'bg-gray-200' : 'bg-gray-600'}
-          relative inline-flex h-[24px] w-[64px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75  sm:h-[28px] sm:w-[74px]`}
+          relative inline-flex h-[14px] w-[44px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75`}
           >
             <span
               aria-hidden='true'
               className={`${isSuperAdmin ? 'translate-x-9' : 'translate-x-0'}
-            pointer-events-none inline-block h-[20px] w-[24px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out sm:h-[24px] sm:w-[34px]`}
+            pointer-events-none inline-block h-[10px] w-[14px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out`}
             />
           </Switch>
         </div>
@@ -382,12 +375,11 @@ const Form = () => {
             className='flex w-full flex-col items-center justify-center '
           >
             <div
-              ref={parent}
               className='flex w-full flex-col items-center gap-1 sm:gap-8'
             >
-              <div className='flex min-h-[80vh] w-full flex-col items-center gap-2 p-1 sm:gap-8 sm:p-4 '>
+              <div className='flex min-h-[60vh] w-full flex-col items-center gap-2 p-1 sm:gap-4 sm:p-4 '>
                 {/* template select */}
-                <div className='flex w-full flex-col items-center  gap-2 md:flex-row '>
+                <div className='flex w-full flex-col items-center justify-center gap-2 md:flex-row '>
                   <TemplateSelect onSelectTemplate={onSelectTemplate} />
                   <div className='flex w-full items-center justify-around gap-2 md:w-fit md:justify-start'>
                     <Button
@@ -408,11 +400,11 @@ const Form = () => {
                 </div>
 
                 {/* Title */}
-                <div className='mb-6  flex w-full gap-2'>
+                <div className='mb-6 justify-center  flex w-full gap-2'>
                   <div className='flex flex-col items-start justify-center gap-2'>
-                    <div className='relative rounded-md shadow-lg'>
+                    <div className='relative rounded-md shadow-lg px-4'>
                       <Input
-                        className='w-40 md:w-72'
+                        className='w-40 md:w-64'
                         placeholder='Title'
                         defaultValue={``}
                         {...register('name', { required: 'This is required.' })}
@@ -441,10 +433,6 @@ const Form = () => {
                     Update
                   </Button>
                 </div>
-                <PlusCircleIcon
-                  className='h-10 w-10 text-gray-500 hover:text-gray-200'
-                  onClick={() => onAddWeek()}
-                />
 
                 <div className='flex w-full flex-col gap-8 '>
                   {weekField.fields.map((week, weekIndex) => (
@@ -456,6 +444,10 @@ const Form = () => {
 
                   <div className='mt-12 flex items-center justify-center gap-2'></div>
                 </div>
+                <PlusCircleIcon
+                  className='h-14 w-14 text-gray-400 hover:text-gray-200'
+                  onClick={() => onAddWeek()}
+                />
               </div>
               <div className='my-28 flex justify-center gap-4'></div>
             </div>

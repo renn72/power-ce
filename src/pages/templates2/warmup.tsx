@@ -39,7 +39,7 @@ const Warmup = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
                 <Listbox.Button className='relative h-12 max-h-min min-h-[40px] w-full cursor-pointer border-b border-gray-600 py-2 pl-3 pr-10 text-left focus:outline-none '>
                   <span
                     className={cn(
-                      'flex items-center capitalize',
+                      'flex items-center capitalize tracking-tighter truncate',
                       value ? 'text-lg' : 'text-gray-600',
                     )}
                   >

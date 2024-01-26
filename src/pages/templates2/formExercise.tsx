@@ -14,13 +14,11 @@ const FormExercise = ({
   exerciseIdx,
   dayIdx,
   weekIdx,
-  onInsertExercise,
 }: {
   exercise: Exercise
   exerciseIdx: number
   dayIdx: number
   weekIdx: number
-  onInsertExercise: (index: number) => void
 }) => {
   const formMethods = useFormContext<PrismaBlock>()
   const { watch, } = formMethods
@@ -31,7 +29,7 @@ const FormExercise = ({
   const exercise = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}`)
   return (
     <div
-      className='relative'
+      className=''
       onClick={() => {
         setIsOpen(true)
       }}
@@ -40,13 +38,6 @@ const FormExercise = ({
         exercise={exercise}
         exerciseIdx={exerciseIdx}
         isAdmin={true}
-      />
-      <PlusCircleIcon
-        className='absolute -bottom-14 left-1/2 mx-auto h-10 w-10 -translate-x-1/2 transform text-gray-400 hover:scale-110 hover:text-gray-200'
-        onClick={(e) => {
-          e.stopPropagation()
-          onInsertExercise(exerciseIdx)
-        }}
       />
       <Transition
         appear

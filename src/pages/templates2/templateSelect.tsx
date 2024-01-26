@@ -8,7 +8,10 @@ import { useSession } from 'next-auth/react'
 import { Listbox, Transition } from '@headlessui/react'
 import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 
-import { isSuperAdminAtom, selectedTemplateAtom } from './index'
+import { isSuperAdminAtom, selectedTemplateAtom } from './form'
+import { LoadingSpinner } from '~/components/loading'
+
+import { cn } from '@/lib/utils'
 
 const TemplateSelect = ({
   onSelectTemplate,
@@ -25,8 +28,12 @@ const TemplateSelect = ({
     (b) => b.trainerId === user?.id || isSuperAdmin,
   )
 
-  if (!blocksTitle) return null
-
+  if (!blocksTitle)
+    return (
+      <div className='w-72'>
+        <LoadingSpinner />
+      </div>
+    )
   return (
     <div className='flex w-full flex-col justify-center px-4 text-lg text-gray-200 sm:w-72 md:mx-0'>
       <Listbox
@@ -34,9 +41,15 @@ const TemplateSelect = ({
         onChange={(e) => onSelectTemplate(e)}
       >
         <div className='z-110 relative'>
-          <Listbox.Button className='relative h-16 max-h-min w-full cursor-default border-b border-gray-600 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none '>
-            <span className='block truncate'>
-              {blocksTitle.find((b) => b.id === selectedTemplate)?.name}
+          <Listbox.Button className='relative h-12 max-h-min w-full cursor-default border-b border-gray-600 py-2 pl-3 pr-10 text-left shadow-md hover:border-gray-200 focus:outline-none '>
+            <span
+              className={cn(
+                'block truncate',
+                selectedTemplate ? 'text-gray-200' : 'text-gray-600 text-sm',
+              )}
+            >
+              {blocksTitle.find((b) => b.id === selectedTemplate)?.name ||
+                'Select a Template'}
             </span>
             <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
               <ChevronUpDownIcon

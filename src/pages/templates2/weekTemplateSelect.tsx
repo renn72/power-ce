@@ -21,7 +21,7 @@ const WeekTemplateSelect = ({
 }) => {
   const { data: session } = useSession()
   const user = session?.user
-  const ctx = api.useContext()
+  const ctx = api.useUtils()
   const { data: weeksData } = api.blocks.getAllWeekTemplates.useQuery({userId: user?.id || ''})
 
   const { mutate: weekDeleteMutate } = api.blocks.deleteWeek.useMutation({

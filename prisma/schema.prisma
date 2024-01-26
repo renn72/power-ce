@@ -173,6 +173,7 @@ model SuperSet {
 
   userId    String?
   trainerId String?
+  isTemplate Boolean?
 
   repUnit String? @db.VarChar(55)
 
@@ -226,6 +227,7 @@ model Exercise {
 
   userId    String?
   trainerId String?
+  isTemplate Boolean?
 
   repUnit String? @db.VarChar(55)
 
@@ -284,6 +286,7 @@ model Day {
 
   userId    String?
   trainerId String?
+  isTemplate Boolean?
 
   exercise  Exercise[]
   isRestDay Boolean

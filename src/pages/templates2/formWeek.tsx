@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { atom } from 'jotai'
 
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import { ErrorMessage } from '@hookform/error-message'
 
 import {
@@ -47,6 +48,18 @@ const FormWeek = ({ weekIdx }: { weekIdx: number }) => {
   const onLoadWeekTemplate = (weekIdx: number) => {
     console.log('onLoadWeekTemplate', weekIdx)
   }
+  const handleDrag = (result) => {
+    console.log('result', result)
+    console.log('days', dayField.fields)
+    const { source, destination } = result
+
+    if (!destination) return
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    )
+      return
+  }
 
   return (
     <div className='flex flex-col'>
@@ -92,15 +105,16 @@ const FormWeek = ({ weekIdx }: { weekIdx: number }) => {
           Load
         </Button>
       </div>
-      <div className='flex mt-8'>
+        <DragDropContext onDragEnd={handleDrag}>
+      <div className='flex gap-1 mt-8'>
         {dayField.fields.map((day, dayIndex) => {
           return (
             <div
               key={day?.id || dayIndex}
               className={cn(
-                'grow p-2 hover:rounded-md hover:bg-gray-900/70 transform tranistion-all duration-200 ease-in-out',
+                'grow p-2 rounded-md bg-gray-900/60 hover:bg-gray-900/80',
                 'flex flex-col gap-2 items-center',
-                day.isRestDay === true ? 'shrink' : 'shrink',
+                day.isRestDay === true ? 'w-30' : '',
               )}
             >
               <h1
@@ -114,6 +128,7 @@ const FormWeek = ({ weekIdx }: { weekIdx: number }) => {
           )
         })}
       </div>
+        </DragDropContext>
     </div>
   )
 }

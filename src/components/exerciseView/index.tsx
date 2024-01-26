@@ -22,7 +22,7 @@ const ExerciseView = ({
 
   return (
     <>
-      <div className='flex cursor-pointer flex-col gap-1 py-2 hover:rounded-md hover:bg-gray-900'>
+      <div className='flex cursor-pointer flex-col gap-1 p-2 '>
         <div>
           <h2>{exerciseIdx + 1}.</h2>
           <h3 className='text-lg capitalize text-yellow-500'>

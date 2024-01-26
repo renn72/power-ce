@@ -2,22 +2,17 @@ import { useFieldArray, useFormContext, Controller } from 'react-hook-form'
 
 import { api } from '~/utils/api'
 
-import {
-  PlusCircleIcon,
-} from '@heroicons/react/24/outline'
+import { PlusCircleIcon } from '@heroicons/react/24/outline'
 
-import { Switch, } from '@headlessui/react'
+import { Switch } from '@headlessui/react'
 import { type PrismaBlock } from '~/store/types'
 import { type Set, SuperSet as SS } from '@prisma/client'
 
-import { useAutoAnimate } from '@formkit/auto-animate/react'
-
 import { useEffect } from 'react'
-import { LoadingSpinner } from '~/components/loading'
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 
 import { cn } from '@/lib/utils'
 import Warmup from './warmup'
-import { useSession } from 'next-auth/react'
 import FormExercise from './formExercise'
 
 const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
@@ -56,15 +51,44 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
       isSS: false,
       isEstimatedOnerm: false,
       estimatedOnermIndex: null,
-      field1: '',
-      field2: '',
+      flield1: null,
+      flield2: null,
+      flield3: null,
+      flield4: null,
+      flield5: null,
       tempoDown: null,
       tempoUp: null,
       tempoPause: null,
       isComplete: false,
       ss: [] as SS[],
       set: [] as Set[],
+      createdAt: new Date(),
+      userId: null,
+      trainerId: null,
+      isTemplate: false,
+      setWieght: null,
+      setTopWeight: null,
+      actualReps: null,
+      actualSets: null,
+      rpe: null,
+      weight: null,
+      dayId: '',
     })
+  }
+
+  // eslint-disable-next-line no-explicit-any
+  const handleDrag = (result) => {
+    console.log('result', result)
+  }
+  const logDrag = ({
+    source,
+    destination,
+  }: {
+    source: any
+    destination: any
+  }) => {
+    console.log('source', source)
+    console.log('destination', destination)
   }
 
   const isRest: boolean = watch(`week.${weekIdx}.day.${dayIdx}.isRestDay`)
@@ -75,11 +99,9 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
     }
   }, [isRest])
 
-  const [parent] = useAutoAnimate(/* optional config */)
-
   return (
     <>
-      <div className='flex flex-col items-stretch justify-center gap-2'>
+      <div className='flex w-full flex-col items-stretch justify-center gap-2'>
         <Controller
           control={control}
           name={`week.${weekIdx}.day.${dayIdx}.isRestDay`}
@@ -111,35 +133,80 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
             </div>
           )}
         />
-        <Warmup 
+        <Warmup
           weekIdx={weekIdx}
           dayIdx={dayIdx}
         />
-        <div
-          ref={parent}
-          className='mb-24 flex flex-col gap-20'
-        >
-          {exerciseField.fields.map((item, index) => {
-            return (
-              <FormExercise
-                key={item.id}
-                exercise={item}
-                exerciseIdx={index}
-                weekIdx={weekIdx}
-                dayIdx={dayIdx}
-                onInsertExercise={onInsertExercise}
-              />
-            )
-          })}
-        </div>
-        <div className='mx-auto flex gap-2 bg-opacity-100'>
+          <Droppable
+            droppableId={`${dayIdx}`}
+            renderClone={(provided, snapshot, rubric) => {
+              return (
+                <div
+                  className={cn(
+                    snapshot.isClone ? 'bg-gray-600' : '',
+                    snapshot.isDragging ? 'bg-gray-700' : '',
+                    'rounded-md bg-gray-800 hover:bg-gray-800/60 ',
+                  )}
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
+                >
+                  <FormExercise
+                    exercise={exerciseArray[rubric.source.index]}
+                    exerciseIdx={rubric.source.index}
+                    weekIdx={weekIdx}
+                    dayIdx={dayIdx}
+                  />
+                </div>
+              )
+            }}
+          >
+            {(provided, snapshot) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className='flex flex-col gap-4'
+              >
+                {exerciseField.fields.map((item, index) => {
+                  return (
+                    <Draggable
+                      key={`week.${weekIdx}.day.${dayIdx}.exercise.${index}`}
+                      draggableId={`item-${weekIdx}-${dayIdx}-${index}`}
+                      index={index}
+                    >
+                      {(provided, snapshot) => (
+                        <div
+                          className={cn(
+                            snapshot.isClone ? 'bg-gray-600' : '',
+                            snapshot.isDragging ? 'bg-gray-700' : '',
+                            'rounded-md bg-gray-900 hover:bg-gray-800/60 ',
+                          )}
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <FormExercise
+                            exercise={item}
+                            exerciseIdx={index}
+                            weekIdx={weekIdx}
+                            dayIdx={dayIdx}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  )
+                })}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        <div className='mx-auto'>
           <PlusCircleIcon
-            onClick={() => onInsertExercise(0)}
+            onClick={() => onInsertExercise(exerciseArray.length - 1)}
             className={cn(
               isRest
                 ? 'hidden h-10 w-10'
                 : 'h-10 w-10 text-gray-400 hover:scale-110 hover:text-gray-200',
-              exerciseArray?.length === 0 ? '' : 'hidden',
             )}
           />
         </div>
