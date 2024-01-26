@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useAtom, atom } from 'jotai'
 import { useSession } from 'next-auth/react'
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 
 import { ErrorMessage } from '@hookform/error-message'
 
@@ -26,6 +27,8 @@ import { type BlockData } from '~/store/types'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { LoadingWrapper } from '~/components/loading'
 
+import { FieldArrayContext } from './index'
+
 export const selectedTemplateAtom = atom('')
 export const isSuperAdminAtom = atom(false)
 
@@ -41,6 +44,8 @@ const Form = () => {
     setError,
     formState: { errors },
   } = formMethods
+
+  const fieldArrayContext = useContext(FieldArrayContext)
 
   const [isOpen, setIsOpen] = useState(false)
   const [isUpdate, setIsUpdate] = useState(false)
@@ -258,14 +263,11 @@ const Form = () => {
   }
 
   const onSelectTemplate = (template: string) => {
-    console.log('onSelectTemplate', template)
     setSelectedTemplate(template)
   }
 
   const onLoadTemplate = () => {
     const block = blocksData?.find((block) => block.id === selectedTemplate)
-    console.log(selectedTemplate)
-    console.log('onLoadTemplate', block)
     setBlockId(block?.id || '')
 
     const template = {
@@ -325,7 +327,6 @@ const Form = () => {
         })),
       })),
     }
-    console.log(template)
     reset(template)
 
     toast.success('Loaded')
@@ -339,6 +340,35 @@ const Form = () => {
   const onRemoveWeek = () => {
     console.log('remove week')
     weekField.remove(weekField.fields.length - 1)
+  }
+
+  const handleDrag = (result) => {
+    console.log('result', result)
+    const { source, destination } = result
+
+    const sourceDayId = source.droppableId
+    const sourceIndex = source.index
+    const destDayId = destination.droppableId
+    const destIndex = destination.index
+
+    if (!destination) return
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    )
+      return
+
+    if (sourceDayId  === destDayId) {
+      console.log('same day')
+      fieldArrayContext[sourceDayId].move(sourceIndex, destIndex)
+      return
+    }
+
+    const sourceDay = fieldArrayContext[sourceDayId].fields[sourceIndex]
+    fieldArrayContext[sourceDayId].remove(sourceIndex)
+    fieldArrayContext[destDayId].insert(destIndex, sourceDay)
+
+    console.log(fieldArrayContext)
   }
 
   return (
@@ -438,17 +468,18 @@ const Form = () => {
                   </div>
                 </div>
 
-                <div className='flex w-full flex-col gap-8 '>
-                  {weekField.fields.map((week, weekIndex) => (
-                    <FormWeek
-                      key={week.id}
-                      weekIdx={weekIndex}
-                    />
-                  ))}
-
-                </div>
+                <DragDropContext onDragEnd={handleDrag}>
+                  <div className='flex w-full flex-col gap-8 '>
+                    {weekField.fields.map((week, weekIndex) => (
+                      <FormWeek
+                        key={week.id}
+                        weekIdx={weekIndex}
+                      />
+                    ))}
+                  </div>
+                </DragDropContext>
                 <PlusCircleIcon
-                  className='h-12 w-12 mt-12 text-gray-400 hover:text-gray-200'
+                  className='mt-12 h-12 w-12 text-gray-400 hover:text-gray-200'
                   onClick={() => onAddWeek()}
                 />
               </div>

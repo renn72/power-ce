@@ -45,7 +45,8 @@ const ExerciseView = ({
                 <PlaySquare
                   size={26}
                   fill='#EAB308'
-                  color='black'
+                  color='#373751'
+                  
                 />
               </a>
             </div>

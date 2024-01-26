@@ -456,7 +456,7 @@ const FormExerciseDialog = ({
   }, [liftType])
 
   return (
-    <div className='flex flex-col justify-center'>
+    <div className='flex flex-col justify-center p-4'>
       <div className='relative flex items-center justify-between gap-4'>
         <div className='p-1 px-4 text-xl font-extrabold italic tracking-widest underline decoration-yellow-500 decoration-2 underline-offset-8'>
           &nbsp;{exerciseIdx + 1}&nbsp;
@@ -480,10 +480,6 @@ const FormExerciseDialog = ({
               </Label>
             </div>
           )}
-        />
-        <XMarkIcon
-          className='h-9 w-9 cursor-pointer font-bold text-gray-400 hover:text-red-600'
-          onClick={() => onRemoveExercise(exerciseIdx)}
         />
       </div>
       <div className='flex flex-col gap-4'>
@@ -557,7 +553,7 @@ const FormExerciseDialog = ({
               />
             </div>
             <div className='my-1 flex w-full flex-col items-center justify-between gap-2 md:gap-6 lg:flex-row'>
-              <div className='flex flex-col lg:flex-row w-full items-center gap-4 md:gap-6'>
+              <div className='flex w-full flex-col items-center gap-4 md:gap-6 lg:flex-row'>
                 <Controller
                   control={control}
                   name={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.weightType`}
@@ -578,7 +574,7 @@ const FormExerciseDialog = ({
                                   ? 'bg-gray-600 bg-opacity-75 text-gray-200'
                                   : 'bg-black text-gray-400'
                               }
-                                relative flex flex w-full h-full cursor-pointer flex-col items-center justify-center lg:justify-between py-1 lg:py-4 rounded-lg px-2 shadow-md hover:text-gray-200 focus:outline-none md:px-6 lg:flex-row`}
+                                relative flex flex h-full w-full cursor-pointer flex-col items-center justify-center rounded-lg px-2 py-1 shadow-md hover:text-gray-200 focus:outline-none md:px-6 lg:flex-row lg:justify-between lg:py-4`}
                             >
                               {({ checked }) => (
                                 <>
@@ -961,13 +957,17 @@ const FormExerciseDialog = ({
           placeholder='link'
         />
       </div>
-      <Button
-        type='button'
-        className='mt-8'
-        onClick={() => setIsOpen(false)}
-      >
-        done
-      </Button>
+      <div className='w-full flex justify-center'>
+        <Button
+          type='button'
+          size='lg'
+          variant='secondary'
+          className='center mt-8 w-36'
+          onClick={() => setIsOpen(false)}
+        >
+          Done
+        </Button>
+      </div>
     </div>
   )
 }

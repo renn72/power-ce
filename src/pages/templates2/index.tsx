@@ -1,14 +1,16 @@
-import { type NextPage, } from 'next'
+import { type NextPage } from 'next'
 import React from 'react'
 import { useSession } from 'next-auth/react'
 
 import Form from './form'
 
-import { api, } from '~/utils/api'
-import { LoadingPage, } from '~/components/loading'
+import { api } from '~/utils/api'
+
+import { createContext } from 'react'
+
+export const FieldArrayContext = createContext([])
 
 const Templates: NextPage = () => {
-
   const { data: session } = useSession()
   const userId = session?.user?.id || ''
   const ctx = api.useUtils()
@@ -19,14 +21,15 @@ const Templates: NextPage = () => {
 
   return (
     <>
-        <main className='h-full flex max-w-[100vw] min-w-[1600px] flex-col justify-center items-center text-sm sm:text-base font-semibold'>
-          <div className='flex flex-col w-full justify-center items-center '>
+      <FieldArrayContext.Provider value={[]}>
+        <main className='flex h-full min-w-[1600px] max-w-[100vw] flex-col items-center justify-center text-sm font-semibold sm:text-base'>
+          <div className='flex w-full flex-col items-center justify-center '>
             <Form />
           </div>
         </main>
+      </FieldArrayContext.Provider>
     </>
   )
 }
 
 export default Templates
-

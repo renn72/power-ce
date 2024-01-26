@@ -8,21 +8,27 @@ import { Switch } from '@headlessui/react'
 import { type PrismaBlock } from '~/store/types'
 import { type Set, SuperSet as SS } from '@prisma/client'
 
-import { useEffect } from 'react'
+import { useEffect, useContext } from 'react'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 
 import { cn } from '@/lib/utils'
 import Warmup from './warmup'
 import FormExercise from './formExercise'
 
+import { FieldArrayContext } from './index'
+
 const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
   const formMethods = useFormContext<PrismaBlock>()
   const { control, watch, getValues } = formMethods
+
+  const fieldArrayContext = useContext(FieldArrayContext)
 
   const exerciseField = useFieldArray({
     control,
     name: `week.${weekIdx}.day.${dayIdx}.exercise`,
   })
+
+  fieldArrayContext[`${weekIdx}-${dayIdx}`] = exerciseField
 
   api.warmups.getAll.useQuery()
 
@@ -137,14 +143,14 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
           dayIdx={dayIdx}
         />
         <Droppable
-          droppableId={`${dayIdx}`}
+          droppableId={`${weekIdx}-${dayIdx}`}
           renderClone={(provided, snapshot, rubric) => {
             return (
               <div
                 className={cn(
                   snapshot.isClone ? 'bg-gray-600' : '',
                   snapshot.isDragging ? 'bg-gray-700' : '',
-                  'rounded-md bg-gray-800 hover:bg-gray-800/60',
+                  'rounded-md bg-gray-700/80',
                 )}
                 ref={provided.innerRef}
                 {...provided.draggableProps}
@@ -178,7 +184,7 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
                         className={cn(
                           snapshot.isClone ? 'bg-gray-600' : '',
                           snapshot.isDragging ? 'bg-gray-700' : '',
-                          'rounded-md bg-gray-800/60 hover:bg-gray-800/80 ',
+                          'rounded-md bg-gray-700/30 hover:bg-gray-700/60 ',
                         )}
                         ref={provided.innerRef}
                         {...provided.draggableProps}
