@@ -19,7 +19,7 @@ const Templates: NextPage = () => {
 
   return (
     <>
-        <main className='h-full flex flex-col justify-center items-center text-sm sm:text-base font-semibold'>
+        <main className='h-full flex max-w-[100vw] min-w-[1600px] flex-col justify-center items-center text-sm sm:text-base font-semibold'>
           <div className='flex flex-col w-full justify-center items-center '>
             <Form />
           </div>

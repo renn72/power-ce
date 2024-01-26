@@ -29,7 +29,6 @@ const FormWeekData = ({ weekIdx }: { weekIdx: number }) => {
   } = formMethods
 
   const [selectedWeekTemplate, setSelectedWeekTemplate] = useState('')
-
   const [loadedTemplate, setLoadedTemplate] = useAtom(loadedTemplateAtom)
 
   const { data: session } = useSession()

@@ -4,20 +4,17 @@ import { useSession } from 'next-auth/react'
 
 import { ErrorMessage } from '@hookform/error-message'
 
-import {
-  useForm,
-  FormProvider,
-  useFieldArray,
-} from 'react-hook-form'
+import { useForm, FormProvider, useFieldArray } from 'react-hook-form'
 
 import { toast } from 'react-hot-toast'
 
 import { api } from '~/utils/api'
+import { cn } from '@/lib/utils'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-import { Switch, } from '@headlessui/react'
+import { Switch } from '@headlessui/react'
 
 import TemplateSelect from './templateSelect'
 import FormWeek from './formWeek'
@@ -344,94 +341,101 @@ const Form = () => {
     weekField.remove(weekField.fields.length - 1)
   }
 
-
   return (
     <>
       <LoadingWrapper
         isOpen={isOpen}
         setIsOpen={setIsOpen}
       />
-      {isMe ? (
-        <div className='flex items-center gap-1 text-sm'>
-          Super
-          <Switch
-            checked={isSuperAdmin}
-            onChange={setIsSuperAdmin}
-            className={`${isSuperAdmin ? 'bg-gray-200' : 'bg-gray-600'}
-          relative inline-flex h-[14px] w-[44px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75`}
-          >
-            <span
-              aria-hidden='true'
-              className={`${isSuperAdmin ? 'translate-x-9' : 'translate-x-0'}
-            pointer-events-none inline-block h-[10px] w-[14px] transform rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out`}
-            />
-          </Switch>
-        </div>
-      ) : null}
       <div className='text-xxs flex h-full w-full flex-col items-center justify-center md:text-base'>
         <FormProvider {...formMethods}>
           <form
             onSubmit={handleSubmit(onSubmit, onError)}
             className='flex w-full flex-col items-center justify-center '
           >
-            <div
-              className='flex w-full flex-col items-center gap-1 sm:gap-8'
-            >
-              <div className='flex min-h-[60vh] w-full flex-col items-center gap-2 p-1 sm:gap-4 sm:p-4 '>
+            <div className='flex w-full flex-col items-center gap-1 sm:gap-8'>
+              <div className='flex min-h-[60vh] w-full flex-col items-center gap-2 p-1 sm:gap-4 sm:p-2 '>
                 {/* template select */}
-                <div className='flex w-full flex-col items-center justify-center gap-2 md:flex-row '>
-                  <TemplateSelect onSelectTemplate={onSelectTemplate} />
-                  <div className='flex w-full items-center justify-around gap-2 md:w-fit md:justify-start'>
-                    <Button
-                      type='button'
-                      className='w-36 text-sm tracking-tighter sm:text-xl sm:tracking-normal'
-                      onClick={() => onNewTemplate()}
-                    >
-                      New
-                    </Button>
-                    <Button
-                      type='button'
-                      className='w-36 text-sm tracking-tighter sm:text-xl sm:tracking-normal'
-                      onClick={() => onLoadTemplate()}
-                    >
-                      Load
-                    </Button>
+                <div className='flex w-full items-center justify-between rounded-lg bg-gray-900 p-2 '>
+                  <div className='flex w-full gap-2'>
+                    <TemplateSelect onSelectTemplate={onSelectTemplate} />
+                    <div className='flex w-full items-center justify-around gap-2 md:w-fit md:justify-start'>
+                      <Button
+                        type='button'
+                        className='w-36 bg-gray-900 text-sm tracking-tighter sm:text-lg sm:tracking-normal'
+                        onClick={() => onNewTemplate()}
+                      >
+                        New
+                      </Button>
+                      <Button
+                        type='button'
+                        className='w-36 bg-gray-900 text-sm  tracking-tighter sm:text-lg sm:tracking-normal'
+                        onClick={() => onLoadTemplate()}
+                      >
+                        Load
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                  {isMe && (
+                    <div className='flex items-center gap-1 text-sm'>
+                      Super
+                      <Switch
+                        checked={isSuperAdmin}
+                        onChange={setIsSuperAdmin}
+                        className={cn(
+                          isSuperAdmin ? 'bg-gray-200' : 'bg-gray-600',
+                          'relative inline-flex h-[14px] w-[44px] shrink-0 cursor-pointer rounded-full border-2 border-transparent',
+                          ' transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75',
+                        )}
+                      >
+                        <span
+                          aria-hidden='true'
+                          className={cn(
+                            isSuperAdmin ? 'translate-x-6' : 'translate-x-0',
+                            'pointer-events-none inline-block h-[10px] w-[14px] transform',
+                            'rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out',
+                          )}
+                        />
+                      </Switch>
+                    </div>
+                  )}
 
-                {/* Title */}
-                <div className='mb-6 justify-center  flex w-full gap-2'>
-                  <div className='flex flex-col items-start justify-center gap-2'>
-                    <div className='relative rounded-md shadow-lg px-4'>
-                      <Input
-                        className='w-40 md:w-64'
-                        placeholder='Title'
-                        defaultValue={``}
-                        {...register('name', { required: 'This is required.' })}
+                  {/* Title */}
+                  <div className='flex w-full justify-end gap-2'>
+                    <div className='flex flex-col items-start justify-center gap-2'>
+                      <div className='relative rounded-md px-4 shadow-lg'>
+                        <Input
+                          className='w-40 bg-gray-900  md:w-64 '
+                          placeholder='Title'
+                          defaultValue={``}
+                          {...register('name', {
+                            required: 'This is required.',
+                          })}
+                        />
+                      </div>
+                      <ErrorMessage
+                        errors={errors}
+                        name='name'
+                        render={({ message }) => (
+                          <p className='text-red-400'>{message}</p>
+                        )}
                       />
                     </div>
-                    <ErrorMessage
-                      errors={errors}
-                      name='name'
-                      render={({ message }) => (
-                        <p className='text-red-400'>{message}</p>
-                      )}
-                    />
+                    <Button
+                      type='submit'
+                      className='w-24 bg-gray-900 px-0  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
+                      onClick={() => setIsUpdate(false)}
+                    >
+                      Save New
+                    </Button>
+                    <Button
+                      type='submit'
+                      className='w-24 bg-gray-900  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
+                      onClick={() => setIsUpdate(true)}
+                    >
+                      Update
+                    </Button>
                   </div>
-                  <Button
-                    type='submit'
-                    className='w-24 px-0 text-sm tracking-tighter sm:text-xl sm:tracking-normal md:w-36'
-                    onClick={() => setIsUpdate(false)}
-                  >
-                    Save New
-                  </Button>
-                  <Button
-                    type='submit'
-                    className='w-24 text-sm tracking-tighter sm:text-xl sm:tracking-normal md:w-36'
-                    onClick={() => setIsUpdate(true)}
-                  >
-                    Update
-                  </Button>
                 </div>
 
                 <div className='flex w-full flex-col gap-8 '>
@@ -442,10 +446,9 @@ const Form = () => {
                     />
                   ))}
 
-                  <div className='mt-12 flex items-center justify-center gap-2'></div>
                 </div>
                 <PlusCircleIcon
-                  className='h-14 w-14 text-gray-400 hover:text-gray-200'
+                  className='h-12 w-12 mt-12 text-gray-400 hover:text-gray-200'
                   onClick={() => onAddWeek()}
                 />
               </div>

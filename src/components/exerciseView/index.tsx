@@ -22,12 +22,35 @@ const ExerciseView = ({
 
   return (
     <>
-      <div className='flex cursor-pointer flex-col gap-1 p-2 '>
+      <div className='flex cursor-pointer flex-col px-2 py-1 text-base '>
         <div>
-          <h2>{exerciseIdx + 1}.</h2>
-          <h3 className='text-lg capitalize text-yellow-500'>
-            {isSS ? 'Super Set' : exercise.name}
-          </h3>
+          <div className='flex justify-between'>
+          <div className='flex gap-1 text-lg '>
+            <h2>{exerciseIdx + 1}.</h2>
+            <h3 className='font-bold capitalize text-yellow-500 truncate'>
+              {isSS ? 'Super Set' : exercise.name?.slice(0, 27)}
+            </h3>
+          </div>
+          {exercise.htmlLink && (
+            <div
+              className=''
+              onClick={(e) => e.stopPropagation()}
+            >
+              <a
+                href={exercise.htmlLink}
+                target='_blank'
+                rel='noreferrer'
+                className=''
+              >
+                <PlaySquare
+                  size={26}
+                  fill='#EAB308'
+                  color='black'
+                />
+              </a>
+            </div>
+          )}
+          </div>
           <h3 className='text-xxs capitalize leading-none text-gray-600'>
             {exercise.lift}
           </h3>
@@ -70,7 +93,7 @@ const ExerciseView = ({
             </div>
           </div>
         ) : (
-          <div className='flex flex-col  gap-1'>
+          <div className='flex flex-col'>
             <div className='flex justify-between  gap-4'>
               <div className='flex gap-4'>
                 <h3>{exercise.sets}</h3>
@@ -100,14 +123,16 @@ const ExerciseView = ({
                       {exercise?.weightBottom ? (
                         +exercise?.weightBottom
                       ) : (
-                        <div className='text-red-500'>Missing W</div>
+                        <div className='text-red-500'>Missing Weight</div>
                       )}
                     </h4>
                     <h4>{exercise?.weightTop && '-'}</h4>
-                    <h4>
-                      {exercise?.weightTop && +exercise?.weightTop}
-                      kg
-                    </h4>
+                    {exercise?.weightTop && (
+                      <h4>
+                        {+exercise?.weightTop}
+                        kg
+                      </h4>
+                    )}
                   </div>
                 )}
               </div>
@@ -145,26 +170,7 @@ const ExerciseView = ({
           )}
         </div>
         <div className='flex justify-between'>
-          <h3 className='text-xxs text-gray-600'>{exercise.weightType}</h3>
-          <div
-            className=''
-            onClick={(e) => e.stopPropagation()}
-          >
-            {exercise.htmlLink && (
-              <a
-                href={exercise.htmlLink}
-                target='_blank'
-                rel='noreferrer'
-                className=''
-              >
-                <PlaySquare
-                  size={26}
-                  fill='#EAB308'
-                  color='black'
-                />
-              </a>
-            )}
-          </div>
+          <h3 className='text-xxs text-gray-600 leading-3'>{exercise.weightType}</h3>
         </div>
       </div>
     </>

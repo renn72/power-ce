@@ -35,7 +35,7 @@ const TemplateSelect = ({
       </div>
     )
   return (
-    <div className='flex w-full flex-col justify-center px-4 text-lg text-gray-200 sm:w-72 md:mx-0'>
+    <div className='flex w-full flex-col justify-center text-lg text-gray-200 sm:w-72'>
       <Listbox
         value={selectedTemplate}
         onChange={(e) => onSelectTemplate(e)}

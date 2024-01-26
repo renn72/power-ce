@@ -101,23 +101,22 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
 
   return (
     <>
-      <div className='flex w-full flex-col items-stretch justify-center gap-2'>
+      <div className='flex w-full flex-col items-stretch justify-center gap-1'>
         <Controller
           control={control}
           name={`week.${weekIdx}.day.${dayIdx}.isRestDay`}
           defaultValue={false}
           render={({ field: { onChange, value } }) => (
-            <div className='mb-2 flex flex-col items-center justify-center gap-0 text-lg text-gray-600'>
+            <div className='flex flex-col items-center justify-center gap-0 text-lg text-gray-600'>
               <label className={value ? `` : `hidden`}>Rest Day</label>
               <Switch
                 checked={value}
                 onChange={onChange}
                 className={cn(
                   value ? 'bg-gray-200' : 'bg-gray-600',
-                  'relative inline-flex h-[24px] w-[64px] shrink-0 cursor-pointer rounded-full',
+                  'relative inline-flex h-[18px] w-[64px] shrink-0 cursor-pointer rounded-full',
                   'border-2 border-transparent transition-colors duration-200 ease-in-out',
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75',
-                  'sm:h-[28px] sm:w-[74px]',
                 )}
               >
                 <span className='sr-only'>Is it a Rest Day</span>
@@ -125,8 +124,8 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
                   aria-hidden='true'
                   className={cn(
                     value ? 'translate-x-9' : 'translate-x-0',
-                    'pointer-events-none inline-block h-[20px] w-[24px] transform rounded-full bg-gray-900',
-                    'shadow-lg ring-0 transition duration-150 ease-in-out sm:h-[24px] sm:w-[34px]',
+                    'pointer-events-none inline-block h-[14px] w-[24px] transform rounded-full bg-gray-900',
+                    'shadow-lg ring-0 transition duration-150 ease-in-out',
                   )}
                 />
               </Switch>
@@ -137,69 +136,69 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
           weekIdx={weekIdx}
           dayIdx={dayIdx}
         />
-          <Droppable
-            droppableId={`${dayIdx}`}
-            renderClone={(provided, snapshot, rubric) => {
-              return (
-                <div
-                  className={cn(
-                    snapshot.isClone ? 'bg-gray-600' : '',
-                    snapshot.isDragging ? 'bg-gray-700' : '',
-                    'rounded-md bg-gray-800 hover:bg-gray-800/60 ',
-                  )}
-                  ref={provided.innerRef}
-                  {...provided.draggableProps}
-                  {...provided.dragHandleProps}
-                >
-                  <FormExercise
-                    exercise={exerciseArray[rubric.source.index]}
-                    exerciseIdx={rubric.source.index}
-                    weekIdx={weekIdx}
-                    dayIdx={dayIdx}
-                  />
-                </div>
-              )
-            }}
-          >
-            {(provided, snapshot) => (
+        <Droppable
+          droppableId={`${dayIdx}`}
+          renderClone={(provided, snapshot, rubric) => {
+            return (
               <div
-                {...provided.droppableProps}
+                className={cn(
+                  snapshot.isClone ? 'bg-gray-600' : '',
+                  snapshot.isDragging ? 'bg-gray-700' : '',
+                  'rounded-md bg-gray-800 hover:bg-gray-800/60',
+                )}
                 ref={provided.innerRef}
-                className='flex flex-col gap-4'
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
               >
-                {exerciseField.fields.map((item, index) => {
-                  return (
-                    <Draggable
-                      key={`week.${weekIdx}.day.${dayIdx}.exercise.${index}`}
-                      draggableId={`item-${weekIdx}-${dayIdx}-${index}`}
-                      index={index}
-                    >
-                      {(provided, snapshot) => (
-                        <div
-                          className={cn(
-                            snapshot.isClone ? 'bg-gray-600' : '',
-                            snapshot.isDragging ? 'bg-gray-700' : '',
-                            'rounded-md bg-gray-900 hover:bg-gray-800/60 ',
-                          )}
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          <FormExercise
-                            exercise={item}
-                            exerciseIdx={index}
-                            weekIdx={weekIdx}
-                            dayIdx={dayIdx}
-                          />
-                        </div>
-                      )}
-                    </Draggable>
-                  )
-                })}
-                {provided.placeholder}
+                <FormExercise
+                  exercise={exerciseArray[rubric.source.index]}
+                  exerciseIdx={rubric.source.index}
+                  weekIdx={weekIdx}
+                  dayIdx={dayIdx}
+                />
               </div>
-            )}
-          </Droppable>
+            )
+          }}
+        >
+          {(provided, snapshot) => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className='flex flex-col gap-2'
+            >
+              {exerciseField.fields.map((item, index) => {
+                return (
+                  <Draggable
+                    key={`week.${weekIdx}.day.${dayIdx}.exercise.${index}`}
+                    draggableId={`item-${weekIdx}-${dayIdx}-${index}`}
+                    index={index}
+                  >
+                    {(provided, snapshot) => (
+                      <div
+                        className={cn(
+                          snapshot.isClone ? 'bg-gray-600' : '',
+                          snapshot.isDragging ? 'bg-gray-700' : '',
+                          'rounded-md bg-gray-800/60 hover:bg-gray-800/80 ',
+                        )}
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <FormExercise
+                          exercise={item}
+                          exerciseIdx={index}
+                          weekIdx={weekIdx}
+                          dayIdx={dayIdx}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                )
+              })}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
         <div className='mx-auto'>
           <PlusCircleIcon
             onClick={() => onInsertExercise(exerciseArray.length - 1)}
