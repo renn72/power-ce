@@ -1,5 +1,3 @@
-import { clerkClient } from '@clerk/nextjs/server'
-import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
 import {
@@ -8,65 +6,10 @@ import {
   publicProcedure,
 } from '~/server/api/trpc'
 
-import type { Block, Post, Exercise, Day, Week } from '@prisma/client'
-
-import { filterUserForClient } from '~/server/helpers/filterUserForClient'
-
-const ssSchema = z.object({
-  name: z.string().min(0).max(280).optional().nullable(),
-  lift: z.string().min(0).max(55).optional().nullable(),
-  sets: z.number().min(0).max(55).optional().nullable(),
-  reps: z.number().min(0).max(99999).optional().nullable(),
-  onerm: z.number().min(0).max(99999).optional().nullable(),
-  onermTop: z.number().min(0).max(99999).optional().nullable(),
-  weightTop: z.number().min(0).max(99999).optional().nullable(),
-  weightBottom: z.number().min(0).max(99999).optional().nullable(),
-  targetRpe: z.number().min(0).max(100).optional().nullable(),
-  notes: z.string().min(0).max(280).optional().nullable(),
-  htmlLink: z.string().min(0).max(280).optional().nullable(),
-  weightType: z.string().min(0).max(280).optional().nullable(),
-  repUnit: z.string().min(0).max(55).optional().nullable(),
-})
-
-const exerciseSchema = z.object({
-  name: z.string().min(0).max(280).optional().nullable(),
-  lift: z.string().min(0).max(55).optional().nullable(),
-  sets: z.number().min(0).max(55).optional().nullable(),
-  reps: z.number().min(0).max(99999).optional().nullable(),
-  onerm: z.number().min(0).max(99999).optional().nullable(),
-  onermTop: z.number().min(0).max(99999).optional().nullable(),
-  weightTop: z.number().min(0).max(99999).optional().nullable(),
-  weightBottom: z.number().min(0).max(99999).optional().nullable(),
-  targetRpe: z.number().min(0).max(100).optional().nullable(),
-  notes: z.string().min(0).max(280).optional().nullable(),
-  isEstimatedOnerm: z.boolean(),
-  estimatedOnermIndex: z.number().min(0).max(100).optional().nullable(),
-  weightType: z.string().min(0).max(280).optional().nullable(),
-  repUnit: z.string().min(0).max(55).optional().nullable(),
-  htmlLink: z.string().min(0).max(280).optional().nullable(),
-  isSS: z.boolean(),
-  ss: z.array(ssSchema).optional().nullable(),
-  tempoDown: z.number().min(0).max(99999).optional().nullable(),
-  tempoPause: z.number().min(0).max(99999).optional().nullable(),
-  tempoUp: z.number().min(0).max(99999).optional().nullable(),
-})
-const daySchema = z.object({
-  isRestDay: z.boolean(),
-  warmupTemplateId: z.string(),
-  exercise: z.array(exerciseSchema),
-})
-const weekSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().min(0).max(280),
-  isTemplate: z.boolean(),
-  day: z.array(daySchema),
-})
-const blockSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().min(1).max(280),
-  isProgram: z.boolean(),
-  week: z.array(weekSchema),
-})
+import {
+  blockSchema,
+  weekSchema,
+} from '~/server/api/schemas/schemas'
 
 export const blocksRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {

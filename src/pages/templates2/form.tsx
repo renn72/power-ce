@@ -29,12 +29,115 @@ import { LoadingWrapper } from '~/components/loading'
 
 import { FieldArrayContext } from './index'
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import { ScrollArea } from '@/components/ui/scroll-area'
+
+import ExerciseView from '~/components/exerciseView'
+
+const ExerciseDropper = () => {
+  const [isOpen, setIsOpen] = useState(false)
+  const { data: session } = useSession()
+  const user = session?.user
+  const userId = user?.id || ''
+  const { data: exerciseTemplates } = api.exercise.getAll.useQuery({
+    userId: userId,
+  })
+  console.log(exerciseTemplates)
+  return (
+    <Accordion
+      type='single'
+      orientation='vertical'
+      collapsible
+      className='mr-1 flex h-full flex-col items-center border-0'
+    >
+      <AccordionItem
+        className='border-0'
+        value={`0`}
+      >
+        <AccordionTrigger className='pt-1 pb-0 flex flex-col'>
+          <div className='flex flex-col rounded-lg bg-gray-900 p-1 w-full text-lg tracking-tigher'>
+            <div>Excercise</div>
+            <div>Templates</div>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className='w-80 rounded-md bg-gray-900 px-4 py-6'>
+          <Droppable
+            droppableId={`templates`}
+            renderClone={(provided, snapshot, rubric) => {
+              return (
+                <div
+                  className={cn(
+                    snapshot.isClone ? 'bg-gray-600' : '',
+                    snapshot.isDragging ? 'bg-gray-700' : '',
+                    'rounded-md bg-gray-700',
+                  )}
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
+                >
+                  <ExerciseView
+                    exercise={exerciseTemplates[rubric.draggableId]}
+                    exerciseIdx={0}
+                    isAdmin={true}
+                  />
+                </div>
+              )
+            }}
+          >
+            {(provided, _snapshot) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className='flex flex-col gap-2'
+              >
+                {exerciseTemplates?.map((t, i) => (
+                  <Draggable
+                    key={t.id}
+                    draggableId={i.toString()}
+                    index={i}
+                  >
+                    {(provided, snapshot) => (
+                      <div
+                        className={cn(
+                          snapshot.isClone ? 'bg-gray-600' : '',
+                          snapshot.isDragging ? 'bg-gray-700' : '',
+                          'rounded-md bg-gray-700 p-2 hover:bg-gray-700 ',
+                        )}
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <ExerciseView
+                          exercise={t}
+                          exerciseIdx={i}
+                          isAdmin={true}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  )
+}
+
 export const selectedTemplateAtom = atom('')
 export const isSuperAdminAtom = atom(false)
 
 const Form = () => {
   const { data: session } = useSession()
   const user = session?.user
+  const userId = user?.id || ''
   const formMethods = useForm({ defaultValues })
   const {
     register,
@@ -51,12 +154,15 @@ const Form = () => {
   const [isUpdate, setIsUpdate] = useState(false)
   const [blockId, setBlockId] = useState('')
   const [isSuperAdmin, setIsSuperAdmin] = useAtom(isSuperAdminAtom)
-  const isMe = user?.id === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a'
+  const isMe = userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a'
 
   const [selectedTemplate, setSelectedTemplate] = useAtom(selectedTemplateAtom)
 
   const { data: blocksData } = api.blocks.getAll.useQuery() // TODO: just load titles
   const blocksTitle = blocksData?.map((block) => block.name)
+  api.exercise.getAll.useQuery({
+    userId: userId,
+  })
 
   const ctx = api.useUtils()
 
@@ -345,24 +451,26 @@ const Form = () => {
   const handleDrag = (result) => {
     console.log('result', result)
     const { source, destination } = result
+    if (!destination) return
 
     const sourceDayId = source.droppableId
     const sourceIndex = source.index
     const destDayId = destination.droppableId
     const destIndex = destination.index
 
-    if (!destination) return
     if (
       source.droppableId === destination.droppableId &&
       source.index === destination.index
     )
       return
 
-    if (sourceDayId  === destDayId) {
+    if (sourceDayId === destDayId) {
       console.log('same day')
       fieldArrayContext[sourceDayId].move(sourceIndex, destIndex)
       return
     }
+
+    if (sourceDayId === 'templates') return
 
     const sourceDay = fieldArrayContext[sourceDayId].fields[sourceIndex]
     fieldArrayContext[sourceDayId].remove(sourceIndex)
@@ -377,117 +485,122 @@ const Form = () => {
         isOpen={isOpen}
         setIsOpen={setIsOpen}
       />
-      <div className='text-xxs flex h-full w-full flex-col items-center justify-center md:text-base'>
-        <FormProvider {...formMethods}>
-          <form
-            onSubmit={handleSubmit(onSubmit, onError)}
-            className='flex w-full flex-col items-center justify-center '
-          >
-            <div className='flex w-full flex-col items-center gap-1 sm:gap-8'>
-              <div className='flex min-h-[60vh] w-full flex-col items-center gap-2 p-1 sm:gap-4 sm:p-2 '>
-                {/* template select */}
-                <div className='flex w-full items-center justify-between rounded-lg bg-gray-900 p-2 '>
-                  <div className='flex w-full gap-2'>
-                    <TemplateSelect onSelectTemplate={onSelectTemplate} />
-                    <div className='flex w-full items-center justify-around gap-2 md:w-fit md:justify-start'>
-                      <Button
-                        type='button'
-                        className='w-36 bg-gray-900 text-sm tracking-tighter sm:text-lg sm:tracking-normal'
-                        onClick={() => onNewTemplate()}
-                      >
-                        New
-                      </Button>
-                      <Button
-                        type='button'
-                        className='w-36 bg-gray-900 text-sm  tracking-tighter sm:text-lg sm:tracking-normal'
-                        onClick={() => onLoadTemplate()}
-                      >
-                        Load
-                      </Button>
-                    </div>
-                  </div>
-                  {isMe && (
-                    <div className='flex items-center gap-1 text-sm'>
-                      Super
-                      <Switch
-                        checked={isSuperAdmin}
-                        onChange={setIsSuperAdmin}
-                        className={cn(
-                          isSuperAdmin ? 'bg-gray-200' : 'bg-gray-600',
-                          'relative inline-flex h-[14px] w-[44px] shrink-0 cursor-pointer rounded-full border-2 border-transparent',
-                          ' transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75',
-                        )}
-                      >
-                        <span
-                          aria-hidden='true'
-                          className={cn(
-                            isSuperAdmin ? 'translate-x-6' : 'translate-x-0',
-                            'pointer-events-none inline-block h-[10px] w-[14px] transform',
-                            'rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out',
-                          )}
-                        />
-                      </Switch>
-                    </div>
-                  )}
-
-                  {/* Title */}
-                  <div className='flex w-full justify-end gap-2'>
-                    <div className='flex flex-col items-start justify-center gap-2'>
-                      <div className='relative rounded-md px-4 shadow-lg'>
-                        <Input
-                          className='w-40 bg-gray-900  md:w-64 '
-                          placeholder='Title'
-                          defaultValue={``}
-                          {...register('name', {
-                            required: 'This is required.',
-                          })}
-                        />
+      <DragDropContext onDragEnd={handleDrag}>
+        <div className='flex w-full'>
+          <ScrollArea className='text-xxs relative flex h-[88vh] h-full w-full flex-col items-center justify-center md:text-base'>
+            <FormProvider {...formMethods}>
+              <form
+                onSubmit={handleSubmit(onSubmit, onError)}
+                className='flex w-full flex-col items-center justify-center '
+              >
+                <div className='flex w-full flex-col items-center gap-1 sm:gap-8'>
+                  <div className='flex min-h-[60vh] w-full flex-col items-center gap-2 p-1 sm:gap-4'>
+                    {/* template select */}
+                    <div className='flex w-full items-center justify-between rounded-lg bg-gray-900 p-2 '>
+                      <div className='flex w-full gap-2'>
+                        <TemplateSelect onSelectTemplate={onSelectTemplate} />
+                        <div className='flex w-full items-center justify-around gap-2 md:w-fit md:justify-start'>
+                          <Button
+                            type='button'
+                            className='w-36 bg-gray-900 text-sm tracking-tighter sm:text-lg sm:tracking-normal'
+                            onClick={() => onNewTemplate()}
+                          >
+                            New
+                          </Button>
+                          <Button
+                            type='button'
+                            className='w-36 bg-gray-900 text-sm  tracking-tighter sm:text-lg sm:tracking-normal'
+                            onClick={() => onLoadTemplate()}
+                          >
+                            Load
+                          </Button>
+                        </div>
                       </div>
-                      <ErrorMessage
-                        errors={errors}
-                        name='name'
-                        render={({ message }) => (
-                          <p className='text-red-400'>{message}</p>
-                        )}
-                      />
-                    </div>
-                    <Button
-                      type='submit'
-                      className='w-24 bg-gray-900 px-0  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
-                      onClick={() => setIsUpdate(false)}
-                    >
-                      Save New
-                    </Button>
-                    <Button
-                      type='submit'
-                      className='w-24 bg-gray-900  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
-                      onClick={() => setIsUpdate(true)}
-                    >
-                      Update
-                    </Button>
-                  </div>
-                </div>
+                      {isMe && (
+                        <div className='flex items-center gap-1 text-sm'>
+                          Super
+                          <Switch
+                            checked={isSuperAdmin}
+                            onChange={setIsSuperAdmin}
+                            className={cn(
+                              isSuperAdmin ? 'bg-gray-200' : 'bg-gray-600',
+                              'relative inline-flex h-[14px] w-[44px] shrink-0 cursor-pointer rounded-full border-2 border-transparent',
+                              ' transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75',
+                            )}
+                          >
+                            <span
+                              aria-hidden='true'
+                              className={cn(
+                                isSuperAdmin
+                                  ? 'translate-x-6'
+                                  : 'translate-x-0',
+                                'pointer-events-none inline-block h-[10px] w-[14px] transform',
+                                'rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out',
+                              )}
+                            />
+                          </Switch>
+                        </div>
+                      )}
 
-                <DragDropContext onDragEnd={handleDrag}>
-                  <div className='flex w-full flex-col gap-8 '>
-                    {weekField.fields.map((week, weekIndex) => (
-                      <FormWeek
-                        key={week.id}
-                        weekIdx={weekIndex}
-                      />
-                    ))}
+                      {/* Title */}
+                      <div className='flex w-full justify-end gap-2'>
+                        <div className='flex flex-col items-start justify-center gap-2'>
+                          <div className='relative rounded-md px-4 shadow-lg'>
+                            <Input
+                              className='w-40 bg-gray-900  md:w-64 '
+                              placeholder='Title'
+                              defaultValue={``}
+                              {...register('name', {
+                                required: 'This is required.',
+                              })}
+                            />
+                          </div>
+                          <ErrorMessage
+                            errors={errors}
+                            name='name'
+                            render={({ message }) => (
+                              <p className='text-red-400'>{message}</p>
+                            )}
+                          />
+                        </div>
+                        <Button
+                          type='submit'
+                          className='w-24 bg-gray-900 px-0  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
+                          onClick={() => setIsUpdate(false)}
+                        >
+                          Save New
+                        </Button>
+                        <Button
+                          type='submit'
+                          className='w-24 bg-gray-900  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
+                          onClick={() => setIsUpdate(true)}
+                        >
+                          Update
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className='flex w-full flex-col gap-8 '>
+                      {weekField.fields.map((week, weekIndex) => (
+                        <FormWeek
+                          key={week.id}
+                          weekIdx={weekIndex}
+                        />
+                      ))}
+                    </div>
+                    <PlusCircleIcon
+                      className='mt-12 h-12 w-12 text-gray-400 hover:text-gray-200'
+                      onClick={() => onAddWeek()}
+                    />
                   </div>
-                </DragDropContext>
-                <PlusCircleIcon
-                  className='mt-12 h-12 w-12 text-gray-400 hover:text-gray-200'
-                  onClick={() => onAddWeek()}
-                />
-              </div>
-              <div className='my-28 flex justify-center gap-4'></div>
-            </div>
-          </form>
-        </FormProvider>
-      </div>
+                  <div className='my-28 flex justify-center gap-4'></div>
+                </div>
+              </form>
+            </FormProvider>
+          </ScrollArea>
+          <ExerciseDropper />
+        </div>
+      </DragDropContext>
     </>
   )
 }

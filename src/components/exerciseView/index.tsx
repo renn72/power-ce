@@ -1,4 +1,3 @@
-import { api } from '~/utils/api'
 import {
   ArrowDownToLine,
   ArrowUpToLine,
@@ -25,32 +24,31 @@ const ExerciseView = ({
       <div className='flex cursor-pointer flex-col px-2 py-1 text-base '>
         <div>
           <div className='flex justify-between'>
-          <div className='flex gap-1 text-lg '>
-            <h2>{exerciseIdx + 1}.</h2>
-            <h3 className='font-bold capitalize text-yellow-500 truncate'>
-              {isSS ? 'Super Set' : exercise.name?.slice(0, 27)}
-            </h3>
-          </div>
-          {exercise.htmlLink && (
-            <div
-              className=''
-              onClick={(e) => e.stopPropagation()}
-            >
-              <a
-                href={exercise.htmlLink}
-                target='_blank'
-                rel='noreferrer'
-                className=''
-              >
-                <PlaySquare
-                  size={26}
-                  fill='#EAB308'
-                  color='#373751'
-                  
-                />
-              </a>
+            <div className='flex gap-1 text-lg '>
+              <h2>{exerciseIdx + 1}.</h2>
+              <h3 className='truncate font-bold capitalize text-yellow-500'>
+                {isSS ? 'Super Set' : exercise.name?.slice(0, 27)}
+              </h3>
             </div>
-          )}
+            {exercise.htmlLink && (
+              <div
+                className=''
+                onClick={(e) => e.stopPropagation()}
+              >
+                <a
+                  href={exercise.htmlLink}
+                  target='_blank'
+                  rel='noreferrer'
+                  className=''
+                >
+                  <PlaySquare
+                    size={26}
+                    fill='#EAB308'
+                    color='#373751'
+                  />
+                </a>
+              </div>
+            )}
           </div>
           <h3 className='text-xxs capitalize leading-none text-gray-600'>
             {exercise.lift}
@@ -111,11 +109,17 @@ const ExerciseView = ({
                   </div>
                 )}
                 {exercise.weightType === 'rpe' && (
-                  <div className='flex items-baseline gap-2'>
-                    <h4>RPE Target:</h4>
+                  <div className='flex items-baseline gap-0'>
+                    <h4>RPE Target:&nbsp;</h4>
                     <h4 className='flex items-baseline justify-center'>
                       {exercise?.targetRpe && +exercise?.targetRpe}
                     </h4>
+                    {exercise.targetRpeHigh && (
+                      <>
+                        <h4>-</h4>
+                        <h4>{+exercise.targetRpeHigh}</h4>
+                      </>
+                    )}
                   </div>
                 )}
                 {exercise.weightType === 'weight' && (
@@ -163,6 +167,12 @@ const ExerciseView = ({
                 )}
               </div>
             ) : null}
+            {exercise.restTime && (
+              <div className='flex gap-2 text-gray-400 text-sm'>
+                <div>Rest: {exercise.restTime}</div>
+                {exercise.restUnit && <div>{exercise.restUnit}</div>}
+              </div>
+            )}
           </div>
         )}
         <div>
@@ -171,7 +181,9 @@ const ExerciseView = ({
           )}
         </div>
         <div className='flex justify-between'>
-          <h3 className='text-xxs text-gray-600 leading-3'>{exercise.weightType}</h3>
+          <h3 className='text-xxs leading-3 text-gray-600'>
+            {exercise.weightType}
+          </h3>
         </div>
       </div>
     </>

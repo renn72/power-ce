@@ -77,7 +77,7 @@ const UserTemplate = ({ user }: { user: User }) => {
 
 const UserProgramCheck = () => {
   const { data: users } = api.users.getAllUsersProfiles.useQuery()
-  const utils = api.useContext()
+  const utils = api.useUtils()
 
   const { mutate: clearChecked } = api.settings.clearChecked.useMutation({
     onSuccess: () => {
