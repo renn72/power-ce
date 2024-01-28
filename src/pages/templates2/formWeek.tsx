@@ -143,10 +143,10 @@ const FormWeek = ({ weekIdx }: { weekIdx: number }) => {
                 key={day?.id || dayIndex}
                 className={cn(
                   'rounded-md bg-gray-800/60 p-2 hover:bg-gray-900',
-                  'flex flex-col items-center gap-1',
+                  'flex flex-col items-center gap-1 w-[14.3%]',
                   day.isRestDay === true
-                    ? 'shrink grow'
-                    : `w-1/${8 - restDays}`,
+                    ? ''
+                    : '',
                 )}
               >
                 <h1 className='text-xl font-bold'>Day {dayIndex + 1}</h1>

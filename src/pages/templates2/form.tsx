@@ -20,6 +20,8 @@ import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { LoadingWrapper } from '~/components/loading'
 
 import { FieldArrayContext } from './index'
+import { type UseFieldArrayReturn } from 'react-hook-form'
+import { type UseFieldArray } from './index'
 
 import ExerciseDropper from './exerciseDropper'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -317,7 +319,6 @@ const Form = () => {
   }
 
   const handleDrag = (result: DragResult) => {
-    console.log('result', result)
     const { source, destination } = result
     if (!destination) return
 
@@ -325,6 +326,9 @@ const Form = () => {
     const sourceIndex = source.index
     const destDayId = destination.droppableId
     const destIndex = destination.index
+
+    const sourceArray = fieldArrayContext?.[sourceDayId] as UseFieldArrayReturn
+    const destArray = fieldArrayContext?.[destDayId] as UseFieldArrayReturn
 
     if (
       source.droppableId === destination.droppableId &&
@@ -335,7 +339,7 @@ const Form = () => {
 
     if (sourceDayId === destDayId) {
       console.log('same day')
-      fieldArrayContext?.[sourceDayId]?.move(sourceIndex, destIndex)
+      sourceArray.move(sourceIndex, destIndex)
       return
     }
 
@@ -347,16 +351,14 @@ const Form = () => {
 
       if (!exercise) return
 
-      fieldArrayContext[destDayId].insert(destIndex, exercise)
+      destArray.insert(destIndex, exercise)
 
       return
     }
 
-    const sourceDay = fieldArrayContext[sourceDayId].fields[sourceIndex]
-    fieldArrayContext[sourceDayId].remove(sourceIndex)
-    fieldArrayContext[destDayId].insert(destIndex, sourceDay)
-
-    console.log(fieldArrayContext)
+    const sourceDay = sourceArray.fields[sourceIndex]
+    destArray.insert(destIndex, sourceDay)
+    sourceArray.remove(sourceIndex)
   }
 
   return (

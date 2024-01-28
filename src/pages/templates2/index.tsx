@@ -7,8 +7,13 @@ import Form from './form'
 import { api } from '~/utils/api'
 
 import { createContext } from 'react'
+import { type UseFieldArrayReturn } from 'react-hook-form'
 
-export const FieldArrayContext = createContext([])
+export type UseFieldArray = {
+  [key: string]: UseFieldArrayReturn
+}
+
+export const FieldArrayContext = createContext<UseFieldArray[]>([])
 
 const Templates: NextPage = () => {
   const { data: session } = useSession()
