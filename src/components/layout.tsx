@@ -6,13 +6,12 @@ import { useSession, signIn } from 'next-auth/react'
 import { LoadingPage } from './loading'
 import { useRouter } from 'next/router'
 
-import Cookies from 'js-cookie'
-
 import { api } from '~/utils/api'
 import { Toaster } from '@/components/ui/sonner'
 
 const LayoutAuth = (props: PropsWithChildren) => {
   const { data: session } = useSession()
+  const router = useRouter()
 
   const userId = session?.user?.id || ''
   const { data: user, isLoading: userLoading } = api.users.get.useQuery({
@@ -20,14 +19,13 @@ const LayoutAuth = (props: PropsWithChildren) => {
     location: 'base',
   })
 
-
   if (userLoading) return <LoadingPage />
 
   return (
     <>
-      <Navbar user={user || null} />
+      {router.pathname !== '/templates2' && <Navbar user={user || null} />}
       <div className='grow'>{props.children}</div>
-      <Footer />
+      {router.pathname !== '/templates2' && <Footer />}
       <Toaster />
     </>
   )
@@ -58,7 +56,7 @@ const Layout = (props: PropsWithChildren) => {
             <LayoutAuth>{props.children}</LayoutAuth>
           </>
         ) : (
-          <div className='flex flex-col h-full w-full grow items-center justify-center'>
+          <div className='flex h-full w-full grow flex-col items-center justify-center'>
             <button
               className='rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20'
               onClick={() => {

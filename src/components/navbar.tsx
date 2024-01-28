@@ -95,7 +95,7 @@ const Navbar = ({ user }: { user: User | null }) => {
       >
         {({ open }) => (
           <>
-            <div className='px-4 py-2 sm:px-6 md:py-4 lg:px-8'>
+            <div className='px-4 py-1 sm:px-6 lg:px-8'>
               <div className='flex items-center justify-between'>
                 <div className='flex items-center'>
                   <div className='flex-shrink-0'>
@@ -103,8 +103,8 @@ const Navbar = ({ user }: { user: User | null }) => {
                       <Image
                         src='/ce.png'
                         alt='logo'
-                        width={50}
-                        height={50}
+                        width={40}
+                        height={40}
                       />
                     </Link>
                   </div>

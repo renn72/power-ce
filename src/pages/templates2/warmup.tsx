@@ -34,7 +34,7 @@ const Warmup = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
               console.log(e)
             }}
           >
-            <div className='relative h-full w-60 overflow-visible text-xs sm:text-base'>
+            <div className='relative h-full w-52  overflow-visible text-xs sm:text-base'>
               <div className='flex items-center gap-4'>
                 <Listbox.Button className='relative h-10 max-h-min min-h-[40px] w-full cursor-pointer border-b border-gray-600 hover:border-gray-200 py-2 pl-3 pr-10 text-left focus:outline-none '>
                   <span

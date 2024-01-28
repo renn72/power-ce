@@ -81,19 +81,18 @@ export type Set = {
 }
 
 export type SS = {
-  id: string
-  lift: string
+  id: string | null
+  lift: string | null
   name: string
   onerm: string | number | null
   onermTop: string | number | null
   weightTop: string | number | null
   weightBottom: string | number | null
   isEstimatedOnerm: boolean | null
-  sets: string | number | null
+  sets: number | null
   reps: string | number | null
   targetRpe: string | number | null
   notes: string | null
-  set: Set[]
   estimatedOnermIndex: number | null
   weightType: string | null
   repUnit: string | null
@@ -101,6 +100,9 @@ export type SS = {
   htmlLink: string | null
   field1: string | null
   field2: string | null
+  restTime: number | null
+  restUnit: string | null
+  targetRpeHigh: number | null
 }
 
 export type Exercise = {
@@ -129,6 +131,9 @@ export type Exercise = {
   tempoDown: number | null
   tempoPause: number | null
   tempoUp: number | null
+  restTime: number | null
+  restUnit: string | null
+  targetRpeHigh: number | null
 }
 
 export type Day = {

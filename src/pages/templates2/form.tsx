@@ -3,22 +3,14 @@ import { useAtom, atom } from 'jotai'
 import { useSession } from 'next-auth/react'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 
-import { ErrorMessage } from '@hookform/error-message'
-
 import { useForm, FormProvider, useFieldArray } from 'react-hook-form'
 
 import { toast } from 'react-hot-toast'
 
 import { api } from '~/utils/api'
-import { cn } from '@/lib/utils'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-
-import { Switch } from '@headlessui/react'
-
-import TemplateSelect from './templateSelect'
 import FormWeek from './formWeek'
+import FormHeader from './formHeader'
 
 import { defaultValues } from '~/store/defaultValues'
 import { type Block } from '~/store/types'
@@ -29,110 +21,25 @@ import { LoadingWrapper } from '~/components/loading'
 
 import { FieldArrayContext } from './index'
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
+import ExerciseDropper from './exerciseDropper'
 import { ScrollArea } from '@/components/ui/scroll-area'
-
-import ExerciseView from '~/components/exerciseView'
-
-const ExerciseDropper = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const { data: session } = useSession()
-  const user = session?.user
-  const userId = user?.id || ''
-  const { data: exerciseTemplates } = api.exercise.getAll.useQuery({
-    userId: userId,
-  })
-  console.log(exerciseTemplates)
-  return (
-    <Accordion
-      type='single'
-      orientation='vertical'
-      collapsible
-      className='mr-1 flex h-full flex-col items-center border-0'
-    >
-      <AccordionItem
-        className='border-0'
-        value={`0`}
-      >
-        <AccordionTrigger className='pt-1 pb-0 flex flex-col'>
-          <div className='flex flex-col rounded-lg bg-gray-900 p-1 w-full text-lg tracking-tigher'>
-            <div>Excercise</div>
-            <div>Templates</div>
-          </div>
-        </AccordionTrigger>
-        <AccordionContent className='w-80 rounded-md bg-gray-900 px-4 py-6'>
-          <Droppable
-            droppableId={`templates`}
-            renderClone={(provided, snapshot, rubric) => {
-              return (
-                <div
-                  className={cn(
-                    snapshot.isClone ? 'bg-gray-600' : '',
-                    snapshot.isDragging ? 'bg-gray-700' : '',
-                    'rounded-md bg-gray-700',
-                  )}
-                  ref={provided.innerRef}
-                  {...provided.draggableProps}
-                  {...provided.dragHandleProps}
-                >
-                  <ExerciseView
-                    exercise={exerciseTemplates[rubric.draggableId]}
-                    exerciseIdx={0}
-                    isAdmin={true}
-                  />
-                </div>
-              )
-            }}
-          >
-            {(provided, _snapshot) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                className='flex flex-col gap-2'
-              >
-                {exerciseTemplates?.map((t, i) => (
-                  <Draggable
-                    key={t.id}
-                    draggableId={i.toString()}
-                    index={i}
-                  >
-                    {(provided, snapshot) => (
-                      <div
-                        className={cn(
-                          snapshot.isClone ? 'bg-gray-600' : '',
-                          snapshot.isDragging ? 'bg-gray-700' : '',
-                          'rounded-md bg-gray-700 p-2 hover:bg-gray-700 ',
-                        )}
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <ExerciseView
-                          exercise={t}
-                          exerciseIdx={i}
-                          isAdmin={true}
-                        />
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
-  )
-}
+import Navbar from '~/components/navbar'
+import Footer from '~/components/footer'
 
 export const selectedTemplateAtom = atom('')
 export const isSuperAdminAtom = atom(false)
+
+interface DragResult {
+  source: {
+    droppableId: string
+    index: number
+  }
+  destination: {
+    droppableId: string
+    index: number
+  }
+  draggableId: string
+}
 
 const Form = () => {
   const { data: session } = useSession()
@@ -148,19 +55,22 @@ const Form = () => {
     formState: { errors },
   } = formMethods
 
+
+  const { data: userNav,  } = api.users.get.useQuery({
+    userId: userId,
+  })
+
   const fieldArrayContext = useContext(FieldArrayContext)
 
   const [isOpen, setIsOpen] = useState(false)
   const [isUpdate, setIsUpdate] = useState(false)
   const [blockId, setBlockId] = useState('')
-  const [isSuperAdmin, setIsSuperAdmin] = useAtom(isSuperAdminAtom)
-  const isMe = userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a'
 
   const [selectedTemplate, setSelectedTemplate] = useAtom(selectedTemplateAtom)
 
   const { data: blocksData } = api.blocks.getAll.useQuery() // TODO: just load titles
   const blocksTitle = blocksData?.map((block) => block.name)
-  api.exercise.getAll.useQuery({
+  const { data: exerciseTemplates } = api.exercise.getAll.useQuery({
     userId: userId,
   })
 
@@ -171,6 +81,7 @@ const Form = () => {
       setIsOpen(false)
       toast.success('Saved')
       void ctx.blocks.getAll.invalidate()
+      void ctx.blocks.getAllBlockTitles.invalidate()
     },
     onError: (e) => {
       console.log('error', e)
@@ -244,18 +155,34 @@ const Form = () => {
             tempoUp: exercise.tempoUp ? +exercise.tempoUp : null,
             tempoPause: exercise.tempoPause ? +exercise.tempoPause : null,
             isSS: exercise.isSS || false,
+            restTime: exercise.restTime ? +exercise.restTime : null,
+            restUnit: exercise.restUnit,
+            targetRpeHigh: exercise.targetRpeHigh,
             ss: exercise.ss.map((s) => ({
+              id: '',
               name: s.name,
+              lift: s.lift,
               onerm: s.onerm ? +s.onerm : null,
               onermTop: s.onermTop ? +s.onermTop : null,
               weightTop: s.weightTop ? +s.weightTop : null,
-              weightBottom: s.weightBottom ? +s.weightBottom : null,
+              weightBottom: s.weightBottom
+                ? +s.weightBottom
+                : null,
               targetRpe: s.targetRpe ? +s.targetRpe : null,
+              sets: s.sets ? +s.sets : null,
               reps: s.reps ? +s.reps : null,
+              notes: s.notes,
+              isEstimatedOnerm: s.isEstimatedOnerm || false,
+              estimatedOnermIndex: s.estimatedOnermIndex,
               weightType: s.weightType,
               repUnit: s.repUnit,
-              notes: s.notes,
               htmlLink: s.htmlLink,
+              isComplete: false,
+              restTime: s.restTime ? +s.restTime : null,
+              restUnit: s.restUnit,
+              targetRpeHigh: s.targetRpeHigh,
+              field1: null,
+              field2: null,
             })),
           })),
         })),
@@ -270,9 +197,10 @@ const Form = () => {
     console.log('blockId', blockId)
     const block: BlockData = {
       name: data.name,
-      id: blockId,
+      id: blockId || '',
       isProgram: false,
       week: data.week.map((week) => ({
+        id: '',
         name: week.name || '',
         isTemplate: false,
         day: week.day.map((day) => ({
@@ -300,18 +228,34 @@ const Form = () => {
             tempoUp: exercise.tempoUp ? +exercise.tempoUp : null,
             tempoPause: exercise.tempoPause ? +exercise.tempoPause : null,
             isSS: exercise.isSS || false,
+            restTime: exercise.restTime ? +exercise.restTime : null,
+            restUnit: exercise.restUnit,
+            targetRpeHigh: exercise.targetRpeHigh,
             ss: exercise.ss.map((s) => ({
+              id: '',
               name: s.name,
+              lift: s.lift,
               onerm: s.onerm ? +s.onerm : null,
               onermTop: s.onermTop ? +s.onermTop : null,
               weightTop: s.weightTop ? +s.weightTop : null,
-              weightBottom: s.weightBottom ? +s.weightBottom : null,
+              weightBottom: s.weightBottom
+                ? +s.weightBottom
+                : null,
               targetRpe: s.targetRpe ? +s.targetRpe : null,
-              reps: s.reps ? +s.reps : null,
+              sets: s.sets ? +s.sets : null,
+              reps: s.reps ? Number(s.reps) : null,
+              notes: s.notes,
+              isEstimatedOnerm: s.isEstimatedOnerm || false,
+              estimatedOnermIndex: s.estimatedOnermIndex,
               weightType: s.weightType,
               repUnit: s.repUnit,
-              notes: s.notes,
               htmlLink: s.htmlLink,
+              isComplete: false,
+              restTime: s.restTime ? +s.restTime : null,
+              restUnit: s.restUnit,
+              targetRpeHigh: s.targetRpeHigh,
+              field1: null,
+              field2: null,
             })),
           })),
         })),
@@ -362,82 +306,6 @@ const Form = () => {
     })
   }
 
-  const onNewTemplate = () => {
-    reset(defaultValues)
-    setIsUpdate(false)
-    setBlockId('')
-  }
-
-  const onSelectTemplate = (template: string) => {
-    setSelectedTemplate(template)
-  }
-
-  const onLoadTemplate = () => {
-    const block = blocksData?.find((block) => block.id === selectedTemplate)
-    setBlockId(block?.id || '')
-
-    const template = {
-      name: block?.name || '',
-      week: block?.week.map((week) => ({
-        name: week.name || '',
-        isTemplate: false,
-        day: week.day.map((day) => ({
-          isRestDay: day.isRestDay,
-          warmupTemplateId: day.warmupTemplateId || '',
-          exercise: day.exercise.map((exercise) => ({
-            name: exercise.name || '',
-            lift: exercise.lift || '',
-            onerm: exercise.onerm ? exercise.onerm.toString() : undefined,
-            onermTop: exercise.onermTop
-              ? exercise.onermTop.toString()
-              : undefined,
-            weightTop: exercise.weightTop
-              ? exercise.weightTop.toString()
-              : undefined,
-            weightBottom: exercise.weightBottom
-              ? exercise.weightBottom.toString()
-              : undefined,
-            sets: exercise.sets ? exercise.sets.toString() : undefined,
-            reps: exercise.reps ? exercise.reps.toString() : undefined,
-            targetRpe: exercise.targetRpe
-              ? exercise.targetRpe.toString()
-              : undefined,
-            isEstimatedOnerm: exercise.isEstimatedOnerm || false,
-            estimatedOnermIndex: exercise.estimatedOnermIndex,
-            notes: exercise.notes || '',
-            weightType: exercise.weightType || undefined,
-            repUnit: exercise.repUnit || undefined,
-            htmlLink: exercise.htmlLink || undefined,
-            tempoDown: exercise.tempoDown || undefined,
-            tempoUp: exercise.tempoUp || undefined,
-            tempoPause: exercise.tempoPause || undefined,
-            isSS: exercise.ss.length > 0 ? true : false,
-            ss: exercise.ss.map((s) => ({
-              name: s.name || '',
-              lift: s.lift || '',
-              onerm: s.onerm ? s.onerm.toString() : undefined,
-              onermTop: s.onermTop ? s.onermTop.toString() : undefined,
-              weightTop: s.weightTop ? s.weightTop.toString() : undefined,
-              weightBottom: s.weightBottom
-                ? s.weightBottom.toString()
-                : undefined,
-              sets: s.sets ? s.sets.toString() : undefined,
-              reps: s.reps ? s.reps.toString() : undefined,
-              targetRpe: s.targetRpe ? s.targetRpe.toString() : undefined,
-              weightType: s.weightType || undefined,
-              repUnit: s.repUnit || undefined,
-              notes: s.notes || '',
-              htmlLink: s.htmlLink || undefined,
-            })),
-          })),
-        })),
-      })),
-    }
-    reset(template)
-
-    toast.success('Loaded')
-  }
-
   const weekField = useFieldArray({
     control,
     name: 'week',
@@ -448,7 +316,7 @@ const Form = () => {
     weekField.remove(weekField.fields.length - 1)
   }
 
-  const handleDrag = (result) => {
+  const handleDrag = (result: DragResult) => {
     console.log('result', result)
     const { source, destination } = result
     if (!destination) return
@@ -461,16 +329,28 @@ const Form = () => {
     if (
       source.droppableId === destination.droppableId &&
       source.index === destination.index
-    )
-      return
-
-    if (sourceDayId === destDayId) {
-      console.log('same day')
-      fieldArrayContext[sourceDayId].move(sourceIndex, destIndex)
+    ) {
       return
     }
 
-    if (sourceDayId === 'templates') return
+    if (sourceDayId === destDayId) {
+      console.log('same day')
+      fieldArrayContext?.[sourceDayId]?.move(sourceIndex, destIndex)
+      return
+    }
+
+    if (destDayId === 'templates') return
+    if (sourceDayId === 'templates') {
+      const exercise = exerciseTemplates?.find(
+        (t) => t.id === result.draggableId,
+      )
+
+      if (!exercise) return
+
+      fieldArrayContext[destDayId].insert(destIndex, exercise)
+
+      return
+    }
 
     const sourceDay = fieldArrayContext[sourceDayId].fields[sourceIndex]
     fieldArrayContext[sourceDayId].remove(sourceIndex)
@@ -485,100 +365,24 @@ const Form = () => {
         isOpen={isOpen}
         setIsOpen={setIsOpen}
       />
-      <DragDropContext onDragEnd={handleDrag}>
-        <div className='flex w-full'>
-          <ScrollArea className='text-xxs relative flex h-[88vh] h-full w-full flex-col items-center justify-center md:text-base'>
+      <DragDropContext
+        className='overflow-auto'
+        onDragEnd={handleDrag}
+      >
+        <div className='flex w-full tracking-tight h-full '>
+          <ScrollArea className='h-screen w-full'>
+            <Navbar user={userNav || null}/>
             <FormProvider {...formMethods}>
               <form
                 onSubmit={handleSubmit(onSubmit, onError)}
-                className='flex w-full flex-col items-center justify-center '
+                className='flex w-full flex-col items-center min-h-[90vh] '
               >
                 <div className='flex w-full flex-col items-center gap-1 sm:gap-8'>
                   <div className='flex min-h-[60vh] w-full flex-col items-center gap-2 p-1 sm:gap-4'>
-                    {/* template select */}
-                    <div className='flex w-full items-center justify-between rounded-lg bg-gray-900 p-2 '>
-                      <div className='flex w-full gap-2'>
-                        <TemplateSelect onSelectTemplate={onSelectTemplate} />
-                        <div className='flex w-full items-center justify-around gap-2 md:w-fit md:justify-start'>
-                          <Button
-                            type='button'
-                            className='w-36 bg-gray-900 text-sm tracking-tighter sm:text-lg sm:tracking-normal'
-                            onClick={() => onNewTemplate()}
-                          >
-                            New
-                          </Button>
-                          <Button
-                            type='button'
-                            className='w-36 bg-gray-900 text-sm  tracking-tighter sm:text-lg sm:tracking-normal'
-                            onClick={() => onLoadTemplate()}
-                          >
-                            Load
-                          </Button>
-                        </div>
-                      </div>
-                      {isMe && (
-                        <div className='flex items-center gap-1 text-sm'>
-                          Super
-                          <Switch
-                            checked={isSuperAdmin}
-                            onChange={setIsSuperAdmin}
-                            className={cn(
-                              isSuperAdmin ? 'bg-gray-200' : 'bg-gray-600',
-                              'relative inline-flex h-[14px] w-[44px] shrink-0 cursor-pointer rounded-full border-2 border-transparent',
-                              ' transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75',
-                            )}
-                          >
-                            <span
-                              aria-hidden='true'
-                              className={cn(
-                                isSuperAdmin
-                                  ? 'translate-x-6'
-                                  : 'translate-x-0',
-                                'pointer-events-none inline-block h-[10px] w-[14px] transform',
-                                'rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out',
-                              )}
-                            />
-                          </Switch>
-                        </div>
-                      )}
-
-                      {/* Title */}
-                      <div className='flex w-full justify-end gap-2'>
-                        <div className='flex flex-col items-start justify-center gap-2'>
-                          <div className='relative rounded-md px-4 shadow-lg'>
-                            <Input
-                              className='w-40 bg-gray-900  md:w-64 '
-                              placeholder='Title'
-                              defaultValue={``}
-                              {...register('name', {
-                                required: 'This is required.',
-                              })}
-                            />
-                          </div>
-                          <ErrorMessage
-                            errors={errors}
-                            name='name'
-                            render={({ message }) => (
-                              <p className='text-red-400'>{message}</p>
-                            )}
-                          />
-                        </div>
-                        <Button
-                          type='submit'
-                          className='w-24 bg-gray-900 px-0  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
-                          onClick={() => setIsUpdate(false)}
-                        >
-                          Save New
-                        </Button>
-                        <Button
-                          type='submit'
-                          className='w-24 bg-gray-900  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
-                          onClick={() => setIsUpdate(true)}
-                        >
-                          Update
-                        </Button>
-                      </div>
-                    </div>
+                    <FormHeader
+                      setIsUpdate={setIsUpdate}
+                      setBlockId={setBlockId}
+                    />
 
                     <div className='flex w-full flex-col gap-8 '>
                       {weekField.fields.map((week, weekIndex) => (
@@ -597,6 +401,7 @@ const Form = () => {
                 </div>
               </form>
             </FormProvider>
+            <Footer />
           </ScrollArea>
           <ExerciseDropper />
         </div>

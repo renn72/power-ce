@@ -57,6 +57,9 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
       isSS: false,
       isEstimatedOnerm: false,
       estimatedOnermIndex: null,
+      targetRpeHigh: null,
+      restTime: null,
+      restUnit: '',
       flield1: null,
       flield2: null,
       flield3: null,
@@ -102,6 +105,11 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
   useEffect(() => {
     if (isRest) {
       exerciseField.remove()
+    } else {
+      if (exerciseArray.length === 0) {
+        onInsertExercise(0)
+      }
+
     }
   }, [isRest])
 

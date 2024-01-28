@@ -20,6 +20,7 @@ const ModalWrapper = ({
       <Dialog
         as='div'
         className='relative z-10'
+        open={isOpen}
         onClose={() => setIsOpen(true)}
       >
         <Transition.Child

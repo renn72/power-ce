@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const ssSchema = z.object({
-  id: z.string().optional(),
+  id: z.string().optional().nullable(),
   name: z.string().min(0).max(280).optional().nullable(),
   lift: z.string().min(0).max(55).optional().nullable(),
   sets: z.number().min(0).max(55).optional().nullable(),
@@ -18,7 +18,7 @@ export const ssSchema = z.object({
 })
 
 export const exerciseSchema = z.object({
-  id: z.string().optional(),
+  id: z.string().optional().nullable(),
   name: z.string().min(0).max(280).optional().nullable(),
   lift: z.string().min(0).max(55).optional().nullable(),
   sets: z.number().min(0).max(55).optional().nullable(),
@@ -46,19 +46,19 @@ export const exerciseSchema = z.object({
   trainerId: z.string().optional().nullable(),
 })
 export const daySchema = z.object({
-  id: z.string().optional(),
+  id: z.string().optional().nullable(),
   isRestDay: z.boolean(),
   warmupTemplateId: z.string(),
   exercise: z.array(exerciseSchema),
 })
 export const weekSchema = z.object({
-  id: z.string().optional(),
+  id: z.string().optional().nullable(),
   name: z.string().min(0).max(280),
   isTemplate: z.boolean(),
   day: z.array(daySchema),
 })
 export const blockSchema = z.object({
-  id: z.string().optional(),
+  id: z.string().optional().nullable(),
   name: z.string().min(1).max(280),
   isProgram: z.boolean(),
   week: z.array(weekSchema),
