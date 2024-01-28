@@ -110,7 +110,7 @@ const ExerciseView = ({
                 )}
                 {exercise.weightType === 'rpe' && (
                   <div className='flex items-baseline gap-0'>
-                    <h4>RPE Target:&nbsp;</h4>
+                    <h4>RPE:&nbsp;</h4>
                     <h4 className='flex items-baseline justify-center'>
                       {exercise?.targetRpe && +exercise?.targetRpe}
                     </h4>
