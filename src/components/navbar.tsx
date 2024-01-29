@@ -32,8 +32,13 @@ const nav = [
     admin: true,
   },
   {
-    name: 'Templates',
+    name: 'Templates-Old',
     href: '/templates',
+    admin: true,
+  },
+  {
+    name: 'Templates-New',
+    href: '/templates2',
     admin: true,
   },
   {

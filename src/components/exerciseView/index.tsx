@@ -21,10 +21,10 @@ const ExerciseView = ({
 
   return (
     <>
-      <div className='flex cursor-pointer flex-col px-2 py-1 text-base '>
+      <div className='flex cursor-pointer flex-col px-2 py-1 text-base overflow-hidden'>
         <div>
           <div className='flex justify-between'>
-            <div className='flex gap-1 text-lg '>
+            <div className='flex gap-0 text-lg tracking-tighter overflow-hidden'>
               <h2>{exerciseIdx + 1}.</h2>
               <h3 className='truncate font-bold capitalize text-yellow-500'>
                 {isSS ? 'Super Set' : exercise.name?.slice(0, 27)}
