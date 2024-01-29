@@ -543,31 +543,16 @@ const FormExerciseDialog = ({
                 />
               </div>
             </div>
-            <div className='flex flex-col gap-4 lg:flex-row lg:items-center'>
-              <div className='w-20 pr-4 text-lg'>Rest</div>
-              <div className='flex flex-row justify-between lg:items-center lg:gap-4'>
-                <Input
-                  type='number'
-                  {...register(
-                    `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.restTime`,
-                    { valueAsNumber: true },
-                  )}
-                  placeholder='Rest'
-                  className='w-24 px-1 lg:w-32'
-                />
-                <Input
-                  type='test'
-                  {...register(
-                    `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.restUnit`,
-                  )}
-                  placeholder='Rest Unit'
-                  className='w-24 lg:w-32'
-                />
-              </div>
-            </div>
           </div>
         ) : (
           <div className='mt-10 rounded-lg pb-6 shadow shadow-gray-800 lg:px-6 '>
+            <Input
+              className='my-4 w-fit capitalize text-yellow-500'
+              {...register(
+                `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.name`,
+              )}
+              placeholder='name'
+            />
             <div className='col-span-2 mb-6 flex w-64 items-center md:col-span-1'>
               <Label
                 htmlFor='sets'
@@ -615,6 +600,28 @@ const FormExerciseDialog = ({
             </div>
           </div>
         )}
+        <div className='flex flex-col gap-4 lg:flex-row lg:items-center'>
+          <div className='w-20 pr-4 text-lg'>Rest</div>
+          <div className='flex flex-row justify-between lg:items-center lg:gap-4'>
+            <Input
+              type='number'
+              {...register(
+                `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.restTime`,
+                { valueAsNumber: true },
+              )}
+              placeholder='Rest'
+              className='w-24 px-1 lg:w-32'
+            />
+            <Input
+              type='test'
+              {...register(
+                `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.restUnit`,
+              )}
+              placeholder='Rest Unit'
+              className='w-24 lg:w-32'
+            />
+          </div>
+        </div>
         <div className='flex flex-col items-center justify-between gap-4 md:flex-row md:gap-10'>
           <Input
             type='text'
