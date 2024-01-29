@@ -28,9 +28,11 @@ import { XIcon } from 'lucide-react'
 const FormHeader = ({
   setIsUpdate,
   setBlockId,
+  onSubmit,
 }: {
   setIsUpdate: React.Dispatch<React.SetStateAction<boolean>>
   setBlockId: React.Dispatch<React.SetStateAction<string>>
+  onSubmit: any
 }) => {
   const { data: session } = useSession()
   const user = session?.user
@@ -40,6 +42,7 @@ const FormHeader = ({
     register,
     reset,
     watch,
+    handleSubmit,
     formState: { errors },
   } = formMethods
 
@@ -199,14 +202,20 @@ const FormHeader = ({
           <Button
             type='submit'
             className='w-24 bg-gray-900 px-0  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
-            onClick={() => setIsUpdate(false)}
+            onClick={() => {
+              setIsUpdate(false)
+              handleSubmit(onSubmit)()
+            }}
           >
             Save New
           </Button>
           <Button
             type='submit'
             className='w-24 bg-gray-900 px-0  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
-            onClick={() => setIsUpdate(true)}
+            onClick={() => {
+              setIsUpdate(true)
+              handleSubmit(onSubmit)()
+            }}
           >
             Update
           </Button>

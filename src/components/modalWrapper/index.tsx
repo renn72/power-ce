@@ -6,10 +6,12 @@ const ModalWrapper = ({
   isOpen,
   setIsOpen,
   children,
+  unmount = true,
 }: {
   isOpen: boolean
   setIsOpen: (args: boolean) => void
   children: React.ReactNode
+  unmount?: boolean
 }) => {
   return (
     <Transition
@@ -22,6 +24,7 @@ const ModalWrapper = ({
         className='relative z-10'
         open={isOpen}
         onClose={() => setIsOpen(true)}
+        unmount={unmount}
       >
         <Transition.Child
           as={Fragment}

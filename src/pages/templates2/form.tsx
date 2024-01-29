@@ -106,6 +106,7 @@ const Form = () => {
   })
 
   const onSubmit = (data: Block) => {
+    console.log('submit', data)
     setIsOpen(true)
     if (isUpdate) {
       updateBlock(data)
@@ -384,6 +385,7 @@ const Form = () => {
                     <FormHeader
                       setIsUpdate={setIsUpdate}
                       setBlockId={setBlockId}
+                      onSubmit={onSubmit}
                     />
 
                     <div className='flex w-full flex-col gap-8 '>
