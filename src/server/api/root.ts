@@ -19,6 +19,8 @@ import { rpeRouter } from './routers/rpe'
 import { adminLogRouter } from './routers/adminLog'
 import { weekRouter } from './routers/week'
 import { exerciseRouter } from './routers/exercise'
+import { templateRouter} from './routers/template'
+
 
 /**
  * This is the primary router for your server.
@@ -46,6 +48,7 @@ export const appRouter = createTRPCRouter({
   adminLog: adminLogRouter,
   weeks: weekRouter,
   exercise: exerciseRouter,
+  template: templateRouter,
 })
 
 // export type definition of API

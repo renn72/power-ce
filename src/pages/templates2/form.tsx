@@ -13,8 +13,6 @@ import FormWeek from './formWeek'
 import FormHeader from './formHeader'
 
 import { defaultValues } from '~/store/defaultValues'
-import { type Block } from '~/store/types'
-import { type BlockData } from '~/store/types'
 import { type PrismaBlock } from '~/store/types'
 
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
@@ -77,7 +75,7 @@ const Form = () => {
 
   const ctx = api.useUtils()
 
-  const { mutate: blockCreateMutate } = api.blocks.create.useMutation({
+  const { mutate: blockCreateMutate } = api.template.create.useMutation({
     onSuccess: () => {
       setIsOpen(false)
       toast.success('Saved')
@@ -85,14 +83,12 @@ const Form = () => {
       void ctx.blocks.getAllBlockTitles.invalidate()
     },
     onError: (e) => {
-      console.log('error', e)
       toast.error('Error')
       setIsOpen(false)
     },
   })
-  const { mutate: blockUpdateMutate } = api.blocks.update.useMutation({
+  const { mutate: blockUpdateMutate } = api.template.update.useMutation({
     onSuccess: (e) => {
-      console.log('success', e)
       setBlockId(e[1]?.id)
       setIsOpen(false)
       toast.success('Saved')

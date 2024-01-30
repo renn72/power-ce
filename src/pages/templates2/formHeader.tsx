@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { useAtom, atom } from 'jotai'
+import { useAtom, } from 'jotai'
 import { useSession } from 'next-auth/react'
 
 import { ErrorMessage } from '@hookform/error-message'
@@ -27,10 +27,7 @@ import { XIcon } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
 
@@ -79,68 +76,6 @@ const FormHeader = ({
     const block = blocksData?.find((block) => block.id === selectedTemplate)
     setBlockId(block?.id || '')
 
-    // const template = {
-    //   name: block?.name || '',
-    //   week: block?.week.map((week) => ({
-    //     name: week.name || '',
-    //     isTemplate: false,
-    //     day: week.day.map((day) => ({
-    //       isRestDay: day.isRestDay,
-    //       warmupTemplateId: day.warmupTemplateId || '',
-    //       exercise: day.exercise.map((exercise) => ({
-    //         name: exercise.name || '',
-    //         lift: exercise.lift || '',
-    //         onerm: exercise.onerm ? exercise.onerm : undefined,
-    //         onermTop: exercise.onermTop
-    //           ? exercise.onermTop
-    //           : undefined,
-    //         weightTop: exercise.weightTop
-    //           ? +exercise.weightTop
-    //           : undefined,
-    //         weightBottom: exercise.weightBottom
-    //           ? +exercise.weightBottom
-    //           : undefined,
-    //         sets: exercise.sets ? exercise.sets : undefined,
-    //         reps: exercise.reps ? exercise.reps : undefined,
-    //         targetRpe: exercise.targetRpe
-    //           ? exercise.targetRpe
-    //           : undefined,
-    //         targetRpeHigh: exercise.targetRpeHigh
-    //           ? exercise.targetRpeHigh
-    //           : undefined,
-    //         isEstimatedOnerm: exercise.isEstimatedOnerm || false,
-    //         estimatedOnermIndex: exercise.estimatedOnermIndex,
-    //         notes: exercise.notes || '',
-    //         weightType: exercise.weightType || undefined,
-    //         repUnit: exercise.repUnit || undefined,
-    //         htmlLink: exercise.htmlLink || undefined,
-    //         tempoDown: exercise.tempoDown || undefined,
-    //         tempoUp: exercise.tempoUp || undefined,
-    //         tempoPause: exercise.tempoPause || undefined,
-    //         restTime: exercise.restTime || undefined,
-    //         restUnit: exercise.restUnit || undefined,
-    //         isSS: exercise.ss.length > 0 ? true : false,
-    //         ss: exercise.ss.map((s) => ({
-    //           name: s.name || '',
-    //           lift: s.lift || '',
-    //           onerm: s.onerm ? s.onerm.toString() : undefined,
-    //           onermTop: s.onermTop ? s.onermTop.toString() : undefined,
-    //           weightTop: s.weightTop ? s.weightTop.toString() : undefined,
-    //           weightBottom: s.weightBottom
-    //             ? s.weightBottom.toString()
-    //             : undefined,
-    //           sets: s.sets ? s.sets.toString() : undefined,
-    //           reps: s.reps ? s.reps.toString() : undefined,
-    //           targetRpe: s.targetRpe ? s.targetRpe.toString() : undefined,
-    //           weightType: s.weightType || undefined,
-    //           repUnit: s.repUnit || undefined,
-    //           notes: s.notes || '',
-    //           htmlLink: s.htmlLink || undefined,
-    //         })),
-    //       })),
-    //     })),
-    //   })),
-    // }
     reset(block)
 
     toast.success('Loaded')
