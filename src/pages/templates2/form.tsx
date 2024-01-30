@@ -110,11 +110,12 @@ const Form = () => {
     console.log('submit', data)
     console.log('isUpdate', isUpdate)
     setIsOpen(true)
-    if (isUpdate) {
-      updateBlock(data)
-    } else {
-      saveNewBlock(data)
-    }
+    saveNewBlock(data)
+  }
+  const onUpdate = (data: PrismaBlock) => {
+    console.log('submit', data)
+    setIsOpen(true)
+    updateBlock(data)
   }
 
   const saveNewBlock = (data: PrismaBlock) => {
@@ -153,179 +154,48 @@ const Form = () => {
         })),
       },
     }
-
-    console.log('block', block)
-
     blockCreateMutate(block)
-    return
-
-    // const block: BlockData = {
-    //   name: data.name,
-    //   id: '',
-    //   isProgram: false,
-    //   week: data.week.map((week) => ({
-    //     id: '',
-    //     name: week.name || '',
-    //     isTemplate: false,
-    //     day: week.day.map((day) => ({
-    //       isRestDay: day.isRestDay,
-    //       isComplete: false,
-    //       warmupTemplateId: day.warmupTemplateId || '',
-    //       exercise: day.exercise.map((exercise) => ({
-    //         name: exercise.name,
-    //         lift: exercise.lift,
-    //         onerm: exercise.onerm ? +exercise.onerm : null,
-    //         onermTop: exercise.onermTop ? +exercise.onermTop : null,
-    //         weightTop: exercise.weightTop ? +exercise.weightTop : null,
-    //         weightBottom: exercise.weightBottom ? +exercise.weightBottom : null,
-    //         targetRpe: exercise.targetRpe ? +exercise.targetRpe : null,
-    //         sets: exercise.sets ? +exercise.sets : null,
-    //         reps: exercise.reps ? +exercise.reps : null,
-    //         notes: exercise.notes,
-    //         isEstimatedOnerm: exercise.isEstimatedOnerm || false,
-    //         estimatedOnermIndex: exercise.estimatedOnermIndex,
-    //         weightType: exercise.weightType,
-    //         repUnit: exercise.repUnit,
-    //         htmlLink: exercise.htmlLink,
-    //         isComplete: false,
-    //         tempoDown: exercise.tempoDown ? +exercise.tempoDown : null,
-    //         tempoUp: exercise.tempoUp ? +exercise.tempoUp : null,
-    //         tempoPause: exercise.tempoPause ? +exercise.tempoPause : null,
-    //         isSS: exercise.isSS || false,
-    //         restTime: exercise.restTime ? +exercise.restTime : null,
-    //         restUnit: exercise.restUnit,
-    //         targetRpeHigh: exercise.targetRpeHigh,
-    //         ss: exercise.ss.map((s) => ({
-    //           id: '',
-    //           name: s.name,
-    //           lift: s.lift,
-    //           onerm: s.onerm ? +s.onerm : null,
-    //           onermTop: s.onermTop ? +s.onermTop : null,
-    //           weightTop: s.weightTop ? +s.weightTop : null,
-    //           weightBottom: s.weightBottom ? +s.weightBottom : null,
-    //           targetRpe: s.targetRpe ? +s.targetRpe : null,
-    //           sets: s.sets ? +s.sets : null,
-    //           reps: s.reps ? +s.reps : null,
-    //           notes: s.notes,
-    //           isEstimatedOnerm: s.isEstimatedOnerm || false,
-    //           estimatedOnermIndex: s.estimatedOnermIndex,
-    //           weightType: s.weightType,
-    //           repUnit: s.repUnit,
-    //           htmlLink: s.htmlLink,
-    //           isComplete: false,
-    //           restTime: s.restTime ? +s.restTime : null,
-    //           restUnit: s.restUnit,
-    //           targetRpeHigh: s.targetRpeHigh,
-    //           field1: null,
-    //           field2: null,
-    //         })),
-    //       })),
-    //     })),
-    //   })),
-    // }
-    //
-    // blockCreateMutate(block)
   }
 
   const updateBlock = (data: PrismaBlock) => {
-    console.log('updateBlock', data)
-    console.log('blockId', blockId)
-
     const block = {
       ...data,
       createdAt: new Date(),
       id: blockId,
       trainerId: userId,
       week: {
-        create: data.week.map((week) => ({
-          weekId: null,
-          ...week,
-          day: {
-            create: week.day.map((day) => ({
-              ...day,
-              exercise: {
-                create: day.exercise.map((exercise) => ({
-                  ...exercise,
-                  ss: {
-                    create: exercise.ss.map((s) => ({
-                      ...s,
-                    })),
+        create: data.week.map((week) => {
+          delete week?.blockId
+          return {
+            ...week,
+            day: {
+              create: week.day.map((day) => {
+                delete day?.weekId
+                return {
+                  ...day,
+                  exercise: {
+                    create: day.exercise.map((exercise) => {
+                      delete exercise?.dayId
+                      return {
+                        ...exercise,
+                        ss: {
+                          create: exercise.ss.map((s) => {
+                            delete s?.exerciseId
+                            return {
+                              ...s,
+                            }
+                          }),
+                        },
+                      }
+                    }),
                   },
-                })),
-              },
-            })),
-          },
-        })),
+                }
+              }),
+            },
+          }
+        }),
       },
     }
-
-    console.log('block', block)
-
-    // const block: BlockData = {
-    //   name: data.name,
-    //   id: blockId || '',
-    //   isProgram: false,
-    //   week: data.week.map((week) => ({
-    //     id: '',
-    //     name: week.name || '',
-    //     isTemplate: false,
-    //     day: week.day.map((day) => ({
-    //       isRestDay: day.isRestDay,
-    //       isComplete: false,
-    //       warmupTemplateId: day.warmupTemplateId || '',
-    //       exercise: day.exercise.map((exercise) => ({
-    //         name: exercise.name,
-    //         lift: exercise.lift,
-    //         onerm: exercise.onerm ? +exercise.onerm : null,
-    //         onermTop: exercise.onermTop ? +exercise.onermTop : null,
-    //         weightTop: exercise.weightTop ? +exercise.weightTop : null,
-    //         weightBottom: exercise.weightBottom ? +exercise.weightBottom : null,
-    //         targetRpe: exercise.targetRpe ? +exercise.targetRpe : null,
-    //         sets: exercise.sets ? +exercise.sets : null,
-    //         reps: exercise.reps ? +exercise.reps : null,
-    //         notes: exercise.notes,
-    //         isEstimatedOnerm: exercise.isEstimatedOnerm || false,
-    //         estimatedOnermIndex: exercise.estimatedOnermIndex,
-    //         weightType: exercise.weightType,
-    //         repUnit: exercise.repUnit,
-    //         htmlLink: exercise.htmlLink,
-    //         isComplete: false,
-    //         tempoDown: exercise.tempoDown ? +exercise.tempoDown : null,
-    //         tempoUp: exercise.tempoUp ? +exercise.tempoUp : null,
-    //         tempoPause: exercise.tempoPause ? +exercise.tempoPause : null,
-    //         isSS: exercise.isSS || false,
-    //         restTime: exercise.restTime ? +exercise.restTime : null,
-    //         restUnit: exercise.restUnit,
-    //         targetRpeHigh: exercise.targetRpeHigh,
-    //         ss: exercise.ss.map((s) => ({
-    //           id: '',
-    //           name: s.name,
-    //           lift: s.lift,
-    //           onerm: s.onerm ? +s.onerm : null,
-    //           onermTop: s.onermTop ? +s.onermTop : null,
-    //           weightTop: s.weightTop ? +s.weightTop : null,
-    //           weightBottom: s.weightBottom ? +s.weightBottom : null,
-    //           targetRpe: s.targetRpe ? +s.targetRpe : null,
-    //           sets: s.sets ? +s.sets : null,
-    //           reps: s.reps ? Number(s.reps) : null,
-    //           notes: s.notes,
-    //           isEstimatedOnerm: s.isEstimatedOnerm || false,
-    //           estimatedOnermIndex: s.estimatedOnermIndex,
-    //           weightType: s.weightType,
-    //           repUnit: s.repUnit,
-    //           htmlLink: s.htmlLink,
-    //           isComplete: false,
-    //           restTime: s.restTime ? +s.restTime : null,
-    //           restUnit: s.restUnit,
-    //           targetRpeHigh: s.targetRpeHigh,
-    //           field1: null,
-    //           field2: null,
-    //         })),
-    //       })),
-    //     })),
-    //   })),
-    // }
-
     blockUpdateMutate(block)
   }
 
@@ -444,9 +314,9 @@ const Form = () => {
                 <div className='flex w-full flex-col items-center gap-1 sm:gap-8'>
                   <div className='flex min-h-[60vh] w-full flex-col items-center gap-2 p-1 sm:gap-4'>
                     <FormHeader
-                      setIsUpdate={setIsUpdate}
                       setBlockId={setBlockId}
                       onSubmit={onSubmit}
+                      onUpdate={onUpdate}
                     />
 
                     <div className='flex w-full flex-col gap-8 '>

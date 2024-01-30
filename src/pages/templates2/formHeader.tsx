@@ -35,13 +35,13 @@ import {
 } from '@/components/ui/dialog'
 
 const FormHeader = ({
-  setIsUpdate,
   setBlockId,
   onSubmit,
+  onUpdate,
 }: {
-  setIsUpdate: (isUpdate: boolean) => void
   setBlockId: (id: string) => void
-  onSubmit: any
+  onSubmit: (data: Block) => void
+  onUpdate: (data: Block) => void
 }) => {
   const { data: session } = useSession()
   const user = session?.user
@@ -153,7 +153,11 @@ const FormHeader = ({
       <div className='flex w-full gap-2'>
         <div className='flex w-full items-center justify-center gap-8 md:w-full'>
           <div className='text-xl'>{title || 'New Training Template'}</div>
-          <Dialog modal={false}>
+          <Dialog 
+            modal={false}
+            open={isSaveOpen}
+            onOpenChange={setIsSaveOpen}
+          >
             <DialogTrigger asChild>
               <Button
                 type='button'
@@ -195,7 +199,8 @@ const FormHeader = ({
                   type='submit'
                   variant='secondary'
                   onClick={() => {
-                    setIsUpdate(false)
+                    setIsSaveOpen(false)
+                    handleSubmit(onSubmit)()
                   }}
                 >
                   Save New
@@ -204,8 +209,8 @@ const FormHeader = ({
                   type='submit'
                   variant='secondary'
                   onClick={() => {
-                    setIsUpdate(true)
-                    // handleSubmit(onSubmit)()
+                    setIsSaveOpen(false)
+                    handleSubmit(onUpdate)()
                   }}
                 >
                   Update
