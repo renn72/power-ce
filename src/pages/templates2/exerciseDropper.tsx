@@ -23,7 +23,6 @@ const ExerciseDropper = () => {
   const { data: exerciseTemplates } = api.exercise.getAll.useQuery({
     userId: userId,
   })
-  console.log(exerciseTemplates)
   return (
     <div className=''>
       <Accordion

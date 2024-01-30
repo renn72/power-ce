@@ -21,17 +21,26 @@ import TemplateSelect from './templateSelect'
 import { defaultValues } from '~/store/defaultValues'
 
 import { selectedTemplateAtom, isSuperAdminAtom } from './form'
-import { Block } from '~/store/types'
-import ModalWrapper from '~/components/settings/modalWrapper'
+import { PrismaBlock as Block } from '~/store/types'
+import ModalWrapper from '~/components/modalWrapper'
 import { XIcon } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 
 const FormHeader = ({
   setIsUpdate,
   setBlockId,
   onSubmit,
 }: {
-  setIsUpdate: React.Dispatch<React.SetStateAction<boolean>>
-  setBlockId: React.Dispatch<React.SetStateAction<string>>
+  setIsUpdate: (isUpdate: boolean) => void
+  setBlockId: (id: string) => void
   onSubmit: any
 }) => {
   const { data: session } = useSession()
@@ -70,69 +79,69 @@ const FormHeader = ({
     const block = blocksData?.find((block) => block.id === selectedTemplate)
     setBlockId(block?.id || '')
 
-    const template = {
-      name: block?.name || '',
-      week: block?.week.map((week) => ({
-        name: week.name || '',
-        isTemplate: false,
-        day: week.day.map((day) => ({
-          isRestDay: day.isRestDay,
-          warmupTemplateId: day.warmupTemplateId || '',
-          exercise: day.exercise.map((exercise) => ({
-            name: exercise.name || '',
-            lift: exercise.lift || '',
-            onerm: exercise.onerm ? exercise.onerm.toString() : undefined,
-            onermTop: exercise.onermTop
-              ? exercise.onermTop.toString()
-              : undefined,
-            weightTop: exercise.weightTop
-              ? exercise.weightTop.toString()
-              : undefined,
-            weightBottom: exercise.weightBottom
-              ? exercise.weightBottom.toString()
-              : undefined,
-            sets: exercise.sets ? exercise.sets.toString() : undefined,
-            reps: exercise.reps ? exercise.reps.toString() : undefined,
-            targetRpe: exercise.targetRpe
-              ? exercise.targetRpe.toString()
-              : undefined,
-            targetRpeHigh: exercise.targetRpeHigh
-              ? exercise.targetRpeHigh.toString()
-              : undefined,
-            isEstimatedOnerm: exercise.isEstimatedOnerm || false,
-            estimatedOnermIndex: exercise.estimatedOnermIndex,
-            notes: exercise.notes || '',
-            weightType: exercise.weightType || undefined,
-            repUnit: exercise.repUnit || undefined,
-            htmlLink: exercise.htmlLink || undefined,
-            tempoDown: exercise.tempoDown || undefined,
-            tempoUp: exercise.tempoUp || undefined,
-            tempoPause: exercise.tempoPause || undefined,
-            restTime: exercise.restTime || undefined,
-            restUnit: exercise.restUnit || undefined,
-            isSS: exercise.ss.length > 0 ? true : false,
-            ss: exercise.ss.map((s) => ({
-              name: s.name || '',
-              lift: s.lift || '',
-              onerm: s.onerm ? s.onerm.toString() : undefined,
-              onermTop: s.onermTop ? s.onermTop.toString() : undefined,
-              weightTop: s.weightTop ? s.weightTop.toString() : undefined,
-              weightBottom: s.weightBottom
-                ? s.weightBottom.toString()
-                : undefined,
-              sets: s.sets ? s.sets.toString() : undefined,
-              reps: s.reps ? s.reps.toString() : undefined,
-              targetRpe: s.targetRpe ? s.targetRpe.toString() : undefined,
-              weightType: s.weightType || undefined,
-              repUnit: s.repUnit || undefined,
-              notes: s.notes || '',
-              htmlLink: s.htmlLink || undefined,
-            })),
-          })),
-        })),
-      })),
-    }
-    reset(template)
+    // const template = {
+    //   name: block?.name || '',
+    //   week: block?.week.map((week) => ({
+    //     name: week.name || '',
+    //     isTemplate: false,
+    //     day: week.day.map((day) => ({
+    //       isRestDay: day.isRestDay,
+    //       warmupTemplateId: day.warmupTemplateId || '',
+    //       exercise: day.exercise.map((exercise) => ({
+    //         name: exercise.name || '',
+    //         lift: exercise.lift || '',
+    //         onerm: exercise.onerm ? exercise.onerm : undefined,
+    //         onermTop: exercise.onermTop
+    //           ? exercise.onermTop
+    //           : undefined,
+    //         weightTop: exercise.weightTop
+    //           ? +exercise.weightTop
+    //           : undefined,
+    //         weightBottom: exercise.weightBottom
+    //           ? +exercise.weightBottom
+    //           : undefined,
+    //         sets: exercise.sets ? exercise.sets : undefined,
+    //         reps: exercise.reps ? exercise.reps : undefined,
+    //         targetRpe: exercise.targetRpe
+    //           ? exercise.targetRpe
+    //           : undefined,
+    //         targetRpeHigh: exercise.targetRpeHigh
+    //           ? exercise.targetRpeHigh
+    //           : undefined,
+    //         isEstimatedOnerm: exercise.isEstimatedOnerm || false,
+    //         estimatedOnermIndex: exercise.estimatedOnermIndex,
+    //         notes: exercise.notes || '',
+    //         weightType: exercise.weightType || undefined,
+    //         repUnit: exercise.repUnit || undefined,
+    //         htmlLink: exercise.htmlLink || undefined,
+    //         tempoDown: exercise.tempoDown || undefined,
+    //         tempoUp: exercise.tempoUp || undefined,
+    //         tempoPause: exercise.tempoPause || undefined,
+    //         restTime: exercise.restTime || undefined,
+    //         restUnit: exercise.restUnit || undefined,
+    //         isSS: exercise.ss.length > 0 ? true : false,
+    //         ss: exercise.ss.map((s) => ({
+    //           name: s.name || '',
+    //           lift: s.lift || '',
+    //           onerm: s.onerm ? s.onerm.toString() : undefined,
+    //           onermTop: s.onermTop ? s.onermTop.toString() : undefined,
+    //           weightTop: s.weightTop ? s.weightTop.toString() : undefined,
+    //           weightBottom: s.weightBottom
+    //             ? s.weightBottom.toString()
+    //             : undefined,
+    //           sets: s.sets ? s.sets.toString() : undefined,
+    //           reps: s.reps ? s.reps.toString() : undefined,
+    //           targetRpe: s.targetRpe ? s.targetRpe.toString() : undefined,
+    //           weightType: s.weightType || undefined,
+    //           repUnit: s.repUnit || undefined,
+    //           notes: s.notes || '',
+    //           htmlLink: s.htmlLink || undefined,
+    //         })),
+    //       })),
+    //     })),
+    //   })),
+    // }
+    reset(block)
 
     toast.success('Loaded')
   }
@@ -144,14 +153,66 @@ const FormHeader = ({
       <div className='flex w-full gap-2'>
         <div className='flex w-full items-center justify-center gap-8 md:w-full'>
           <div className='text-xl'>{title || 'New Training Template'}</div>
-          <Button
-            type='button'
-            variant='secondary'
-            className='tracking-tighter'
-            onClick={() => setIsSaveOpen(true)}
-          >
-            Save
-          </Button>
+          <Dialog modal={false}>
+            <DialogTrigger asChild>
+              <Button
+                type='button'
+                variant='secondary'
+                className='tracking-tighter'
+              >
+                Save
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent
+              className='flex flex-col items-center justify-center gap-4 bg-gray-900'
+              forceMount
+            >
+              <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
+                Save Template
+              </DialogHeader>
+              <div className='flex flex-col items-start justify-center gap-2'>
+                <div className='relative rounded-md px-4 shadow-lg'>
+                  <Input
+                    className='w-40 bg-gray-900  md:w-64 '
+                    placeholder='Title'
+                    defaultValue={``}
+                    {...register('name', {
+                      required: 'This is required.',
+                    })}
+                  />
+                </div>
+                <ErrorMessage
+                  errors={errors}
+                  name='name'
+                  render={({ message }) => (
+                    <p className='text-red-400'>{message}</p>
+                  )}
+                />
+              </div>
+              <div className='flex gap-4'>
+                <Button
+                  type='submit'
+                  variant='secondary'
+                  onClick={() => {
+                    setIsUpdate(false)
+                  }}
+                >
+                  Save New
+                </Button>
+                <Button
+                  type='submit'
+                  variant='secondary'
+                  onClick={() => {
+                    setIsUpdate(true)
+                    // handleSubmit(onSubmit)()
+                  }}
+                >
+                  Update
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
           <Button
             type='button'
             variant='secondary'
@@ -172,82 +233,32 @@ const FormHeader = ({
       </div>
 
       <ModalWrapper
-        isOpen={isSaveOpen}
-        setIsOpen={setIsSaveOpen}
-      >
-        <div className='relative flex flex-col items-center justify-center gap-2'>
-          <XIcon
-            className='absolute right-2 top-2 cursor-pointer'
-            onClick={() => setIsSaveOpen(false)}
-          />
-          <div className='flex flex-col items-start justify-center gap-2'>
-            <div className='relative rounded-md px-4 shadow-lg'>
-              <Input
-                className='w-40 bg-gray-900  md:w-64 '
-                placeholder='Title'
-                defaultValue={``}
-                {...register('name', {
-                  required: 'This is required.',
-                })}
-              />
-            </div>
-            <ErrorMessage
-              errors={errors}
-              name='name'
-              render={({ message }) => (
-                <p className='text-red-400'>{message}</p>
-              )}
-            />
-          </div>
-          <Button
-            type='submit'
-            className='w-24 bg-gray-900 px-0  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
-            onClick={() => {
-              setIsUpdate(false)
-              handleSubmit(onSubmit)()
-            }}
-          >
-            Save New
-          </Button>
-          <Button
-            type='submit'
-            className='w-24 bg-gray-900 px-0  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
-            onClick={() => {
-              setIsUpdate(true)
-              handleSubmit(onSubmit)()
-            }}
-          >
-            Update
-          </Button>
-        </div>
-      </ModalWrapper>
-      <ModalWrapper
         isOpen={isLoadOpen}
         setIsOpen={setIsLoadOpen}
       >
-      {isMe && (
-        <div className='flex items-center gap-1 text-sm'>
-          Super
-          <Switch
-            checked={isSuperAdmin}
-            onChange={setIsSuperAdmin}
-            className={cn(
-              isSuperAdmin ? 'bg-gray-200' : 'bg-gray-600',
-              'relative inline-flex h-[14px] w-[44px] shrink-0 cursor-pointer rounded-full border-2 border-transparent',
-              ' transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75',
-            )}
-          >
-            <span
-              aria-hidden='true'
+        {isMe && (
+          <div className='flex items-center gap-1 text-sm'>
+            Super
+            <Switch
+              checked={isSuperAdmin}
+              onChange={setIsSuperAdmin}
               className={cn(
-                isSuperAdmin ? 'translate-x-6' : 'translate-x-0',
-                'pointer-events-none inline-block h-[10px] w-[14px] transform',
-                'rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out',
+                isSuperAdmin ? 'bg-gray-200' : 'bg-gray-600',
+                'relative inline-flex h-[14px] w-[44px] shrink-0 cursor-pointer rounded-full border-2 border-transparent',
+                ' transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75',
               )}
-            />
-          </Switch>
-        </div>
-      )}
+            >
+              <span
+                aria-hidden='true'
+                className={cn(
+                  isSuperAdmin ? 'translate-x-6' : 'translate-x-0',
+                  'pointer-events-none inline-block h-[10px] w-[14px] transform',
+                  'rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out',
+                )}
+              />
+            </Switch>
+          </div>
+        )}
         <div className='relative flex items-center justify-center gap-2 px-8 py-16'>
           <XIcon
             className='absolute right-2 top-2 cursor-pointer'

@@ -30,12 +30,12 @@ export const exerciseSchema = z.object({
   targetRpe: z.number().min(0).max(100).optional().nullable(),
   targetRpeHigh: z.number().min(0).max(100).optional().nullable(),
   notes: z.string().min(0).max(280).optional().nullable(),
-  isEstimatedOnerm: z.boolean(),
+  isEstimatedOnerm: z.boolean().optional().nullable(),
   estimatedOnermIndex: z.number().min(0).max(100).optional().nullable(),
   weightType: z.string().min(0).max(280).optional().nullable(),
   repUnit: z.string().min(0).max(55).optional().nullable(),
   htmlLink: z.string().min(0).max(280).optional().nullable(),
-  isSS: z.boolean(),
+  isSS: z.boolean().optional().nullable(),
   ss: z.array(ssSchema).optional().nullable(),
   tempoDown: z.number().min(0).max(99999).optional().nullable(),
   tempoPause: z.number().min(0).max(99999).optional().nullable(),
@@ -47,14 +47,16 @@ export const exerciseSchema = z.object({
 })
 export const daySchema = z.object({
   id: z.string().optional().nullable(),
+  name: z.string().min(0).max(280).optional().nullable(),
   isRestDay: z.boolean(),
   warmupTemplateId: z.string(),
   exercise: z.array(exerciseSchema),
+  isTemplate: z.boolean().optional().nullable(),
 })
 export const weekSchema = z.object({
   id: z.string().optional().nullable(),
-  name: z.string().min(0).max(280),
-  isTemplate: z.boolean(),
+  name: z.string().min(0).max(280).optional().nullable(),
+  isTemplate: z.boolean().optional().nullable(),
   day: z.array(daySchema),
 })
 export const blockSchema = z.object({

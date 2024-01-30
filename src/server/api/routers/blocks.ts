@@ -6,10 +6,13 @@ import {
   publicProcedure,
 } from '~/server/api/trpc'
 
+import { blockSchema, weekSchema } from '~/server/api/schemas/schemas'
+
 import {
-  blockSchema,
-  weekSchema,
-} from '~/server/api/schemas/schemas'
+  BlockCreateInputObjectSchema,
+  BlockCreateOneSchema,
+} from '~/../prisma/generated/schemas'
+import { BlockCreateInputSchema } from 'prisma/generated/zod'
 
 export const blocksRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
@@ -266,72 +269,143 @@ export const blocksRouter = createTRPCRouter({
     }),
 
   create: privateProcedure
-    .input(blockSchema)
+    .input(BlockCreateInputSchema)
     .mutation(async ({ ctx, input }) => {
       const authorId = ctx.userId
 
       console.log('ctx', ctx.userId)
       console.log('input', JSON.stringify(input, null, 2))
 
-      const block = await ctx.prisma.block.create({
-        data: {
-          name: input.name,
-          isProgram: input.isProgram,
-          trainerId: authorId,
-          week: {
-            create: input.week.map((week) => ({
-              name: week.name,
-              isTemplate: week.isTemplate,
-              day: {
-                create: week.day.map((day) => ({
-                  isRestDay: day.isRestDay,
-                  warmupTemplateId: day.warmupTemplateId,
-                  exercise: {
-                    create: day.exercise.map((exercise) => ({
-                      name: exercise.name,
-                      lift: exercise.lift,
-                      sets: exercise.sets,
-                      reps: exercise.reps,
-                      onerm: exercise.onerm,
-                      onermTop: exercise.onermTop,
-                      weightTop: exercise.weightTop,
-                      weightBottom: exercise.weightBottom,
-                      targetRpe: exercise.targetRpe,
-                      notes: exercise?.notes,
-                      isEstimatedOnerm: exercise.isEstimatedOnerm,
-                      actualSets: exercise.sets,
-                      estimatedOnermIndex: exercise.estimatedOnermIndex,
-                      weightType: exercise.weightType,
-                      repUnit: exercise.repUnit,
-                      tempoDown: exercise.tempoDown,
-                      tempoPause: exercise.tempoPause,
-                      tempoUp: exercise.tempoUp,
-                      htmlLink: exercise.htmlLink,
-                      ss: {
-                        create: exercise?.ss?.map((s) => ({
-                          name: s.name,
-                          lift: s.lift,
-                          reps: s.reps,
-                          onerm: s.onerm,
-                          onermTop: s.onermTop,
-                          weightTop: s.weightTop,
-                          weightBottom: s.weightBottom,
-                          targetRpe: s.targetRpe,
-                          weightType: s.weightType,
-                          notes: s.notes,
-                          htmlLink: s.htmlLink,
-                        })),
-                      },
-                    })),
-                  },
-                })),
-              },
-            })),
-          },
-        },
-      })
+      const block = await ctx.prisma.block.create({ data: input })
+      return block
+
+      // const block = await ctx.prisma.block.create({
+      //   data: {
+      //     name: input.name,
+      //     isProgram: input.isProgram,
+      //     trainerId: authorId,
+      //     week: {
+      //       create: input.week.map((week) => ({
+      //         name: week.name,
+      //         isTemplate: week.isTemplate,
+      //         day: {
+      //           create: week.day.map((day) => ({
+      //             isRestDay: day.isRestDay,
+      //             warmupTemplateId: day.warmupTemplateId,
+      //             exercise: {
+      //               create: day.exercise.map((exercise) => ({
+      //                 name: exercise.name,
+      //                 lift: exercise.lift,
+      //                 sets: exercise.sets,
+      //                 reps: exercise.reps,
+      //                 onerm: exercise.onerm,
+      //                 onermTop: exercise.onermTop,
+      //                 weightTop: exercise.weightTop,
+      //                 weightBottom: exercise.weightBottom,
+      //                 targetRpe: exercise.targetRpe,
+      //                 notes: exercise?.notes,
+      //                 isEstimatedOnerm: exercise.isEstimatedOnerm,
+      //                 actualSets: exercise.sets,
+      //                 estimatedOnermIndex: exercise.estimatedOnermIndex,
+      //                 weightType: exercise.weightType,
+      //                 repUnit: exercise.repUnit,
+      //                 tempoDown: exercise.tempoDown,
+      //                 tempoPause: exercise.tempoPause,
+      //                 tempoUp: exercise.tempoUp,
+      //                 htmlLink: exercise.htmlLink,
+      //                 ss: {
+      //                   create: exercise?.ss?.map((s) => ({
+      //                     name: s.name,
+      //                     lift: s.lift,
+      //                     reps: s.reps,
+      //                     onerm: s.onerm,
+      //                     onermTop: s.onermTop,
+      //                     weightTop: s.weightTop,
+      //                     weightBottom: s.weightBottom,
+      //                     targetRpe: s.targetRpe,
+      //                     weightType: s.weightType,
+      //                     notes: s.notes,
+      //                     htmlLink: s.htmlLink,
+      //                   })),
+      //                 },
+      //               })),
+      //             },
+      //           })),
+      //         },
+      //       })),
+      //     },
+      //   },
+      // })
 
       return block
+    }),
+
+  update: privateProcedure
+    .input(BlockCreateInputSchema)
+    .mutation(async ({ ctx, input }) => {
+      const updateAction = await ctx.prisma.$transaction([
+        ctx.prisma.block.delete({ where: { id: input.id } }),
+        ctx.prisma.block.create({
+          data: input,
+          // data: {
+          //   name: input.name,
+          //   isProgram: false,
+          //   trainerId: authorId,
+          //   week: {
+          //     create: input.week.map((week) => ({
+          //       day: {
+          //         create: week.day.map((day) => ({
+          //           isRestDay: day.isRestDay,
+          //           warmupTemplateId: day.warmupTemplateId,
+          //           exercise: {
+          //             create: day.exercise.map((exercise) => ({
+          //               name: exercise.name,
+          //               lift: exercise.lift,
+          //               sets: exercise.sets,
+          //               reps: exercise.reps,
+          //               onerm: exercise.onerm,
+          //               onermTop: exercise.onermTop,
+          //               weightTop: exercise.weightTop,
+          //               weightBottom: exercise.weightBottom,
+          //               targetRpe: exercise.targetRpe,
+          //               notes: exercise?.notes,
+          //               tempoDown: exercise.tempoDown,
+          //               tempoPause: exercise.tempoPause,
+          //               tempoUp: exercise.tempoUp,
+          //               isEstimatedOnerm: exercise.isEstimatedOnerm,
+          //               actualSets: exercise.sets,
+          //               estimatedOnermIndex: exercise.estimatedOnermIndex,
+          //               weightType: exercise.weightType,
+          //               repUnit: exercise.repUnit,
+          //               htmlLink: exercise.htmlLink,
+          //               ss: exercise.isSS
+          //                 ? {
+          //                     create: exercise?.ss?.map((s) => ({
+          //                       name: s.name,
+          //                       lift: s.lift,
+          //                       reps: s.reps,
+          //                       onerm: s.onerm,
+          //                       onermTop: s.onermTop,
+          //                       weightTop: s.weightTop,
+          //                       weightBottom: s.weightBottom,
+          //                       targetRpe: s.targetRpe,
+          //                       weightType: s.weightType,
+          //                       notes: s.notes,
+          //                       htmlLink: s.htmlLink,
+          //                     })),
+          //                   }
+          //                 : undefined,
+          //             })),
+          //           },
+          //         })),
+          //       },
+          //     })),
+          //   },
+          // },
+        }),
+      ])
+
+      return updateAction
     }),
 
   getAllWeekTemplates: privateProcedure
@@ -476,77 +550,6 @@ export const blocksRouter = createTRPCRouter({
       return week
     }),
 
-  update: privateProcedure
-    .input(blockSchema)
-    .mutation(async ({ ctx, input }) => {
-      const authorId = ctx.userId
-
-      console.log('ctx', ctx.userId)
-      console.log('input', JSON.stringify(input, null, 2))
-
-      const updateAction = await ctx.prisma.$transaction([
-        ctx.prisma.block.delete({ where: { id: input.id } }),
-        ctx.prisma.block.create({
-          data: {
-            name: input.name,
-            isProgram: false,
-            trainerId: authorId,
-            week: {
-              create: input.week.map((week) => ({
-                day: {
-                  create: week.day.map((day) => ({
-                    isRestDay: day.isRestDay,
-                    warmupTemplateId: day.warmupTemplateId,
-                    exercise: {
-                      create: day.exercise.map((exercise) => ({
-                        name: exercise.name,
-                        lift: exercise.lift,
-                        sets: exercise.sets,
-                        reps: exercise.reps,
-                        onerm: exercise.onerm,
-                        onermTop: exercise.onermTop,
-                        weightTop: exercise.weightTop,
-                        weightBottom: exercise.weightBottom,
-                        targetRpe: exercise.targetRpe,
-                        notes: exercise?.notes,
-                        tempoDown: exercise.tempoDown,
-                        tempoPause: exercise.tempoPause,
-                        tempoUp: exercise.tempoUp,
-                        isEstimatedOnerm: exercise.isEstimatedOnerm,
-                        actualSets: exercise.sets,
-                        estimatedOnermIndex: exercise.estimatedOnermIndex,
-                        weightType: exercise.weightType,
-                        repUnit: exercise.repUnit,
-                        htmlLink: exercise.htmlLink,
-                        ss: exercise.isSS
-                          ? {
-                              create: exercise?.ss?.map((s) => ({
-                                name: s.name,
-                                lift: s.lift,
-                                reps: s.reps,
-                                onerm: s.onerm,
-                                onermTop: s.onermTop,
-                                weightTop: s.weightTop,
-                                weightBottom: s.weightBottom,
-                                targetRpe: s.targetRpe,
-                                weightType: s.weightType,
-                                notes: s.notes,
-                                htmlLink: s.htmlLink,
-                              })),
-                            }
-                          : undefined,
-                      })),
-                    },
-                  })),
-                },
-              })),
-            },
-          },
-        }),
-      ])
-
-      return updateAction
-    }),
   hardDelete: privateProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {

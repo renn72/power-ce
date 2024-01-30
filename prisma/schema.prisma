@@ -6,19 +6,27 @@ generator client {
   // previewFeatures = ["jsonProtocol"]
 }
 
+generator zod {
+  provider                         = "zod-prisma-types"
+  useMultipleFiles                 = true
+  createOptionalDefaultValuesTypes = true
+  writeNullishInModelTypes = true
+}
+
 datasource db {
   provider     = "mysql"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
+/// @@Gen.model(hide: true)
 model RPEIndex {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
   userId String
 
-  name String
+  name  String
   value Decimal
 
   isDeleted Boolean @default(false)
@@ -26,6 +34,7 @@ model RPEIndex {
   @@unique([userId, name], name: "userId_name")
 }
 
+/// @@Gen.model(hide: true)
 model CompDate {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -44,6 +53,7 @@ model CompDate {
   flield5 String?
 }
 
+/// @@Gen.model(hide: true)
 model CompLift {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -105,6 +115,7 @@ model CompLift {
   flield0 String?
 }
 
+/// @@Gen.model(hide: true)
 model CompLiftAddress {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -121,6 +132,7 @@ model CompLiftAddress {
   flield5 String?
 }
 
+/// @@Gen.model(hide: true)
 model Post {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -171,8 +183,8 @@ model SuperSet {
   sets Int?
   reps Int?
 
-  userId    String?
-  trainerId String?
+  userId     String?
+  trainerId  String?
   isTemplate Boolean?
 
   repUnit String? @db.VarChar(55)
@@ -185,7 +197,7 @@ model SuperSet {
   weightTop    Decimal?
   weightBottom Decimal?
 
-  targetRpe Decimal?
+  targetRpe     Decimal?
   targetRpeHigh Decimal?
 
   restTime Int?
@@ -229,8 +241,8 @@ model Exercise {
   sets Int?
   reps Int?
 
-  userId    String?
-  trainerId String?
+  userId     String?
+  trainerId  String?
   isTemplate Boolean?
 
   repUnit String? @db.VarChar(55)
@@ -243,7 +255,7 @@ model Exercise {
   weightTop    Decimal?
   weightBottom Decimal?
 
-  targetRpe Decimal?
+  targetRpe     Decimal?
   targetRpeHigh Decimal?
 
   restTime Int?
@@ -271,7 +283,7 @@ model Exercise {
 
   day Day? @relation(fields: [dayId], references: [id], onDelete: Cascade)
 
-  ss SuperSet[]
+  ss   SuperSet[]
   isSS Boolean?
 
   notes    String? @db.Text
@@ -292,8 +304,8 @@ model Day {
 
   name String? @db.VarChar(255)
 
-  userId    String?
-  trainerId String?
+  userId     String?
+  trainerId  String?
   isTemplate Boolean?
 
   exercise  Exercise[]
@@ -354,7 +366,7 @@ model Block {
 
   name String @db.VarChar(255)
 
-  isProgram Boolean
+  isProgram Boolean @default(false)
 
   isDeleted Boolean @default(false)
 
@@ -387,6 +399,7 @@ model UserProgram {
   createdAt       DateTime @default(now())
 }
 
+/// @@Gen.model(hide: true)
 model OneRepMax {
   createdAt DateTime @default(now())
 
@@ -401,6 +414,7 @@ model OneRepMax {
   @@id([userId, lift])
 }
 
+/// @@Gen.model(hide: true)
 model Lifts {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -418,6 +432,7 @@ model Lifts {
   flield3 String?
 }
 
+/// @@Gen.model(hide: true)
 model PrimaryLifts {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -432,6 +447,7 @@ model PrimaryLifts {
   flield3 String?
 }
 
+/// @@Gen.model(hide: true)
 model TrainerToClient {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -446,6 +462,7 @@ model TrainerToClient {
   flield3 String?
 }
 
+/// @@Gen.model(hide: true)
 model Lift {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -473,6 +490,7 @@ model Lift {
   @@index([liftId])
 }
 
+/// @@Gen.model(hide: true)
 model Goal {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -493,6 +511,7 @@ model Goal {
   @@index([userId])
 }
 
+/// @@Gen.model(hide: true)
 model DailyLog {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -531,27 +550,29 @@ model DailyLog {
   @@index([userId])
 }
 
+/// @@Gen.model(hide: true)
 model Log {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  userId String
-  action String
+  userId   String
+  action   String
   location String
-  url String?
+  url      String?
   response Json
-  request Json?
+  request  Json?
 
   flield1 String?
   flield2 String?
 }
 
+/// @@Gen.model(hide: true)
 model UserProfile {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
   userId String @unique
-  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   DOB    DateTime?
   gender String?
@@ -572,7 +593,7 @@ model UserProfile {
   deadliftOneRepMax Decimal?
 
   programInterval String?
-  isChecked      Boolean @default(false)
+  isChecked       Boolean @default(false)
 
   sp1_1 Decimal @default(0.9)
   sp1_2 Decimal @default(0.91)
@@ -617,6 +638,7 @@ model UserProfile {
   @@index([userId])
 }
 
+/// @@Gen.model(hide: true)
 model CompPlanValue {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -624,17 +646,19 @@ model CompPlanValue {
   CompPlanId String
   CompPlan   CompPlan @relation(fields: [CompPlanId], references: [id], onDelete: Cascade)
 
-  name String
+  name  String
   value String
 
   notes String?
   time  String?
 
   isGoodLift Boolean?
-  isComplete Boolean @default(false)
+  isComplete Boolean  @default(false)
+
   @@index([CompPlanId])
 }
 
+/// @@Gen.model(hide: true)
 model CompPlan {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -649,6 +673,7 @@ model CompPlan {
   isDeleted Boolean @default(false)
 }
 
+/// @@Gen.model(hide: true)
 model Record {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -668,6 +693,7 @@ model Record {
   isDeleted Boolean @default(false)
 }
 
+/// @@Gen.model(hide: true)
 model Warmup {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -688,6 +714,7 @@ model Warmup {
   @@index([warmupTemplateId])
 }
 
+/// @@Gen.model(hide: true)
 model WarmupTemplate {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -705,6 +732,7 @@ model WarmupTemplate {
 }
 
 // Necessary for Next auth
+/// @@Gen.model(hide: true)
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -723,6 +751,7 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+/// @@Gen.model(hide: true)
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
@@ -731,6 +760,7 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+/// @@Gen.model(hide: true)
 model User {
   id            String        @id @default(cuid())
   firstName     String?
@@ -768,6 +798,7 @@ model User {
   flield9 String?
 }
 
+/// @@Gen.model(hide: true)
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -776,6 +807,7 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+/// @@Gen.model(hide: true)
 model BaseIngredient {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -806,6 +838,7 @@ model BaseIngredient {
   flield3 String?
 }
 
+/// @@Gen.model(hide: true)
 model Ingredient {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -831,6 +864,7 @@ model Ingredient {
   @@index([recipeId])
 }
 
+/// @@Gen.model(hide: true)
 model Recipe {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -862,6 +896,7 @@ model Recipe {
   flield3 String?
 }
 
+/// @@Gen.model(hide: true)
 model RecipeNote {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
