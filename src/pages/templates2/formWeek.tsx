@@ -8,6 +8,13 @@ import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+
 import { useSession } from 'next-auth/react'
 import { api } from '~/utils/api'
 
@@ -33,20 +40,142 @@ const FormWeekHeader = ({ weekIdx }: { weekIdx: number }) => {
     formState: { errors },
   } = formMethods
 
+  const [isSaveOpen, setIsSaveOpen] = useState(false)
+  const [isLoadOpen, setIsLoadOpen] = useState(false)
+
   const weekName = watch(`week.${weekIdx}.name`)
 
   return (
-    <div className='flex items-center justify-center gap-8 p-1'>
+    <div className='flex items-center justify-center gap-12 pt-1 pb-2'>
       <div className='text-xl font-bold'>
         {weekName ? weekName : `Week ${weekIdx + 1}`}
       </div>
-      <Button
-        type='button'
-        size='sm'
-        className='bg-gray-900 text-xs sm:text-sm'
-      >
-        Save
-      </Button>
+      <div className='flex gap-2'>
+        <Dialog
+          open={isSaveOpen}
+          onOpenChange={setIsSaveOpen}
+        >
+          <DialogTrigger asChild>
+            <Button
+              type='button'
+              size='sm'
+              variant='secondary'
+              className='h-7 tracking-tighter'
+            >
+              Save
+            </Button>
+          </DialogTrigger>
+
+          <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
+            <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
+              Save Template
+            </DialogHeader>
+            <div className='flex flex-col items-start justify-center gap-2'>
+              <div className='relative rounded-md px-4 shadow-lg'>
+                <Input
+                  className='w-40 bg-gray-900  md:w-64 '
+                  placeholder='Title'
+                  defaultValue={``}
+                  {...register(`week.${weekIdx}.name`)}
+                />
+              </div>
+              <ErrorMessage
+                errors={errors}
+                name='name'
+                render={({ message }) => (
+                  <p className='text-red-400'>{message}</p>
+                )}
+              />
+            </div>
+            <div className='flex gap-4'>
+              <Button
+                type='submit'
+                variant='secondary'
+                onClick={() => {
+                  setIsSaveOpen(false)
+                }}
+              >
+                Save New
+              </Button>
+              <Button
+                type='submit'
+                variant='secondary'
+                onClick={() => {
+                  setIsSaveOpen(false)
+                }}
+              >
+                Update
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+        <Button
+          type='button'
+          size='sm'
+          variant='secondary'
+          className='h-7 tracking-tighter'
+        >
+          Clear
+        </Button>
+        <Dialog
+          open={isSaveOpen}
+          onOpenChange={setIsSaveOpen}
+        >
+          <DialogTrigger asChild>
+            <Button
+              type='button'
+              size='sm'
+              variant='secondary'
+              className='h-7 tracking-tighter'
+            >
+              Load
+            </Button>
+          </DialogTrigger>
+
+          <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
+            <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
+              Save Template
+            </DialogHeader>
+            <div className='flex flex-col items-start justify-center gap-2'>
+              <div className='relative rounded-md px-4 shadow-lg'>
+                <Input
+                  className='w-40 bg-gray-900  md:w-64 '
+                  placeholder='Title'
+                  defaultValue={``}
+                  {...register(`week.${weekIdx}.name`)}
+                />
+              </div>
+              <ErrorMessage
+                errors={errors}
+                name='name'
+                render={({ message }) => (
+                  <p className='text-red-400'>{message}</p>
+                )}
+              />
+            </div>
+            <div className='flex gap-4'>
+              <Button
+                type='submit'
+                variant='secondary'
+                onClick={() => {
+                  setIsSaveOpen(false)
+                }}
+              >
+                Save New
+              </Button>
+              <Button
+                type='submit'
+                variant='secondary'
+                onClick={() => {
+                  setIsSaveOpen(false)
+                }}
+              >
+                Update
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   )
 }

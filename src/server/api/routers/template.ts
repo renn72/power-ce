@@ -1,6 +1,9 @@
 import { createTRPCRouter, privateProcedure } from '~/server/api/trpc'
 
-import { BlockCreateInputSchema } from 'prisma/generated/zod'
+import {
+  BlockCreateInputSchema,
+  WeekCreateInputSchema,
+} from 'prisma/generated/zod'
 
 import { z } from 'zod'
 
@@ -66,5 +69,14 @@ export const templateRouter = createTRPCRouter({
         },
       })
       return block
+    }),
+  createWeek: privateProcedure
+    .input(WeekCreateInputSchema)
+    .mutation(async ({ ctx, input }) => {
+      const week = await ctx.prisma.week.create({
+        data: input,
+      })
+
+      return week
     }),
 })
