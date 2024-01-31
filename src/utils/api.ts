@@ -24,7 +24,7 @@ export const api = createTRPCNext<AppRouter>({
         defaultOptions: {
           queries: {
             staleTime: 10 * 60 * 1000, // 10 minutes
-            gcTime:10 * 60 * 1000,  // 10 minutes 
+            gcTime: 10 * 60 * 1000, // 10 minutes
           },
         },
       },

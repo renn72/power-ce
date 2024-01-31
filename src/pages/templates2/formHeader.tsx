@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, } from 'react'
 import { useAtom } from 'jotai'
 import { useSession } from 'next-auth/react'
 
@@ -23,7 +23,6 @@ import { defaultValues } from '~/store/defaultValues'
 import { selectedTemplateAtom, isSuperAdminAtom } from './form'
 import { PrismaBlock as Block } from '~/store/types'
 import ModalWrapper from '~/components/modalWrapper'
-import { XIcon } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -59,11 +58,14 @@ const FormHeader = ({
   const isMe = userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a'
 
   const [selectedTemplate, setSelectedTemplate] = useAtom(selectedTemplateAtom)
+
   api.template.getAllTemplateTitles.useQuery({
     userId: userId,
     isSuperAdmin: isSuperAdmin,
   })
-  const { data: blocksData } = api.blocks.getAll.useQuery() // TODO: just load titles
+  const { data: templateData, isLoading: templateLoading } = api.template.get.useQuery({
+    id: selectedTemplate,
+  })
 
   const onNewTemplate = () => {
     reset(defaultValues)
@@ -75,10 +77,14 @@ const FormHeader = ({
   }
 
   const onLoadTemplate = () => {
-    const block = blocksData?.find((block) => block.id === selectedTemplate)
-    setBlockId(block?.id || '')
+    if (!templateData) {
+      toast.error('error')
+      return
+    }
 
-    reset(block)
+    setBlockId(templateData.id)
+
+    reset(templateData)
 
     toast.success('Loaded')
   }
@@ -91,7 +97,6 @@ const FormHeader = ({
         <div className='flex w-full items-center justify-center gap-8 md:w-full'>
           <div className='text-xl'>{title || 'New Training Template'}</div>
           <Dialog
-            modal={false}
             open={isSaveOpen}
             onOpenChange={setIsSaveOpen}
           >
@@ -107,7 +112,6 @@ const FormHeader = ({
 
             <DialogContent
               className='flex flex-col items-center justify-center gap-4 bg-gray-900'
-              forceMount
             >
               <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
                 Save Template
@@ -165,7 +169,6 @@ const FormHeader = ({
           </Button>
 
           <Dialog
-            modal={false}
             open={isLoadOpen}
             onOpenChange={setIsLoadOpen}
           >
@@ -174,6 +177,7 @@ const FormHeader = ({
                 type='button'
                 variant='secondary'
                 className='tracking-tighter'
+                disabled={templateLoading}
                 onClick={() => setIsLoadOpen(true)}
               >
                 Load
@@ -182,7 +186,6 @@ const FormHeader = ({
 
             <DialogContent
               className='flex flex-col items-center justify-center gap-4 bg-gray-900'
-              forceMount
             >
               <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
                 Save Template
@@ -211,7 +214,8 @@ const FormHeader = ({
                 </div>
               )}
               <div className='flex items-center justify-center gap-2 px-8 py-16'>
-                <TemplateSelect onSelectTemplate={onSelectTemplate} />
+                <TemplateSelect 
+                  onSelectTemplate={onSelectTemplate} />
                 <Button
                   type='button'
                   className='w-24 bg-gray-900 px-0  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'

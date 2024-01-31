@@ -15,6 +15,7 @@ import {
   CheckIcon,
   XCircleIcon,
   CheckCircleIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline'
 
 import { NumericFormat } from 'react-number-format'
@@ -47,12 +48,14 @@ const FormExerciseDialog = ({
   weekIdx,
   dayIdx,
   exerciseIdx,
+  onRemoveExercise,
   setIsOpen,
 }: {
   weekIdx: number
   dayIdx: number
   exerciseIdx: number
   setIsOpen: (args0: boolean) => void
+  onRemoveExercise: (args0: number) => void
 }) => {
   const formMethods = useFormContext()
   const { register, control, watch, setValue, getValues } = formMethods
@@ -177,7 +180,11 @@ const FormExerciseDialog = ({
   }, [liftType])
 
   return (
-    <div className='flex flex-col justify-center p-4'>
+    <div className='relative flex flex-col justify-center p-4'>
+      <XMarkIcon
+        className='absolute right-0 top-0 h-8 w-8 cursor-pointer text-gray-400 hover:text-white'
+        onClick={() => setIsOpen(false)}
+      />
       <div className='relative flex items-center justify-between gap-4'>
         <div className='p-1 px-4 text-xl font-extrabold italic tracking-widest underline decoration-yellow-500 decoration-2 underline-offset-8'>
           &nbsp;{exerciseIdx + 1}&nbsp;
@@ -738,6 +745,18 @@ const FormExerciseDialog = ({
           onClick={onSaveTemplate}
         >
           Save Template
+        </Button>
+        <Button
+          type='button'
+          size='lg'
+          variant='destructive'
+          className='center mt-8 tracking-tight text-gray-200/80'
+          onClick={() => {
+            setIsOpen(false)
+            onRemoveExercise(exerciseIdx)
+          }}
+        >
+          Delete
         </Button>
       </div>
     </div>

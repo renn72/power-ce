@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input'
 import { useSession } from 'next-auth/react'
 import { api } from '~/utils/api'
 
-import { type Block } from '~/store/types'
+import { type PrismaBlock as Block } from '~/store/types'
 
 import { cn } from '@/lib/utils'
 import FormDay from './formDay'
@@ -19,7 +19,7 @@ import WeekTemplateSelect from './weekTemplateSelect'
 
 const loadedTemplateAtom = atom<string>('')
 
-const FormWeek = ({ weekIdx }: { weekIdx: number }) => {
+const FormWeekHeader = ({ weekIdx }: { weekIdx: number }) => {
   const formMethods = useFormContext<Block>()
   const {
     control,
@@ -29,6 +29,34 @@ const FormWeek = ({ weekIdx }: { weekIdx: number }) => {
     getValues,
     setValue,
     setError,
+    watch,
+    formState: { errors },
+  } = formMethods
+
+  const weekName = watch(`week.${weekIdx}.name`)
+
+  return (
+    <div className='flex items-center justify-center gap-8 p-1'>
+      <div className='text-xl font-bold'>
+        {weekName ? weekName : `Week ${weekIdx + 1}`}
+      </div>
+      <Button
+        type='button'
+        size='sm'
+        className='bg-gray-900 text-xs sm:text-sm'
+      >
+        Save
+      </Button>
+    </div>
+  )
+}
+
+const FormWeek = ({ weekIdx }: { weekIdx: number }) => {
+  const formMethods = useFormContext<Block>()
+  const {
+    control,
+    reset,
+    getValues,
     formState: { errors },
   } = formMethods
 
@@ -76,88 +104,32 @@ const FormWeek = ({ weekIdx }: { weekIdx: number }) => {
     // setSelectedWeekTemplate('')
 
     reset(update)
-    // toast.success('Loaded')
+    toast.success('Loaded')
   }
-
-
-  const restDays = dayField.fields.reduce(
-    (a, i) => a + (i.isRestDay ? 1 : 0),
-    0,
-  )
 
   return (
     <div className='flex flex-col gap-1 rounded-lg bg-gray-900 px-2 py-2 '>
-      <div className='flex justify-between'>
-        <div className='flex gap-2'>
-          <div className='relative flex flex-col gap-2'>
-            <Input
-              className='bg-gray-900 text-xs sm:text-sm'
-              placeholder='Week Name'
-              defaultValue={``}
-              {...register(`week.${weekIdx}.name`)}
-              onChange={() => clearErrors(`week.${weekIdx}.name`)}
-            />
-            <div className='absolute top-12'>
-              <ErrorMessage
-                errors={errors}
-                name={`week.${weekIdx}.name`}
-                render={({ message }) => (
-                  <p className='text-red-400'>{message}</p>
-                )}
+      <FormWeekHeader weekIdx={weekIdx} />
+      <div className='flex min-h-80 w-full gap-1'>
+        {dayField.fields.map((day, dayIndex) => {
+          return (
+            <div
+              key={day?.id || dayIndex}
+              className={cn(
+                'rounded-md bg-gray-800/60 p-2 hover:bg-gray-900',
+                'flex w-[14.3%] flex-col items-center gap-1',
+                day.isRestDay === true ? '' : '',
+              )}
+            >
+              <h1 className='text-xl font-bold'>Day {dayIndex + 1}</h1>
+              <FormDay
+                weekIdx={weekIdx}
+                dayIdx={dayIndex}
               />
             </div>
-          </div>
-          <Button
-            type='button'
-            className='bg-gray-900 text-xs sm:text-sm'
-            onClick={() => onSaveWeekAsTemplate(weekIdx)}
-          >
-            Save
-          </Button>
-          <Button
-            type='button'
-            className='bg-gray-900 text-xs sm:text-sm'
-            onClick={() => onUpdateWeekAsTemplate(weekIdx)}
-          >
-            Update
-          </Button>
-        </div>
-        <div className='flex items-center gap-2'>
-          <WeekTemplateSelect
-            onSelectWeekTemplate={onSelectWeekTemplate}
-            selectedWeekTemplate={selectedWeekTemplate}
-          />
-          <Button
-            type='button'
-            className='bg-gray-900 text-xs sm:text-sm'
-            onClick={() => onLoadWeekTemplate(weekIdx)}
-          >
-            Load
-          </Button>
-        </div>
+          )
+        })}
       </div>
-        <div className='flex min-h-80 w-full gap-1'>
-          {dayField.fields.map((day, dayIndex) => {
-            return (
-              <div
-                key={day?.id || dayIndex}
-                className={cn(
-                  'rounded-md bg-gray-800/60 p-2 hover:bg-gray-900',
-                  'flex flex-col items-center gap-1 w-[14.3%]',
-                  day.isRestDay === true
-                    ? ''
-                    : '',
-                )}
-              >
-                <h1 className='text-xl font-bold'>Day {dayIndex + 1}</h1>
-                <FormDay
-                  weekIdx={weekIdx}
-                  dayIdx={dayIndex}
-                />
-              </div>
-            )
-          })}
-        </div>
     </div>
   )
 }

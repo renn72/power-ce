@@ -65,8 +65,6 @@ const Form = () => {
   const [isUpdate, setIsUpdate] = useState(false)
   const [blockId, setBlockId] = useState('')
 
-  const [selectedTemplate, setSelectedTemplate] = useAtom(selectedTemplateAtom)
-
   const { data: blocksData } = api.blocks.getAll.useQuery() // TODO: just load titles
   const blocksTitle = blocksData?.map((block) => block.name)
   const { data: exerciseTemplates } = api.exercise.getAll.useQuery({

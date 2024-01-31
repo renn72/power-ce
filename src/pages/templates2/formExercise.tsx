@@ -14,18 +14,17 @@ const FormExercise = ({
   exerciseIdx,
   dayIdx,
   weekIdx,
+  onRemoveExercise,
 }: {
   exercise: Exercise
   exerciseIdx: number
   dayIdx: number
   weekIdx: number
+  onRemoveExercise: (args0: number) => void
 }) => {
   const formMethods = useFormContext<PrismaBlock>()
   const { watch, } = formMethods
   const [isOpen, setIsOpen] = useState(false)
-  const onRemoveExercise = (index: number) => {
-    console.log('remove exercise')
-  }
   const exercise = watch(`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}`)
   return (
     <div

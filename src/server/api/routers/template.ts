@@ -48,4 +48,23 @@ export const templateRouter = createTRPCRouter({
         return blocks
       }
     }),
+  get: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const block = await ctx.prisma.block.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          week: {
+            include: {
+              day: {
+                include: { exercise: { include: { set: true, ss: true } } },
+              },
+            },
+          },
+        },
+      })
+      return block
+    }),
 })

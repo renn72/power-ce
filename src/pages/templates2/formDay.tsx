@@ -203,6 +203,7 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
                           exerciseIdx={index}
                           weekIdx={weekIdx}
                           dayIdx={dayIdx}
+                          onRemoveExercise={onRemoveExercise}
                         />
                       </div>
                     )}
