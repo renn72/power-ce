@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { useAtom, } from 'jotai'
+import { useAtom } from 'jotai'
 import { useSession } from 'next-auth/react'
 
 import { ErrorMessage } from '@hookform/error-message'
@@ -59,12 +59,14 @@ const FormHeader = ({
   const isMe = userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a'
 
   const [selectedTemplate, setSelectedTemplate] = useAtom(selectedTemplateAtom)
-
+  api.template.getAllTemplateTitles.useQuery({
+    userId: userId,
+    isSuperAdmin: isSuperAdmin,
+  })
   const { data: blocksData } = api.blocks.getAll.useQuery() // TODO: just load titles
 
   const onNewTemplate = () => {
     reset(defaultValues)
-    setIsUpdate(false)
     setBlockId('')
   }
 
@@ -88,7 +90,7 @@ const FormHeader = ({
       <div className='flex w-full gap-2'>
         <div className='flex w-full items-center justify-center gap-8 md:w-full'>
           <div className='text-xl'>{title || 'New Training Template'}</div>
-          <Dialog 
+          <Dialog
             modal={false}
             open={isSaveOpen}
             onOpenChange={setIsSaveOpen}
@@ -161,62 +163,75 @@ const FormHeader = ({
           >
             Clear
           </Button>
-          <Button
-            type='button'
-            variant='secondary'
-            className='tracking-tighter'
-            onClick={() => setIsLoadOpen(true)}
+
+          <Dialog
+            modal={false}
+            open={isLoadOpen}
+            onOpenChange={setIsLoadOpen}
           >
-            Load
-          </Button>
+            <DialogTrigger asChild>
+              <Button
+                type='button'
+                variant='secondary'
+                className='tracking-tighter'
+                onClick={() => setIsLoadOpen(true)}
+              >
+                Load
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent
+              className='flex flex-col items-center justify-center gap-4 bg-gray-900'
+              forceMount
+            >
+              <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
+                Save Template
+              </DialogHeader>
+              {isMe && (
+                <div className='flex items-center gap-1 text-sm'>
+                  Super
+                  <Switch
+                    checked={isSuperAdmin}
+                    onChange={setIsSuperAdmin}
+                    className={cn(
+                      isSuperAdmin ? 'bg-gray-200' : 'bg-gray-600',
+                      'relative inline-flex h-[14px] w-[44px] shrink-0 cursor-pointer rounded-full border-2 border-transparent',
+                      ' transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75',
+                    )}
+                  >
+                    <span
+                      aria-hidden='true'
+                      className={cn(
+                        isSuperAdmin ? 'translate-x-6' : 'translate-x-0',
+                        'pointer-events-none inline-block h-[10px] w-[14px] transform',
+                        'rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out',
+                      )}
+                    />
+                  </Switch>
+                </div>
+              )}
+              <div className='flex items-center justify-center gap-2 px-8 py-16'>
+                <TemplateSelect onSelectTemplate={onSelectTemplate} />
+                <Button
+                  type='button'
+                  className='w-24 bg-gray-900 px-0  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
+                  onClick={() => {
+                    setIsLoadOpen(false)
+                    onLoadTemplate()
+                  }}
+                >
+                  Load
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
       <ModalWrapper
         isOpen={isLoadOpen}
         setIsOpen={setIsLoadOpen}
-      >
-        {isMe && (
-          <div className='flex items-center gap-1 text-sm'>
-            Super
-            <Switch
-              checked={isSuperAdmin}
-              onChange={setIsSuperAdmin}
-              className={cn(
-                isSuperAdmin ? 'bg-gray-200' : 'bg-gray-600',
-                'relative inline-flex h-[14px] w-[44px] shrink-0 cursor-pointer rounded-full border-2 border-transparent',
-                ' transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75',
-              )}
-            >
-              <span
-                aria-hidden='true'
-                className={cn(
-                  isSuperAdmin ? 'translate-x-6' : 'translate-x-0',
-                  'pointer-events-none inline-block h-[10px] w-[14px] transform',
-                  'rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out',
-                )}
-              />
-            </Switch>
-          </div>
-        )}
-        <div className='relative flex items-center justify-center gap-2 px-8 py-16'>
-          <XIcon
-            className='absolute right-2 top-2 cursor-pointer'
-            onClick={() => setIsLoadOpen(false)}
-          />
-          <TemplateSelect onSelectTemplate={onSelectTemplate} />
-          <Button
-            type='button'
-            className='w-24 bg-gray-900 px-0  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
-            onClick={() => {
-              setIsLoadOpen(false)
-              onLoadTemplate()
-            }}
-          >
-            Load
-          </Button>
-        </div>
-      </ModalWrapper>
+      ></ModalWrapper>
     </div>
   )
 }

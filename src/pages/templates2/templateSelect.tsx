@@ -21,19 +21,15 @@ const TemplateSelect = ({
   const [isSuperAdmin] = useAtom(isSuperAdminAtom)
   const { data: session } = useSession()
   const user = session?.user
+  const userId = user?.id || ''
   const [selectedTemplate] = useAtom(selectedTemplateAtom)
 
-  const { data: blocksData } = api.blocks.getAllBlockTitles.useQuery()
-  const blocksTitle = blocksData?.filter(
-    (b) => b.trainerId === user?.id || isSuperAdmin,
-  )
+  const { data: blocksTitle, isLoading } = api.template.getAllTemplateTitles.useQuery({userId: userId, isSuperAdmin: isSuperAdmin})
+  
+  if (!blocksTitle || isLoading) {
+    <LoadingSpinner />
+  }
 
-  if (!blocksTitle)
-    return (
-      <div className='w-72'>
-        <LoadingSpinner />
-      </div>
-    )
   return (
     <div className='flex w-full flex-col justify-center text-lg text-gray-200 sm:w-72'>
       <Listbox
@@ -48,7 +44,7 @@ const TemplateSelect = ({
                 selectedTemplate ? 'text-gray-200' : 'text-gray-600 text-sm',
               )}
             >
-              {blocksTitle.find((b) => b.id === selectedTemplate)?.name ||
+              {blocksTitle?.find((b) => b.id === selectedTemplate)?.name ||
                 'Select a Template'}
             </span>
             <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
@@ -64,7 +60,7 @@ const TemplateSelect = ({
             leaveFrom='opacity-100'
             leaveTo='opacity-0'
           >
-            <Listbox.Options className='max-h-160 absolute z-20 mt-1 w-full overflow-auto border border-gray-600 bg-black py-1 '>
+            <Listbox.Options className='max-h-96 absolute z-20 mt-1 w-full overflow-auto border border-gray-600 bg-black py-1 '>
               {blocksTitle?.map((template) => (
                 <Listbox.Option
                   key={template.id}

@@ -1,12 +1,10 @@
-import {
-  createTRPCRouter,
-  privateProcedure,
-} from '~/server/api/trpc'
+import { createTRPCRouter, privateProcedure } from '~/server/api/trpc'
 
 import { BlockCreateInputSchema } from 'prisma/generated/zod'
 
-export const templateRouter = createTRPCRouter({
+import { z } from 'zod'
 
+export const templateRouter = createTRPCRouter({
   create: privateProcedure
     .input(BlockCreateInputSchema)
     .mutation(async ({ ctx, input }) => {
@@ -26,5 +24,28 @@ export const templateRouter = createTRPCRouter({
 
       return updateAction
     }),
-
+  getAllTemplateTitles: privateProcedure
+    .input(z.object({ userId: z.string(), isSuperAdmin: z.boolean() }))
+    .query(async ({ ctx, input }) => {
+      if (input.isSuperAdmin) {
+        const blocks = await ctx.prisma.block.findMany({
+          orderBy: { createdAt: 'desc' },
+          where: {
+            isDeleted: false,
+            isProgram: false,
+          },
+        })
+        return blocks
+      } else {
+        const blocks = await ctx.prisma.block.findMany({
+          orderBy: { createdAt: 'desc' },
+          where: {
+            trainerId: input.userId,
+            isDeleted: false,
+            isProgram: false,
+          },
+        })
+        return blocks
+      }
+    }),
 })
