@@ -93,8 +93,8 @@ const ExerciseView = ({
           </div>
         ) : (
           <div className='flex flex-col'>
-            <div className='flex justify-between  gap-4'>
-              <div className='flex gap-4'>
+            <div className='flex gap-2'>
+              <div className='flex gap-1'>
                 <h3>{exercise.sets}</h3>
                 <h3>X</h3>
                 <h3>{exercise.reps}</h3>
@@ -132,12 +132,9 @@ const ExerciseView = ({
                       )}
                     </h4>
                     <h4>{exercise?.weightTop && '-'}</h4>
-                    {exercise?.weightTop && (
-                      <h4>
-                        {+exercise?.weightTop}
-                        kg
-                      </h4>
-                    )}
+                    {exercise?.weightTop && <h4>{+exercise?.weightTop}</h4>}
+                    {(exercise?.weightBottom ||
+                      (exercise?.weightTop) ? <h4>kg</h4> : null)}
                   </div>
                 )}
               </div>

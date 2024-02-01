@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, } from 'react'
 import { useSession } from 'next-auth/react'
-import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
+import { Droppable, Draggable } from '@hello-pangea/dnd'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
 import { api } from '~/utils/api'
@@ -35,8 +35,8 @@ const ExerciseDropper = () => {
           className='border-0'
           value={`0`}
         >
-          <AccordionTrigger className='flex flex-col pb-0 pt-1'>
-            <div className='tracking-tigher flex w-full flex-col rounded-lg bg-gray-900 p-1 text-lg'>
+          <AccordionTrigger className='flex flex-col pb-0 mt-10'>
+            <div className='tracking-tigher flex w-full flex-col rounded-lg bg-gray-900 p-1 text-lg leading-snug'>
               <div>Excercise</div>
               <div>Templates</div>
             </div>

@@ -27,17 +27,17 @@ const nav = [
     admin: true,
   },
   {
-    name: 'Primary Lifts',
+    name: 'PL',
     href: '/primary-lifts',
     admin: true,
   },
   {
-    name: 'Templates-Old',
+    name: 'Templates-O',
     href: '/templates',
     admin: true,
   },
   {
-    name: 'Templates-New',
+    name: 'Templates-N',
     href: '/templates2',
     admin: true,
   },
@@ -100,7 +100,7 @@ const Navbar = ({ user }: { user: User | null }) => {
       >
         {({ open }) => (
           <>
-            <div className='px-4 py-1 sm:px-6 lg:px-8'>
+            <div className='px-4 py-1 sm:px-2 lg:px-2'>
               <div className='flex items-center justify-between'>
                 <div className='flex items-center'>
                   <div className='flex-shrink-0'>
@@ -168,7 +168,7 @@ const Navbar = ({ user }: { user: User | null }) => {
             </div>
 
             <Disclosure.Panel className='md:hidden'>
-              <div className='space-y-1 px-2 pb-3 pt-2 sm:px-3'>
+              <div className='space-y-1 px-1 pb-3 pt-2 sm:px-2'>
                 {navigation.map((item) => (
                   <Disclosure.Button
                     key={item.name}
