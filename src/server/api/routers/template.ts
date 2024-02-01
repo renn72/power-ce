@@ -62,7 +62,14 @@ export const templateRouter = createTRPCRouter({
           week: {
             include: {
               day: {
-                include: { exercise: { include: { set: true, ss: true } } },
+                include: {
+                  exercise: {
+                    include: {
+                      ss: true,
+                      set: true,
+                    },
+                  },
+                },
               },
             },
           },

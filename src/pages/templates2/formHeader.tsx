@@ -1,4 +1,4 @@
-import React, { useState, } from 'react'
+import React, { useState } from 'react'
 import { useAtom } from 'jotai'
 import { useSession } from 'next-auth/react'
 
@@ -63,9 +63,10 @@ const FormHeader = ({
     userId: userId,
     isSuperAdmin: isSuperAdmin,
   })
-  const { data: templateData, isLoading: templateLoading } = api.template.get.useQuery({
-    id: selectedTemplate,
-  })
+  const { data: templateData, isLoading: templateLoading } =
+    api.template.get.useQuery({
+      id: selectedTemplate,
+    })
 
   const onNewTemplate = () => {
     reset(defaultValues)
@@ -84,7 +85,40 @@ const FormHeader = ({
 
     setBlockId(templateData.id)
 
-    reset(templateData)
+    console.log(templateData)
+
+    reset({
+      ...templateData,
+      id: undefined,
+      week: templateData.week?.map((_week) => {
+        const { blockId, ...week } = _week
+        return {
+          ...week,
+          id: undefined,
+          day: week?.day?.map((_day) => {
+            const { weekId, ...day } = _day
+            return {
+              ...day,
+              id: undefined,
+              exercise: day?.exercise?.map((_exercise) => {
+                const { dayId, ...exercise } = _exercise
+                return {
+                  ...exercise,
+                  id: undefined,
+                  ss: exercise?.ss?.map((_s) => {
+                    const { exerciseId, ...s } = _s
+                    return {
+                      ...s,
+                      id: undefined,
+                    }
+                  }),
+                }
+              }),
+            }
+          }),
+        }
+      }),
+    })
 
     toast.success('Loaded')
   }
@@ -110,9 +144,7 @@ const FormHeader = ({
               </Button>
             </DialogTrigger>
 
-            <DialogContent
-              className='flex flex-col items-center justify-center gap-4 bg-gray-900'
-            >
+            <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
               <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
                 Save Template
               </DialogHeader>
@@ -177,16 +209,13 @@ const FormHeader = ({
                 type='button'
                 variant='secondary'
                 className='tracking-tighter'
-                disabled={templateLoading}
                 onClick={() => setIsLoadOpen(true)}
               >
                 Load
               </Button>
             </DialogTrigger>
 
-            <DialogContent
-              className='flex flex-col items-center justify-center gap-4 bg-gray-900'
-            >
+            <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
               <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
                 Save Template
               </DialogHeader>
@@ -214,11 +243,11 @@ const FormHeader = ({
                 </div>
               )}
               <div className='flex items-center justify-center gap-2 px-8 py-16'>
-                <TemplateSelect 
-                  onSelectTemplate={onSelectTemplate} />
+                <TemplateSelect onSelectTemplate={onSelectTemplate} />
                 <Button
                   type='button'
                   className='w-24 bg-gray-900 px-0  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
+                  disabled={templateLoading}
                   onClick={() => {
                     setIsLoadOpen(false)
                     onLoadTemplate()
@@ -231,11 +260,6 @@ const FormHeader = ({
           </Dialog>
         </div>
       </div>
-
-      <ModalWrapper
-        isOpen={isLoadOpen}
-        setIsOpen={setIsLoadOpen}
-      ></ModalWrapper>
     </div>
   )
 }

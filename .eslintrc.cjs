@@ -95,27 +95,6 @@ const config = {
       },
     ],
     'no-trailing-spaces': ['warn', { ignoreComments: true }],
-    // 'object-curly-newline': [
-    //   'warn',
-    //   {
-    //     ObjectExpression: {
-    //       multiline: true,
-    //       minProperties: 4,
-    //     },
-    //     ObjectPattern: {
-    //       multiline: true,
-    //       minProperties: 4,
-    //     },
-    //     ImportDeclaration: {
-    //       multiline: true,
-    //       minProperties: 4,
-    //     },
-    //     ExportDeclaration: {
-    //       multiline: true,
-    //       minProperties: 4,
-    //     },
-    //   },
-    // ],
     'object-property-newline': ['warn', { allowAllPropertiesOnSameLine: true }],
     quotes: [
       'warn',

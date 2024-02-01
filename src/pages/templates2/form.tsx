@@ -159,22 +159,22 @@ const Form = () => {
       trainerId: userId,
       week: {
         create: data.week.map((week) => {
-          delete week?.blockId
+          // delete week?.blockId
           return {
             ...week,
             day: {
               create: week.day.map((day) => {
-                delete day?.weekId
+                // delete day?.weekId
                 return {
                   ...day,
                   exercise: {
                     create: day.exercise.map((exercise) => {
-                      delete exercise?.dayId
+                      // delete exercise?.dayId
                       return {
                         ...exercise,
                         ss: {
                           create: exercise.ss.map((s) => {
-                            delete s?.exerciseId
+                            // delete s?.exerciseId
                             return {
                               ...s,
                             }

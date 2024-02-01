@@ -56,9 +56,8 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
         </div>
         <div> Estiamted 1rm</div>
         <div
-          className={`${
-            estOnerm?.estimatedOnerm == 0 ? 'hidden' : 'text-xl font-bold'
-          }`}
+          className={`${estOnerm?.estimatedOnerm == 0 ? 'hidden' : 'text-xl font-bold'
+            }`}
         >
           {estOnerm?.estimatedOnerm}kg
         </div>
@@ -121,7 +120,6 @@ const Home: NextPage = () => {
     return acc
   }, '')
 
-
   const [address, setAddress] = useState(addressData?.address || '')
   useEffect(() => {
     setAddress(addressData?.address || '')
@@ -142,12 +140,8 @@ const Home: NextPage = () => {
         <div className='flex  w-full flex-col items-center gap-8 lg:items-start '>
           <div className='flex w-full items-center justify-between'>
             <div className='flex gap-2 text-2xl tracking-tighter'>
-              <div
-                className='hidden'
-              >{user?.firstName}</div>
-              <div
-                className='hidden'
-              >{user?.lastName}</div>
+              <div className='hidden'>{user?.firstName}</div>
+              <div className='hidden'>{user?.lastName}</div>
             </div>
             <Link href='/settings'>
               <Cog8ToothIcon className='h-6 w-6 text-yellow-400' />
@@ -157,7 +151,7 @@ const Home: NextPage = () => {
             <Link href={`/day/${currentProgram.id}/${defaultOpen}`}>
               <Button
                 size='lg'
-                className='rounded text-xl bg-yellow-400 font-bold text-gray-900 hover:bg-yellow-500'
+                className='rounded bg-yellow-400 text-xl font-bold text-gray-900 hover:bg-yellow-500'
               >
                 Current Program
               </Button>
