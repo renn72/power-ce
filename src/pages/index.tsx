@@ -105,14 +105,6 @@ const Home: NextPage = () => {
   const { data: currentProgram, isLoading: programLoading } =
     api.blocks.getUserActiveProgramFull.useQuery({ userId: userId })
 
-  const { mutate: setOpenPowerliftingData } =
-    api.compLift.setOpenPower.useMutation({
-      onSuccess: (data) => {
-        console.log(data)
-        void ctx.compLift.getCompLifts.invalidate({ userId: userId })
-      },
-    })
-
   const { mutate: saveAddress } = api.compLift.createAddress.useMutation({
     onSuccess: () => {
       toast.success('saved')
@@ -129,12 +121,6 @@ const Home: NextPage = () => {
     return acc
   }, '')
 
-  const lastFinished = currentProgram?.week.reduce((acc, week) => {
-    week.day.forEach((day) => {
-      if (day.isComplete) acc = day.id
-    })
-    return acc
-  }, '')
 
   const [address, setAddress] = useState(addressData?.address || '')
   useEffect(() => {

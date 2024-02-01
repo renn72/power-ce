@@ -7,6 +7,7 @@ import { useFieldArray, useFormContext } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { toast } from 'react-hot-toast'
 
 import {
   Dialog,
@@ -18,7 +19,7 @@ import {
 import { useSession } from 'next-auth/react'
 import { api } from '~/utils/api'
 
-import { type PrismaBlock as Block } from '~/store/types'
+import { type PrismaBlock as Block, PrismaWeek as Week } from '~/store/types'
 
 import { cn } from '@/lib/utils'
 import FormDay from './formDay'
@@ -40,13 +41,91 @@ const FormWeekHeader = ({ weekIdx }: { weekIdx: number }) => {
     formState: { errors },
   } = formMethods
 
+  const ctx = api.useUtils()
+  const { mutate: weekCreateMutate } = api.template.createWeek.useMutation({
+    onSuccess: () => {
+      toast.success('Saved')
+      void ctx.blocks.getAllWeekTemplates.invalidate()
+    },
+    onError: () => {
+      toast.error('Error')
+    },
+  })
+
+
+  const onSaveWeekAsTemplate = (weekIdx: number) => {
+    const name = getValues(`week.${weekIdx}.name`)
+
+    // handle error
+    if (name === '') {
+      setError(`week.${weekIdx}.name`, {
+        type: 'manual',
+        message: 'Need a unique name',
+      })
+      setTimeout(() => {
+        clearErrors(`week.${weekIdx}.name`)
+      }, 3000)
+      toast.error('Need a unique name')
+      console.log('clash')
+      return
+    }
+
+    const week = getValues(`week.${weekIdx}`)
+
+    const weekData: Week = {
+      name: week.name,
+      isTemplate: true,
+      day: week.day.map((day) => ({
+        isRestDay: day.isRestDay,
+        isComplete: false,
+        warmupTemplateId: day.warmupTemplateId || '',
+        exercise: day.exercise.map((exercise) => ({
+          name: exercise.name ? exercise.name : '',
+          lift: exercise.lift ? exercise.lift : '',
+          onerm: exercise.onerm ? +exercise.onerm : null,
+          onermTop: exercise.onermTop ? +exercise.onermTop : null,
+          weightTop: exercise.weightTop ? +exercise.weightTop : null,
+          weightBottom: exercise.weightBottom ? +exercise.weightBottom : null,
+          targetRpe: exercise.targetRpe ? +exercise.targetRpe : null,
+          sets: exercise.sets ? +exercise.sets : null,
+          reps: exercise.reps ? +exercise.reps : null,
+          notes: exercise.notes,
+          isEstimatedOnerm: exercise.isEstimatedOnerm || false,
+          estimatedOnermIndex: exercise.estimatedOnermIndex,
+          weightType: exercise.weightType,
+          repUnit: exercise.repUnit,
+          htmlLink: exercise.htmlLink,
+          isComplete: false,
+          tempoDown: exercise.tempoDown ? +exercise.tempoDown : null,
+          tempoUp: exercise.tempoUp ? +exercise.tempoUp : null,
+          tempoPause: exercise.tempoPause ? +exercise.tempoPause : null,
+          isSS: exercise.isSS || false,
+          ss: exercise.ss.map((s) => ({
+            name: s.name,
+            onerm: s.onerm ? +s.onerm : null,
+            onermTop: s.onermTop ? +s.onermTop : null,
+            weightTop: s.weightTop ? +s.weightTop : null,
+            weightBottom: s.weightBottom ? +s.weightBottom : null,
+            targetRpe: s.targetRpe ? +s.targetRpe : null,
+            reps: s.reps ? +s.reps : null,
+            weightType: s.weightType,
+            repUnit: s.repUnit,
+            notes: s.notes,
+            htmlLink: s.htmlLink,
+          })),
+        })),
+      })),
+    }
+    weekCreateMutate(weekData)
+  }
+
   const [isSaveOpen, setIsSaveOpen] = useState(false)
   const [isLoadOpen, setIsLoadOpen] = useState(false)
 
   const weekName = watch(`week.${weekIdx}.name`)
 
   return (
-    <div className='flex items-center justify-center gap-12 pt-1 pb-2'>
+    <div className='flex items-center justify-center gap-12 pb-2 pt-1'>
       <div className='text-xl font-bold'>
         {weekName ? weekName : `Week ${weekIdx + 1}`}
       </div>
