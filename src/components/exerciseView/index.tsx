@@ -133,8 +133,9 @@ const ExerciseView = ({
                     </h4>
                     <h4>{exercise?.weightTop && '-'}</h4>
                     {exercise?.weightTop && <h4>{+exercise?.weightTop}</h4>}
-                    {(exercise?.weightBottom ||
-                      (exercise?.weightTop) ? <h4>kg</h4> : null)}
+                    {exercise?.weightBottom || exercise?.weightTop ? (
+                      <h4>kg</h4>
+                    ) : null}
                   </div>
                 )}
               </div>

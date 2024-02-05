@@ -85,31 +85,26 @@ const FormHeader = ({
 
     setBlockId(templateData.id)
 
-    console.log(templateData)
+    console.log('temp', templateData)
 
-    reset({
+    const resetData = {
       ...templateData,
-      id: undefined,
       week: templateData.week?.map((_week) => {
-        const { blockId, ...week } = _week
+        const { blockId: _blockId, ...week } = _week
         return {
           ...week,
-          id: undefined,
           day: week?.day?.map((_day) => {
             const { weekId, ...day } = _day
             return {
               ...day,
-              id: undefined,
               exercise: day?.exercise?.map((_exercise) => {
-                const { dayId, ...exercise } = _exercise
+                const { dayId, set, ...exercise } = _exercise
                 return {
                   ...exercise,
-                  id: undefined,
                   ss: exercise?.ss?.map((_s) => {
                     const { exerciseId, ...s } = _s
                     return {
                       ...s,
-                      id: undefined,
                     }
                   }),
                 }
@@ -118,7 +113,11 @@ const FormHeader = ({
           }),
         }
       }),
-    })
+    }
+
+    console.log('reset', resetData)
+
+    reset(resetData)
 
     toast.success('Loaded')
   }

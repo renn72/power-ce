@@ -19,7 +19,7 @@ import {
 import { useSession } from 'next-auth/react'
 import { api } from '~/utils/api'
 
-import { type PrismaBlock as Block, PrismaWeek as Week } from '~/store/types'
+import type { PrismaBlock as Block, PrismaWeek as Week } from '~/store/types'
 
 import { cn } from '@/lib/utils'
 import FormDay from './formDay'
@@ -27,19 +27,30 @@ import WeekTemplateSelect from './weekTemplateSelect'
 
 const loadedTemplateAtom = atom<string>('')
 
-const FormWeekHeader = ({ weekIdx }: { weekIdx: number }) => {
+const FormWeekHeader = ({
+  weekIdx,
+  setLoadedTemplate,
+  onRemoveWeek,
+}: {
+  weekIdx: number
+  setLoadedTemplate: (value: string) => void
+  onRemoveWeek: (weekIdx: number) => void
+}) => {
   const formMethods = useFormContext<Block>()
   const {
-    control,
     register,
     reset,
     clearErrors,
     getValues,
-    setValue,
     setError,
     watch,
     formState: { errors },
   } = formMethods
+  const { data: session } = useSession()
+  const user = session?.user
+  const userId = user?.id || ''
+
+  const [selectedWeekTemplate, setSelectedWeekTemplate] = useState('')
 
   const ctx = api.useUtils()
   const { mutate: weekCreateMutate } = api.template.createWeek.useMutation({
@@ -51,7 +62,40 @@ const FormWeekHeader = ({ weekIdx }: { weekIdx: number }) => {
       toast.error('Error')
     },
   })
+  const { data: weeksData } = api.blocks.getAllWeekTemplates.useQuery({
+    userId: user?.id || '',
+  })
 
+  const onSelectWeekTemplate = (week: string) => {
+    setSelectedWeekTemplate(week)
+    console.log('selected', week)
+  }
+
+  const onLoadWeekTemplate = (weekIdx: number) => {
+    const weekTemplate = weeksData?.find(
+      (week) => week.id === selectedWeekTemplate,
+    )
+
+    const currentTemplate = getValues()
+
+    const update = {
+      ...currentTemplate,
+      week: currentTemplate.week.map((week, idx) => {
+        if (idx === weekIdx) {
+          return weekTemplate
+        }
+        return week
+      }),
+    }
+    console.log('update', update)
+
+    setLoadedTemplate(selectedWeekTemplate)
+
+    // setSelectedWeekTemplate('')
+
+    reset(update)
+    toast.success('Loaded')
+  }
 
   const onSaveWeekAsTemplate = (weekIdx: number) => {
     const name = getValues(`week.${weekIdx}.name`)
@@ -70,52 +114,29 @@ const FormWeekHeader = ({ weekIdx }: { weekIdx: number }) => {
       return
     }
 
-    const week = getValues(`week.${weekIdx}`)
+    const data = getValues(`week.${weekIdx}`)
 
-    const weekData: Week = {
-      name: week.name,
+    const weekData = {
+      ...data,
+      trainerId: userId,
       isTemplate: true,
-      day: week.day.map((day) => ({
-        isRestDay: day.isRestDay,
-        isComplete: false,
-        warmupTemplateId: day.warmupTemplateId || '',
-        exercise: day.exercise.map((exercise) => ({
-          name: exercise.name ? exercise.name : '',
-          lift: exercise.lift ? exercise.lift : '',
-          onerm: exercise.onerm ? +exercise.onerm : null,
-          onermTop: exercise.onermTop ? +exercise.onermTop : null,
-          weightTop: exercise.weightTop ? +exercise.weightTop : null,
-          weightBottom: exercise.weightBottom ? +exercise.weightBottom : null,
-          targetRpe: exercise.targetRpe ? +exercise.targetRpe : null,
-          sets: exercise.sets ? +exercise.sets : null,
-          reps: exercise.reps ? +exercise.reps : null,
-          notes: exercise.notes,
-          isEstimatedOnerm: exercise.isEstimatedOnerm || false,
-          estimatedOnermIndex: exercise.estimatedOnermIndex,
-          weightType: exercise.weightType,
-          repUnit: exercise.repUnit,
-          htmlLink: exercise.htmlLink,
-          isComplete: false,
-          tempoDown: exercise.tempoDown ? +exercise.tempoDown : null,
-          tempoUp: exercise.tempoUp ? +exercise.tempoUp : null,
-          tempoPause: exercise.tempoPause ? +exercise.tempoPause : null,
-          isSS: exercise.isSS || false,
-          ss: exercise.ss.map((s) => ({
-            name: s.name,
-            onerm: s.onerm ? +s.onerm : null,
-            onermTop: s.onermTop ? +s.onermTop : null,
-            weightTop: s.weightTop ? +s.weightTop : null,
-            weightBottom: s.weightBottom ? +s.weightBottom : null,
-            targetRpe: s.targetRpe ? +s.targetRpe : null,
-            reps: s.reps ? +s.reps : null,
-            weightType: s.weightType,
-            repUnit: s.repUnit,
-            notes: s.notes,
-            htmlLink: s.htmlLink,
-          })),
+      day: {
+        create: data.day.map((day) => ({
+          ...day,
+          exercise: {
+            create: day.exercise.map((exercise) => ({
+              ...exercise,
+              ss: {
+                create: exercise.ss.map((s) => ({
+                  ...s,
+                })),
+              },
+            })),
+          },
         })),
-      })),
+      },
     }
+
     weekCreateMutate(weekData)
   }
 
@@ -172,6 +193,7 @@ const FormWeekHeader = ({ weekIdx }: { weekIdx: number }) => {
                 variant='secondary'
                 onClick={() => {
                   setIsSaveOpen(false)
+                  onSaveWeekAsTemplate(weekIdx)
                 }}
               >
                 Save New
@@ -188,17 +210,9 @@ const FormWeekHeader = ({ weekIdx }: { weekIdx: number }) => {
             </div>
           </DialogContent>
         </Dialog>
-        <Button
-          type='button'
-          size='sm'
-          variant='secondary'
-          className='h-7 tracking-tighter'
-        >
-          Clear
-        </Button>
         <Dialog
-          open={isSaveOpen}
-          onOpenChange={setIsSaveOpen}
+          open={isLoadOpen}
+          onOpenChange={setIsLoadOpen}
         >
           <DialogTrigger asChild>
             <Button
@@ -215,51 +229,45 @@ const FormWeekHeader = ({ weekIdx }: { weekIdx: number }) => {
             <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
               Save Template
             </DialogHeader>
-            <div className='flex flex-col items-start justify-center gap-2'>
-              <div className='relative rounded-md px-4 shadow-lg'>
-                <Input
-                  className='w-40 bg-gray-900  md:w-64 '
-                  placeholder='Title'
-                  defaultValue={``}
-                  {...register(`week.${weekIdx}.name`)}
-                />
-              </div>
-              <ErrorMessage
-                errors={errors}
-                name='name'
-                render={({ message }) => (
-                  <p className='text-red-400'>{message}</p>
-                )}
-              />
-            </div>
+            <WeekTemplateSelect
+              onSelectWeekTemplate={onSelectWeekTemplate}
+              selectedWeekTemplate={selectedWeekTemplate}
+            />
             <div className='flex gap-4'>
               <Button
                 type='submit'
                 variant='secondary'
                 onClick={() => {
-                  setIsSaveOpen(false)
+                  onLoadWeekTemplate(weekIdx)
+                  setIsLoadOpen(false)
                 }}
               >
-                Save New
-              </Button>
-              <Button
-                type='submit'
-                variant='secondary'
-                onClick={() => {
-                  setIsSaveOpen(false)
-                }}
-              >
-                Update
+                Load
               </Button>
             </div>
           </DialogContent>
         </Dialog>
+        <Button
+          type='button'
+          size='sm'
+          variant='secondary'
+          className='h-7 tracking-tighter'
+          onClick={() => onRemoveWeek(weekIdx)}
+        >
+          Delete
+        </Button>
       </div>
     </div>
   )
 }
 
-const FormWeek = ({ weekIdx }: { weekIdx: number }) => {
+const FormWeek = ({
+  weekIdx,
+  onRemoveWeek,
+}: {
+  weekIdx: number
+  onRemoveWeek: (weekIdx: number) => void
+}) => {
   const formMethods = useFormContext<Block>()
   const {
     control,
@@ -273,51 +281,19 @@ const FormWeek = ({ weekIdx }: { weekIdx: number }) => {
     name: `week.${weekIdx}.day`,
   })
 
-  const [selectedWeekTemplate, setSelectedWeekTemplate] = useState('')
   const [loadedTemplate, setLoadedTemplate] = useAtom(loadedTemplateAtom)
 
   const { data: session } = useSession()
   const user = session?.user
-
-  const ctx = api.useUtils()
-  const { data: weeksData } = api.blocks.getAllWeekTemplates.useQuery({
-    userId: user?.id || '',
-  })
-
-  const onSelectWeekTemplate = (week: string) => {
-    setSelectedWeekTemplate(week)
-    console.log('selected', week)
-  }
-
-  const onLoadWeekTemplate = (weekIdx: number) => {
-    const weekTemplate = weeksData?.find(
-      (week) => week.id === selectedWeekTemplate,
-    )
-
-    const currentTemplate = getValues()
-
-    const update = {
-      ...currentTemplate,
-      week: currentTemplate.week.map((week, idx) => {
-        if (idx === weekIdx) {
-          return weekTemplate
-        }
-        return week
-      }),
-    }
-    console.log('update', update)
-
-    setLoadedTemplate(selectedWeekTemplate)
-
-    // setSelectedWeekTemplate('')
-
-    reset(update)
-    toast.success('Loaded')
-  }
+  const userId = user?.id || ''
 
   return (
     <div className='flex flex-col gap-1 rounded-lg bg-gray-900 px-2 py-2 '>
-      <FormWeekHeader weekIdx={weekIdx} />
+      <FormWeekHeader
+        weekIdx={weekIdx}
+        setLoadedTemplate={setLoadedTemplate}
+        onRemoveWeek={onRemoveWeek}
+      />
       <div className='flex min-h-80 w-full gap-1'>
         {dayField.fields.map((day, dayIndex) => {
           return (

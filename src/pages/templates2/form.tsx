@@ -239,9 +239,9 @@ const Form = () => {
     name: 'week',
   })
 
-  const onRemoveWeek = () => {
+  const onRemoveWeek = (index: number) => {
     console.log('remove week')
-    weekField.remove(weekField.fields.length - 1)
+    weekField.remove(index)
   }
 
   const handleDrag = (result: DragResult) => {
@@ -318,6 +318,7 @@ const Form = () => {
                         <FormWeek
                           key={week.id}
                           weekIdx={weekIndex}
+                          onRemoveWeek={onRemoveWeek}
                         />
                       ))}
                     </div>
