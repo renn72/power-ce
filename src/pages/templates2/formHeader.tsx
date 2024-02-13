@@ -90,7 +90,7 @@ const FormHeader = ({
     const resetData = {
       ...templateData,
       week: templateData.week?.map((_week) => {
-        const { blockId: _blockId, ...week } = _week
+        const { blockId, ...week } = _week
         return {
           ...week,
           day: week?.day?.map((_day) => {

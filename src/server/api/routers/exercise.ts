@@ -13,7 +13,11 @@ export const exerciseRouter = createTRPCRouter({
         where: { isTemplate: true, trainerId: input?.userId },
         include: { ss: true },
       })
-      return exercises
+      const exercisesWithoutDayId = exercises.map((e) => {
+        const { dayId, ...rest } = e
+        return rest
+      })
+      return exercisesWithoutDayId
     }),
 
   create: privateProcedure
@@ -125,7 +129,9 @@ export const exerciseRouter = createTRPCRouter({
   delete: privateProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const exercise = await ctx.prisma.exercise.delete({ where: { id: input.id } })
+      const exercise = await ctx.prisma.exercise.delete({
+        where: { id: input.id },
+      })
       return exercise
     }),
 })

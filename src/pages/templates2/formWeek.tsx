@@ -62,7 +62,7 @@ const FormWeekHeader = ({
       toast.error('Error')
     },
   })
-  const { data: weeksData } = api.blocks.getAllWeekTemplates.useQuery({
+  const { data: weeksData } = api.template.getAllWeekTemplates.useQuery({
     userId: user?.id || '',
   })
 

@@ -79,6 +79,8 @@ const Form = () => {
       toast.success('Saved')
       void ctx.blocks.getAll.invalidate()
       void ctx.blocks.getAllBlockTitles.invalidate()
+      void ctx.template.getAllWeekTemplates.invalidate()
+      void ctx.template.get.invalidate()
     },
     onError: (e) => {
       toast.error('Error')
@@ -92,6 +94,8 @@ const Form = () => {
       toast.success('Saved')
       void ctx.blocks.getAll.invalidate()
       void ctx.blocks.getAllBlockTitles.invalidate()
+      void ctx.template.getAllWeekTemplates.invalidate()
+      void ctx.template.get.invalidate()
     },
     onError: (e) => {
       console.log('error', e)
@@ -128,24 +132,40 @@ const Form = () => {
       ...data,
       trainerId: userId,
       week: {
-        create: data.week.map((week) => ({
-          ...week,
-          day: {
-            create: week.day.map((day) => ({
-              ...day,
-              exercise: {
-                create: day.exercise.map((exercise) => ({
-                  ...exercise,
-                  ss: {
-                    create: exercise.ss.map((s) => ({
-                      ...s,
-                    })),
+        create: data.week.map((week) => {
+          delete week?.id
+          delete week?.blockId
+          return {
+            ...week,
+            day: {
+              create: week.day.map((day) => {
+                delete day?.id
+                delete day?.weekId
+                return {
+                  ...day,
+                  exercise: {
+                    create: day.exercise.map((exercise) => {
+                      delete exercise?.id
+                      delete exercise?.dayId
+                      return {
+                        ...exercise,
+                        ss: {
+                          create: exercise.ss.map((s) => {
+                            delete s?.id
+                            delete s?.exerciseId
+                            return {
+                              ...s,
+                            }
+                          }),
+                        },
+                      }
+                    }),
                   },
-                })),
-              },
-            })),
-          },
-        })),
+                }
+              }),
+            },
+          }
+        }),
       },
     }
     blockCreateMutate(block)
@@ -159,22 +179,26 @@ const Form = () => {
       trainerId: userId,
       week: {
         create: data.week.map((week) => {
-          // delete week?.blockId
+          delete week?.id
+          delete week?.blockId
           return {
             ...week,
             day: {
               create: week.day.map((day) => {
-                // delete day?.weekId
+                delete day?.id
+                delete day?.weekId
                 return {
                   ...day,
                   exercise: {
                     create: day.exercise.map((exercise) => {
-                      // delete exercise?.dayId
+                      delete exercise?.id
+                      delete exercise?.dayId
                       return {
                         ...exercise,
                         ss: {
                           create: exercise.ss.map((s) => {
-                            // delete s?.exerciseId
+                            delete s?.id
+                            delete s?.exerciseId
                             return {
                               ...s,
                             }

@@ -86,4 +86,14 @@ export const templateRouter = createTRPCRouter({
 
       return week
     }),
+  getAllWeekTemplates: privateProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const weeks = await ctx.prisma.week.findMany({
+        orderBy: { createdAt: 'desc' },
+        where: { isTemplate: true, trainerId: input?.userId },
+        include: { day: { include: { exercise: { include: { ss: true } } } } },
+      })
+      return weeks
+    }),
 })
