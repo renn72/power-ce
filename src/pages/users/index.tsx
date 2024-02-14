@@ -588,7 +588,6 @@ const Users = () => {
               </Tab.Panel>
 
               <Tab.Panel>
-                <ProgramTemplate />
               </Tab.Panel>
 
               <Tab.Panel>

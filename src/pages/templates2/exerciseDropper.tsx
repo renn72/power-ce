@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, } from 'react'
 import { useSession } from 'next-auth/react'
 import { Droppable, Draggable } from '@hello-pangea/dnd'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -35,8 +35,8 @@ const ExerciseDropper = () => {
           className='border-0'
           value={`0`}
         >
-          <AccordionTrigger className='mt-10 flex flex-col pb-0'>
-            <div className='tracking-tigher flex w-full flex-col rounded-lg bg-gray-900 p-1 text-lg font-bold leading-snug'>
+          <AccordionTrigger className='flex flex-col pb-0 mt-10'>
+            <div className='tracking-tigher flex w-full flex-col rounded-lg bg-gray-900 p-1 text-lg leading-snug font-bold'>
               <div>Excercise</div>
               <div>Templates</div>
             </div>
@@ -72,7 +72,7 @@ const ExerciseDropper = () => {
                     ref={provided.innerRef}
                     className='flex flex-col gap-2'
                   >
-                    {exerciseTemplates?.map(({ dayId, ...t }, i) => (
+                    {exerciseTemplates?.map((t, i) => (
                       <Draggable
                         key={t.id}
                         draggableId={t.id}

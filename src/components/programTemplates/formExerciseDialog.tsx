@@ -649,7 +649,7 @@ const FormExerciseDialog = ({
                   onChange={onChange}
                 >
                   <div className='relative w-24 text-xs sm:text-sm'>
-                    <Listbox.Button className='relative w-full cursor-default border-b border-gray-600 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none '>
+                    <Listbox.Button className='relative w-full cursor-default border-b border-gray-600 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none hover:border-gray-50 '>
                       <span
                         className={
                           value
@@ -711,7 +711,7 @@ const FormExerciseDialog = ({
                   </div>
                 </Listbox>
                 <XCircleIcon
-                  className='h-6 w-6 cursor-pointer text-gray-400'
+                  className='h-6 w-6 cursor-pointer text-gray-400 hover:text-red-500'
                   onClick={() => onChange(null)}
                 />
               </div>

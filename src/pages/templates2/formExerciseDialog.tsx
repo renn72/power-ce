@@ -181,10 +181,12 @@ const FormExerciseDialog = ({
 
   return (
     <div className='relative flex flex-col justify-center p-4'>
-      <XMarkIcon
-        className='absolute right-0 top-0 h-8 w-8 cursor-pointer text-gray-400 hover:text-white'
+      <div
+        className='cursor-pointer py-1 px-2 text-gray-400 hover:text-white'
         onClick={() => setIsOpen(false)}
-      />
+      >
+        <XMarkIcon className='absolute right-0 top-0 h-8 w-8' />
+      </div>
       <div className='relative flex items-center justify-between gap-4'>
         <div className='p-1 px-4 text-xl font-extrabold italic tracking-widest underline decoration-yellow-500 decoration-2 underline-offset-8'>
           &nbsp;{exerciseIdx + 1}&nbsp;
@@ -649,7 +651,7 @@ const FormExerciseDialog = ({
                   onChange={onChange}
                 >
                   <div className='relative w-24 text-xs sm:text-sm'>
-                    <Listbox.Button className='relative w-full cursor-default border-b border-gray-600 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none '>
+                    <Listbox.Button className='relative w-full cursor-default border-b border-gray-600 py-2 pl-3 pr-10 text-left shadow-md hover:border-gray-200 focus:outline-none '>
                       <span
                         className={
                           value
@@ -711,7 +713,7 @@ const FormExerciseDialog = ({
                   </div>
                 </Listbox>
                 <XCircleIcon
-                  className='h-6 w-6 cursor-pointer text-gray-400'
+                  className='h-6 w-6 cursor-pointer text-gray-400 hover:text-red-500'
                   onClick={() => onChange(null)}
                 />
               </div>
