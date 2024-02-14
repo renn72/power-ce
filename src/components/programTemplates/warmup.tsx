@@ -1,179 +1,115 @@
-import { useState, Fragment } from 'react'
-
-import type { PrismaDay as Day, PrismaBlock as Block } from '~/store/types'
-
-import { toast } from 'react-hot-toast'
+import { useFormContext, Controller } from 'react-hook-form'
 
 import { api } from '~/utils/api'
 
-import { Dialog, Transition } from '@headlessui/react'
-import { LoadingPage } from '~/components/loading'
+import {
+  CheckIcon,
+  ChevronUpDownIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline'
 
-import { PlaySquare } from 'lucide-react'
-import { XMarkIcon } from '@heroicons/react/24/outline'
+import { Listbox, Transition } from '@headlessui/react'
+import { type PrismaBlock } from '~/store/types'
 import { cn } from '@/lib/utils'
 
-const Warmup = ({ day, program }: { day: Day; program: Block }) => {
-  const [warmupDayId, setWarmupDayId] = useState('')
-  const [isOpenWarmup, setIsOpenWarmup] = useState(false)
-  const ctx = api.useUtils()
-  const { data: allWarmups, isLoading: warmupsLoading } =
-    api.warmups.getAll.useQuery()
-  const { mutate: updateWarmupTemplateId } =
-    api.days.updateWarmupTemplateId.useMutation({
-      onSuccess: () => {
-        toast.success('Warmup updated')
-        void ctx.blocks.get.invalidate()
-        setIsOpenWarmup(false)
-      },
-    })
+import { Fragment } from 'react'
 
-  if (warmupsLoading) return <LoadingPage />
-
+const Warmup = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
+  const formMethods = useFormContext<PrismaBlock>()
+  const { control, watch, getValues } = formMethods
+  const utils = api.useUtils()
+  const warmups = utils.warmups.getAll.getData()
+  const isRest: boolean = watch(`week.${weekIdx}.day.${dayIdx}.isRestDay`)
   return (
-    <>
-      <div
-        className='cursor-pointer'
-        onClick={(e) => {
-          e.stopPropagation()
-          setIsOpenWarmup(true)
-          setWarmupDayId(day.id)
-        }}
-      >
-        {day.warmupTemplateId === '' || day.warmupTemplateId === null ? (
-          <div>
-            <h2>Warm Up</h2>
-            <div className='text-sm text-gray-600'>none</div>
-          </div>
-        ) : (
-          <div className='flex flex-col gap-2 text-base'>
-            <h2>Warm Up</h2>
-            <div className='px-4'>
-              {
-                allWarmups?.find((warmup) => warmup.id === day.warmupTemplateId)
-                  ?.name
-              }
-              <div className='flex flex-col gap-1'>
-                {allWarmups &&
-                  allWarmups
-                    ?.find((warmup) => warmup.id === day.warmupTemplateId)
-                    ?.warmups?.map((warmup) => (
-                      <div
-                        key={warmup.id}
-                        className='flex items-center gap-1'
-                      >
-                        <div
-                          className='w-6'
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {warmup.link && (
-                            <a
-                              target='_blank'
-                              rel='noreferrer'
-                              className=''
-                              href={warmup.link}
-                            >
-                              <PlaySquare className='h-4 w-4 text-yellow-500' />
-                            </a>
-                          )}
-                        </div>
-                        <div className='ml-2 text-sm capitalize text-gray-600'>
-                          {warmup.name}
-                        </div>
-                      </div>
-                    ))}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-      <Transition
-        appear
-        show={isOpenWarmup}
-        as={Fragment}
-      >
-        <div>
-          <Dialog
-            as='div'
-            className='relative z-10 text-gray-200'
-            onClose={() => setIsOpenWarmup(false)}
+    <div className={`flex items-center gap-2 ${isRest ? 'hidden' : ''}`}>
+      <Controller
+        control={control}
+        name={`week.${weekIdx}.day.${dayIdx}.warmupTemplateId`}
+        defaultValue=''
+        render={({ field: { onChange, value } }) => (
+          <Listbox
+            value={value as string}
+            onChange={(e) => {
+              onChange(e)
+              console.log(e)
+            }}
           >
-            <Transition.Child
-              as={Fragment}
-              enter='ease-out duration-300'
-              enterFrom='opacity-0'
-              enterTo='opacity-100'
-              leave='ease-in duration-200'
-              leaveFrom='opacity-100'
-              leaveTo='opacity-0'
-            >
-              <div className='fixed inset-0 bg-black bg-opacity-75' />
-            </Transition.Child>
-
-            <div className='fixed inset-0 overflow-y-auto'>
-              <div className='flex min-h-full items-center justify-center p-4 text-center'>
-                <Transition.Child
-                  as={Fragment}
-                  enter='ease-out duration-300'
-                  enterFrom='opacity-0 scale-95'
-                  enterTo='opacity-100 scale-100'
-                  leave='ease-in duration-200'
-                  leaveFrom='opacity-100 scale-100'
-                  leaveTo='opacity-0 scale-95'
-                >
-                  <Dialog.Panel className='w-80 max-w-xl transform overflow-visible rounded-2xl border border-gray-800 bg-black p-6 text-left align-middle text-lg transition-all'>
-                    <div className='flex justify-between'>
-                      <div className='mb-8 text-xl font-semibold'>Warm Ups</div>
-                      <XMarkIcon
-                        className='h-6 w-6 cursor-pointer text-gray-400 hover:text-white'
-                        onClick={() => setIsOpenWarmup(false)}
-                      />
-                    </div>
-                    <div className='flex w-fit flex-col gap-2 font-semibold text-gray-400'>
-                      {allWarmups?.map((warmup) => (
-                        <div
-                          key={warmup.id}
-                          className={`cursor-pointer rounded-lg border border-gray-700 px-6 py-3 hover:border-gray-400 hover:text-gray-200 ${
-                            program?.week.some((w) =>
-                              w.day.some(
-                                (d) =>
-                                  d.warmupTemplateId === warmup.id &&
-                                  d.id === warmupDayId,
-                              ),
-                            )
-                              ? 'bg-yellow-500 text-black hover:text-black'
-                              : ''
-                          }`}
-                          onClick={() => {
-                            updateWarmupTemplateId({
-                              id: warmupDayId,
-                              warmupTemplateId: warmup.id,
-                            })
-                          }}
-                        >
-                          <h2 className='capitalize'>{warmup.name}</h2>
-                        </div>
-                      ))}
-                      <div
-                        className={`cursor-pointer rounded-lg border border-gray-700 px-6 py-3 hover:border-gray-400 hover:text-gray-200`}
-                        onClick={() => {
-                          updateWarmupTemplateId({
-                            id: warmupDayId,
-                            warmupTemplateId: '',
-                          })
-                        }}
-                      >
-                        <h2 className='capitalize'>Clear</h2>
-                      </div>
-                    </div>
-                  </Dialog.Panel>
-                </Transition.Child>
+            <div className='relative h-full w-52  overflow-visible text-xs sm:text-base'>
+              <div className='flex items-center gap-4'>
+                <Listbox.Button className='relative h-10 max-h-min min-h-[40px] w-full cursor-pointer border-b border-gray-600 hover:border-gray-200 py-2 pl-3 pr-10 text-left focus:outline-none '>
+                  <span
+                    className={cn(
+                      'flex items-center capitalize tracking-tighter truncate',
+                      value ? '' : 'text-gray-600',
+                    )}
+                  >
+                    {warmups?.find((warmup) => warmup.id === value)?.name ||
+                      'Warmup'}
+                  </span>
+                  <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
+                    <ChevronUpDownIcon
+                      className='h-5 w-5 text-gray-400'
+                      aria-hidden='true'
+                    />
+                  </span>
+                </Listbox.Button>
               </div>
+              <Transition
+                as={Fragment}
+                leave='transition ease-in duration-100'
+                leaveFrom='opacity-100'
+                leaveTo='opacity-0'
+              >
+                <Listbox.Options className='max-h-160 absolute z-30 mt-1 w-full overflow-auto border border-gray-600 bg-black py-1 '>
+                  {warmups?.map((warmup, Idx) => (
+                    <Listbox.Option
+                      key={Idx}
+                      className={({ active }) =>
+                        `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                          active
+                            ? 'bg-amber-100 text-amber-900'
+                            : 'text-gray-200'
+                        }`
+                      }
+                      value={warmup.id}
+                    >
+                      {({ selected }) => (
+                        <>
+                          <span
+                            className={`block truncate capitalize ${
+                              selected ? 'font-bold' : 'font-semibold'
+                            }`}
+                          >
+                            {warmup.name}
+                          </span>
+                          {selected ? (
+                            <span className='absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600'>
+                              <CheckIcon
+                                className='h-5 w-5'
+                                aria-hidden='true'
+                              />
+                            </span>
+                          ) : null}
+                        </>
+                      )}
+                    </Listbox.Option>
+                  ))}
+                </Listbox.Options>
+              </Transition>
             </div>
-          </Dialog>
-        </div>
-      </Transition>
-    </>
+          </Listbox>
+        )}
+      />
+      <XMarkIcon
+        className='h-6 w-6 shrink-0 cursor-pointer text-gray-400 hover:text-white'
+        onClick={() =>
+          formMethods.setValue(
+            `week.${weekIdx}.day.${dayIdx}.warmupTemplateId`,
+            '',
+          )
+        }
+      />
+    </div>
   )
 }
 

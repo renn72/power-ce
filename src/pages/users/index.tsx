@@ -24,6 +24,7 @@ import CompPlan from '~/components/compPlan'
 import ModalWrapper from '~/components/settings/modalWrapper'
 
 import UserProgramCheck from './userProgramCheck'
+import ProgramTemplate from '~/components/programTemplates'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -335,7 +336,7 @@ const TabWrapper = ({ title }: { title: string }) => (
   <Tab
     className={({ selected }) =>
       classNames(
-        'py-4 hover:bg-gray-900',
+        'py-4 tracking-tighter hover:bg-gray-900',
         selected ? 'font-semibold text-white' : 'font-medium text-gray-500',
       )
     }
@@ -346,7 +347,9 @@ const TabWrapper = ({ title }: { title: string }) => (
 
 const Users = () => {
   const { data: session } = useSession()
-  const { data: user } = api.users.get.useQuery({ userId: session?.user?.id || '' })
+  const { data: user } = api.users.get.useQuery({
+    userId: session?.user?.id || '',
+  })
   const [userId, setUserId] = useState<string>(() => session?.user?.id || '')
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
@@ -490,7 +493,11 @@ const Users = () => {
     userProgramRemoveSecondaryMutate({ userId: userId })
   }
 
-  const onSetSecondaryTemplate = (templateId: string, userId: string, name: string) => {
+  const onSetSecondaryTemplate = (
+    templateId: string,
+    userId: string,
+    name: string,
+  ) => {
     if (!templateId) return
     setIsOpen(true)
     userProgramCreateSecondaryMutate({
@@ -519,9 +526,10 @@ const Users = () => {
           defaultIndex={0}
         >
           <div className='flex w-full gap-4 lg:gap-16'>
-            <Tab.List className='flex w-36 flex-col divide-y divide-yellow-500'>
+            <Tab.List className='flex w-28 flex-col divide-y divide-yellow-500'>
               <TabWrapper title='Overview' />
               <TabWrapper title='Program' />
+              <TabWrapper title='Program-N' />
               <TabWrapper title='History' />
               <TabWrapper title='One RM' />
               <TabWrapper title='RPE Chart' />
@@ -571,14 +579,16 @@ const Users = () => {
                   isAdmin={true}
                   programId={activeProgram?.id || ''}
                 />
-                <h2
-                  className='text-3xl font-semibold my-6'
-                >Next Program2</h2>
+                <h2 className='my-6 text-3xl font-semibold'>Next Program2</h2>
                 <ProgramView
                   userId={userId}
                   isAdmin={true}
                   programId={secondaryProgram?.id || ''}
                 />
+              </Tab.Panel>
+
+              <Tab.Panel>
+                <ProgramTemplate />
               </Tab.Panel>
 
               <Tab.Panel>
