@@ -9,13 +9,12 @@ import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
 
 import { Listbox, Transition, RadioGroup } from '@headlessui/react'
-import { PrismaExercise, type SS } from '~/store/types'
+import type { PrismaExercise, SS } from '~/store/types'
 import {
   ChevronUpDownIcon,
   CheckIcon,
   XCircleIcon,
   CheckCircleIcon,
-  XMarkIcon,
 } from '@heroicons/react/24/outline'
 
 import { NumericFormat } from 'react-number-format'
@@ -24,6 +23,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { PlusIcon } from '@heroicons/react/20/solid'
 import FormSS from './formSSDialog'
+import InputInteger from './inputInteger'
 
 const plans = [
   {
@@ -180,13 +180,7 @@ const FormExerciseDialog = ({
   }, [liftType])
 
   return (
-    <div className='relative flex flex-col justify-center p-4'>
-      <div
-        className='cursor-pointer py-1 px-2 text-gray-400 hover:text-white'
-        onClick={() => setIsOpen(false)}
-      >
-        <XMarkIcon className='absolute right-0 top-0 h-8 w-8' />
-      </div>
+    <div className='relative flex flex-col justify-center gap-2 p-4'>
       <div className='relative flex items-center justify-between gap-4'>
         <div className='p-1 px-4 text-xl font-extrabold italic tracking-widest underline decoration-yellow-500 decoration-2 underline-offset-8'>
           &nbsp;{exerciseIdx + 1}&nbsp;
@@ -236,44 +230,18 @@ const FormExerciseDialog = ({
                 )}
                 placeholder='name'
               />
-              <div className='col-span-2 flex items-center md:col-span-1'>
-                <Label
-                  htmlFor='sets'
-                  className='absolute text-gray-400'
-                >
-                  Sets:
-                </Label>
-                <Input
-                  id='sets'
-                  type='number'
-                  className='pl-12'
-                  {...register(
-                    `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`,
-                    { valueAsNumber: true },
-                  )}
-                  placeholder='sets'
-                  defaultValue={1}
-                />
-              </div>
-              <div className='flex items-center'>
-                <Label
-                  htmlFor='reps'
-                  className='absolute text-gray-400'
-                >
-                  Reps:
-                </Label>
-                <Input
-                  id='reps'
-                  className='pl-12'
-                  type='number'
-                  {...register(
-                    `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`,
-                    { valueAsNumber: true },
-                  )}
-                  placeholder='reps'
-                  defaultValue={1}
-                />
-              </div>
+              <InputInteger
+                registerValue={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.sets`}
+                placeholder='sets'
+                defaultValue={1}
+                label='Sets'
+              />
+              <InputInteger
+                registerValue={`week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.reps`}
+                placeholder='reps'
+                defaultValue={1}
+                label='Reps'
+              />
               <Input
                 className=''
                 {...register(
