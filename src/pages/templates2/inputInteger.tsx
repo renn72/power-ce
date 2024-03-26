@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils'
 const InputInteger = ({
   registerValue,
   placeholder,
-  defaultValue,
   label = null,
 }: {
   registerValue: string

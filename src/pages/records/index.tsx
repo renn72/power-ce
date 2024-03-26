@@ -316,8 +316,11 @@ const CellHeading = ({ children }: { children: React.ReactNode }) => (
 
 const Records = () => {
   const { data: session } = useSession()
-  const user = session?.user
   const userId = session?.user?.id || ''
+  const ctx = api.useUtils()
+  const user = ctx.users.get.getData({ userId: userId, location: 'base' })
+
+  console.log('user', user)
 
   const [isAdmin, setIsAdmin] = useState(false)
   const isEditor = user?.isRecordEditor || false

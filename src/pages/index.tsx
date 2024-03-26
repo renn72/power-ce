@@ -56,8 +56,9 @@ const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
         </div>
         <div> Estiamted 1rm</div>
         <div
-          className={`${estOnerm?.estimatedOnerm == 0 ? 'hidden' : 'text-xl font-bold'
-            }`}
+          className={`${
+            estOnerm?.estimatedOnerm == 0 ? 'hidden' : 'text-xl font-bold'
+          }`}
         >
           {estOnerm?.estimatedOnerm}kg
         </div>
