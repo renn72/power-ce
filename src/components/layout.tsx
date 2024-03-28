@@ -23,9 +23,9 @@ const LayoutAuth = (props: PropsWithChildren) => {
 
   return (
     <>
-      {router.pathname !== '/templates2' && <Navbar user={user || null} />}
+      {router.pathname !== '/templates2' && router.pathname !== '/price-board' && <Navbar user={user || null} />}
       <div className='grow'>{props.children}</div>
-      {router.pathname !== '/templates2' && <Footer />}
+      {router.pathname !== '/templates2' && router.pathname !== '/price-board' && <Footer />}
       <Toaster />
     </>
   )
@@ -51,6 +51,7 @@ const Layout = (props: PropsWithChildren) => {
       <div className='flex min-h-screen w-full flex-col overflow-auto bg-black text-gray-200'>
         {status === 'authenticated' ||
         router.pathname === '/records-men' ||
+        router.pathname === '/price-board' ||
         router.pathname === '/records-women' ? (
           <>
             <LayoutAuth>{props.children}</LayoutAuth>
