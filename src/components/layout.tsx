@@ -23,9 +23,19 @@ const LayoutAuth = (props: PropsWithChildren) => {
 
   return (
     <>
-      {router.pathname !== '/templates2' && router.pathname !== '/price-board' && <Navbar user={user || null} />}
+      {
+        router.pathname !== '/templates2' &&
+        router.pathname !== '/price-board' &&
+        router.pathname !== '/image-roll' &&
+        <Navbar user={user || null} />
+      }
       <div className='grow'>{props.children}</div>
-      {router.pathname !== '/templates2' && router.pathname !== '/price-board' && <Footer />}
+      {
+        router.pathname !== '/templates2' &&
+        router.pathname !== '/price-board' &&
+        router.pathname !== '/image-roll' &&
+          <Footer />
+      }
       <Toaster />
     </>
   )
@@ -52,6 +62,7 @@ const Layout = (props: PropsWithChildren) => {
         {status === 'authenticated' ||
         router.pathname === '/records-men' ||
         router.pathname === '/price-board' ||
+        router.pathname === '/image-roll' ||
         router.pathname === '/records-women' ? (
           <>
             <LayoutAuth>{props.children}</LayoutAuth>
