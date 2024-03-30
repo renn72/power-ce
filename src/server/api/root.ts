@@ -20,6 +20,7 @@ import { adminLogRouter } from './routers/adminLog'
 import { weekRouter } from './routers/week'
 import { exerciseRouter } from './routers/exercise'
 import { templateRouter} from './routers/template'
+import { filesRouter} from './routers/files'
 
 
 /**
@@ -49,6 +50,7 @@ export const appRouter = createTRPCRouter({
   weeks: weekRouter,
   exercise: exerciseRouter,
   template: templateRouter,
+  files: filesRouter,
 })
 
 // export type definition of API
