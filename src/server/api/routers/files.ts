@@ -6,7 +6,8 @@ export const filesRouter = createTRPCRouter({
   getAll: privateProcedure.query(async ({ ctx }) => {
     const files = await utapi.listFiles()
     return {
-      files,
+      time: new Date(),
+      files: files,
     }
   }),
   delete: privateProcedure

@@ -10,12 +10,15 @@ import { useEffect } from 'react'
 
 const PriceBoard = () => {
   const { data: files } = api.files.getAll.useQuery();
-  console.log("Files: ", files);
 
   const utils = api.useUtils()
 
   useEffect(() => {
     setTimeout(() => {
+      console.log('Files Refreshed')
+      console.log(new Date().toLocaleTimeString(
+        'en-US', { hour12: false }
+      ))
       utils.files.getAll.invalidate();
     }, 1000 * 60 * 1) // 5 minutes
   }, [files])
@@ -27,7 +30,7 @@ const PriceBoard = () => {
       }}
       plugins={[
         Autoplay({
-          delay: 5000,
+          delay: 15000,
         }),
       ]}
     >

@@ -85,12 +85,16 @@ const Records = () => {
 
   const pageRefresh = () => {
     utils.records.getAll.invalidate()
+    console.log('Records Refreshed')
+    console.log(new Date().toLocaleTimeString(
+      'en-US', { hour12: false }
+    ))
   }
 
   const setRefresh = () => {
     setTimeout(() => {
       pageRefresh()
-    }, 1000 * 60 * 5) // 10 minutes
+    }, 1000 * 60 * 1) // 10 minutes
   }
 
   useEffect(() => {
