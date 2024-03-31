@@ -1,12 +1,25 @@
-import Image from 'next/image'
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
 } from '@/components/ui/carousel'
 import Autoplay from 'embla-carousel-autoplay'
+import { api } from '~/utils/api'
+
+import { useEffect } from 'react'
 
 const PriceBoard = () => {
+  const { data: files } = api.files.getAll.useQuery();
+  console.log("Files: ", files);
+
+  const utils = api.useUtils()
+
+  useEffect(() => {
+    setTimeout(() => {
+      utils.files.getAll.invalidate();
+    }, 1000 * 60 * 5) // 5 minutes
+  }, [files])
+
   return (
     <Carousel
       opts={{
@@ -14,27 +27,24 @@ const PriceBoard = () => {
       }}
       plugins={[
         Autoplay({
-          delay: 10000,
+          delay: 5000,
         }),
       ]}
     >
       <CarouselContent
         className='h-screen w-screen'
       >
-        <CarouselItem >
-          <img
-            src='/images/price-board.jpg'
-            alt='price-board'
-            className='h-full w-full object-fill'
-          />
-        </CarouselItem>
-        <CarouselItem className='h-screen w-screen'>
-          <img
-            src='/images/hiper-center.png'
-            alt='hiper'
-            className='h-full w-full object-fill'
-          />
-        </CarouselItem>
+        {
+          files?.files.map((file) => (
+            <CarouselItem key={file.id}>
+              <img
+                src={`https://utfs.io/f/${file.key}`}
+                alt={file.name}
+                className="h-full w-full object-fill"
+              />
+            </CarouselItem>
+          ))
+        }
       </CarouselContent>
     </Carousel>
   )
