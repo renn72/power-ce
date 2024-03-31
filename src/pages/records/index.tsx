@@ -124,7 +124,7 @@ const Cell = ({
   userId: string
   isAuth: boolean
 }) => {
-  const ctx = api.useContext()
+  const ctx = api.useUtils()
   const [isOpen, setIsOpen] = useState(false)
   const [name, setName] = useState('')
   const [value, setValue] = useState('')

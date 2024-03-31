@@ -1,5 +1,9 @@
+'use client'
+
 import { LoadingPage } from '~/components/loading'
 import { api } from '~/utils/api'
+
+import { useEffect, } from 'react'
 
 const women = [
   '44',
@@ -70,12 +74,28 @@ const CellHeading = ({ children }: { children: React.ReactNode }) => (
 
 const Records = () => {
   const { data: _records, isLoading: recordsLoading } =
-    api.records.getAll.useQuery()
+  api.records.getAll.useQuery()
 
   const records = _records?.map((r) => ({
     ...r,
     weight: Number(r.weight),
   }))
+
+  const utils = api.useUtils()
+
+  const pageRefresh = () => {
+    utils.records.getAll.invalidate()
+  }
+
+  const setRefresh = () => {
+    setTimeout(() => {
+      pageRefresh()
+    }, 1000 * 60 * 5) // 10 minutes
+  }
+
+  useEffect(() => {
+    setRefresh()
+  }, [records])
 
   if (recordsLoading) return <LoadingPage />
 
