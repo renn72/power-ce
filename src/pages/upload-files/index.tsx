@@ -47,7 +47,7 @@ const Upload = () => {
 
   const userId = session?.user?.id || ''
   const ctx = api.useUtils()
-  const user = ctx.users.get.getData({ userId: userId, })
+  const user = ctx.users.get.getData({ userId: userId, location: 'base' })
   if (!user) return <div>Login</div>
   if (!user.isAdmin) return <div>Not Authorized</div>
 

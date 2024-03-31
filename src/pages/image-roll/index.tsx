@@ -17,7 +17,7 @@ const PriceBoard = () => {
   useEffect(() => {
     setTimeout(() => {
       utils.files.getAll.invalidate();
-    }, 1000 * 60 * 5) // 5 minutes
+    }, 1000 * 60 * 1) // 5 minutes
   }, [files])
 
   return (
