@@ -508,8 +508,8 @@ const Users = () => {
   }
 
   const programLink = (
-    (allUsers?.find(i => i.id === userId)?.firstName || '')
-      + allUsers?.find(i => i.id === userId)?.lastName?.slice(0, 1) || '' ).toLowerCase()
+    (allUsers?.find(i => i.id === userId)?.firstName?.trim() || '')
+      + allUsers?.find(i => i.id === userId)?.lastName?.trim()?.slice(0, 1) || '' ).toLowerCase()
 
   const [planName, setPlanName] = useState<string>('Powerlifting')
 
