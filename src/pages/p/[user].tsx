@@ -385,6 +385,7 @@ const ProgramView = () => {
   const router = useRouter()
   const userName = router.query.user as string
   const user = allUsersNames?.find((u) => u.name === userName)
+  const userFurstName = allUsers?.find((u) => u.id === user?.id)?.firstName || ''
   const userId = session?.user?.id || ''
   const { data: program, isLoading: programLoading } = api.blocks.getUserActiveProgramFull.useQuery({
     userId: user?.id || '',
@@ -441,6 +442,9 @@ day.isRestDay === true ? 'cols-span-1' : 'col-span-2'
           </div>
         ) : (
             <div className='flex flex-col gap-2 text-base'>
+                <h2 className='text-2xl font-bold'>
+                  {userFurstName}
+                </h2>
               <div className={`flex justify-between gap-8 `}>
                 <h2
                   className={`flex text-2xl ${
