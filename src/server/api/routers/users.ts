@@ -19,7 +19,11 @@ export const usersRouter = createTRPCRouter({
   }),
 
   getAllUsers: privateProcedure.query(async ({ ctx }) => {
-    const res = await ctx.prisma.user.findMany({})
+    const res = await ctx.prisma.user.findMany({
+      orderBy: {
+        firstName: 'asc',
+      }
+    })
     return res
   }),
   getAllUsersProfiles: privateProcedure.query(async ({ ctx }) => {

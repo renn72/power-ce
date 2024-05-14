@@ -1,9 +1,9 @@
-import React, { useState, useEffect, Fragment } from 'react'
+import React, { useState, useEffect, } from 'react'
 import { toast } from 'react-hot-toast'
 import { api } from '~/utils/api'
 import { useSession } from 'next-auth/react'
 
-import { Disclosure, Transition, Tab, Dialog } from '@headlessui/react'
+import { Disclosure, Transition, Tab, } from '@headlessui/react'
 
 import { ChevronUpIcon } from '@heroicons/react/20/solid'
 import TemplateSelect from './templateSelect'
@@ -17,14 +17,14 @@ import UserSelect from './userSelect'
 import CountDown from '~/components/countDown'
 import TrainerSelect from './trainerSelect'
 import Settings from '~/components/settings'
-import { ChevronsLeft, RefreshCcwIcon, ChevronsRight } from 'lucide-react'
+import { RefreshCcwIcon, } from 'lucide-react'
+import { CopyIcon, } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import CompPlan from '~/components/compPlan'
 import ModalWrapper from '~/components/settings/modalWrapper'
 
 import UserProgramCheck from './userProgramCheck'
-import ProgramTemplate from '~/components/programTemplates'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -359,9 +359,7 @@ const Users = () => {
 
   const ctx = api.useUtils()
 
-  api.users.getAllUsers.useQuery()
-
-  const { data: blocksData } = api.blocks.getAllBlockTitles.useQuery()
+  const { data: allUsers} = api.users.getAllUsers.useQuery()
 
   const { mutate: userProgramCreateSecondaryMutate } =
     api.userPrograms.createSecondary.useMutation({
@@ -509,6 +507,10 @@ const Users = () => {
     })
   }
 
+  const programLink = (
+    (allUsers?.find(i => i.id === userId)?.firstName || '')
+      + allUsers?.find(i => i.id === userId)?.lastName?.slice(0, 1) || '' ).toLowerCase()
+
   const [planName, setPlanName] = useState<string>('Powerlifting')
 
   if (!user?.isAdmin) return <div>Not Authorized</div>
@@ -542,6 +544,20 @@ const Users = () => {
               <Tab.Panel>
                 <div className='flex flex-col gap-4'>
                   <h2 className='text-2xl font-medium'>Overview</h2>
+                  <div className='flex gap-8 items-center'>
+                    <div className='border rounded-lg border-gray-400 text-lg px-6 py-3 underline underline-offset-4 text-yellow-500'>
+                      https://cepower.fit/p/{programLink}
+                    </div>
+                    <CopyIcon
+                      className='h-6 w-6 cursor-pointer hover:text-yellow-400'
+                      onClick={() => {
+                        navigator.clipboard.writeText(
+                          `https://cepower.fit/p/${programLink}`,
+                        )
+                        toast.success('Copied')
+                      }}
+                    />
+                  </div>
                   <div className='w-64'>
                     <CountDown userId={userId} />
                   </div>
