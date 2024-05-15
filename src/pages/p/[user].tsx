@@ -527,7 +527,7 @@ day.isComplete
                 {day.exercise.map((exercise, exerciseIdx) => (
                   <ExerciseView
                     key={exercise.id}
-                    userId={userId}
+                    userId={user?.id || ''}
                     weekIdx={weekIndex}
                     dayIdx={dayIndex}
                     exerciseIdx={exerciseIdx}
