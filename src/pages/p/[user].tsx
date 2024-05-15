@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 
-import { Day } from '~/types'
+import { PrismaDay as Day } from '~/store/types'
 
 import { useSession } from 'next-auth/react'
 
@@ -421,13 +421,16 @@ const ProgramView = () => {
 
   const isAdmin = true
 
+
   if (programLoading || warmupsLoading) return <LoadingPage />
 
   return (
     <>
       <div
         key={day.id}
-        className={`p-2 hover:rounded-md hover:bg-gray-900/70 ${
+        className={
+          `p-2 hover:rounded-md hover:bg-gray-901/70
+${
 day.isRestDay === true ? 'cols-span-1' : 'col-span-2'
 }`}
       >

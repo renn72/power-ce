@@ -512,6 +512,12 @@ const Users = () => {
       + allUsers?.find(i => i.id === userId)?.lastName?.trim()?.slice(0, 1) || '' ).toLowerCase()
 
   const [planName, setPlanName] = useState<string>('Powerlifting')
+  const origin =
+        typeof window !== 'undefined' && window.location.origin
+            ? window.location.origin
+            : '';
+
+  console.log('path', origin)
 
   if (!user?.isAdmin) return <div>Not Authorized</div>
 
@@ -545,18 +551,24 @@ const Users = () => {
                 <div className='flex flex-col gap-4'>
                   <h2 className='text-2xl font-medium'>Overview</h2>
                   <div className='flex gap-8 items-center'>
-                    <div className='border rounded-lg border-gray-400 text-lg px-6 py-3 underline underline-offset-4 text-yellow-500'>
-                      https://cepower.fit/p/{programLink}
-                    </div>
                     <CopyIcon
                       className='h-6 w-6 cursor-pointer hover:text-yellow-400'
                       onClick={() => {
                         navigator.clipboard.writeText(
-                          `https://cepower.fit/p/${programLink}`,
+                          `${origin}/p/${programLink}`,
                         )
                         toast.success('Copied')
                       }}
                     />
+                    <div className='border rounded-lg border-gray-400 text-lg px-6 py-3 underline underline-offset-4 text-yellow-500'>
+                      <a
+                        href={`${origin}/p/${programLink}`}
+                        target='_blank'
+                        rel='noreferrer'
+                      >
+                      {origin}/p/{programLink}
+                      </a>
+                    </div>
                   </div>
                   <div className='w-64'>
                     <CountDown userId={userId} />
