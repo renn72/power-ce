@@ -517,7 +517,6 @@ const Users = () => {
             ? window.location.origin
             : '';
 
-  console.log('path', origin)
 
   if (!user?.isAdmin) return <div>Not Authorized</div>
 
