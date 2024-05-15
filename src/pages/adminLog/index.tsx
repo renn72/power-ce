@@ -28,9 +28,6 @@ const Log = ({ log, idx }: { log: Log; idx: number }) => {
       ? 'unauth'
       : log.location
 
-  console.log(idx, log)
-  console.log({ request, response })
-
   return (
     <div className='grid grid-cols-13 gap-1 border-b border-gray-700'>
       <div>{idx}</div>
