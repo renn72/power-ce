@@ -128,11 +128,9 @@ const ExerciseView = ({
                         </h4>
                       </div>
                     ) : (
-                            <>
-                              {isAdmin && (
-                                <div className='text-red-500'>No 1RM</div>
-                              )}
-                            </>
+                      <>
+                        {isAdmin && <div className='text-red-500'>No 1RM</div>}
+                      </>
                     )}
                   </div>
                 )}
@@ -150,11 +148,9 @@ const ExerciseView = ({
                       {exercise?.weightBottom ? (
                         +exercise?.weightBottom
                       ) : (
-                            <>
-                              {isAdmin && (
-                                <div className='text-red-500'>No W</div>
-                              )}
-                            </>
+                        <>
+                          {isAdmin && <div className='text-red-500'>No W</div>}
+                        </>
                       )}
                     </h4>
                     <h4>{exercise?.weightTop && '-'}</h4>
@@ -201,9 +197,7 @@ const ExerciseView = ({
             )}
           </div>
         ) : (
-          <div
-            className='flex cursor-pointer flex-col gap-1 py-2 hover:rounded-md hover:bg-gray-900'
-          >
+          <div className='flex cursor-pointer flex-col gap-1 py-2 hover:rounded-md hover:bg-gray-900'>
             <div>
               <h3 className='text-lg capitalize text-yellow-500'>
                 {isSS ? 'Super Set' : exercise.name}
@@ -370,26 +364,28 @@ const ExerciseView = ({
 }
 
 const ProgramView = () => {
-  const { data: allUsers} = api.users.getAllUsers.useQuery()
-  const allUsersNames = allUsers?.map(
-    (u) =>
-  {
-      return {
-        id: u.id,
-        name: ((u?.firstName?.trim() || '') + (u?.lastName?.trim()?.slice(0, 1) || ''))?.toLowerCase()
-      }
-    })
+  const { data: allUsers } = api.users.getAllUsers.useQuery()
+  const allUsersNames = allUsers?.map((u) => {
+    return {
+      id: u.id,
+      name: (
+        (u?.firstName?.trim() || '') + (u?.lastName?.trim()?.slice(0, 1) || '')
+      )?.toLowerCase(),
+    }
+  })
   console.log(allUsersNames)
   const { data: session } = useSession()
 
   const router = useRouter()
   const userName = router.query.user as string
   const user = allUsersNames?.find((u) => u.name === userName)
-  const userFurstName = allUsers?.find((u) => u.id === user?.id)?.firstName || ''
+  const userFurstName =
+    allUsers?.find((u) => u.id === user?.id)?.firstName || ''
   const userId = session?.user?.id || ''
-  const { data: program, isLoading: programLoading } = api.blocks.getUserActiveProgramFull.useQuery({
-    userId: user?.id || '',
-  })
+  const { data: program, isLoading: programLoading } =
+    api.blocks.getUserActiveProgramFull.useQuery({
+      userId: user?.id || '',
+    })
   const dayId = program?.week.reduce((acc, week) => {
     week.day.forEach((day) => {
       if (!day.isComplete && acc === '' && !day.isRestDay) {
@@ -408,9 +404,8 @@ const ProgramView = () => {
     w.day.find((d) => d.id === dayId),
   ) as number
 
-  const dayIndex = program?.week[weekIndex]?.day?.findIndex(
-    (d) => d.id === dayId,
-  ) || 0
+  const dayIndex =
+    program?.week[weekIndex]?.day?.findIndex((d) => d.id === dayId) || 0
 
   const programId = program?.id || ''
 
@@ -421,123 +416,105 @@ const ProgramView = () => {
 
   const isAdmin = true
 
-
   if (programLoading || warmupsLoading) return <LoadingPage />
 
   return (
     <>
       <div
         key={day.id}
-        className={
-          `p-2 hover:rounded-md hover:bg-gray-901/70
-${
-day.isRestDay === true ? 'cols-span-1' : 'col-span-2'
-}`}
+        className={`hover:bg-gray-901/70 p-2 hover:rounded-md ${
+          day.isRestDay === true ? 'cols-span-1' : 'col-span-2'
+        }`}
       >
         {day.isRestDay ? (
           <div>
-            <h2 className='mb-2 text-xl font-bold'>
-              Day {dayIndex + 1}
-            </h2>
-            <h2 className='pt-2 font-normal text-gray-400 lg:w-44'>
-              Rest Day
-            </h2>
+            <h2 className='mb-2 text-xl font-bold'>Day {dayIndex + 1}</h2>
+            <h2 className='pt-2 font-normal text-gray-400 lg:w-44'>Rest Day</h2>
           </div>
         ) : (
-            <div className='flex flex-col gap-2 text-base'>
-                <h2 className='text-2xl font-bold'>
-                  {userFurstName}
-                </h2>
-              <div className={`flex justify-between gap-8 `}>
-                <h2
-                  className={`flex text-2xl ${
-day.isComplete
-? 'font-bold text-green-500'
-: 'font-bold '
-}`}
-                >
-                  Day {dayIndex + 1}
-                </h2>
-                {day.isComplete && (
-                  <StarIcon className='h-6 w-6 text-yellow-500' />
-                )}
-                {day.isComplete && (
-                  <span className='flex items-center gap-1 text-2xl font-semibold text-yellow-500'>
-                    <Zap className='h-5 w-5' />
-                    <span className='font-extrabold'>
-                      {day.energyRating}
-                    </span>
-                  </span>
-                )}
-              </div>
-              <div
+          <div className='flex flex-col gap-2 text-base'>
+            <h2 className='text-2xl font-bold'>{userFurstName}</h2>
+            <div className={`flex justify-between gap-8 `}>
+              <h2
+                className={`flex text-2xl ${
+                  day.isComplete ? 'font-bold text-green-500' : 'font-bold '
+                }`}
               >
-                {day.warmupTemplateId === '' ||
-                  day.warmupTemplateId === null ? (
-                    <div>
-                      <h2>Warm Up</h2>
-                      <div className='text-sm text-gray-600'>none</div>
-                    </div>
-                  ) : (
-                    <div className='flex flex-col gap-2 text-base'>
-                      <h2>Warm Up</h2>
-                      <div className='px-4'>
-                        {
-                          allWarmups?.find(
-                            (warmup) =>
-                              warmup.id === day.warmupTemplateId,
-                          )?.name
-                        }
-                        <div className='flex flex-col gap-1'>
-                          {allWarmups
-                            ?.find(
-                              (warmup) =>
-                                warmup.id === day.warmupTemplateId,
-                            )?.warmups?.map((warmup) => (
-                              <div
-                                key={warmup.id}
-                                className='flex items-center gap-1'
-                              >
-                                <div
-                                  className='w-6'
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  {warmup.link && (
-                                    <a
-                                      target='_blank'
-                                      rel='noreferrer'
-                                      className=''
-                                      href={warmup.link}
-                                    >
-                                      <PlaySquare className='h-4 w-4 text-yellow-500' />
-                                    </a>
-                                  )}
-                                </div>
-                                <div className='ml-2 text-sm capitalize text-gray-600'>
-                                  {warmup.name}
-                                </div>
-                              </div>
-                            ))}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-              </div>
-              <div className='flex flex-col divide-y divide-dashed divide-gray-600'>
-                {day.exercise.map((exercise, exerciseIdx) => (
-                  <ExerciseView
-                    key={exercise.id}
-                    userId={user?.id || ''}
-                    weekIdx={weekIndex}
-                    dayIdx={dayIndex}
-                    exerciseIdx={exerciseIdx}
-                    programId={programId}
-                    isAdmin={isAdmin}
-                  />
-                ))}
-              </div>
+                Day {dayIndex + 1}
+              </h2>
+              {day.isComplete && (
+                <StarIcon className='h-6 w-6 text-yellow-500' />
+              )}
+              {day.isComplete && (
+                <span className='flex items-center gap-1 text-2xl font-semibold text-yellow-500'>
+                  <Zap className='h-5 w-5' />
+                  <span className='font-extrabold'>{day.energyRating}</span>
+                </span>
+              )}
             </div>
-          )}
+            <div>
+              {day.warmupTemplateId === '' || day.warmupTemplateId === null ? (
+                <div>
+                  <h2>Warm Up</h2>
+                  <div className='text-sm text-gray-600'>none</div>
+                </div>
+              ) : (
+                <div className='flex flex-col gap-2 text-base'>
+                  <h2>Warm Up</h2>
+                  <div className='px-4'>
+                    {
+                      allWarmups?.find(
+                        (warmup) => warmup.id === day.warmupTemplateId,
+                      )?.name
+                    }
+                    <div className='flex flex-col gap-1'>
+                      {allWarmups
+                        ?.find((warmup) => warmup.id === day.warmupTemplateId)
+                        ?.warmups?.map((warmup) => (
+                          <div
+                            key={warmup.id}
+                            className='flex items-center gap-1'
+                          >
+                            <div
+                              className='w-6'
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {warmup.link && (
+                                <a
+                                  target='_blank'
+                                  rel='noreferrer'
+                                  className=''
+                                  href={warmup.link}
+                                >
+                                  <PlaySquare className='h-4 w-4 text-yellow-500' />
+                                </a>
+                              )}
+                            </div>
+                            <div className='ml-2 text-sm capitalize text-gray-600'>
+                              {warmup.name}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className='flex flex-col divide-y divide-dashed divide-gray-600'>
+              {day.exercise.map((exercise, exerciseIdx) => (
+                <ExerciseView
+                  key={exercise.id}
+                  userId={user?.id || ''}
+                  weekIdx={weekIndex}
+                  dayIdx={dayIndex}
+                  exerciseIdx={exerciseIdx}
+                  programId={programId}
+                  isAdmin={isAdmin}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </>
   )
