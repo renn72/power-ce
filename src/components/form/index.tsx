@@ -273,8 +273,8 @@ const Form = () => {
   const onLoadTemplate = () => {
     // const block = blocksData?.find((block) => block.id === selectedTemplate)
     console.log(selectedTemplate)
-    console.log('onLoadTemplate', block)
-    setBlockId(block?.id || '')
+    console.log('onLoadTemplate', selectedTemplateData)
+    setBlockId(selectedTemplateData?.id || '')
 
     const template = {
       name: selectedTemplateData?.name || '',
