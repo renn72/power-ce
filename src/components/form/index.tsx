@@ -52,10 +52,10 @@ const Form = () => {
 
   const [selectedTemplate, setSelectedTemplate] = useAtom(selectedTemplateAtom)
 
-  const { data: blocksData } = api.blocks.getAll.useQuery() // TODO: just load titles
+  const { data: blocksData } = api.blocks.getAllBlockTitles.useQuery() // TODO: just load titles
   const blocksTitle = blocksData?.map((block) => block.name)
 
-  const ctx = api.useContext()
+  const ctx = api.useUtils()
 
   const { mutate: blockCreateMutate } = api.blocks.create.useMutation({
     onSuccess: () => {

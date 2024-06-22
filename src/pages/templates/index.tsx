@@ -11,7 +11,7 @@ const Templates: NextPage = () => {
 
   const {
     data: blocksData, isLoading: blocksLoading,
-  } = api.blocks.getAll.useQuery()
+  } = api.blocks.getAllBlockTitles.useQuery()
 
   const { data: session } = useSession()
   const userId = session?.user?.id || ''
