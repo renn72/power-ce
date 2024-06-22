@@ -22,7 +22,7 @@ export const blocksRouter = createTRPCRouter({
             where: {
                 isProgram: false,
                 isDeleted: false,
-                trainerId: authorId,
+                // trainerId: authorId,
             },
             include: {
                 week: {
