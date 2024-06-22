@@ -128,6 +128,7 @@ const Form = () => {
       return
     }
 
+    delete data?.id
     const block = {
       ...data,
       trainerId: userId,

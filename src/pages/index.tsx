@@ -17,6 +17,7 @@ import discordIcon from '~/../public/discord.svg'
 import Image from 'next/image'
 import { BellRing } from 'lucide-react'
 
+
 const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
   api.users.getAllUsers.useQuery()

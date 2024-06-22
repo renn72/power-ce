@@ -2,909 +2,911 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
-  // previewFeatures = ["jsonProtocol"]
+    provider = "prisma-client-js"
+        // previewFeatures = ["jsonProtocol"]
 }
 
 generator zod {
-  provider                         = "zod-prisma-types"
-  useMultipleFiles                 = true
-  createOptionalDefaultValuesTypes = true
-  writeNullishInModelTypes = true
+    provider                         = "zod-prisma-types"
+        useMultipleFiles                 = true
+        createOptionalDefaultValuesTypes = true
+        writeNullishInModelTypes = true
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+    provider     = "mysql"
+        url          = env("DATABASE_URL")
+        relationMode = "prisma"
 }
 
 /// @@Gen.model(hide: true)
 model RPEIndex {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  userId String
+        userId String
 
-  name  String
-  value Decimal
+        name  String
+        value Decimal
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 
-  @@unique([userId, name], name: "userId_name")
+        @@unique([userId, name], name: "userId_name")
 }
+
+
 
 /// @@Gen.model(hide: true)
 model CompDate {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  userId String
+        userId String
 
-  name String
-  date String
+        name String
+        date String
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
-  flield4 String?
-  flield5 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
+        flield4 String?
+        flield5 String?
 }
 
 /// @@Gen.model(hide: true)
 model CompLift {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  userId String
+        userId String
 
-  name           String
-  Age            String
-  AgeClass       String
-  BirthYearClass String
-  Division       String
-  Event          String
+        name           String
+        Age            String
+        AgeClass       String
+        BirthYearClass String
+        Division       String
+        Event          String
 
-  BodyweightKg String?
-  WeightClass  String?
+        BodyweightKg String?
+        WeightClass  String?
 
-  Squat1 String?
-  Squat2 String?
-  Squat3 String?
-  Squat4 String?
+        Squat1 String?
+        Squat2 String?
+        Squat3 String?
+        Squat4 String?
 
-  Bench1 String?
-  Bench2 String?
-  Bench3 String?
-  Bench4 String?
+        Bench1 String?
+        Bench2 String?
+        Bench3 String?
+        Bench4 String?
 
-  Deadlift1 String?
-  Deadlift2 String?
-  Deadlift3 String?
-  Deadlift4 String?
+        Deadlift1 String?
+        Deadlift2 String?
+        Deadlift3 String?
+        Deadlift4 String?
 
-  Total String?
+        Total String?
 
-  Place String?
+        Place String?
 
-  Dots         String?
-  Wilks        String?
-  Glossbrenner String?
-  GoodLift     String?
+        Dots         String?
+        Wilks        String?
+        Glossbrenner String?
+        GoodLift     String?
 
-  Federation String?
+        Federation String?
 
-  Date String?
+        Date String?
 
-  MeetCountry String?
-  MeetState   String?
-  MeetTown    String?
-  MeetName    String?
+        MeetCountry String?
+        MeetState   String?
+        MeetTown    String?
+        MeetName    String?
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
-  flield4 String?
-  flield5 String?
-  flield6 String?
-  flield7 String?
-  flield8 String?
-  flield9 String?
-  flield0 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
+        flield4 String?
+        flield5 String?
+        flield6 String?
+        flield7 String?
+        flield8 String?
+        flield9 String?
+        flield0 String?
 }
 
 /// @@Gen.model(hide: true)
 model CompLiftAddress {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  userId  String @unique
-  address String
+        userId  String @unique
+        address String
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
-  flield4 String?
-  flield5 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
+        flield4 String?
+        flield5 String?
 }
 
 /// @@Gen.model(hide: true)
 model Post {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  title     String
-  content   String
-  published Boolean @default(false)
+        title     String
+        content   String
+        published Boolean @default(false)
 }
 
 model Set {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  rep        Int
-  rpe        Decimal?
-  weight     Decimal?
-  isComplete Boolean
+        rep        Int
+        rpe        Decimal?
+        weight     Decimal?
+        isComplete Boolean
 
-  name String? @db.VarChar(255)
-  lift String? @db.VarChar(55)
+        name String? @db.VarChar(255)
+        lift String? @db.VarChar(55)
 
-  userId    String?
-  trainerId String?
+        userId    String?
+        trainerId String?
 
-  actualReps Int?
+        actualReps Int?
 
-  estiamtedOnerm Decimal?
+        estiamtedOnerm Decimal?
 
-  exerciseId String?
+        exerciseId String?
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
-  flield4 String?
-  flield5 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
+        flield4 String?
+        flield5 String?
 
-  exercise Exercise? @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+        exercise Exercise? @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
 
-  @@index([exerciseId])
+        @@index([exerciseId])
 }
 
 model SuperSet {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  name String? @db.VarChar(255)
-  lift String? @db.VarChar(55)
-  sets Int?
-  reps Int?
+        name String? @db.VarChar(255)
+        lift String? @db.VarChar(55)
+        sets Int?
+        reps Int?
 
-  userId     String?
-  trainerId  String?
-  isTemplate Boolean?
+        userId     String?
+        trainerId  String?
+        isTemplate Boolean?
 
-  repUnit String? @db.VarChar(55)
+        repUnit String? @db.VarChar(55)
 
-  weightType String? @db.VarChar(55)
+        weightType String? @db.VarChar(55)
 
-  onerm    Int?
-  onermTop Int?
+        onerm    Int?
+        onermTop Int?
 
-  weightTop    Decimal?
-  weightBottom Decimal?
+        weightTop    Decimal?
+        weightBottom Decimal?
 
-  targetRpe     Decimal?
-  targetRpeHigh Decimal?
+        targetRpe     Decimal?
+        targetRpeHigh Decimal?
 
-  restTime Int?
-  restUnit String?
+        restTime Int?
+        restUnit String?
 
-  setWieght    Decimal?
-  setTopWeight Decimal?
+        setWieght    Decimal?
+        setTopWeight Decimal?
 
-  isEstimatedOnerm    Boolean? @default(false)
-  estimatedOnermIndex Int?
+        isEstimatedOnerm    Boolean? @default(false)
+        estimatedOnermIndex Int?
 
-  actualSets Int?
-  actualReps Int?
-  isComplete Boolean @default(false)
+        actualSets Int?
+        actualReps Int?
+        isComplete Boolean @default(false)
 
-  rpe    Decimal?
-  weight Decimal?
+        rpe    Decimal?
+        weight Decimal?
 
-  exerciseId String?
+        exerciseId String?
 
-  exercise Exercise? @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+        exercise Exercise? @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
 
-  notes    String? @db.Text
-  htmlLink String?
+        notes    String? @db.Text
+        htmlLink String?
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
-  flield4 String?
-  flield5 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
+        flield4 String?
+        flield5 String?
 
-  @@index([exerciseId])
+        @@index([exerciseId])
 }
 
 model Exercise {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  name String? @db.VarChar(255)
-  lift String? @db.VarChar(55)
-  sets Int?
-  reps Int?
+        name String? @db.VarChar(255)
+        lift String? @db.VarChar(55)
+        sets Int?
+        reps Int?
 
-  userId     String?
-  trainerId  String?
-  isTemplate Boolean?
+        userId     String?
+        trainerId  String?
+        isTemplate Boolean?
 
-  repUnit String? @db.VarChar(55)
+        repUnit String? @db.VarChar(55)
 
-  weightType String? @db.VarChar(55)
+        weightType String? @db.VarChar(55)
 
-  onerm    Int?
-  onermTop Int?
+        onerm    Int?
+        onermTop Int?
 
-  weightTop    Decimal?
-  weightBottom Decimal?
+        weightTop    Decimal?
+        weightBottom Decimal?
 
-  targetRpe     Decimal?
-  targetRpeHigh Decimal?
+        targetRpe     Decimal?
+        targetRpeHigh Decimal?
 
-  restTime Int?
-  restUnit String?
+        restTime Int?
+        restUnit String?
 
-  setWieght    Decimal?
-  setTopWeight Decimal?
+        setWieght    Decimal?
+        setTopWeight Decimal?
 
-  isEstimatedOnerm    Boolean? @default(false)
-  estimatedOnermIndex Int?
+        isEstimatedOnerm    Boolean? @default(false)
+        estimatedOnermIndex Int?
 
-  tempoDown  Int?
-  tempoPause Int?
-  tempoUp    Int?
+        tempoDown  Int?
+        tempoPause Int?
+        tempoUp    Int?
 
-  actualSets Int?
-  actualReps Int?
-  isComplete Boolean @default(false)
+        actualSets Int?
+        actualReps Int?
+        isComplete Boolean @default(false)
 
-  set    Set[]
-  rpe    Decimal?
-  weight Decimal?
+        set    Set[]
+        rpe    Decimal?
+        weight Decimal?
 
-  dayId String?
+        dayId String?
 
-  day Day? @relation(fields: [dayId], references: [id], onDelete: Cascade)
+        day Day? @relation(fields: [dayId], references: [id], onDelete: Cascade)
 
-  ss   SuperSet[]
-  isSS Boolean?
+        ss   SuperSet[]
+        isSS Boolean?
 
-  notes    String? @db.Text
-  htmlLink String?
+        notes    String? @db.Text
+        htmlLink String?
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
-  flield4 String?
-  flield5 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
+        flield4 String?
+        flield5 String?
 
-  @@index([dayId])
+        @@index([dayId])
 }
 
 model Day {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  name String? @db.VarChar(255)
+        name String? @db.VarChar(255)
 
-  userId     String?
-  trainerId  String?
-  isTemplate Boolean?
+        userId     String?
+        trainerId  String?
+        isTemplate Boolean?
 
-  exercise  Exercise[]
-  isRestDay Boolean
+        exercise  Exercise[]
+        isRestDay Boolean
 
-  weekId String?
+        weekId String?
 
-  warmupTemplateId String?
+        warmupTemplateId String?
 
-  week Week? @relation(fields: [weekId], references: [id], onDelete: Cascade)
+        week Week? @relation(fields: [weekId], references: [id], onDelete: Cascade)
 
-  energyRating String?  @default("A") @db.VarChar(1)
-  isComplete   Boolean?
+        energyRating String?  @default("A") @db.VarChar(1)
+        isComplete   Boolean?
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
-  flield4 String?
-  flield5 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
+        flield4 String?
+        flield5 String?
 
-  @@index([weekId])
+        @@index([weekId])
 }
 
 model Week {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  name String? @db.VarChar(255)
+        name String? @db.VarChar(255)
 
-  isTemplate Boolean?
-  isDeleted  Boolean  @default(false)
+        isTemplate Boolean?
+        isDeleted  Boolean  @default(false)
 
-  userId    String?
-  trainerId String?
+        userId    String?
+        trainerId String?
 
-  day Day[]
+        day Day[]
 
-  blockId String?
+        blockId String?
 
-  block Block? @relation(fields: [blockId], references: [id], onDelete: Cascade)
+        block Block? @relation(fields: [blockId], references: [id], onDelete: Cascade)
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
-  flield4 String?
-  flield5 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
+        flield4 String?
+        flield5 String?
 
-  @@index([blockId])
+        @@index([blockId])
 }
 
 model Block {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  creatorId String?
+        creatorId String?
 
-  isGlobal Boolean @default(false)
+        isGlobal Boolean @default(false)
 
-  name String @db.VarChar(255)
+        name String @db.VarChar(255)
 
-  isProgram Boolean @default(false)
+        isProgram Boolean @default(false)
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 
-  userId    String?
-  trainerId String?
+        userId    String?
+        trainerId String?
 
-  userIdOfProgram String?
-  isProgramActive Boolean?
+        userIdOfProgram String?
+        isProgramActive Boolean?
 
-  isComplete  Boolean?
-  isSecondary Boolean?
+        isComplete  Boolean?
+        isSecondary Boolean?
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
-  flield4 String?
-  flield5 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
+        flield4 String?
+        flield5 String?
 
-  week Week[]
+        week Week[]
 }
 
 model UserProgram {
-  id              String   @id @default(cuid())
-  userId          String   @db.VarChar(255)
-  trainerId       String?
-  templateId      String
-  programId       String?
-  isProgramActive Boolean
-  isDeleted       Boolean  @default(false)
-  createdAt       DateTime @default(now())
+    id              String   @id @default(cuid())
+        userId          String   @db.VarChar(255)
+        trainerId       String?
+        templateId      String
+        programId       String?
+        isProgramActive Boolean
+        isDeleted       Boolean  @default(false)
+        createdAt       DateTime @default(now())
 }
 
 /// @@Gen.model(hide: true)
 model OneRepMax {
-  createdAt DateTime @default(now())
+    createdAt DateTime @default(now())
 
-  userId String
-  lift   String
-  weight Decimal
+        userId String
+        lift   String
+        weight Decimal
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
 
-  @@id([userId, lift])
+        @@id([userId, lift])
 }
 
 /// @@Gen.model(hide: true)
 model Lifts {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  userId String
+        userId String
 
-  name String
+        name String
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 
-  lift Lift[]
+        lift Lift[]
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
 }
 
 /// @@Gen.model(hide: true)
 model PrimaryLifts {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  name      String @unique
-  creadedBy String
+        name      String @unique
+        creadedBy String
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
 }
 
 /// @@Gen.model(hide: true)
 model TrainerToClient {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  trainerId String
-  clientId  String
+        trainerId String
+        clientId  String
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
 }
 
 /// @@Gen.model(hide: true)
 model Lift {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  createdAtUser DateTime @default(now())
+        createdAtUser DateTime @default(now())
 
-  userId    String
-  trainerId String?
+        userId    String
+        trainerId String?
 
-  liftId String
+        liftId String
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 
-  lift     Lifts   @relation(fields: [liftId], references: [id], onDelete: Cascade)
-  weight   Decimal
-  reps     Int
-  liftName String
+        lift     Lifts   @relation(fields: [liftId], references: [id], onDelete: Cascade)
+        weight   Decimal
+        reps     Int
+        liftName String
 
-  notes String? @db.Text
+        notes String? @db.Text
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
 
-  @@index([liftId])
+        @@index([liftId])
 }
 
 /// @@Gen.model(hide: true)
 model Goal {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  userId String
+        userId String
 
-  goal       String
-  date       DateTime
-  isComplete Boolean     @default(false)
-  user       UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+        goal       String
+        date       DateTime
+        isComplete Boolean     @default(false)
+        user       UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
 
-  @@index([userId])
+        @@index([userId])
 }
 
 /// @@Gen.model(hide: true)
 model DailyLog {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  userId      String
-  UserProfile UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+        userId      String
+        UserProfile UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  weight   Decimal?
-  fat      Decimal?
-  carbs    Decimal?
-  protein  Decimal?
-  calories Decimal?
+        weight   Decimal?
+        fat      Decimal?
+        carbs    Decimal?
+        protein  Decimal?
+        calories Decimal?
 
-  steps Int?
+        steps Int?
 
-  motivation Int?
+        motivation Int?
 
-  notes String? @db.Text
+        notes String? @db.Text
 
-  sleepHrs     Decimal?
-  sleepQuality Int?
+        sleepHrs     Decimal?
+        sleepQuality Int?
 
-  recovery Int?
-  stress   Int?
-  energy   Int?
+        recovery Int?
+        stress   Int?
+        energy   Int?
 
-  restingHeartRate Int?
-  vo2Max           Int?
+        restingHeartRate Int?
+        vo2Max           Int?
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
 
-  @@index([userId])
+        @@index([userId])
 }
 
 /// @@Gen.model(hide: true)
 model Log {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  userId   String
-  action   String
-  location String
-  url      String?
-  response Json
-  request  Json?
+        userId   String
+        action   String
+        location String
+        url      String?
+        response Json
+        request  Json?
 
-  flield1 String?
-  flield2 String?
+        flield1 String?
+        flield2 String?
 }
 
 /// @@Gen.model(hide: true)
 model UserProfile {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  userId String @unique
-  user   User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
+        userId String @unique
+        user   User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  DOB    DateTime?
-  gender String?
-  height Decimal?
+        DOB    DateTime?
+        gender String?
+        height Decimal?
 
-  weight       Decimal?
-  targetWeight Decimal?
+        weight       Decimal?
+        targetWeight Decimal?
 
-  weightGoal            String?
-  activityLevelTraining String?
-  activityLevelRest     String?
+        weightGoal            String?
+        activityLevelTraining String?
+        activityLevelRest     String?
 
-  goals    Goal[]
-  dailyLog DailyLog[]
+        goals    Goal[]
+        dailyLog DailyLog[]
 
-  squatOneRepMax    Decimal?
-  benchOneRepMax    Decimal?
-  deadliftOneRepMax Decimal?
+        squatOneRepMax    Decimal?
+        benchOneRepMax    Decimal?
+        deadliftOneRepMax Decimal?
 
-  programInterval String?
-  isChecked       Boolean @default(false)
+        programInterval String?
+        isChecked       Boolean @default(false)
 
-  sp1_1 Decimal @default(0.9)
-  sp1_2 Decimal @default(0.91)
-  sp1_3 Decimal @default(0.92)
-  sp2_1 Decimal @default(0.95)
-  sp2_2 Decimal @default(0.96)
-  sp2_3 Decimal @default(0.97)
-  sp3_1 Decimal @default(0.99)
-  sp3_2 Decimal @default(1.0)
-  sp3_3 Decimal @default(1.02)
+        sp1_1 Decimal @default(0.9)
+        sp1_2 Decimal @default(0.91)
+        sp1_3 Decimal @default(0.92)
+        sp2_1 Decimal @default(0.95)
+        sp2_2 Decimal @default(0.96)
+        sp2_3 Decimal @default(0.97)
+        sp3_1 Decimal @default(0.99)
+        sp3_2 Decimal @default(1.0)
+        sp3_3 Decimal @default(1.02)
 
-  bp1_1 Decimal @default(0.9)
-  bp1_2 Decimal @default(0.91)
-  bp1_3 Decimal @default(0.92)
-  bp2_1 Decimal @default(0.95)
-  bp2_2 Decimal @default(0.96)
-  bp2_3 Decimal @default(0.97)
-  bp3_1 Decimal @default(0.99)
-  bp3_2 Decimal @default(1.0)
-  bp3_3 Decimal @default(1.02)
+        bp1_1 Decimal @default(0.9)
+        bp1_2 Decimal @default(0.91)
+        bp1_3 Decimal @default(0.92)
+        bp2_1 Decimal @default(0.95)
+        bp2_2 Decimal @default(0.96)
+        bp2_3 Decimal @default(0.97)
+        bp3_1 Decimal @default(0.99)
+        bp3_2 Decimal @default(1.0)
+        bp3_3 Decimal @default(1.02)
 
-  dp1_1 Decimal @default(0.9)
-  dp1_2 Decimal @default(0.91)
-  dp1_3 Decimal @default(0.92)
-  dp2_1 Decimal @default(0.95)
-  dp2_2 Decimal @default(0.96)
-  dp2_3 Decimal @default(0.97)
-  dp3_1 Decimal @default(0.99)
-  dp3_2 Decimal @default(1.0)
-  dp3_3 Decimal @default(1.02)
+        dp1_1 Decimal @default(0.9)
+        dp1_2 Decimal @default(0.91)
+        dp1_3 Decimal @default(0.92)
+        dp2_1 Decimal @default(0.95)
+        dp2_2 Decimal @default(0.96)
+        dp2_3 Decimal @default(0.97)
+        dp3_1 Decimal @default(0.99)
+        dp3_2 Decimal @default(1.0)
+        dp3_3 Decimal @default(1.02)
 
-  fatAdjustment     Decimal?
-  carbAdjustment    Decimal?
-  proteinAdjustment Decimal?
+        fatAdjustment     Decimal?
+        carbAdjustment    Decimal?
+        proteinAdjustment Decimal?
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
 
-  @@index([userId])
+        @@index([userId])
 }
 
 /// @@Gen.model(hide: true)
 model CompPlanValue {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  CompPlanId String
-  CompPlan   CompPlan @relation(fields: [CompPlanId], references: [id], onDelete: Cascade)
+        CompPlanId String
+        CompPlan   CompPlan @relation(fields: [CompPlanId], references: [id], onDelete: Cascade)
 
-  name  String
-  value String
+        name  String
+        value String
 
-  notes String?
-  time  String?
+        notes String?
+        time  String?
 
-  isGoodLift Boolean?
-  isComplete Boolean  @default(false)
+        isGoodLift Boolean?
+        isComplete Boolean  @default(false)
 
-  @@index([CompPlanId])
+        @@index([CompPlanId])
 }
 
 /// @@Gen.model(hide: true)
 model CompPlan {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  value CompPlanValue[]
+        value CompPlanValue[]
 
-  userId String
+        userId String
 
-  name String
-  date String
+        name String
+        date String
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 }
 
 /// @@Gen.model(hide: true)
 model Record {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  date DateTime @default(now())
+        date DateTime @default(now())
 
-  lift String
-  wc   String
+        lift String
+        wc   String
 
-  gender String
+        gender String
 
-  name   String
-  weight Decimal
+        name   String
+        weight Decimal
 
-  userId String
+        userId String
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 }
 
 /// @@Gen.model(hide: true)
 model Warmup {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  notes String
-  name  String
-  link  String
+        notes String
+        name  String
+        link  String
 
-  warmupTemplateId String
-  warmupTemplate   WarmupTemplate @relation(fields: [warmupTemplateId], references: [id], onDelete: Cascade)
+        warmupTemplateId String
+        warmupTemplate   WarmupTemplate @relation(fields: [warmupTemplateId], references: [id], onDelete: Cascade)
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
 
-  @@index([warmupTemplateId])
+        @@index([warmupTemplateId])
 }
 
 /// @@Gen.model(hide: true)
 model WarmupTemplate {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  creatorId String
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
+        creatorId String
 
-  name String
+        name String
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 
-  warmups Warmup[]
+        warmups Warmup[]
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
 }
 
 // Necessary for Next auth
 /// @@Gen.model(hide: true)
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    id                String  @id @default(cuid())
+        userId            String
+        type              String
+        provider          String
+        providerAccountId String
+        refresh_token     String? @db.Text
+        access_token      String? @db.Text
+        expires_at        Int?
+        token_type        String?
+        scope             String?
+        id_token          String? @db.Text
+        session_state     String?
+        user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
+        @@unique([provider, providerAccountId])
 }
 
 /// @@Gen.model(hide: true)
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    id           String   @id @default(cuid())
+        sessionToken String   @unique
+        userId       String
+        expires      DateTime
+        user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 /// @@Gen.model(hide: true)
 model User {
-  id            String        @id @default(cuid())
-  firstName     String?
-  lastName      String?
-  email         String?       @unique
-  emailVerified DateTime?
-  image         String?
-  name          String?
-  accounts      Account[]
-  sessions      Session[]
-  userProfiles  UserProfile[]
+    id            String        @id @default(cuid())
+        firstName     String?
+        lastName      String?
+        email         String?       @unique
+        emailVerified DateTime?
+        image         String?
+        name          String?
+        accounts      Account[]
+        sessions      Session[]
+        userProfiles  UserProfile[]
 
-  isDiet         Boolean @default(false)
-  isDietTrainer  Boolean @default(false)
-  isPower        Boolean @default(false)
-  isTrainer      Boolean @default(false)
-  isClient       Boolean @default(true)
-  isRecordEditor Boolean @default(false)
-  isAdmin        Boolean @default(false)
-  isSuper        Boolean @default(false)
-  isCreator      Boolean @default(false)
-  isRoot         Boolean @default(false)
-  isHiit         Boolean @default(false)
-  isHiitTrainer  Boolean @default(false)
-  isPowerTrainer Boolean @default(false)
+        isDiet         Boolean @default(false)
+        isDietTrainer  Boolean @default(false)
+        isPower        Boolean @default(false)
+        isTrainer      Boolean @default(false)
+        isClient       Boolean @default(true)
+        isRecordEditor Boolean @default(false)
+        isAdmin        Boolean @default(false)
+        isSuper        Boolean @default(false)
+        isCreator      Boolean @default(false)
+        isRoot         Boolean @default(false)
+        isHiit         Boolean @default(false)
+        isHiitTrainer  Boolean @default(false)
+        isPowerTrainer Boolean @default(false)
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
-  flield4 String?
-  flield5 String?
-  flield6 String?
-  flield7 String?
-  flield8 String?
-  flield9 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
+        flield4 String?
+        flield5 String?
+        flield6 String?
+        flield7 String?
+        flield8 String?
+        flield9 String?
 }
 
 /// @@Gen.model(hide: true)
 model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
+    identifier String
+        token      String   @unique
+        expires    DateTime
 
-  @@unique([identifier, token])
+        @@unique([identifier, token])
 }
 
 /// @@Gen.model(hide: true)
 model BaseIngredient {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  name String @unique
+        name String @unique
 
-  calories Decimal
-  fat      Decimal
-  carbs    Decimal
-  protein  Decimal
+        calories Decimal
+        fat      Decimal
+        carbs    Decimal
+        protein  Decimal
 
-  size Decimal
+        size Decimal
 
-  unit String
+        unit String
 
-  isScalable Boolean @default(true)
+        isScalable Boolean @default(true)
 
-  ingredient Ingredient[]
+        ingredient Ingredient[]
 
-  isGluetenFree Boolean @default(false)
-  isVegan       Boolean @default(false)
-  isVegetarian  Boolean @default(false)
+        isGluetenFree Boolean @default(false)
+        isVegan       Boolean @default(false)
+        isVegetarian  Boolean @default(false)
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
 }
 
 /// @@Gen.model(hide: true)
 model Ingredient {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  baseIngredientId String
-  baseIngredient   BaseIngredient @relation(fields: [baseIngredientId], references: [id], onDelete: Cascade)
+        baseIngredientId String
+        baseIngredient   BaseIngredient @relation(fields: [baseIngredientId], references: [id], onDelete: Cascade)
 
-  recipeId String
-  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+        recipeId String
+        recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
-  size Decimal
+        size Decimal
 
-  unit String
+        unit String
 
-  isScalable Boolean @default(true)
+        isScalable Boolean @default(true)
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
 
-  @@index([recipeId])
+        @@index([recipeId])
 }
 
 /// @@Gen.model(hide: true)
 model Recipe {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  name String @unique
+        name String @unique
 
-  ingredients Ingredient[]
+        ingredients Ingredient[]
 
-  notes RecipeNote[]
+        notes RecipeNote[]
 
-  calories Decimal
-  fat      Decimal
-  carbs    Decimal
-  protein  Decimal
+        calories Decimal
+        fat      Decimal
+        carbs    Decimal
+        protein  Decimal
 
-  isGluetenFree Boolean @default(false)
-  isVegan       Boolean @default(false)
-  isVegetarian  Boolean @default(false)
+        isGluetenFree Boolean @default(false)
+        isVegan       Boolean @default(false)
+        isVegetarian  Boolean @default(false)
 
-  isScalable Boolean @default(true)
+        isScalable Boolean @default(true)
 
-  size Decimal
-  unit String
+        size Decimal
+        unit String
 
-  isDeleted Boolean @default(false)
+        isDeleted Boolean @default(false)
 
-  flield1 String?
-  flield2 String?
-  flield3 String?
+        flield1 String?
+        flield2 String?
+        flield3 String?
 }
 
 /// @@Gen.model(hide: true)
 model RecipeNote {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+        createdAt DateTime @default(now())
 
-  recipeId String
-  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+        recipeId String
+        recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
-  note String
+        note String
 
-  @@index([recipeId])
+        @@index([recipeId])
 }
