@@ -55,12 +55,17 @@ const Form = () => {
   const { data: blocksData } = api.blocks.getAllBlockTitles.useQuery() // TODO: just load titles
   const blocksTitle = blocksData?.map((block) => block.name)
 
+    const { data: selectedTemplateData } = api.blocks.get.useQuery({
+      id: selectedTemplate,
+    })
+
   const ctx = api.useUtils()
 
   const { mutate: blockCreateMutate } = api.blocks.create.useMutation({
     onSuccess: () => {
       setIsOpen(false)
       toast.success('Saved')
+      void ctx.blocks.getAllBlockTitles.invalidate()
       void ctx.blocks.getAll.invalidate()
     },
     onError: (e) => {
@@ -266,14 +271,14 @@ const Form = () => {
   }
 
   const onLoadTemplate = () => {
-    const block = blocksData?.find((block) => block.id === selectedTemplate)
+    // const block = blocksData?.find((block) => block.id === selectedTemplate)
     console.log(selectedTemplate)
     console.log('onLoadTemplate', block)
     setBlockId(block?.id || '')
 
     const template = {
-      name: block?.name || '',
-      week: block?.week.map((week) => ({
+      name: selectedTemplateData?.name || '',
+      week: selectedTemplateData?.week.map((week) => ({
         name: week.name || '',
         isTemplate: false,
         day: week.day.map((day) => ({
