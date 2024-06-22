@@ -62,7 +62,7 @@ const Admin = () => {
                 <Button
                   className='text-red-500'
                   onClick={() => {
-                    deleteSoftTemplate({ id: template.id })
+                    deleteTemplate({ id: template.id })
                   }}
                 >
                   Delete
