@@ -19,9 +19,9 @@ import { rpeRouter } from './routers/rpe'
 import { adminLogRouter } from './routers/adminLog'
 import { weekRouter } from './routers/week'
 import { exerciseRouter } from './routers/exercise'
-import { templateRouter} from './routers/template'
-import { filesRouter} from './routers/files'
-
+import { templateRouter } from './routers/template'
+import { filesRouter } from './routers/files'
+import { templateBuilderRouter } from './routers/templateBuilder'
 
 /**
  * This is the primary router for your server.
@@ -29,28 +29,29 @@ import { filesRouter} from './routers/files'
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  blocks: blocksRouter,
-  users: usersRouter,
-  programs: programsRouter,
-  userPrograms: userProgramsRouter,
-  oneRepMax: oneRepMaxRouter,
-  lifts: liftsRouter,
-  lift: liftRouter,
-  primaryLifts: primaryLiftsRouter,
-  compLift: compLiftsRouter,
-  compDate: compDateRouter,
-  days: daysRouter,
-  sets: setsRouter,
-  warmups: warmupsRouter,
-  settings: settingsRouter,
-  records: recordsRouter,
-  plans: compPlanRouter,
-  rpe: rpeRouter,
-  adminLog: adminLogRouter,
-  weeks: weekRouter,
-  exercise: exerciseRouter,
-  template: templateRouter,
-  files: filesRouter,
+    blocks: blocksRouter,
+    users: usersRouter,
+    programs: programsRouter,
+    userPrograms: userProgramsRouter,
+    oneRepMax: oneRepMaxRouter,
+    lifts: liftsRouter,
+    lift: liftRouter,
+    primaryLifts: primaryLiftsRouter,
+    compLift: compLiftsRouter,
+    compDate: compDateRouter,
+    days: daysRouter,
+    sets: setsRouter,
+    warmups: warmupsRouter,
+    settings: settingsRouter,
+    records: recordsRouter,
+    plans: compPlanRouter,
+    rpe: rpeRouter,
+    adminLog: adminLogRouter,
+    weeks: weekRouter,
+    exercise: exerciseRouter,
+    template: templateRouter,
+    files: filesRouter,
+    templateBuilder: templateBuilderRouter,
 })
 
 // export type definition of API
