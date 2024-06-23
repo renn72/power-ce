@@ -62,7 +62,7 @@ const WeekTemplateSelect = ({
             leaveFrom='opacity-100'
             leaveTo='opacity-0'
           >
-            <Listbox.Options className='max-h-160 absolute z-20 mt-1 w-full overflow-auto border border-gray-600 bg-black py-1 '>
+            <Listbox.Options className='max-h-[400px] absolute z-20 mt-1 w-full overflow-auto border border-gray-600 bg-black py-1 '>
               {weeksData?.map((template, Idx) => (
                 <Listbox.Option
                   key={Idx}
