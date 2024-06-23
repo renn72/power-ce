@@ -86,6 +86,7 @@ const FormHeader = ({
     }
 
     setBlockId(templateData.id)
+    console.log('setBlockId', templateData.id)
 
     console.log('temp', templateData)
 

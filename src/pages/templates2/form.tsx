@@ -81,7 +81,9 @@ const Form = () => {
     const ctx = api.useUtils()
 
     const { mutate: blockCreateMutate } = api.template.create.useMutation({
-        onSuccess: () => {
+        onSuccess: (e) => {
+            console.log('e', e)
+            setBlockId(e?.id)
             setIsOpen(false)
             toast.success('Saved')
             void ctx.templateBuilder.getAllTemplateTitles.refetch()
@@ -98,6 +100,7 @@ const Form = () => {
     })
     const { mutate: blockUpdateMutate } = api.template.update.useMutation({
         onSuccess: (e) => {
+            console.log('e', e)
             setBlockId(e[1]?.id)
             setIsOpen(false)
             toast.success('Saved')
@@ -169,7 +172,7 @@ const Form = () => {
                                             return {
                                                 ...exercise,
                                                 ss: {
-                                                    create: exercise.ss.map(
+                                                    create: exercise?.ss?.map(
                                                         (s) => {
                                                             // @ts-ignore
                                                             delete s?.id

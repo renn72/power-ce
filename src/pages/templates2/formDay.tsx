@@ -40,7 +40,7 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
 
   const onInsertExercise = (index: number) => {
     exerciseField.insert(index + 1, {
-      id: '',
+      // id: '',
       name: '',
       lift: 'unlinked',
       sets: null,
@@ -69,8 +69,8 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
       tempoUp: null,
       tempoPause: null,
       isComplete: false,
-      ss: [] as SS[],
-      set: [] as Set[],
+      // ss: [] as SS[],
+      // set: [] as Set[],
       createdAt: new Date(),
       userId: null,
       trainerId: null,
