@@ -24,7 +24,14 @@ import { type UseFieldArrayReturn } from 'react-hook-form'
 import ExerciseDropper from './exerciseDropper'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import Navbar from '~/components/navbar'
+import { Button } from '@/components/ui/button'
 // import Footer from '~/components/footer'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 
 export const selectedTemplateAtom = atom('')
 export const isSuperAdminAtom = atom(false)
@@ -61,6 +68,8 @@ const Form = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [isUpdate, _setIsUpdate] = useState(false)
     const [blockId, setBlockId] = useState('')
+
+    const [isAddWeekOpen, setIsAddWeekOpen] = useState(false)
 
     const { data: blocksIdTitle } = api.templateBuilder.getAllTemplateTitles.useQuery()
     const blocksTitle = blocksIdTitle?.map((block) => block.name)
@@ -241,6 +250,12 @@ const Form = () => {
         toast.error('Error')
     }
 
+    const onAddWeekCopyPrevious = () => {
+        const week = weekField.fields[weekField.fields.length - 1]
+        if (!week) return
+        weekField.append(week)
+    }
+
     const onAddWeek = () => {
         weekField.append({
             name: '',
@@ -381,10 +396,43 @@ const Form = () => {
                                                 ),
                                             )}
                                         </div>
+                                        <Dialog
+                                            open={isAddWeekOpen}
+                                            onOpenChange={setIsAddWeekOpen}
+                                        >
+                                            <DialogTrigger asChild>
                                         <PlusCircleIcon
                                             className='mt-12 h-12 w-12 text-gray-400 hover:text-gray-200'
-                                            onClick={() => onAddWeek()}
                                         />
+                                            </DialogTrigger>
+                                            <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
+                                                <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
+                                                    Add Week
+                                                </DialogHeader>
+                                                <div className='flex flex-col items-start justify-center gap-2'>
+                                                    <Button
+                                                        variant='secondary'
+                                                        onClick={(e) => {
+                                                            e.preventDefault()
+                                                            setIsAddWeekOpen(false)
+                                                            onAddWeek()
+                                                        }}
+                                                    >
+                                                        Add Blank
+                                                    </Button>
+                                                    <Button
+                                                        variant='secondary'
+                                                        onClick={(e) => {
+                                                            e.preventDefault()
+                                                            setIsAddWeekOpen(false)
+                                                            onAddWeekCopyPrevious()
+                                                        }}
+                                                    >
+                                                        Copy Previous
+                                                    </Button>
+                                                </div>
+                                            </DialogContent>
+                                        </Dialog>
                                     </div>
                                     <div className='my-28 flex justify-center gap-4'></div>
                                 </div>
