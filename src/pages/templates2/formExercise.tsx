@@ -50,6 +50,9 @@ const FormExercise = ({
                     <FileMinus2
                         size={24}
                         className='cursor-pointer hover:text-red-400'
+                        onClick={() => {
+                            onRemoveExercise(exerciseIdx)
+                        }}
                     />
                 </div>
             </div>
