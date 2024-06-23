@@ -215,6 +215,7 @@ const FormWeekHeader = ({
                             <Button
                                 type='submit'
                                 variant='secondary'
+                                disabled
                                 onClick={() => {
                                     setIsSaveOpen(false)
                                 }}
