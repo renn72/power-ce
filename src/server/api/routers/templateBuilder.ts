@@ -51,6 +51,38 @@ export const templateBuilderRouter = createTRPCRouter({
         })
         return blocks
     }),
+    getAllTemplateTitlesSuper: privateProcedure
+        .input(z.object({ userId: z.string(), isSuperAdmin: z.boolean() }))
+        .query(async ({ ctx, input }) => {
+            if (input.isSuperAdmin) {
+                const blocks = await ctx.prisma.block.findMany({
+                    orderBy: { createdAt: 'desc' },
+                    where: {
+                        isDeleted: false,
+                        isProgram: false,
+                    },
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                })
+                return blocks
+            } else {
+                const blocks = await ctx.prisma.block.findMany({
+                    orderBy: { createdAt: 'desc' },
+                    where: {
+                        trainerId: input.userId,
+                        isDeleted: false,
+                        isProgram: false,
+                    },
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                })
+                return blocks
+            }
+        }),
     getAllExerciseTemplates: privateProcedure.query(async ({ ctx }) => {
         const exercises = await ctx.prisma.exercise.findMany({
             orderBy: { createdAt: 'desc' },
@@ -80,32 +112,32 @@ export const templateBuilderRouter = createTRPCRouter({
             })
             return exercisesWithoutDayId
         }),
-  getTemplate: privateProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const block = await ctx.prisma.block.findUnique({
-        where: {
-          id: input.id,
-        },
-        include: {
-          week: {
-            include: {
-              day: {
-                include: {
-                  exercise: {
-                    include: {
-                      ss: true,
-                      set: true,
-                    },
-                  },
+    getTemplate: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const block = await ctx.prisma.block.findUnique({
+                where: {
+                    id: input.id,
                 },
-              },
-            },
-          },
-        },
-      })
-      return block
-    }),
+                include: {
+                    week: {
+                        include: {
+                            day: {
+                                include: {
+                                    exercise: {
+                                        include: {
+                                            ss: true,
+                                            set: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            })
+            return block
+        }),
     // getAllProgramTitles: publicProcedure.query(async ({ ctx }) => {
     //     const blocks = await ctx.prisma.block.findMany({
     //         orderBy: { createdAt: 'desc' },
