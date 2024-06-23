@@ -9,6 +9,7 @@ import FormExerciseDialog from './formExerciseDialog'
 
 import { type PrismaExercise as Exercise } from '~/store/types'
 import { type PrismaBlock } from '~/store/types'
+import { FilePen, FileMinus2 } from 'lucide-react'
 
 const FormExercise = ({
     exerciseIdx,
@@ -33,13 +34,25 @@ const FormExercise = ({
             open={isOpen}
             onOpenChange={setIsOpen}
         >
-            <DialogTrigger className='w-full'>
+            <div className=''>
                 <ExerciseView
                     exercise={exercise}
                     exerciseIdx={exerciseIdx}
                     isAdmin={true}
                 />
-            </DialogTrigger>
+                <div className='flex justify-between px-4 py-1'>
+                    <DialogTrigger asChild>
+                        <FilePen
+                            size={24}
+                            className='cursor-pointer hover:text-yellow-400'
+                        />
+                    </DialogTrigger>
+                    <FileMinus2
+                        size={24}
+                        className='cursor-pointer hover:text-red-400'
+                    />
+                </div>
+            </div>
             <DialogContent className='max-w-5xl'>
                 <FormExerciseDialog
                     exerciseIdx={exerciseIdx}

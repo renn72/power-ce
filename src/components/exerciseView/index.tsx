@@ -21,7 +21,7 @@ const ExerciseView = ({
 
   return (
     <>
-      <div className='flex cursor-pointer flex-col overflow-hidden px-2 py-3 text-base'>
+      <div className='flex cursor-pointer flex-col overflow-hidden px-2 py-2 text-base'>
         <div>
           <div className='flex justify-between'>
             <div className='flex gap-0 overflow-hidden text-lg tracking-tighter'>

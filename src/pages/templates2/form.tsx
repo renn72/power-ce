@@ -318,6 +318,7 @@ const Form = () => {
 
         if (sourceDayId === destDayId) {
             console.log('same day')
+            if (!sourceArray?.move) return
             sourceArray.move(sourceIndex, destIndex)
             return
         }
