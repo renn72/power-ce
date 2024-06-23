@@ -84,6 +84,8 @@ const Form = () => {
         onSuccess: () => {
             setIsOpen(false)
             toast.success('Saved')
+            void ctx.templateBuilder.getAllTemplateTitles.refetch()
+            void ctx.templateBuilder.getAllYourExerciseTemplates.refetch()
             void ctx.blocks.getAll.invalidate()
             void ctx.blocks.getAllBlockTitles.invalidate()
             void ctx.template.getAllWeekTemplates.invalidate()
@@ -99,6 +101,8 @@ const Form = () => {
             setBlockId(e[1]?.id)
             setIsOpen(false)
             toast.success('Saved')
+            void ctx.templateBuilder.getAllTemplateTitles.refetch()
+            void ctx.templateBuilder.getAllYourExerciseTemplates.refetch()
             void ctx.blocks.getAll.invalidate()
             void ctx.blocks.getAllBlockTitles.invalidate()
             void ctx.template.getAllWeekTemplates.invalidate()
