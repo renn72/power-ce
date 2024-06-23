@@ -20,7 +20,7 @@ const ExerciseDropper = () => {
   const { data: session } = useSession()
   const user = session?.user
   const userId = user?.id || ''
-  const { data: exerciseTemplates } = api.exercise.getAll.useQuery({
+  const { data: exerciseTemplates } = api.templateBuilder.getAllYourExerciseTemplates.useQuery({
     userId: userId,
   })
   return (
@@ -29,6 +29,7 @@ const ExerciseDropper = () => {
         type='single'
         orientation='vertical'
         collapsible
+        defaultValue={'0'}
         className='mr-1 flex h-full flex-col items-center border-0'
       >
         <AccordionItem
@@ -58,7 +59,7 @@ const ExerciseDropper = () => {
                       {...provided.dragHandleProps}
                     >
                       <ExerciseView
-                        exercise={exerciseTemplates[rubric.source.index]}
+                        exercise={exerciseTemplates?.[rubric.source.index]}
                         exerciseIdx={0}
                         isAdmin={true}
                       />

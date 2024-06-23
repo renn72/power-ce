@@ -23,6 +23,7 @@ import { defaultValues } from '~/store/defaultValues'
 import { selectedTemplateAtom, isSuperAdminAtom } from './form'
 import { PrismaBlock as Block } from '~/store/types'
 import ModalWrapper from '~/components/modalWrapper'
+
 import {
   Dialog,
   DialogContent,
@@ -59,12 +60,13 @@ const FormHeader = ({
 
   const [selectedTemplate, setSelectedTemplate] = useAtom(selectedTemplateAtom)
 
-  api.template.getAllTemplateTitles.useQuery({
-    userId: userId,
-    isSuperAdmin: isSuperAdmin,
-  })
+  // api.template.getAllTemplateTitles.useQuery({
+  //   userId: userId,
+  //   isSuperAdmin: isSuperAdmin,
+  // })
+
   const { data: templateData, isLoading: templateLoading } =
-    api.template.get.useQuery({
+    api.templateBuilder.getTemplate.useQuery({
       id: selectedTemplate,
     })
 

@@ -1,4 +1,3 @@
-
 import { z } from 'zod'
 
 import {
@@ -7,7 +6,7 @@ import {
     publicProcedure,
 } from '~/server/api/trpc'
 
-import { blockSchema, weekSchema } from '~/server/api/schemas/schemas'
+// import { blockSchema, weekSchema } from '~/server/api/schemas/schemas'
 
 export const templateBuilderRouter = createTRPCRouter({
     // getAll: publicProcedure.query(async ({ ctx }) => {
@@ -38,16 +37,75 @@ export const templateBuilderRouter = createTRPCRouter({
     //     })
     //     return blocks
     // }),
-    // getAllBlockTitles: publicProcedure.query(async ({ ctx }) => {
-    //     const blocks = await ctx.prisma.block.findMany({
-    //         orderBy: { createdAt: 'desc' },
-    //         where: {
-    //             isDeleted: false,
-    //             isProgram: false,
-    //         },
-    //     })
-    //     return blocks
-    // }),
+    getAllTemplateTitles: publicProcedure.query(async ({ ctx }) => {
+        const blocks = await ctx.prisma.block.findMany({
+            orderBy: { createdAt: 'desc' },
+            where: {
+                isDeleted: false,
+                isProgram: false,
+            },
+            select: {
+                id: true,
+                name: true,
+            },
+        })
+        return blocks
+    }),
+    getAllExerciseTemplates: privateProcedure.query(async ({ ctx }) => {
+        const exercises = await ctx.prisma.exercise.findMany({
+            orderBy: { createdAt: 'desc' },
+            where: { isTemplate: true },
+            include: { ss: true },
+        })
+        const exercisesWithoutDayId = exercises.map((e) => {
+            const { dayId, ...rest } = e
+            return rest
+        })
+        return exercisesWithoutDayId
+    }),
+    getAllYourExerciseTemplates: privateProcedure
+        .input(z.object({ userId: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const exercises = await ctx.prisma.exercise.findMany({
+                orderBy: { createdAt: 'desc' },
+                where: {
+                    isTemplate: true,
+                    // trainerId: input?.userId,
+                },
+                include: { ss: true },
+            })
+            const exercisesWithoutDayId = exercises.map((e) => {
+                const { dayId, ...rest } = e
+                return rest
+            })
+            return exercisesWithoutDayId
+        }),
+  getTemplate: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const block = await ctx.prisma.block.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          week: {
+            include: {
+              day: {
+                include: {
+                  exercise: {
+                    include: {
+                      ss: true,
+                      set: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      })
+      return block
+    }),
     // getAllProgramTitles: publicProcedure.query(async ({ ctx }) => {
     //     const blocks = await ctx.prisma.block.findMany({
     //         orderBy: { createdAt: 'desc' },

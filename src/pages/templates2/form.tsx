@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react'
-import { useAtom, atom } from 'jotai'
+import { atom } from 'jotai'
 import { useSession } from 'next-auth/react'
-import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
+import { DragDropContext, } from '@hello-pangea/dnd'
 
 import { useForm, FormProvider, useFieldArray } from 'react-hook-form'
 
@@ -24,345 +24,378 @@ import { type UseFieldArrayReturn } from 'react-hook-form'
 import ExerciseDropper from './exerciseDropper'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import Navbar from '~/components/navbar'
-import Footer from '~/components/footer'
+// import Footer from '~/components/footer'
 
 export const selectedTemplateAtom = atom('')
 export const isSuperAdminAtom = atom(false)
 
 interface DragResult {
-  source: {
-    droppableId: string
-    index: number
-  }
-  destination: {
-    droppableId: string
-    index: number
-  }
-  draggableId: string
+    source: {
+        droppableId: string
+        index: number
+    }
+    destination: {
+        droppableId: string
+        index: number
+    }
+    draggableId: string
 }
 
 const Form = () => {
-  const { data: session } = useSession()
-  const user = session?.user
-  const userId = user?.id || ''
-  const formMethods = useForm<PrismaBlock>({ defaultValues })
-  const {
-    register,
-    reset,
-    control,
-    handleSubmit,
-    setError,
-    formState: { errors },
-  } = formMethods
+    const { data: session } = useSession()
+    const user = session?.user
+    const userId = user?.id || ''
+    const formMethods = useForm<PrismaBlock>({ defaultValues })
+    const {
+        control,
+        handleSubmit,
+        setError,
+    } = formMethods
 
-  const { data: userNav } = api.users.get.useQuery({
-    userId: userId,
-  })
-
-  const fieldArrayContext = useContext(FieldArrayContext)
-
-  const [isOpen, setIsOpen] = useState(false)
-  const [isUpdate, setIsUpdate] = useState(false)
-  const [blockId, setBlockId] = useState('')
-
-  const { data: blocksData } = api.blocks.getAll.useQuery() // TODO: just load titles
-  const blocksTitle = blocksData?.map((block) => block.name)
-  const { data: exerciseTemplates } = api.exercise.getAll.useQuery({
-    userId: userId,
-  })
-
-  const ctx = api.useUtils()
-
-  const { mutate: blockCreateMutate } = api.template.create.useMutation({
-    onSuccess: () => {
-      setIsOpen(false)
-      toast.success('Saved')
-      void ctx.blocks.getAll.invalidate()
-      void ctx.blocks.getAllBlockTitles.invalidate()
-      void ctx.template.getAllWeekTemplates.invalidate()
-      void ctx.template.get.invalidate()
-    },
-    onError: (e) => {
-      toast.error('Error')
-      setIsOpen(false)
-    },
-  })
-  const { mutate: blockUpdateMutate } = api.template.update.useMutation({
-    onSuccess: (e) => {
-      setBlockId(e[1]?.id)
-      setIsOpen(false)
-      toast.success('Saved')
-      void ctx.blocks.getAll.invalidate()
-      void ctx.blocks.getAllBlockTitles.invalidate()
-      void ctx.template.getAllWeekTemplates.invalidate()
-      void ctx.template.get.invalidate()
-    },
-    onError: (e) => {
-      console.log('error', e)
-      toast.error('Error')
-      setIsOpen(false)
-    },
-  })
-
-  const onSubmit = (data: PrismaBlock) => {
-    console.log('submit', data)
-    console.log('isUpdate', isUpdate)
-    setIsOpen(true)
-    saveNewBlock(data)
-  }
-  const onUpdate = (data: PrismaBlock) => {
-    console.log('submit', data)
-    setIsOpen(true)
-    updateBlock(data)
-  }
-
-  const saveNewBlock = (data: PrismaBlock) => {
-    console.log('saveNewBlock', data)
-    if (blocksTitle && blocksTitle.includes(data.name) && !isUpdate) {
-      setError('name', {
-        type: 'manual',
-        message: 'Need a unique name',
-      })
-      console.log('clash')
-      setIsOpen(false)
-      return
-    }
-
-    delete data?.id
-    const block = {
-      ...data,
-      trainerId: userId,
-      week: {
-        create: data.week.map((week) => {
-          delete week?.id
-          delete week?.blockId
-          return {
-            ...week,
-            day: {
-              create: week.day.map((day) => {
-                delete day?.id
-                delete day?.weekId
-                return {
-                  ...day,
-                  exercise: {
-                    create: day.exercise.map((exercise) => {
-                      delete exercise?.id
-                      delete exercise?.dayId
-                      return {
-                        ...exercise,
-                        ss: {
-                          create: exercise.ss.map((s) => {
-                            delete s?.id
-                            delete s?.exerciseId
-                            return {
-                              ...s,
-                            }
-                          }),
-                        },
-                      }
-                    }),
-                  },
-                }
-              }),
-            },
-          }
-        }),
-      },
-    }
-    blockCreateMutate(block)
-  }
-
-  const updateBlock = (data: PrismaBlock) => {
-    const block = {
-      ...data,
-      createdAt: new Date(),
-      id: blockId,
-      trainerId: userId,
-      week: {
-        create: data.week.map((week) => {
-          delete week?.id
-          delete week?.blockId
-          return {
-            ...week,
-            day: {
-              create: week.day.map((day) => {
-                delete day?.id
-                delete day?.weekId
-                return {
-                  ...day,
-                  exercise: {
-                    create: day.exercise.map((exercise) => {
-                      delete exercise?.id
-                      delete exercise?.dayId
-                      return {
-                        ...exercise,
-                        ss: {
-                          create: exercise.ss.map((s) => {
-                            delete s?.id
-                            delete s?.exerciseId
-                            return {
-                              ...s,
-                            }
-                          }),
-                        },
-                      }
-                    }),
-                  },
-                }
-              }),
-            },
-          }
-        }),
-      },
-    }
-    blockUpdateMutate(block)
-  }
-
-  const onError = () => {
-    toast.error('Error')
-  }
-
-  const onAddWeek = () => {
-    weekField.append({
-      name: '',
-      isTemplate: false,
-      day: [
-        {
-          exercise: [],
-          isRestDay: true,
-        },
-        {
-          exercise: [],
-          isRestDay: true,
-        },
-        {
-          exercise: [],
-          isRestDay: true,
-        },
-        {
-          exercise: [],
-          isRestDay: true,
-        },
-        {
-          exercise: [],
-          isRestDay: true,
-        },
-        {
-          exercise: [],
-          isRestDay: true,
-        },
-        {
-          exercise: [],
-          isRestDay: true,
-        },
-      ],
+    const { data: userNav } = api.users.get.useQuery({
+        userId: userId,
     })
-  }
 
-  const weekField = useFieldArray({
-    control,
-    name: 'week',
-  })
+    const fieldArrayContext = useContext(FieldArrayContext)
 
-  const onRemoveWeek = (index: number) => {
-    console.log('remove week')
-    weekField.remove(index)
-  }
+    const [isOpen, setIsOpen] = useState(false)
+    const [isUpdate, _setIsUpdate] = useState(false)
+    const [blockId, setBlockId] = useState('')
 
-  const handleDrag = (result: DragResult) => {
-    const { source, destination } = result
-    if (!destination) return
+    const { data: blocksIdTitle } = api.templateBuilder.getAllTemplateTitles.useQuery()
+    const blocksTitle = blocksIdTitle?.map((block) => block.name)
+    const { data: exerciseTemplates } = api.templateBuilder.getAllYourExerciseTemplates.useQuery({
+        userId: userId,
+    })
+    // const { data: exerciseTemplates } = api.templateBuilder.getAllExerciseTemplates.useQuery()
 
-    const sourceDayId = source.droppableId
-    const sourceIndex = source.index
-    const destDayId = destination.droppableId
-    const destIndex = destination.index
+    const ctx = api.useUtils()
 
-    const sourceArray = fieldArrayContext?.[sourceDayId] as UseFieldArrayReturn
-    const destArray = fieldArrayContext?.[destDayId] as UseFieldArrayReturn
+    const { mutate: blockCreateMutate } = api.template.create.useMutation({
+        onSuccess: () => {
+            setIsOpen(false)
+            toast.success('Saved')
+            void ctx.blocks.getAll.invalidate()
+            void ctx.blocks.getAllBlockTitles.invalidate()
+            void ctx.template.getAllWeekTemplates.invalidate()
+            void ctx.template.get.invalidate()
+        },
+        onError: (_e) => {
+            toast.error('Error')
+            setIsOpen(false)
+        },
+    })
+    const { mutate: blockUpdateMutate } = api.template.update.useMutation({
+        onSuccess: (e) => {
+            setBlockId(e[1]?.id)
+            setIsOpen(false)
+            toast.success('Saved')
+            void ctx.blocks.getAll.invalidate()
+            void ctx.blocks.getAllBlockTitles.invalidate()
+            void ctx.template.getAllWeekTemplates.invalidate()
+            void ctx.template.get.invalidate()
+        },
+        onError: (e) => {
+            console.log('error', e)
+            toast.error('Error')
+            setIsOpen(false)
+        },
+    })
 
-    if (
-      source.droppableId === destination.droppableId &&
-      source.index === destination.index
-    ) {
-      return
+    const onSubmit = (data: PrismaBlock) => {
+        console.log('submit', data)
+        console.log('isUpdate', isUpdate)
+        setIsOpen(true)
+        saveNewBlock(data)
+    }
+    const onUpdate = (data: PrismaBlock) => {
+        console.log('submit', data)
+        setIsOpen(true)
+        updateBlock(data)
     }
 
-    if (sourceDayId === destDayId) {
-      console.log('same day')
-      sourceArray.move(sourceIndex, destIndex)
-      return
+    const saveNewBlock = (data: PrismaBlock) => {
+        console.log('saveNewBlock', data)
+        if (blocksTitle && blocksTitle.includes(data.name) && !isUpdate) {
+            setError('name', {
+                type: 'manual',
+                message: 'Need a unique name',
+            })
+            console.log('clash')
+            setIsOpen(false)
+            return
+        }
+
+        // @ts-ignore
+        delete data?.id
+        const block = {
+            ...data,
+            trainerId: userId,
+            week: {
+                create: data.week.map((week) => {
+                    // @ts-ignore
+                    delete week?.id
+                    // @ts-ignore
+                    delete week?.blockId
+                    return {
+                        ...week,
+                        day: {
+                            create: week.day.map((day) => {
+                                // @ts-ignore
+                                delete day?.id
+                                // @ts-ignore
+                                delete day?.weekId
+                                return {
+                                    ...day,
+                                    exercise: {
+                                        create: day.exercise.map((exercise) => {
+                                            // @ts-ignore
+                                            delete exercise?.id
+                                            // @ts-ignore
+                                            delete exercise?.dayId
+                                            return {
+                                                ...exercise,
+                                                ss: {
+                                                    create: exercise.ss.map(
+                                                        (s) => {
+                                                            // @ts-ignore
+                                                            delete s?.id
+                                                            // @ts-ignore
+                                                            delete s?.exerciseId
+                                                            return {
+                                                                ...s,
+                                                            }
+                                                        },
+                                                    ),
+                                                },
+                                            }
+                                        }),
+                                    },
+                                }
+                            }),
+                        },
+                    }
+                }),
+            },
+        }
+        blockCreateMutate(block)
     }
 
-    if (destDayId === 'templates') return
-    if (sourceDayId === 'templates') {
-      const exercise = exerciseTemplates?.find(
-        (t) => t.id === result.draggableId,
-      )
-
-      if (!exercise) return
-
-      destArray.insert(destIndex, exercise)
-
-      return
+    const updateBlock = (data: PrismaBlock) => {
+        const block = {
+            ...data,
+            createdAt: new Date(),
+            id: blockId,
+            trainerId: userId,
+            week: {
+                create: data.week.map((week) => {
+                    // @ts-ignore
+                    delete week?.id
+                    // @ts-ignore
+                    delete week?.blockId
+                    return {
+                        ...week,
+                        day: {
+                            create: week.day.map((day) => {
+                                // @ts-ignore
+                                delete day?.id
+                                // @ts-ignore
+                                delete day?.weekId
+                                return {
+                                    ...day,
+                                    exercise: {
+                                        create: day.exercise.map((exercise) => {
+                                            // @ts-ignore
+                                            delete exercise?.id
+                                            // @ts-ignore
+                                            delete exercise?.dayId
+                                            return {
+                                                ...exercise,
+                                                ss: {
+                                                    create: exercise.ss.map(
+                                                        (s) => {
+                                                            // @ts-ignore
+                                                            delete s?.id
+                                                            // @ts-ignore
+                                                            delete s?.exerciseId
+                                                            return {
+                                                                ...s,
+                                                            }
+                                                        },
+                                                    ),
+                                                },
+                                            }
+                                        }),
+                                    },
+                                }
+                            }),
+                        },
+                    }
+                }),
+            },
+        }
+        blockUpdateMutate(block)
     }
 
-    const sourceDay = sourceArray.fields[sourceIndex]
-    destArray.insert(destIndex, sourceDay)
-    sourceArray.remove(sourceIndex)
-  }
+    const onError = () => {
+        toast.error('Error')
+    }
 
-  return (
-    <>
-      <LoadingWrapper
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-      />
-      <DragDropContext
-        className='overflow-auto'
-        onDragEnd={handleDrag}
-      >
-        <div className='flex h-full w-full tracking-tight '>
-          <ScrollArea className='h-screen w-full'>
-            <Navbar user={userNav || null} />
-            <FormProvider {...formMethods}>
-              <form
-                onSubmit={handleSubmit(onSubmit, onError)}
-                className='flex min-h-[90vh] w-full flex-col items-center '
-              >
-                <div className='flex w-full flex-col items-center gap-1 sm:gap-8'>
-                  <div className='flex min-h-[60vh] w-full flex-col items-center gap-2 p-1 sm:gap-4'>
-                    <FormHeader
-                      setBlockId={setBlockId}
-                      onSubmit={onSubmit}
-                      onUpdate={onUpdate}
-                    />
+    const onAddWeek = () => {
+        weekField.append({
+            name: '',
+            isTemplate: false,
+            day: [
+                // @ts-ignore
+                {
+                    exercise: [],
+                    isRestDay: true,
+                },
+                // @ts-ignore
+                {
+                    exercise: [],
+                    isRestDay: true,
+                },
+                // @ts-ignore
+                {
+                    exercise: [],
+                    isRestDay: true,
+                },
+                // @ts-ignore
+                {
+                    exercise: [],
+                    isRestDay: true,
+                },
+                // @ts-ignore
+                {
+                    exercise: [],
+                    isRestDay: true,
+                },
+                // @ts-ignore
+                {
+                    exercise: [],
+                    isRestDay: true,
+                },
+                // @ts-ignore
+                {
+                    exercise: [],
+                    isRestDay: true,
+                },
+            ],
+        })
+    }
 
-                    <div className='flex w-full flex-col gap-8 '>
-                      {weekField.fields.map((week, weekIndex) => (
-                        <FormWeek
-                          key={week.id}
-                          weekIdx={weekIndex}
-                          onRemoveWeek={onRemoveWeek}
-                        />
-                      ))}
-                    </div>
-                    <PlusCircleIcon
-                      className='mt-12 h-12 w-12 text-gray-400 hover:text-gray-200'
-                      onClick={() => onAddWeek()}
-                    />
-                  </div>
-                  <div className='my-28 flex justify-center gap-4'></div>
+    const weekField = useFieldArray({
+        control,
+        name: 'week',
+    })
+
+    const onRemoveWeek = (index: number) => {
+        console.log('remove week')
+        weekField.remove(index)
+    }
+
+    const handleDrag = (result: DragResult) => {
+        const { source, destination } = result
+        if (!destination) return
+
+        const sourceDayId = source.droppableId
+        const sourceIndex = source.index
+        const destDayId = destination.droppableId
+        const destIndex = destination.index
+
+        const sourceArray = fieldArrayContext?.[
+            sourceDayId
+        ] as UseFieldArrayReturn
+        const destArray = fieldArrayContext?.[destDayId] as UseFieldArrayReturn
+
+        if (
+            source.droppableId === destination.droppableId &&
+            source.index === destination.index
+        ) {
+            return
+        }
+
+        if (sourceDayId === destDayId) {
+            console.log('same day')
+            sourceArray.move(sourceIndex, destIndex)
+            return
+        }
+
+        if (destDayId === 'templates') return
+        if (sourceDayId === 'templates') {
+            const exercise = exerciseTemplates?.find(
+                (t) => t.id === result.draggableId,
+            )
+
+            if (!exercise) return
+
+            destArray.insert(destIndex, exercise)
+
+            return
+        }
+
+        const sourceDay = sourceArray.fields[sourceIndex]
+        destArray.insert(destIndex, sourceDay)
+        sourceArray.remove(sourceIndex)
+    }
+
+    return (
+        <>
+            <LoadingWrapper
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+            />
+            <DragDropContext
+                className='overflow-auto'
+                // @ts-ignore
+                onDragEnd={handleDrag} // TODO: workout typing issue
+            >
+                <div className='flex h-full w-full tracking-tight '>
+                    <ScrollArea className='h-screen w-full'>
+                        <Navbar user={userNav || null} />
+                        <FormProvider {...formMethods}>
+                            <form
+                                onSubmit={handleSubmit(onSubmit, onError)}
+                                className='flex min-h-[90vh] w-full flex-col items-center '
+                            >
+                                <div className='flex w-full flex-col items-center gap-1 sm:gap-8'>
+                                    <div className='flex min-h-[60vh] w-full flex-col items-center gap-2 p-1 sm:gap-4'>
+                                        <FormHeader
+                                            setBlockId={setBlockId}
+                                            onSubmit={onSubmit}
+                                            onUpdate={onUpdate}
+                                        />
+
+                                        <div className='flex w-full flex-col gap-8 '>
+                                            {weekField.fields.map(
+                                                (week, weekIndex) => (
+                                                    <FormWeek
+                                                        key={week.id}
+                                                        weekIdx={weekIndex}
+                                                        onRemoveWeek={
+                                                            onRemoveWeek
+                                                        }
+                                                    />
+                                                ),
+                                            )}
+                                        </div>
+                                        <PlusCircleIcon
+                                            className='mt-12 h-12 w-12 text-gray-400 hover:text-gray-200'
+                                            onClick={() => onAddWeek()}
+                                        />
+                                    </div>
+                                    <div className='my-28 flex justify-center gap-4'></div>
+                                </div>
+                            </form>
+                        </FormProvider>
+                        {/* <Footer /> */}
+                    </ScrollArea>
+                    <ExerciseDropper />
                 </div>
-              </form>
-            </FormProvider>
-            <Footer />
-          </ScrollArea>
-          <ExerciseDropper />
-        </div>
-      </DragDropContext>
-    </>
-  )
+            </DragDropContext>
+        </>
+    )
 }
 
 export default Form
