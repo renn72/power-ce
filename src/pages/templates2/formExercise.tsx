@@ -40,7 +40,7 @@ const FormExercise = ({
                     exerciseIdx={exerciseIdx}
                     isAdmin={true}
                 />
-                <div className='flex justify-between px-4 py-1'>
+                <div className='flex justify-start gap-4 px-4 py-1'>
                     <DialogTrigger asChild>
                         <FilePen
                             size={24}
