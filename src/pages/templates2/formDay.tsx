@@ -107,7 +107,6 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
       exerciseField.remove()
     } else {
       if (exerciseArray.length === 0) {
-        onInsertExercise(0)
       }
 
     }
@@ -178,7 +177,7 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className='flex flex-col gap-2'
+              className='flex flex-col gap-2 min-h-[200px]'
             >
               {exerciseField.fields.map((item, index) => {
                 return (
