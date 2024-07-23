@@ -114,7 +114,7 @@ const ExerciseDropper = () => {
                                                     >
                                                         <X
                                                             size={20}
-                                                            className='absolute right-2 top-0 text-gray-400'
+                                                            className='absolute right-2 top-1 text-gray-400 hover:text-gray-200 cursor-pointer'
                                                             onClick={() =>
                                                                 deleteExerciseTemplate({
                                                                     id: t.id,

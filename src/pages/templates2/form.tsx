@@ -76,7 +76,6 @@ const Form = () => {
   const { data: exerciseTemplates } = api.templateBuilder.getAllYourExerciseTemplates.useQuery({
     userId: userId,
   })
-  // const { data: exerciseTemplates } = api.templateBuilder.getAllExerciseTemplates.useQuery()
 
   const ctx = api.useUtils()
 
@@ -443,15 +442,6 @@ const Form = () => {
                           </div>
                         </DialogContent>
                       </Dialog>
-                      <Button
-                      onClick={(e) => {
-                        e.preventDefault()
-                        console.log('log', formMethods.getValues())
-                      }
-                      }
-                    >log
-
-                    </Button>
                     </div>
                     <div className='my-28 flex justify-center gap-4'></div>
                   </div>
