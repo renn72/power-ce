@@ -66,6 +66,7 @@ const Form = () => {
   const fieldArrayContext = useContext(FieldArrayContext)
 
   const [isOpen, setIsOpen] = useState(false)
+  const [isSaveOpen, setIsSaveOpen] = useState(false)
   const [isUpdate, _setIsUpdate] = useState(false)
   const [blockId, setBlockId] = useState('')
 
@@ -84,6 +85,7 @@ const Form = () => {
       console.log('e', e)
       setBlockId(e?.id)
       setIsOpen(false)
+      setIsSaveOpen(false)
       toast.success('Saved')
       void ctx.templateBuilder.getAllTemplateTitles.refetch()
       void ctx.templateBuilder.getAllYourExerciseTemplates.refetch()
@@ -102,6 +104,7 @@ const Form = () => {
       console.log('e', e)
       setBlockId(e[1]?.id)
       setIsOpen(false)
+      setIsSaveOpen(false)
       toast.success('Saved')
       void ctx.templateBuilder.getAllTemplateTitles.refetch()
       void ctx.templateBuilder.getAllYourExerciseTemplates.refetch()
@@ -389,6 +392,8 @@ const Form = () => {
                       setBlockId={setBlockId}
                       onSubmit={onSubmit}
                       onUpdate={onUpdate}
+                      setIsSaveOpen={setIsSaveOpen}
+                      isSaveOpen={isSaveOpen}
                     />
 
                       <div className='flex w-full flex-col gap-8 '>
