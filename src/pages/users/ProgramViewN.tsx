@@ -28,7 +28,7 @@ const ProgramViewN = ({
       <FieldArrayContext.Provider value={[]}>
         <main className='flex h-full min-w-[1600px] max-w-[100vw] flex-col items-center justify-center text-sm font-semibold sm:text-base'>
           <div className='flex w-full flex-col items-center justify-center '>
-            <Form isProgram={true} ProgramId={programId} />
+            <Form isProgramProps={true} ProgramId={programId} />
           </div>
         </main>
       </FieldArrayContext.Provider>

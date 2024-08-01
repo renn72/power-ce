@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { atom } from 'jotai'
+import { atom, useAtom } from 'jotai'
 import { useSession } from 'next-auth/react'
 import { DragDropContext } from '@hello-pangea/dnd'
 
@@ -35,6 +35,9 @@ import {
 export const selectedTemplateAtom = atom('')
 export const isSuperAdminAtom = atom(false)
 
+export const isProgramAtom = atom(false)
+export const isEditProgramAtom = atom(false)
+
 interface DragResult {
   source: {
     droppableId: string
@@ -48,10 +51,10 @@ interface DragResult {
 }
 
 const Form = ({
-  isProgram = false,
+  isProgramProps = false,
   ProgramId = null,
 }: {
-  isProgram?: boolean
+  isProgramProps?: boolean
   ProgramId?: string | null
 }) => {
   const { data: session } = useSession()
@@ -59,6 +62,13 @@ const Form = ({
   const userId = user?.id || ''
   const formMethods = useForm<PrismaBlock>({ defaultValues })
   const { control, handleSubmit, setError, reset } = formMethods
+
+  const [isEditProgram, setIsEditProgram] = useAtom(isEditProgramAtom)
+  const [isProgram, setIsProgram] = useAtom(isProgramAtom)
+
+  useEffect(() => {
+    setIsProgram(isProgramProps)
+  }, [])
 
   const { data: userNav } = api.users.get.useQuery({
     userId: userId,
@@ -445,41 +455,45 @@ const Form = ({
                         />
                       ))}
                     </div>
-                    <Dialog
-                      open={isAddWeekOpen}
-                      onOpenChange={setIsAddWeekOpen}
-                    >
-                      <DialogTrigger asChild>
-                        <PlusCircleIcon className='mt-12 h-12 w-12 text-gray-400 hover:text-gray-200' />
-                      </DialogTrigger>
-                      <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
-                        <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
-                          Add Week
-                        </DialogHeader>
-                        <div className='flex flex-col items-start justify-center gap-2'>
-                          <Button
-                            variant='secondary'
-                            onClick={(e) => {
-                              e.preventDefault()
-                              setIsAddWeekOpen(false)
-                              onAddWeek()
-                            }}
-                          >
-                            Add Blank
-                          </Button>
-                          <Button
-                            variant='secondary'
-                            onClick={(e) => {
-                              e.preventDefault()
-                              setIsAddWeekOpen(false)
-                              onAddWeekCopyPrevious()
-                            }}
-                          >
-                            Copy Previous
-                          </Button>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
+                    {isProgram && !isEditProgram ? (
+                      <div>false</div>
+                    ) : (
+                      <Dialog
+                        open={isAddWeekOpen}
+                        onOpenChange={setIsAddWeekOpen}
+                      >
+                        <DialogTrigger asChild>
+                          <PlusCircleIcon className='mt-12 h-12 w-12 text-gray-400 hover:text-gray-200' />
+                        </DialogTrigger>
+                        <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
+                          <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
+                            Add Week
+                          </DialogHeader>
+                          <div className='flex flex-col items-start justify-center gap-2'>
+                            <Button
+                              variant='secondary'
+                              onClick={(e) => {
+                                e.preventDefault()
+                                setIsAddWeekOpen(false)
+                                onAddWeek()
+                              }}
+                            >
+                              Add Blank
+                            </Button>
+                            <Button
+                              variant='secondary'
+                              onClick={(e) => {
+                                e.preventDefault()
+                                setIsAddWeekOpen(false)
+                                onAddWeekCopyPrevious()
+                              }}
+                            >
+                              Copy Previous
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    )}
                   </div>
                   <div className='my-28 flex justify-center gap-4'></div>
                 </div>
@@ -487,7 +501,7 @@ const Form = ({
             </FormProvider>
             {/* <Footer /> */}
           </ScrollArea>
-          <ExerciseDropper />
+          {isProgram && !isEditProgram ? null : <ExerciseDropper />}
         </div>
       </DragDropContext>
     </>

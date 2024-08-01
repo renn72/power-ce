@@ -17,9 +17,20 @@ import FormExercise from './formExercise'
 
 import { FieldArrayContext } from './index'
 
+import { useAtomValue } from 'jotai'
+import { isProgramAtom, isEditProgramAtom } from './form'
+
 const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
   const formMethods = useFormContext<PrismaBlock>()
   const { control, watch, getValues } = formMethods
+
+  const isProgram = useAtomValue(isProgramAtom)
+  const isEditProgram = useAtomValue(isEditProgramAtom)
+
+
+  const isEnabled = !isProgram ? true : isEditProgram
+
+  console.log({ isProgram, isEditProgram })
 
   const fieldArrayContext = useContext(FieldArrayContext)
 
@@ -121,7 +132,6 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
           defaultValue={false}
           render={({ field: { onChange, value } }) => (
             <div className='flex flex-col items-center justify-center gap-0 text-lg text-gray-600'>
-              <label className={value ? `` : `hidden`}>Rest Day</label>
               <Switch
                 checked={value}
                 onChange={onChange}
@@ -142,6 +152,7 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
                   )}
                 />
               </Switch>
+              <label className={value ? `mt-4` : `hidden`}>Rest Day</label>
             </div>
           )}
         />
@@ -182,6 +193,7 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
               {exerciseField.fields.map((item, index) => {
                 return (
                   <Draggable
+                    isDragDisabled={!isEnabled}
                     key={`week.${weekIdx}.day.${dayIdx}.exercise.${index}`}
                     draggableId={`item-${weekIdx}-${dayIdx}-${index}`}
                     index={index}
