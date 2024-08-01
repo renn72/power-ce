@@ -25,6 +25,7 @@ import CompPlan from '~/components/compPlan'
 import ModalWrapper from '~/components/settings/modalWrapper'
 
 import UserProgramCheck from './userProgramCheck'
+import ProgramViewN from './ProgramViewN'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -615,6 +616,10 @@ const Users = () => {
               </Tab.Panel>
 
               <Tab.Panel>
+                <ProgramViewN
+                  userId={userId}
+                  programId={activeProgram?.id || ''}
+                />
               </Tab.Panel>
 
               <Tab.Panel>

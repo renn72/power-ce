@@ -1,7 +1,7 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { atom } from 'jotai'
 import { useSession } from 'next-auth/react'
-import { DragDropContext, } from '@hello-pangea/dnd'
+import { DragDropContext } from '@hello-pangea/dnd'
 
 import { useForm, FormProvider, useFieldArray } from 'react-hook-form'
 
@@ -25,7 +25,6 @@ import ExerciseDropper from './exerciseDropper'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import Navbar from '~/components/navbar'
 import { Button } from '@/components/ui/button'
-// import Footer from '~/components/footer'
 import {
   Dialog,
   DialogContent,
@@ -48,16 +47,18 @@ interface DragResult {
   draggableId: string
 }
 
-const Form = () => {
+const Form = ({
+  isProgram = false,
+  ProgramId = null,
+}: {
+  isProgram?: boolean
+  ProgramId?: string | null
+}) => {
   const { data: session } = useSession()
   const user = session?.user
   const userId = user?.id || ''
   const formMethods = useForm<PrismaBlock>({ defaultValues })
-  const {
-    control,
-    handleSubmit,
-    setError,
-  } = formMethods
+  const { control, handleSubmit, setError, reset } = formMethods
 
   const { data: userNav } = api.users.get.useQuery({
     userId: userId,
@@ -72,13 +73,56 @@ const Form = () => {
 
   const [isAddWeekOpen, setIsAddWeekOpen] = useState(false)
 
-  const { data: blocksIdTitle } = api.templateBuilder.getAllTemplateTitles.useQuery()
+  const { data: blocksIdTitle } =
+    api.templateBuilder.getAllTemplateTitles.useQuery()
   const blocksTitle = blocksIdTitle?.map((block) => block.name)
-  const { data: exerciseTemplates } = api.templateBuilder.getAllYourExerciseTemplates.useQuery({
-    userId: userId,
+  const { data: exerciseTemplates } =
+    api.templateBuilder.getAllYourExerciseTemplates.useQuery({
+      userId: userId,
+    })
+
+  const { data: program, isLoading: programLoading } = api.blocks.get.useQuery({
+    id: ProgramId || '',
   })
 
   const ctx = api.useUtils()
+
+  useEffect(() => {
+    if (isProgram) {
+      if (program === null || program === undefined) {
+      } else {
+        setBlockId(program.id)
+        const resetData = {
+          ...program,
+          week: program.week?.map((_week) => {
+            const { blockId, ...week } = _week
+            return {
+              ...week,
+              day: week?.day?.map((_day) => {
+                const { weekId, ...day } = _day
+                return {
+                  ...day,
+                  exercise: day?.exercise?.map((_exercise) => {
+                    const { dayId, set, ...exercise } = _exercise
+                    return {
+                      ...exercise,
+                      ss: exercise?.ss?.map((_s) => {
+                        const { exerciseId, ...s } = _s
+                        return {
+                          ...s,
+                        }
+                      }),
+                    }
+                  }),
+                }
+              }),
+            }
+          }),
+        }
+        reset(resetData)
+      }
+    }
+  }, [program])
 
   const { mutate: blockCreateMutate } = api.template.create.useMutation({
     onSuccess: (e) => {
@@ -175,17 +219,15 @@ const Form = () => {
                         ...exercise,
                         isTemplate: false,
                         ss: {
-                          create: exercise?.ss?.map(
-                            (s) => {
-                              // @ts-ignore
-                              delete s?.id
-                              // @ts-ignore
-                              delete s?.exerciseId
-                              return {
-                                ...s,
-                              }
-                            },
-                          ),
+                          create: exercise?.ss?.map((s) => {
+                            // @ts-ignore
+                            delete s?.id
+                            // @ts-ignore
+                            delete s?.exerciseId
+                            return {
+                              ...s,
+                            }
+                          }),
                         },
                       }
                     }),
@@ -232,17 +274,15 @@ const Form = () => {
                         ...exercise,
                         isTemplate: false,
                         ss: {
-                          create: exercise.ss.map(
-                            (s) => {
-                              // @ts-ignore
-                              delete s?.id
-                              // @ts-ignore
-                              delete s?.exerciseId
-                              return {
-                                ...s,
-                              }
-                            },
-                          ),
+                          create: exercise.ss.map((s) => {
+                            // @ts-ignore
+                            delete s?.id
+                            // @ts-ignore
+                            delete s?.exerciseId
+                            return {
+                              ...s,
+                            }
+                          }),
                         },
                       }
                     }),
@@ -330,14 +370,12 @@ const Form = () => {
     const destDayId = destination.droppableId
     const destIndex = destination.index
 
-    const sourceArray = fieldArrayContext?.[
-      sourceDayId
-    ] as UseFieldArrayReturn
+    const sourceArray = fieldArrayContext?.[sourceDayId] as UseFieldArrayReturn
     const destArray = fieldArrayContext?.[destDayId] as UseFieldArrayReturn
 
     if (
       source.droppableId === destination.droppableId &&
-        source.index === destination.index
+      source.index === destination.index
     ) {
       return
     }
@@ -367,28 +405,30 @@ const Form = () => {
     sourceArray.remove(sourceIndex)
   }
 
+  if (programLoading) return null
+
   return (
     <>
       <LoadingWrapper
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-    />
-        <DragDropContext
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
+      <DragDropContext
         className='overflow-auto'
         // @ts-ignore
         onDragEnd={handleDrag} // TODO: workout typing issue
       >
-          <div className='flex h-full w-full tracking-tight '>
-            <ScrollArea className='h-screen w-full'>
-              <Navbar user={userNav || null} />
-              <FormProvider {...formMethods}>
-                <form
+        <div className='flex h-full w-full tracking-tight '>
+          <ScrollArea className='h-screen w-full'>
+            {isProgram ? null : <Navbar user={userNav || null} />}
+            <FormProvider {...formMethods}>
+              <form
                 onSubmit={handleSubmit(onSubmit, onError)}
                 className='flex min-h-[90vh] w-full flex-col items-center '
               >
-                  <div className='flex w-full flex-col items-center gap-1 sm:gap-8'>
-                    <div className='flex min-h-[60vh] w-full flex-col items-center gap-2 p-1 sm:gap-4'>
-                      <FormHeader
+                <div className='flex w-full flex-col items-center gap-1 sm:gap-8'>
+                  <div className='flex min-h-[60vh] w-full flex-col items-center gap-2 p-1 sm:gap-4'>
+                    <FormHeader
                       setBlockId={setBlockId}
                       onSubmit={onSubmit}
                       onUpdate={onUpdate}
@@ -396,35 +436,28 @@ const Form = () => {
                       isSaveOpen={isSaveOpen}
                     />
 
-                      <div className='flex w-full flex-col gap-8 '>
-                        {weekField.fields.map(
-                          (week, weekIndex) => (
-                            <FormWeek
-                              key={week.id}
-                              weekIdx={weekIndex}
-                              onRemoveWeek={
-                                onRemoveWeek
-                              }
-                            />
-                          ),
-                        )}
-                      </div>
-                      <Dialog
+                    <div className='flex w-full flex-col gap-8 '>
+                      {weekField.fields.map((week, weekIndex) => (
+                        <FormWeek
+                          key={week.id}
+                          weekIdx={weekIndex}
+                          onRemoveWeek={onRemoveWeek}
+                        />
+                      ))}
+                    </div>
+                    <Dialog
                       open={isAddWeekOpen}
                       onOpenChange={setIsAddWeekOpen}
                     >
-                        <DialogTrigger asChild>
-                          <PlusCircleIcon
-                          className='mt-12 h-12 w-12 text-gray-400 hover:text-gray-200'
-                        />
-
-                        </DialogTrigger>
-                        <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
-                          <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
+                      <DialogTrigger asChild>
+                        <PlusCircleIcon className='mt-12 h-12 w-12 text-gray-400 hover:text-gray-200' />
+                      </DialogTrigger>
+                      <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
+                        <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
                           Add Week
                         </DialogHeader>
-                          <div className='flex flex-col items-start justify-center gap-2'>
-                            <Button
+                        <div className='flex flex-col items-start justify-center gap-2'>
+                          <Button
                             variant='secondary'
                             onClick={(e) => {
                               e.preventDefault()
@@ -434,7 +467,7 @@ const Form = () => {
                           >
                             Add Blank
                           </Button>
-                            <Button
+                          <Button
                             variant='secondary'
                             onClick={(e) => {
                               e.preventDefault()
@@ -444,20 +477,20 @@ const Form = () => {
                           >
                             Copy Previous
                           </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                    <div className='my-28 flex justify-center gap-4'></div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </div>
-                </form>
-              </FormProvider>
-              {/* <Footer /> */}
-            </ScrollArea>
-            <ExerciseDropper />
-          </div>
-        </DragDropContext>
-      </>
+                  <div className='my-28 flex justify-center gap-4'></div>
+                </div>
+              </form>
+            </FormProvider>
+            {/* <Footer /> */}
+          </ScrollArea>
+          <ExerciseDropper />
+        </div>
+      </DragDropContext>
+    </>
   )
 }
 

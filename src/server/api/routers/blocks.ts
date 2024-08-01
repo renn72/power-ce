@@ -146,6 +146,7 @@ export const blocksRouter = createTRPCRouter({
     get: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
+        if (input.id === '') return null
         const block = await ctx.prisma.block.findUnique({
             where: {
                 id: input.id,
