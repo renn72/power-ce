@@ -35,9 +35,14 @@ const FormExercise = ({
     `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}`,
   )
 
+  const isDayComplete = watch(`week.${weekIdx}.day.${dayIdx}.isComplete`)
+  const isExerciseComplete = watch(
+    `week.${weekIdx}.day.${dayIdx}.exercise.${exerciseIdx}.isComplete`,
+  )
+
   const isProgram = useAtomValue(isProgramAtom)
   const isEditProgram = useAtomValue(isEditProgramAtom)
-  const isEnabled = !isProgram ? true : isEditProgram
+  const isEnabled = !isProgram ? true : isDayComplete ? false : isExerciseComplete ? false : isEditProgram
 
   return (
     <Dialog
@@ -48,6 +53,8 @@ const FormExercise = ({
         <ExerciseView
           exercise={exercise}
           exerciseIdx={exerciseIdx}
+          isExerciseComplete={isExerciseComplete}
+          isDayComplete={isDayComplete || false}
         />
         {isEnabled ? (
           <div className='flex justify-start gap-4 px-4 py-1'>

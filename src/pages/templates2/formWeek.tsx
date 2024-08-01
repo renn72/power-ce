@@ -123,7 +123,9 @@ const FormWeekHeader = ({
 
     const data = getValues(`week.${weekIdx}`)
 
+    // @ts-ignore
     delete data.blockId
+    // @ts-ignore
     delete data.id
 
     const weekData = {
@@ -132,20 +134,26 @@ const FormWeekHeader = ({
       isTemplate: true,
       day: {
         create: data.day.map((day) => {
+          // @ts-ignore
           delete day?.id
+          // @ts-ignore
           delete day?.weekId
           return {
             ...day,
             exercise: {
               create: day.exercise.map((exercise) => {
+                // @ts-ignore
                 delete exercise?.id
+                // @ts-ignore
                 delete exercise?.dayId
                 return {
                   ...exercise,
                   isTemplate: false,
                   ss: {
                     create: exercise.ss.map((s) => {
+                      // @ts-ignore
                       delete s?.id
+                      // @ts-ignore
                       delete s?.exerciseId
                       return {
                         ...s,

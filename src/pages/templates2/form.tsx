@@ -97,6 +97,8 @@ const Form = ({
 
   const ctx = api.useUtils()
 
+  console.log('program', program)
+
   useEffect(() => {
     if (isProgram) {
       if (program === null || program === undefined) {

@@ -260,24 +260,6 @@ const Home: NextPage = () => {
             </Button>
           </div>
         </div>
-        <a
-          href='https://discord.gg/hHNCnmVmNW'
-          target='_blank'
-          rel='noreferrer'
-          className='relative flex w-fit items-center gap-4 text-xl underline underline-offset-4'
-        >
-          <Image
-            height={20}
-            src={discordIcon}
-            alt='discord'
-          />
-          <span>Discord Channel</span>
-          <BellRing
-            size={8}
-            strokeWidth={4}
-            className='absolute -right-3 -top-1 z-10 animate-bounce text-yellow-400'
-          />
-        </a>
       </main>
     </>
   )

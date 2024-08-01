@@ -24,9 +24,13 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
   const formMethods = useFormContext<PrismaBlock>()
   const { control, watch, getValues } = formMethods
 
+  const isDayComplete = watch(`week.${weekIdx}.day.${dayIdx}.isComplete`)
+
+  console.log('isDayComplete', isDayComplete)
+
   const isProgram = useAtomValue(isProgramAtom)
   const isEditProgram = useAtomValue(isEditProgramAtom)
-  const isEnabled = !isProgram ? true : isEditProgram
+  const isEnabled = !isProgram ? true : isDayComplete ? false : isEditProgram
 
   const fieldArrayContext = useContext(FieldArrayContext)
 

@@ -185,7 +185,7 @@ const ExerciseView = ({
                     <h4 className='col-span-2'>{+s.weight}kg</h4>
                   )}
                   <h4 className='col-span-2'>rpe {s?.rpe && +s?.rpe}</h4>
-                  {s.estiamtedOnerm && Number(s.estiamtedOnerm) != 0 && (
+                  {s.estiamtedOnerm && exercise.lift !== 'unlinked' && Number(s.estiamtedOnerm) != 0 && (
                     <h4 className='col-span-2'>E1rm {+s.estiamtedOnerm}kg</h4>
                   )}
                 </div>
@@ -445,9 +445,9 @@ grid-cols-1 lg:grid-cols-5 2xl:${
                           0,
                         )
                         .toString()
-                    } 
+                    }
 `
-              }  
+              }
 `}
             >
               {week.day.map((day, dayIndex) => (
@@ -521,7 +521,7 @@ grid-cols-1 lg:grid-cols-5 2xl:${
                                     (warmup) =>
                                       warmup.id === day.warmupTemplateId,
                                   )
-                                  .warmups?.map((warmup) => (
+                                  ?.warmups?.map((warmup) => (
                                     <div
                                       key={warmup.id}
                                       className='flex items-center gap-1'
