@@ -29,7 +29,7 @@ const ExerciseView = ({
       <div
         className={cn(
           'flex flex-col overflow-hidden px-2 py-2 text-base',
-          isEnabled ? 'cursor-move' : '',
+          isEnabled ? 'cursor-move' : 'cursor-default',
         )}
       >
         <div>

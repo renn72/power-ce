@@ -455,9 +455,7 @@ const Form = ({
                         />
                       ))}
                     </div>
-                    {isProgram && !isEditProgram ? (
-                      <div>false</div>
-                    ) : (
+                    {isProgram && !isEditProgram ? null : (
                       <Dialog
                         open={isAddWeekOpen}
                         onOpenChange={setIsAddWeekOpen}

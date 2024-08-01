@@ -4,6 +4,8 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 
 import { useFormContext } from 'react-hook-form'
 
+import { cn } from '@/lib/utils'
+
 import ExerciseView from './exerciseView'
 import FormExerciseDialog from './formExerciseDialog'
 
@@ -36,12 +38,13 @@ const FormExercise = ({
   const isProgram = useAtomValue(isProgramAtom)
   const isEditProgram = useAtomValue(isEditProgramAtom)
   const isEnabled = !isProgram ? true : isEditProgram
+
   return (
     <Dialog
       open={isOpen}
       onOpenChange={setIsOpen}
     >
-      <div className=''>
+      <div className={cn(isEnabled ? 'cursor-move' : 'cursor-default')}>
         <ExerciseView
           exercise={exercise}
           exerciseIdx={exerciseIdx}

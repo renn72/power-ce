@@ -26,11 +26,7 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
 
   const isProgram = useAtomValue(isProgramAtom)
   const isEditProgram = useAtomValue(isEditProgramAtom)
-
-
   const isEnabled = !isProgram ? true : isEditProgram
-
-  console.log({ isProgram, isEditProgram })
 
   const fieldArrayContext = useContext(FieldArrayContext)
 
@@ -50,6 +46,7 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
   }
 
   const onInsertExercise = (index: number) => {
+    // @ts-ignore
     exerciseField.insert(index + 1, {
       // id: '',
       name: '',
@@ -96,21 +93,6 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
     })
   }
 
-  // eslint-disable-next-line no-explicit-any
-  const handleDrag = (result) => {
-    console.log('result', result)
-  }
-  const logDrag = ({
-    source,
-    destination,
-  }: {
-    source: any
-    destination: any
-  }) => {
-    console.log('source', source)
-    console.log('destination', destination)
-  }
-
   const isRest: boolean = watch(`week.${weekIdx}.day.${dayIdx}.isRestDay`)
 
   useEffect(() => {
@@ -119,7 +101,6 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
     } else {
       if (exerciseArray.length === 0) {
       }
-
     }
   }, [isRest])
 
@@ -132,26 +113,28 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
           defaultValue={false}
           render={({ field: { onChange, value } }) => (
             <div className='flex flex-col items-center justify-center gap-0 text-lg text-gray-600'>
-              <Switch
-                checked={value}
-                onChange={onChange}
-                className={cn(
-                  value ? 'bg-gray-200' : 'bg-gray-600',
-                  'relative inline-flex h-[18px] w-[64px] shrink-0 cursor-pointer rounded-full',
-                  'border-2 border-transparent transition-colors duration-200 ease-in-out',
-                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75',
-                )}
-              >
-                <span className='sr-only'>Is it a Rest Day</span>
-                <span
-                  aria-hidden='true'
+              {isEnabled && (
+                <Switch
+                  checked={value}
+                  onChange={onChange}
                   className={cn(
-                    value ? 'translate-x-9' : 'translate-x-0',
-                    'pointer-events-none inline-block h-[14px] w-[24px] transform rounded-full bg-gray-900',
-                    'shadow-lg ring-0 transition duration-150 ease-in-out',
+                    value ? 'bg-gray-200' : 'bg-gray-600',
+                    'relative inline-flex h-[18px] w-[64px] shrink-0 cursor-pointer rounded-full',
+                    'border-2 border-transparent transition-colors duration-200 ease-in-out',
+                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75',
                   )}
-                />
-              </Switch>
+                >
+                  <span className='sr-only'>Is it a Rest Day</span>
+                  <span
+                    aria-hidden='true'
+                    className={cn(
+                      value ? 'translate-x-9' : 'translate-x-0',
+                      'pointer-events-none inline-block h-[14px] w-[24px] transform rounded-full bg-gray-900',
+                      'shadow-lg ring-0 transition duration-150 ease-in-out',
+                    )}
+                  />
+                </Switch>
+              )}
               <label className={value ? `mt-4` : `hidden`}>Rest Day</label>
             </div>
           )}
@@ -175,6 +158,7 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
                 {...provided.dragHandleProps}
               >
                 <FormExercise
+                  // @ts-ignore
                   exercise={exerciseArray[rubric.source.index]}
                   exerciseIdx={rubric.source.index}
                   weekIdx={weekIdx}
@@ -188,7 +172,7 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className='flex flex-col gap-2 min-h-[200px]'
+              className='flex min-h-[200px] flex-col gap-2'
             >
               {exerciseField.fields.map((item, index) => {
                 return (
@@ -226,14 +210,16 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
           )}
         </Droppable>
         <div className='mx-auto'>
-          <PlusCircleIcon
-            onClick={() => onInsertExercise(exerciseArray.length - 1)}
-            className={cn(
-              isRest
-                ? 'hidden h-10 w-10'
-                : 'h-10 w-10 text-gray-400 hover:scale-110 hover:text-gray-200',
-            )}
-          />
+          {isEnabled && (
+            <PlusCircleIcon
+              onClick={() => onInsertExercise(exerciseArray.length - 1)}
+              className={cn(
+                isRest
+                  ? 'hidden h-10 w-10'
+                  : 'h-10 w-10 text-gray-400 hover:scale-110 hover:text-gray-200',
+              )}
+            />
+          )}
         </div>
       </div>
     </>

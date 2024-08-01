@@ -17,6 +17,9 @@ import {
 import ExerciseView from '~/components/exerciseView'
 import { SearchIcon, X } from 'lucide-react'
 
+import { useAtomValue } from 'jotai'
+import { isProgramAtom, } from './form'
+
 const ExerciseDropper = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { data: session } = useSession()
@@ -24,6 +27,8 @@ const ExerciseDropper = () => {
   const user = session?.user
   const userId = user?.id || ''
   const ctx = api.useUtils()
+
+  const isProgram = useAtomValue(isProgramAtom)
 
   const { data: exerciseTemplateaQuery } =
   api.templateBuilder.getAllYourExerciseTemplates.useQuery({
@@ -53,7 +58,9 @@ const ExerciseDropper = () => {
         className='border-0'
         value={`0`}
       >
-          <AccordionTrigger className='mt-10 flex flex-col pb-0'>
+          <AccordionTrigger className={cn('flex flex-col pb-0',
+            isProgram ? 'pt-1' : 'mt-[41px]',
+          )}>
             <div className='tracking-tigher flex w-full flex-col rounded-lg bg-gray-900 p-1 text-lg font-bold leading-snug'>
               <div>Excercise</div>
               <div>Templates</div>
