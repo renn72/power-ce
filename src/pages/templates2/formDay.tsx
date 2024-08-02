@@ -26,8 +26,6 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
 
   const isDayComplete = watch(`week.${weekIdx}.day.${dayIdx}.isComplete`)
 
-  console.log('isDayComplete', isDayComplete)
-
   const isProgram = useAtomValue(isProgramAtom)
   const isEditProgram = useAtomValue(isEditProgramAtom)
   const isEnabled = !isProgram ? true : isDayComplete ? false : isEditProgram
@@ -149,6 +147,7 @@ const FormDay = ({ weekIdx, dayIdx }: { weekIdx: number; dayIdx: number }) => {
         />
         <Droppable
           droppableId={`${weekIdx}-${dayIdx}`}
+          isDropDisabled={!isEnabled}
           renderClone={(provided, snapshot, rubric) => {
             return (
               <div

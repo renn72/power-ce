@@ -10,19 +10,30 @@ import { type PrismaExercise as Exercise } from '~/store/types'
 
 import { useAtomValue } from 'jotai'
 import { isProgramAtom, isEditProgramAtom } from './form'
+import { StarIcon } from '@heroicons/react/20/solid'
 
 const ExerciseView = ({
   exercise,
   exerciseIdx,
+  isDayComplete,
+  isExerciseComplete,
 }: {
   exercise: Exercise
   exerciseIdx: number
+  isDayComplete: boolean
+  isExerciseComplete: boolean
 }) => {
   const isSS = exercise?.ss && exercise?.ss.length > 0
 
   const isProgram = useAtomValue(isProgramAtom)
   const isEditProgram = useAtomValue(isEditProgramAtom)
-  const isEnabled = !isProgram ? true : isEditProgram
+  const isEnabled = !isProgram
+    ? true
+    : isDayComplete
+    ? false
+    : isExerciseComplete
+    ? false
+    : isEditProgram
 
   return (
     <>
@@ -34,11 +45,28 @@ const ExerciseView = ({
       >
         <div>
           <div className='flex justify-between'>
-            <div className='flex gap-0 overflow-hidden text-lg tracking-tighter'>
-              <h2>{exerciseIdx + 1}.</h2>
-              <h3 className='truncate font-bold capitalize text-yellow-500'>
+            <div className='relative flex w-full gap-0 overflow-hidden text-lg tracking-tighter'>
+              <h2 className='font-medium'>{exerciseIdx + 1}.</h2>
+              <h3
+                className={cn(
+                  'truncate font-bold capitalize text-yellow-500',
+                  exercise.isComplete ? 'text-green-500' : '',
+                  isDayComplete && !isExerciseComplete ? 'text-red-500' : '',
+                  Number(exercise?.sets) > exercise?.set?.length && isDayComplete
+                    ? 'text-orange-500'
+                    : '',
+                  Number(exercise?.sets) < exercise?.set?.length && isDayComplete
+                    ? 'text-indigo-400'
+                    : '',
+                )}
+              >
                 {exercise.name ? exercise.name?.slice(0, 27) : 'No Name'}
               </h3>
+              {exercise.isComplete && (
+                <div className='absolute right-1 top-0 transform text-yellow-500'>
+                  <StarIcon className='h-5 w-5' />
+                </div>
+              )}
             </div>
             {exercise.htmlLink && (
               <div

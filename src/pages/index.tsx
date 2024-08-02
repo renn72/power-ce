@@ -13,11 +13,6 @@ import { LoadingPage, LoadingSpinner } from '~/components/loading'
 import { getDate } from '~/utils/utils'
 import { Cog8ToothIcon } from '@heroicons/react/20/solid'
 
-import discordIcon from '~/../public/discord.svg'
-import Image from 'next/image'
-import { BellRing } from 'lucide-react'
-
-
 const Lift = ({ lift, userId }: { lift: string; userId: string }) => {
   api.oneRepMax.getUserCoreLifts.useQuery({ userId: userId })
   api.users.getAllUsers.useQuery()

@@ -61,7 +61,7 @@ const Form = ({
   const user = session?.user
   const userId = user?.id || ''
   const formMethods = useForm<PrismaBlock>({ defaultValues })
-  const { control, handleSubmit, setError, reset } = formMethods
+  const { control, handleSubmit, setError, reset, getValues } = formMethods
 
   const [isEditProgram, setIsEditProgram] = useAtom(isEditProgramAtom)
   const [isProgram, setIsProgram] = useAtom(isProgramAtom)
@@ -115,9 +115,13 @@ const Form = ({
                 return {
                   ...day,
                   exercise: day?.exercise?.map((_exercise) => {
-                    const { dayId, set, ...exercise } = _exercise
+                    const { dayId, ...exercise } = _exercise
                     return {
                       ...exercise,
+                      set: exercise?.set?.map((_set) => {
+                        const { exerciseId, ...set } = _set
+                        return { ...set }
+                      }),
                       ss: exercise?.ss?.map((_s) => {
                         const { exerciseId, ...s } = _s
                         return {
@@ -416,6 +420,8 @@ const Form = ({
     destArray.insert(destIndex, sourceDay)
     sourceArray.remove(sourceIndex)
   }
+
+  console.log('program values', getValues())
 
   if (programLoading) return null
 

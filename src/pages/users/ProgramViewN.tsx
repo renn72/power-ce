@@ -2,8 +2,6 @@ import React from 'react'
 
 import Form from '~/pages/templates2/form'
 
-import { api } from '~/utils/api'
-
 import { createContext } from 'react'
 import { type UseFieldArrayReturn } from 'react-hook-form'
 
@@ -13,16 +11,10 @@ export type UseFieldArray = {
 
 export const FieldArrayContext = createContext<UseFieldArray[]>([])
 const ProgramViewN = ({
-  userId,
   programId,
 }: {
-  userId: string
   programId: string
 }) => {
-  const ctx = api.useUtils()
-  const user = ctx.users.get.getData({ userId: userId, location: 'base' })
-  if (!user) return <div>Login</div>
-  if (!user.isAdmin) return <div>Not Authorized</div>
   return (
     <>
       <FieldArrayContext.Provider value={[]}>

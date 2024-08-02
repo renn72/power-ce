@@ -617,7 +617,6 @@ const Users = () => {
 
               <Tab.Panel>
                 <ProgramViewN
-                  userId={userId}
                   programId={activeProgram?.id || ''}
                 />
               </Tab.Panel>
