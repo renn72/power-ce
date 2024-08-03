@@ -473,6 +473,8 @@ const Form = ({
     sourceArray.remove(sourceIndex)
   }
 
+  console.log('program', program)
+
   if (programLoading) return null
 
   return (

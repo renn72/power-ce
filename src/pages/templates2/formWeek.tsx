@@ -185,7 +185,7 @@ const FormWeekHeader = ({
       <div className='text-xl font-bold'>
         {weekName ? weekName : `Week ${weekIdx + 1}`}
       </div>
-        {isEnabled && (
+        {isEnabled ? (
           <div className='flex gap-2'>
             <Dialog
             open={isSaveOpen}
@@ -294,7 +294,7 @@ const FormWeekHeader = ({
               Delete
             </Button>
             </div>
-        )}
+        ) : (<div />)}
       </div>
   )
 }
