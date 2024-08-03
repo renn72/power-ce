@@ -624,6 +624,18 @@ const Users = () => {
               </Tab.Panel>
 
               <Tab.Panel>
+                <TemplateSelect
+                  onSetTemplate={onSetTemplate}
+                  onClearTemplate={onClearTemplate}
+                  userId={userId}
+                  isCurrent={true}
+                />
+                <TemplateSelect
+                  onSetTemplate={onSetSecondaryTemplate}
+                  onClearTemplate={onClearSecondaryTemplate}
+                  userId={userId}
+                  isCurrent={false}
+                />
                 <ProgramViewN
                   programId={activeProgram?.id || ''}
                   tabIndex={tabIndex}
