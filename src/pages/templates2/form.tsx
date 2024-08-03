@@ -372,7 +372,28 @@ const Form = ({
   const onAddWeekCopyPrevious = () => {
     const week = weekField.fields[weekField.fields.length - 1]
     if (!week) return
-    weekField.append(week)
+    console.log('week', week)
+    weekField.append({
+      ...week,
+      day: week.day.map((day) => {
+      return {
+        ...day,
+        isComplete: false,
+        exercise: day.exercise.map((exercise) => {
+          return {
+            ...exercise,
+            isComplete: false,
+            set: [],
+            ss: exercise.ss.map((ss) => {
+              return {
+                ...ss,
+                exerciseId: null,
+              }
+            }),
+          }
+        }),
+      }
+    })})
   }
 
   const onAddWeek = () => {
