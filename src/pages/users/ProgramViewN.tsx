@@ -12,18 +12,26 @@ export type UseFieldArray = {
 export const FieldArrayContext = createContext<UseFieldArray[]>([])
 const ProgramViewN = ({
   programId,
+  tabIndex,
 }: {
   programId: string
+  tabIndex: number
 }) => {
   return (
     <>
+      { programId === '' ? null : (
       <FieldArrayContext.Provider value={[]}>
         <main className='flex h-full min-w-[1600px] max-w-[100vw] flex-col items-center justify-center text-sm font-semibold sm:text-base'>
           <div className='flex w-full flex-col items-center justify-center '>
-            <Form isProgramProps={true} ProgramId={programId} />
+            <Form
+              isProgramProps={true}
+              ProgramId={programId}
+              resetData={tabIndex}
+            />
           </div>
         </main>
       </FieldArrayContext.Provider>
+      )}
     </>
   )
 }

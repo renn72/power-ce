@@ -53,9 +53,11 @@ interface DragResult {
 const Form = ({
   isProgramProps = false,
   ProgramId = null,
+  resetData = null,
 }: {
   isProgramProps?: boolean
   ProgramId?: string | null
+  resetData?: number | null
 }) => {
   const { data: session } = useSession()
   const user = session?.user
@@ -98,8 +100,11 @@ const Form = ({
   const ctx = api.useUtils()
 
   useEffect(() => {
-    if (isProgram) {
+    console.log('effect')
+    if (isProgramProps) {
+      console.log('isProgram')
       if (program === null || program === undefined) {
+        console.log('null')
         reset(defaultValues)
       } else {
         setBlockId(program.id)
@@ -134,10 +139,11 @@ const Form = ({
             }
           }),
         }
+        console.log('resetData', resetData)
         reset(resetData)
       }
     }
-  }, [program, isProgram])
+  }, [program])
 
   const { mutate: blockCreateMutate } = api.template.create.useMutation({
     onSuccess: (e) => {
@@ -171,6 +177,9 @@ const Form = ({
       void ctx.blocks.getAllBlockTitles.invalidate()
       void ctx.template.getAllWeekTemplates.invalidate()
       void ctx.template.get.invalidate()
+      void ctx.blocks.getUserActiveProgram.refetch()
+      void ctx.blocks.getUserActiveProgramFull.refetch()
+      void ctx.blocks.getAllUserProgramsTitles.refetch()
     },
     onError: (e) => {
       console.log('error', e)
@@ -232,7 +241,6 @@ const Form = ({
     }
     reset(resetData)
   }
-
 
   const saveNewBlock = (data: PrismaBlock) => {
     console.log('saveNewBlock', data)
@@ -377,24 +385,25 @@ const Form = ({
     weekField.append({
       ...week,
       day: week.day.map((day) => {
-      return {
-        ...day,
-        isComplete: false,
-        exercise: day.exercise.map((exercise) => {
-          return {
-            ...exercise,
-            isComplete: false,
-            set: [],
-            ss: exercise.ss.map((ss) => {
-              return {
-                ...ss,
-                exerciseId: null,
-              }
-            }),
-          }
-        }),
-      }
-    })})
+        return {
+          ...day,
+          isComplete: false,
+          exercise: day.exercise.map((exercise) => {
+            return {
+              ...exercise,
+              isComplete: false,
+              set: [],
+              ss: exercise.ss.map((ss) => {
+                return {
+                  ...ss,
+                  exerciseId: null,
+                }
+              }),
+            }
+          }),
+        }
+      }),
+    })
   }
 
   const onAddWeek = () => {
@@ -496,6 +505,7 @@ const Form = ({
   }
 
   console.log('program', program)
+  console.log('weekflield', weekField.fields)
 
   if (programLoading) return null
 

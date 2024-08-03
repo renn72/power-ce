@@ -358,6 +358,8 @@ const Users = () => {
   const [rpeModalValue, setRpeModalValue] = useState<string>('')
   const [rpeModalKey, setRpeModalKey] = useState<string>('')
 
+  const [tabIndex, setTabIndex] = useState<number>(0)
+
   const ctx = api.useUtils()
 
   const { data: allUsers} = api.users.getAllUsers.useQuery()
@@ -520,6 +522,7 @@ const Users = () => {
             ? window.location.origin
             : '';
 
+  console.log('tabIndex', tabIndex)
 
   if (!user?.isAdmin) return <div>Not Authorized</div>
 
@@ -534,6 +537,9 @@ const Users = () => {
         <Tab.Group
           vertical
           defaultIndex={0}
+          onChange={(index) => {
+            setTabIndex(index)
+          }}
         >
           <div className='flex w-full gap-4 lg:gap-16'>
             <Tab.List className='flex w-28 flex-col divide-y divide-yellow-500'>
@@ -620,6 +626,7 @@ const Users = () => {
               <Tab.Panel>
                 <ProgramViewN
                   programId={activeProgram?.id || ''}
+                  tabIndex={tabIndex}
                 />
               </Tab.Panel>
 
