@@ -63,7 +63,7 @@ const Form = ({
   const formMethods = useForm<PrismaBlock>({ defaultValues })
   const { control, handleSubmit, setError, reset, getValues } = formMethods
 
-  const [isEditProgram, setIsEditProgram] = useAtom(isEditProgramAtom)
+  const [isEditProgram, _setIsEditProgram] = useAtom(isEditProgramAtom)
   const [isProgram, setIsProgram] = useAtom(isProgramAtom)
 
   useEffect(() => {
@@ -96,8 +96,6 @@ const Form = ({
   })
 
   const ctx = api.useUtils()
-
-  console.log('program', program)
 
   useEffect(() => {
     if (isProgram) {
@@ -142,7 +140,7 @@ const Form = ({
 
   const { mutate: blockCreateMutate } = api.template.create.useMutation({
     onSuccess: (e) => {
-      console.log('e', e)
+      console.log('create', e)
       setBlockId(e?.id)
       setIsOpen(false)
       setIsSaveOpen(false)
@@ -161,7 +159,7 @@ const Form = ({
   })
   const { mutate: blockUpdateMutate } = api.template.update.useMutation({
     onSuccess: (e) => {
-      console.log('e', e)
+      console.log('update', e)
       setBlockId(e[1]?.id)
       setIsOpen(false)
       setIsSaveOpen(false)
@@ -181,16 +179,59 @@ const Form = ({
   })
 
   const onSubmit = (data: PrismaBlock) => {
-    console.log('submit', data)
-    console.log('isUpdate', isUpdate)
     setIsOpen(true)
+    console.log('onSubmit')
     saveNewBlock(data)
   }
+
   const onUpdate = (data: PrismaBlock) => {
-    console.log('submit', data)
     setIsOpen(true)
+    console.log('onUpdate')
     updateBlock(data)
   }
+
+  const onSaveProgram = (data: PrismaBlock) => {
+    console.log('onSaveProgram', data)
+    return
+  }
+
+  const onResetProgram = () => {
+    if (!program) return
+    setBlockId(program.id)
+    const resetData = {
+      ...program,
+      week: program.week?.map((_week) => {
+        const { blockId, ...week } = _week
+        return {
+          ...week,
+          day: week?.day?.map((_day) => {
+            const { weekId, ...day } = _day
+            return {
+              ...day,
+              exercise: day?.exercise?.map((_exercise) => {
+                const { dayId, ...exercise } = _exercise
+                return {
+                  ...exercise,
+                  set: exercise?.set?.map((_set) => {
+                    const { exerciseId, ...set } = _set
+                    return { ...set }
+                  }),
+                  ss: exercise?.ss?.map((_s) => {
+                    const { exerciseId, ...s } = _s
+                    return {
+                      ...s,
+                    }
+                  }),
+                }
+              }),
+            }
+          }),
+        }
+      }),
+    }
+    reset(resetData)
+  }
+
 
   const saveNewBlock = (data: PrismaBlock) => {
     console.log('saveNewBlock', data)
@@ -289,6 +330,17 @@ const Form = ({
                       return {
                         ...exercise,
                         isTemplate: false,
+                        set: {
+                          create: exercise?.set?.map((set) => {
+                            // @ts-ignore
+                            delete set?.id
+                            // @ts-ignore
+                            delete set?.exerciseId
+                            return {
+                              ...set,
+                            }
+                          }),
+                        },
                         ss: {
                           create: exercise.ss.map((s) => {
                             // @ts-ignore
@@ -421,8 +473,6 @@ const Form = ({
     sourceArray.remove(sourceIndex)
   }
 
-  console.log('program values', getValues())
-
   if (programLoading) return null
 
   return (
@@ -452,6 +502,8 @@ const Form = ({
                       onUpdate={onUpdate}
                       setIsSaveOpen={setIsSaveOpen}
                       isSaveOpen={isSaveOpen}
+                      onResetProgram={onResetProgram}
+                      onSaveProgram={onSaveProgram}
                     />
 
                     <div className='flex w-full flex-col gap-8 '>

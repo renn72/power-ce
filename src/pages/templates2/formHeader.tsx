@@ -38,12 +38,16 @@ const FormHeader = ({
   onUpdate,
   setIsSaveOpen,
   isSaveOpen,
+  onResetProgram,
+  onSaveProgram,
 }: {
   setBlockId: (id: string) => void
   onSubmit: (data: Block) => void
   onUpdate: (data: Block) => void
   setIsSaveOpen: (isOpen: boolean) => void
   isSaveOpen: boolean
+  onResetProgram: () => void
+  onSaveProgram: (data: Block) => void
 }) => {
   const { data: session } = useSession()
   const user = session?.user
@@ -133,7 +137,7 @@ const FormHeader = ({
   return (
     <div className='flex w-full items-center justify-between rounded-lg bg-gray-900 p-2 '>
       <div className='flex w-full gap-2'>
-        <div className='relative flex w-full items-center justify-between md:w-full px-4'>
+        <div className='relative flex w-full items-center justify-between px-4 md:w-full'>
           <div />
           <div className='text-xl'>{title || 'New Training Template'}</div>
           {isEnabled && !isProgram && (
@@ -180,7 +184,6 @@ const FormHeader = ({
                       type='submit'
                       variant='secondary'
                       onClick={() => {
-                        // setIsSaveOpen(false)
                         handleSubmit(onSubmit)()
                       }}
                     >
@@ -190,7 +193,6 @@ const FormHeader = ({
                       type='submit'
                       variant='secondary'
                       onClick={() => {
-                        // setIsSaveOpen(false)
                         handleSubmit(onUpdate)()
                       }}
                     >
@@ -282,7 +284,7 @@ const FormHeader = ({
             <Button
               type='button'
               variant='secondary'
-              className='absolute right-10 top-1/2 h-6 -translate-y-1/2 transform'
+              className=''
               onClick={() => setIsEditProgram(true)}
             >
               Edit
@@ -293,12 +295,16 @@ const FormHeader = ({
               <Button
                 type='button'
                 variant='secondary'
+                onClick={() => {
+                  handleSubmit(onUpdate)()
+                }}
               >
-                Save
+                Update
               </Button>
               <Button
                 type='button'
                 variant='secondary'
+                onClick={onResetProgram}
               >
                 Undo
               </Button>
