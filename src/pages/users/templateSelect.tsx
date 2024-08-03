@@ -168,11 +168,7 @@ const TemplateSelect = ({
       }
     })
 
-  console.log('blocksTitle', blocksTitle)
-
   // if (userId === 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a') return null
-  console.log('templateId', templateId)
-
   const currentTitle = isCurrent ? currentProgram?.name : secondProgram?.name
 
   return (

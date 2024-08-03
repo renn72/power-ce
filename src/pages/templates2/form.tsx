@@ -53,15 +53,20 @@ interface DragResult {
 const Form = ({
   isProgramProps = false,
   ProgramId = null,
-  resetData = null,
+  program = null,
+  triggerReset = null,
 }: {
   isProgramProps?: boolean
   ProgramId?: string | null
-  resetData?: number | null
+  triggerReset?: number | null
+  program?: PrismaBlock | null
 }) => {
   const { data: session } = useSession()
   const user = session?.user
   const userId = user?.id || ''
+
+  const ctx = api.useUtils()
+
   const formMethods = useForm<PrismaBlock>({ defaultValues })
   const { control, handleSubmit, setError, reset, getValues } = formMethods
 
@@ -93,11 +98,14 @@ const Form = ({
       userId: userId,
     })
 
-  const { data: program, isLoading: programLoading } = api.blocks.get.useQuery({
-    id: ProgramId || '',
+  // const { data: program, isLoading: programLoading } = api.blocks.get.useQuery({
+  //   id: ProgramId || '',
+  // })
+  const weekField = useFieldArray({
+    control,
+    name: 'week',
+    shouldUnregister: false,
   })
-
-  const ctx = api.useUtils()
 
   useEffect(() => {
     console.log('effect')
@@ -141,9 +149,12 @@ const Form = ({
         }
         console.log('resetData', resetData)
         reset(resetData)
+        weekField.fields.forEach((week, idx) => {})
       }
     }
-  }, [program])
+  }, [program, triggerReset])
+
+  api.blocks.getUserActiveProgram.useQuery({ userId: program?.userId || '' })
 
   const { mutate: blockCreateMutate } = api.template.create.useMutation({
     onSuccess: (e) => {
@@ -177,9 +188,16 @@ const Form = ({
       void ctx.blocks.getAllBlockTitles.invalidate()
       void ctx.template.getAllWeekTemplates.invalidate()
       void ctx.template.get.invalidate()
-      void ctx.blocks.getUserActiveProgram.refetch()
-      void ctx.blocks.getUserActiveProgramFull.refetch()
-      void ctx.blocks.getAllUserProgramsTitles.refetch()
+      void ctx.blocks.invalidate()
+      if (isProgramProps) {
+        void ctx.blocks.getUserActiveProgram.invalidate()
+        void ctx.blocks.getUserActiveProgramFull.invalidate({
+          userId: e[1]?.userId || '',
+        })
+        void ctx.blocks.getAllUserProgramsTitles.invalidate({
+          userId: e[1]?.userId || '',
+        })
+      }
     },
     onError: (e) => {
       console.log('error', e)
@@ -380,6 +398,7 @@ const Form = ({
 
   const onAddWeekCopyPrevious = () => {
     const week = weekField.fields[weekField.fields.length - 1]
+    console.log('week', week)
     if (!week) return
     console.log('week', week)
     weekField.append({
@@ -450,11 +469,6 @@ const Form = ({
     })
   }
 
-  const weekField = useFieldArray({
-    control,
-    name: 'week',
-  })
-
   const onRemoveWeek = (index: number) => {
     console.log('remove week')
     weekField.remove(index)
@@ -506,8 +520,7 @@ const Form = ({
 
   console.log('program', program)
   console.log('weekflield', weekField.fields)
-
-  if (programLoading) return null
+  console.log('values', getValues())
 
   return (
     <>

@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { api } from '~/utils/api'
+
 import Form from '~/pages/templates2/form'
 
 import { createContext } from 'react'
@@ -17,6 +19,8 @@ const ProgramViewN = ({
   programId: string
   tabIndex: number
 }) => {
+  const { data, isLoading } = api.blocks.get.useQuery({ id: programId })
+  if (isLoading) return null
   return (
     <div className='mt-10'>
       { programId === '' ? null : (
@@ -26,7 +30,8 @@ const ProgramViewN = ({
             <Form
               isProgramProps={true}
               ProgramId={programId}
-              resetData={tabIndex}
+              triggerReset={tabIndex}
+              program={data}
             />
           </div>
         </main>
