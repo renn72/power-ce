@@ -133,10 +133,11 @@ const FormHeader = ({
   return (
     <div className='flex w-full items-center justify-between rounded-lg bg-gray-900 p-2 '>
       <div className='flex w-full gap-2'>
-        <div className='flex w-full items-center justify-center gap-8 md:w-full relative'>
+        <div className='relative flex w-full items-center justify-between md:w-full px-4'>
+          <div />
           <div className='text-xl'>{title || 'New Training Template'}</div>
-          {isEnabled ? (
-            <>
+          {isEnabled && !isProgram && (
+            <div className='flex gap-2'>
               <Dialog
                 open={isSaveOpen}
                 onOpenChange={setIsSaveOpen}
@@ -265,27 +266,51 @@ const FormHeader = ({
                   </div>
                 </DialogContent>
               </Dialog>
-              { isProgram && (
+              {isProgram && (
+                <Button
+                  type='button'
+                  variant='secondary'
+                  className='absolute right-10 top-1/2 h-6 -translate-y-1/2 transform'
+                  onClick={() => setIsEditProgram(false)}
+                >
+                  Finish Editing
+                </Button>
+              )}
+            </div>
+          )}
+          {!isEnabled && isProgram && (
+            <Button
+              type='button'
+              variant='secondary'
+              className='absolute right-10 top-1/2 h-6 -translate-y-1/2 transform'
+              onClick={() => setIsEditProgram(true)}
+            >
+              Edit
+            </Button>
+          )}
+          {isEnabled && isProgram && (
+            <div className='flex gap-2'>
               <Button
                 type='button'
                 variant='secondary'
-                className='absolute transform -translate-y-1/2 top-1/2 right-10 h-6'
+              >
+                Save
+              </Button>
+              <Button
+                type='button'
+                variant='secondary'
+              >
+                Undo
+              </Button>
+              <Button
+                type='button'
+                variant='secondary'
+                className=''
                 onClick={() => setIsEditProgram(false)}
               >
-                 Finish Editing
+                Finish Editing
               </Button>
-
-              )}
-            </>
-          ) : (
-              <Button
-                type='button'
-                variant='secondary'
-                className='absolute transform -translate-y-1/2 top-1/2 right-10 h-6'
-                onClick={() => setIsEditProgram(true)}
-              >
-                Edit
-              </Button>
+            </div>
           )}
         </div>
       </div>

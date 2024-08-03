@@ -180,7 +180,8 @@ const FormWeekHeader = ({
   const weekName = watch(`week.${weekIdx}.name`)
 
   return (
-    <div className='flex items-center justify-center gap-12 pb-2 pt-1'>
+    <div className='flex items-center justify-between pb-2 pt-1 px-4'>
+      <div />
       <div className='text-xl font-bold'>
         {weekName ? weekName : `Week ${weekIdx + 1}`}
       </div>
