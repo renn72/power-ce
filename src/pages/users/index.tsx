@@ -435,6 +435,8 @@ const Users = () => {
     userId: userId,
   })
 
+  api.blocks.get.useQuery({ id: activeProgram?.id || '' })
+
   const { data: secondaryProgram } =
     api.blocks.getUserSecondaryProgram.useQuery({
       userId: userId,

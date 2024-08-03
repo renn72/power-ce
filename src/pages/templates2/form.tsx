@@ -100,6 +100,7 @@ const Form = ({
   useEffect(() => {
     if (isProgram) {
       if (program === null || program === undefined) {
+        reset(defaultValues)
       } else {
         setBlockId(program.id)
         const resetData = {
@@ -136,7 +137,7 @@ const Form = ({
         reset(resetData)
       }
     }
-  }, [program])
+  }, [program, isProgram])
 
   const { mutate: blockCreateMutate } = api.template.create.useMutation({
     onSuccess: (e) => {
