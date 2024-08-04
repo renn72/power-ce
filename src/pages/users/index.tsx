@@ -1,9 +1,9 @@
-import React, { useState, useEffect, } from 'react'
+import React, { useState, useEffect } from 'react'
 import { toast } from 'react-hot-toast'
 import { api } from '~/utils/api'
 import { useSession } from 'next-auth/react'
 
-import { Disclosure, Transition, Tab, } from '@headlessui/react'
+import { Disclosure, Transition, Tab } from '@headlessui/react'
 
 import { ChevronUpIcon } from '@heroicons/react/20/solid'
 import TemplateSelect from './templateSelect'
@@ -17,8 +17,8 @@ import UserSelect from './userSelect'
 import CountDown from '~/components/countDown'
 import TrainerSelect from './trainerSelect'
 import Settings from '~/components/settings'
-import { RefreshCcwIcon, } from 'lucide-react'
-import { CopyIcon, } from 'lucide-react'
+import { RefreshCcwIcon } from 'lucide-react'
+import { CopyIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import CompPlan from '~/components/compPlan'
@@ -362,7 +362,7 @@ const Users = () => {
 
   const ctx = api.useUtils()
 
-  const { data: allUsers} = api.users.getAllUsers.useQuery()
+  const { data: allUsers } = api.users.getAllUsers.useQuery()
 
   const { mutate: userProgramCreateSecondaryMutate } =
     api.userPrograms.createSecondary.useMutation({
@@ -513,14 +513,18 @@ const Users = () => {
   }
 
   const programLink = (
-    (allUsers?.find(i => i.id === userId)?.firstName?.trim() || '')
-      + allUsers?.find(i => i.id === userId)?.lastName?.trim()?.slice(0, 1) || '' ).toLowerCase()
+    (allUsers?.find((i) => i.id === userId)?.firstName?.trim() || '') +
+      allUsers
+        ?.find((i) => i.id === userId)
+        ?.lastName?.trim()
+        ?.slice(0, 1) || ''
+  ).toLowerCase()
 
   const [planName, setPlanName] = useState<string>('Powerlifting')
   const origin =
-        typeof window !== 'undefined' && window.location.origin
-            ? window.location.origin
-            : '';
+    typeof window !== 'undefined' && window.location.origin
+      ? window.location.origin
+      : ''
 
   console.log('tabIndex', tabIndex)
 
@@ -533,7 +537,6 @@ const Users = () => {
         setIsOpen={setIsOpen}
       />
       <main className=' relative flex h-full min-w-[1500px] flex-col items-center justify-center gap-8 px-2 py-3 sm:px-2 md:mt-6 '>
-        <UserSelect onSelectUser={setUserId} />
         <Tab.Group
           vertical
           defaultIndex={0}
@@ -542,7 +545,8 @@ const Users = () => {
           }}
         >
           <div className='flex w-full gap-4 lg:gap-16'>
-            <Tab.List className='flex w-28 flex-col divide-y divide-yellow-500'>
+            <Tab.List className='flex w-44 flex-col divide-y divide-yellow-500'>
+              <UserSelect onSelectUser={setUserId} />
               <TabWrapper title='Overview' />
               <TabWrapper title='Program' />
               <TabWrapper title='Program-N' />
@@ -558,7 +562,7 @@ const Users = () => {
               <Tab.Panel>
                 <div className='flex flex-col gap-4'>
                   <h2 className='text-2xl font-medium'>Overview</h2>
-                  <div className='flex gap-8 items-center'>
+                  <div className='flex items-center gap-8'>
                     <CopyIcon
                       className='h-6 w-6 cursor-pointer hover:text-yellow-400'
                       onClick={() => {
@@ -568,31 +572,31 @@ const Users = () => {
                         toast.success('Copied')
                       }}
                     />
-                    <div className='border rounded-lg border-gray-400 text-lg px-6 py-3 underline underline-offset-4 text-yellow-500'>
+                    <div className='rounded-lg border border-gray-400 px-6 py-3 text-lg text-yellow-500 underline underline-offset-4'>
                       <a
                         href={`${origin}/p/${programLink}`}
                         target='_blank'
                         rel='noreferrer'
                       >
-                      {origin}/p/{programLink}
+                        {origin}/p/{programLink}
                       </a>
                     </div>
                   </div>
                   <div className='w-64'>
                     <CountDown userId={userId} />
                   </div>
-                  {activeProgram ? (
-                    <div className='flex gap-4'>
-                      <div className='w-48'>Current Program:</div>
-                      <div>{activeProgram.name}</div>
-                    </div>
-                  ) : null}
-                  {secondaryProgram ? (
-                    <div className='flex gap-4'>
-                      <div className='w-48'>Next Program:</div>
-                      <div>{secondaryProgram.name}</div>
-                    </div>
-                  ) : null}
+                  <TemplateSelect
+                    onSetTemplate={onSetTemplate}
+                    onClearTemplate={onClearTemplate}
+                    userId={userId}
+                    isCurrent={true}
+                  />
+                  <TemplateSelect
+                    onSetTemplate={onSetSecondaryTemplate}
+                    onClearTemplate={onClearSecondaryTemplate}
+                    userId={userId}
+                    isCurrent={false}
+                  />
                   <TrainerSelect userId={userId} />
                 </div>
               </Tab.Panel>
@@ -624,20 +628,6 @@ const Users = () => {
               </Tab.Panel>
 
               <Tab.Panel>
-                <div className='flex gap-4 flex-col md:flex-row'>
-                <TemplateSelect
-                  onSetTemplate={onSetTemplate}
-                  onClearTemplate={onClearTemplate}
-                  userId={userId}
-                  isCurrent={true}
-                />
-                <TemplateSelect
-                  onSetTemplate={onSetSecondaryTemplate}
-                  onClearTemplate={onClearSecondaryTemplate}
-                  userId={userId}
-                  isCurrent={false}
-                />
-                </div>
                 <ProgramViewN
                   programId={activeProgram?.id || ''}
                   tabIndex={tabIndex}

@@ -537,7 +537,7 @@ const Form = ({
           <FormProvider {...formMethods}>
             <form
               onSubmit={handleSubmit(onSubmit, onError)}
-              className='flex min-h-[90vh] w-full flex-col items-center '
+              className='flex w-full flex-col items-center '
             >
               <div className='flex w-full flex-col items-center gap-1 sm:gap-8'>
                 <div className='flex min-h-[60vh] w-full flex-col items-center justify-gap-2 p-1 sm:gap-4'>
@@ -600,7 +600,6 @@ const Form = ({
                   </ScrollArea>
 
                 </div>
-                <div className='my-28 flex justify-center gap-4'></div>
               </div>
             </form>
           </FormProvider>

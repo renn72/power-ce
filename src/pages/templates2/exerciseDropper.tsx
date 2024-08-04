@@ -78,7 +78,7 @@ const ExerciseDropper = () => {
           </AccordionTrigger>
           <AccordionContent
             forceMount={true}
-            className='w-min rounded-md bg-gray-900 px-2 py-6'
+            className='w-min rounded-md bg-gray-900 px-2 py-2'
           >
             <div className='mb-4 flex items-center gap-2'>
               <Input
@@ -95,7 +95,7 @@ const ExerciseDropper = () => {
                 }}
               />
             </div>
-            <ScrollArea className='max-h-[calc(100vh-8rem)] w-full'>
+            <ScrollArea className='h-[calc(100vh-200px)] w-full'>
               <Droppable
                 droppableId={`templates`}
                 renderClone={(provided, snapshot, rubric) => {
