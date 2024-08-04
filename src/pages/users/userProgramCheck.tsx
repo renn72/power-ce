@@ -24,7 +24,7 @@ const userWithProfile = Prisma.validator<Prisma.UserArgs>()({
 type User = Prisma.UserGetPayload<typeof userWithProfile>
 
 const UserTemplate = ({ user }: { user: User }) => {
-  const utils = api.useContext()
+  const utils = api.useUtils()
   const { mutate: updateChecked } = api.settings.updateChecked.useMutation({
     onMutate: () => {
       if (!user.userProfiles?.[0]) return
@@ -91,16 +91,16 @@ const UserProgramCheck = () => {
         <ChevronsLeft
           size={48}
           strokeWidth={2}
-          className='absolute right-0 top-1/2 hidden -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-200 md:block'
+          className='absolute right-0 top-1/2 hidden -translate-y-1/2 cursor-pointer text-gray-400/50 hover:text-gray-200 md:block'
         />
       </SheetTrigger>
       <SheetContent
-        className='max-h-[calc(100vh-4rem)] px-1 py-6'
+        className='max-h-[calc(100vh-0rem)] px-1 py-6'
         onInteractOutside={(e) => {
           e.preventDefault()
         }}
       >
-        <ScrollArea className='h-[calc(100vh-6rem)]'>
+        <ScrollArea className='h-[calc(100vh-2rem)]'>
           <SheetHeader>
             <SheetClose />
           </SheetHeader>
@@ -126,7 +126,7 @@ const UserProgramCheck = () => {
             <ChevronsRight
               size={48}
               strokeWidth={2}
-              className='absolute left-0 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-200'
+              className='absolute left-0 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400/50 hover:text-gray-200'
             />
           </SheetClose>
         </ScrollArea>

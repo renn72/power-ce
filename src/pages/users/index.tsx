@@ -532,7 +532,7 @@ const Users = () => {
         isOpen={isOpen}
         setIsOpen={setIsOpen}
       />
-      <main className=' relative flex h-full min-w-[1500px] flex-col items-center justify-center gap-8 px-2 py-3 sm:px-6 md:mt-6 '>
+      <main className=' relative flex h-full min-w-[1500px] flex-col items-center justify-center gap-8 px-2 py-3 sm:px-2 md:mt-6 '>
         <UserSelect onSelectUser={setUserId} />
         <Tab.Group
           vertical
