@@ -307,16 +307,6 @@ const FormHeader = ({
                     </DialogContent>
                   </Dialog>
                 </DropdownMenuItem>
-                {isProgram && (
-                  <Button
-                    type='button'
-                    variant='secondary'
-                    className='absolute right-10 top-1/2 h-6 -translate-y-1/2 transform'
-                    onClick={() => setIsEditProgram(false)}
-                  >
-                    Finish Editing
-                  </Button>
-                )}
               </DropdownMenuContent>
             </DropdownMenu>
           )}
@@ -348,27 +338,29 @@ const FormHeader = ({
                   <Button
                     type='button'
                     variant='secondary'
+                    className='w-full'
                     onClick={() => {
                       handleSubmit(onUpdate)()
                     }}
                   >
-                    Update
+                    Save
                   </Button>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Button
                     type='button'
                     variant='secondary'
+                    className='w-full'
                     onClick={onResetProgram}
                   >
-                    Undo
+                    Reset
                   </Button>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Button
                     type='button'
                     variant='secondary'
-                    className=''
+                    className='w-full'
                     onClick={() => setIsEditProgram(false)}
                   >
                     Finish Editing
