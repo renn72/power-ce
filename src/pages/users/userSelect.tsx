@@ -48,7 +48,7 @@ const UserSelect = ({
   if (usersLoading) return <div>loading</div>
 
   return (
-    <div className='flex w-full flex-col justify-start sm:gap-2 md:flex-row md:items-center md:p-0 mb-4'>
+    <div className='flex w-full flex-col justify-start sm:gap-2 md:flex-row md:items-center mb-4 pt-4'>
       <div className='flex w-full justify-start sm:gap-2 md:items-center'>
         <div className='flex flex-col justify-center text-sm font-bold md:text-base'>
           <Listbox
