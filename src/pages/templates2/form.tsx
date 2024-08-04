@@ -533,26 +533,24 @@ const Form = ({
         // @ts-ignore
         onDragEnd={handleDrag} // TODO: workout typing issue
       >
-        <div className='flex h-full w-full tracking-tight '>
-          <ScrollArea className='h-screen w-full'>
-            {isProgram ? null : <Navbar user={userNav || null} />}
-            <FormProvider {...formMethods}>
-              <form
-                onSubmit={handleSubmit(onSubmit, onError)}
-                className='flex min-h-[90vh] w-full flex-col items-center '
-              >
-                <div className='flex w-full flex-col items-center gap-1 sm:gap-8'>
-                  <div className='flex min-h-[60vh] w-full flex-col items-center gap-2 p-1 sm:gap-4'>
-                    <FormHeader
-                      setBlockId={setBlockId}
-                      onSubmit={onSubmit}
-                      onUpdate={onUpdate}
-                      setIsSaveOpen={setIsSaveOpen}
-                      isSaveOpen={isSaveOpen}
-                      onResetProgram={onResetProgram}
-                      onSaveProgram={onSaveProgram}
-                    />
-
+        <div className='flex h-full w-full tracking-tight-col '>
+          <FormProvider {...formMethods}>
+            <form
+              onSubmit={handleSubmit(onSubmit, onError)}
+              className='flex min-h-[90vh] w-full flex-col items-center '
+            >
+              <div className='flex w-full flex-col items-center gap-1 sm:gap-8'>
+                <div className='flex min-h-[60vh] w-full flex-col items-center justify-gap-2 p-1 sm:gap-4'>
+                  <FormHeader
+                    setBlockId={setBlockId}
+                    onSubmit={onSubmit}
+                    onUpdate={onUpdate}
+                    setIsSaveOpen={setIsSaveOpen}
+                    isSaveOpen={isSaveOpen}
+                    onResetProgram={onResetProgram}
+                    onSaveProgram={onSaveProgram}
+                  />
+                  <ScrollArea className='w-full max-h-[calc(100vh-8rem)]'>
                     <div className='flex w-full flex-col gap-8 '>
                       {weekField.fields.map((week, weekIndex) => (
                         <FormWeek
@@ -567,8 +565,8 @@ const Form = ({
                         open={isAddWeekOpen}
                         onOpenChange={setIsAddWeekOpen}
                       >
-                        <DialogTrigger asChild>
-                          <PlusCircleIcon className='mt-12 h-12 w-12 text-gray-400 hover:text-gray-200' />
+                        <DialogTrigger className='w-full'>
+                          <PlusCircleIcon className='mt-12 h-12 w-12 text-gray-400 hover:text-gray-200 mx-auto' />
                         </DialogTrigger>
                         <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
                           <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
@@ -599,13 +597,14 @@ const Form = ({
                         </DialogContent>
                       </Dialog>
                     )}
-                  </div>
-                  <div className='my-28 flex justify-center gap-4'></div>
+                  </ScrollArea>
+
                 </div>
-              </form>
-            </FormProvider>
-            {/* <Footer /> */}
-          </ScrollArea>
+                <div className='my-28 flex justify-center gap-4'></div>
+              </div>
+            </form>
+          </FormProvider>
+          {/* <Footer /> */}
           {isProgram && !isEditProgram ? null : <ExerciseDropper />}
         </div>
       </DragDropContext>

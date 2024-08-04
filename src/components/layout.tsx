@@ -24,7 +24,6 @@ const LayoutAuth = (props: PropsWithChildren) => {
   return (
     <>
       {
-        router.pathname !== '/templates2' &&
         router.pathname !== '/price-board' &&
         router.pathname !== '/image-roll' &&
         <Navbar user={user || null} />
