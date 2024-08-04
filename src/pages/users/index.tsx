@@ -624,6 +624,7 @@ const Users = () => {
               </Tab.Panel>
 
               <Tab.Panel>
+                <div className='flex gap-4 flex-col md:flex-row'>
                 <TemplateSelect
                   onSetTemplate={onSetTemplate}
                   onClearTemplate={onClearTemplate}
@@ -636,6 +637,7 @@ const Users = () => {
                   userId={userId}
                   isCurrent={false}
                 />
+                </div>
                 <ProgramViewN
                   programId={activeProgram?.id || ''}
                   tabIndex={tabIndex}

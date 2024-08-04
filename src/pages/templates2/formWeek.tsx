@@ -17,6 +17,16 @@ import {
   DialogHeader,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+
 
 import { useSession } from 'next-auth/react'
 import { api } from '~/utils/api'
@@ -29,6 +39,7 @@ import WeekTemplateSelect from './weekTemplateSelect'
 
 import { useAtomValue } from 'jotai'
 import { isProgramAtom, isEditProgramAtom } from './form'
+import { Menu } from 'lucide-react'
 
 const loadedTemplateAtom = atom<string>('')
 
@@ -37,10 +48,10 @@ const FormWeekHeader = ({
   setLoadedTemplate,
   onRemoveWeek,
 }: {
-  weekIdx: number
-  setLoadedTemplate: (value: string) => void
-  onRemoveWeek: (weekIdx: number) => void
-}) => {
+    weekIdx: number
+    setLoadedTemplate: (value: string) => void
+    onRemoveWeek: (weekIdx: number) => void
+  }) => {
   const formMethods = useFormContext<Block>()
   const {
     register,
@@ -149,6 +160,8 @@ const FormWeekHeader = ({
                 delete exercise?.id
                 // @ts-ignore
                 delete exercise?.dayId
+                // @ts-ignore
+                delete exercise?.set
                 return {
                   ...exercise,
                   isComplete: false,
@@ -184,122 +197,139 @@ const FormWeekHeader = ({
   return (
     <div className='flex items-center justify-between px-4 pb-2 pt-1'>
       <div />
-      <div className='text-xl font-bold'>
-        {weekName ? weekName : `Week ${weekIdx + 1}`}
-      </div>
-      {isEnabled ? (
-        <div className='flex gap-2'>
-          <Dialog
-            open={isSaveOpen}
-            onOpenChange={setIsSaveOpen}
-          >
-            <DialogTrigger asChild>
-              <Button
-                type='button'
-                size='sm'
-                variant='secondary'
-                className='h-7 tracking-tighter'
-              >
-                Save
-              </Button>
-            </DialogTrigger>
-
-            <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
-              <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
-                Save Template
-              </DialogHeader>
-              <div className='flex flex-col items-start justify-center gap-2'>
-                <div className='relative rounded-md px-4 shadow-lg'>
-                  <Input
-                    className='w-40 bg-gray-900  md:w-64 '
-                    placeholder='Title'
-                    defaultValue={``}
-                    {...register(`week.${weekIdx}.name`)}
-                  />
-                </div>
-                <ErrorMessage
-                  errors={errors}
-                  name='name'
-                  render={({ message }) => (
-                    <p className='text-red-400'>{message}</p>
-                  )}
-                />
-              </div>
-              <div className='flex gap-4'>
-                <Button
-                  type='submit'
-                  variant='secondary'
-                  onClick={() => {
-                    setIsSaveOpen(false)
-                    onSaveWeekAsTemplate(weekIdx)
-                  }}
-                >
-                  Save New
-                </Button>
-                <Button
-                  type='submit'
-                  variant='secondary'
-                  disabled
-                  onClick={() => {
-                    setIsSaveOpen(false)
-                  }}
-                >
-                  Update
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-          <Dialog
-            open={isLoadOpen}
-            onOpenChange={setIsLoadOpen}
-          >
-            <DialogTrigger asChild>
-              <Button
-                type='button'
-                size='sm'
-                variant='secondary'
-                className='h-7 tracking-tighter'
-              >
-                Load
-              </Button>
-            </DialogTrigger>
-
-            <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
-              <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
-                Save Template
-              </DialogHeader>
-              <WeekTemplateSelect
-                onSelectWeekTemplate={onSelectWeekTemplate}
-                selectedWeekTemplate={selectedWeekTemplate}
-              />
-              <div className='flex gap-4'>
-                <Button
-                  type='submit'
-                  variant='secondary'
-                  onClick={() => {
-                    onLoadWeekTemplate(weekIdx)
-                    setIsLoadOpen(false)
-                  }}
-                >
-                  Load
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-          <Button
-            type='button'
-            size='sm'
-            variant='secondary'
-            className='h-7 tracking-tighter'
-            onClick={() => onRemoveWeek(weekIdx)}
-          >
-            Delete
-          </Button>
+        <div className='text-xl font-bold'>
+          {weekName ? weekName : `Week ${weekIdx + 1}`}
         </div>
-      ) : (
-        <div />
-      )}
-    </div>
+        {isEnabled ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+            <Menu
+              className='h-6 w-6 text-yellow-500 hover:text-yellow-200 cursor-pointer'
+            />
+            </DropdownMenuTrigger>
+              <DropdownMenuContent
+              align='end'
+              sideOffset={5}
+            >
+                <DropdownMenuItem>
+                  <Dialog
+                  open={isSaveOpen}
+                  onOpenChange={setIsSaveOpen}
+                >
+                    <DialogTrigger asChild>
+                      <Button
+                      type='button'
+                      size='sm'
+                      variant='secondary'
+                      className='w-full'
+                    >
+                      Save
+                    </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
+                      <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
+                      Save Template
+                    </DialogHeader>
+                      <div className='flex flex-col items-start justify-center gap-2'>
+                        <div className='relative rounded-md px-4 shadow-lg'>
+                          <Input
+                          className='w-40 bg-gray-900  md:w-64 '
+                          placeholder='Title'
+                          defaultValue={``}
+                          {...register(`week.${weekIdx}.name`)}
+                        />
+                        </div>
+                        <ErrorMessage
+                        errors={errors}
+                        name='name'
+                        render={({ message }) => (
+                          <p className='text-red-400'>{message}</p>
+                        )}
+                      />
+                      </div>
+                      <div className='flex gap-4'>
+                        <Button
+                        type='submit'
+                        variant='secondary'
+                        onClick={() => {
+                          setIsSaveOpen(false)
+                          onSaveWeekAsTemplate(weekIdx)
+                        }}
+                      >
+                        Save New
+                      </Button>
+                        <Button
+                        type='submit'
+                        variant='secondary'
+                        disabled
+                        onClick={() => {
+                          setIsSaveOpen(false)
+                        }}
+                      >
+                        Update
+                      </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Dialog
+                  open={isLoadOpen}
+                  onOpenChange={setIsLoadOpen}
+                >
+                    <DialogTrigger asChild>
+                      <Button
+                      type='button'
+                      size='sm'
+                      variant='secondary'
+                      className='w-full'
+                    >
+                      Load
+                    </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
+                      <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
+                      Save Template
+                    </DialogHeader>
+                      <WeekTemplateSelect
+                      onSelectWeekTemplate={onSelectWeekTemplate}
+                      selectedWeekTemplate={selectedWeekTemplate}
+                    />
+                      <div className='flex gap-4'>
+                        <Button
+                        type='submit'
+                        variant='secondary'
+                        onClick={() => {
+                          onLoadWeekTemplate(weekIdx)
+                          setIsLoadOpen(false)
+                        }}
+                      >
+                        Load
+                      </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+
+                  <Button
+                  type='button'
+                  size='sm'
+                  variant='secondary'
+                      className='w-full'
+                  onClick={() => onRemoveWeek(weekIdx)}
+                >
+                  Delete
+                </Button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+        ) : (
+            <div />
+          )}
+      </div>
   )
 }
 
@@ -307,9 +337,9 @@ const FormWeek = ({
   weekIdx,
   onRemoveWeek,
 }: {
-  weekIdx: number
-  onRemoveWeek: (weekIdx: number) => void
-}) => {
+    weekIdx: number
+    onRemoveWeek: (weekIdx: number) => void
+  }) => {
   const formMethods = useFormContext<Block>()
   const { control } = formMethods
 
@@ -323,43 +353,43 @@ const FormWeek = ({
   return (
     <div className='flex flex-col gap-1 rounded-lg bg-gray-900 px-2 py-2 '>
       <FormWeekHeader
-        weekIdx={weekIdx}
-        setLoadedTemplate={setLoadedTemplate}
-        onRemoveWeek={onRemoveWeek}
-      />
-      <div className='flex min-h-80 w-full gap-1'>
-        {dayField.fields.map((day, dayIndex) => {
-          return (
-            <div
-              key={day?.id || dayIndex}
-              className={cn(
-                'relative rounded-md bg-gray-800/60 p-2 hover:bg-gray-900',
-                'flex w-[14.3%] flex-col items-center gap-1',
-                day.isRestDay === true ? '' : '',
-              )}
-            >
-              <h1
+      weekIdx={weekIdx}
+      setLoadedTemplate={setLoadedTemplate}
+      onRemoveWeek={onRemoveWeek}
+    />
+        <div className='flex min-h-80 w-full gap-1'>
+          {dayField.fields.map((day, dayIndex) => {
+            return (
+              <div
+                key={day?.id || dayIndex}
                 className={cn(
-                  'text-xl font-bold',
-                  day.isComplete === true ? 'text-green-500' : '',
+                  'relative rounded-md bg-gray-800/60 p-2 hover:bg-gray-900',
+                  'flex w-[14.3%] flex-col items-center gap-1',
+                  day.isRestDay === true ? '' : '',
                 )}
               >
-                Day {dayIndex + 1}
-              </h1>
-              {day.isComplete === true && (
-                <div className='absolute right-5 top-0 translate-y-1/2 transform text-green-500'>
-                  <StarIcon className='h-5 w-5' />
+                  <h1
+                  className={cn(
+                    'text-xl font-bold',
+                    day.isComplete === true ? 'text-green-500' : '',
+                  )}
+                >
+                  Day {dayIndex + 1}
+                  </h1>
+                  {day.isComplete === true && (
+                    <div className='absolute right-5 top-0 translate-y-1/2 transform text-green-500'>
+                      <StarIcon className='h-5 w-5' />
+                      </div>
+                  )}
+                  <FormDay
+                  weekIdx={weekIdx}
+                  dayIdx={dayIndex}
+                />
                 </div>
-              )}
-              <FormDay
-                weekIdx={weekIdx}
-                dayIdx={dayIndex}
-              />
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </div>
-    </div>
   )
 }
 
