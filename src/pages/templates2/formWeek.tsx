@@ -38,7 +38,6 @@ import WeekTemplateSelect from './weekTemplateSelect'
 import { useAtomValue } from 'jotai'
 import { isProgramAtom, isEditProgramAtom } from './form'
 import { Menu } from 'lucide-react'
-import { DropdownMenuArrow } from '@radix-ui/react-dropdown-menu'
 
 const loadedTemplateAtom = atom<string>('')
 
@@ -75,6 +74,7 @@ const FormWeekHeader = ({
   const { mutate: weekCreateMutate } = api.template.createWeek.useMutation({
     onSuccess: () => {
       toast.success('Saved')
+      setIsSaveOpen(false)
       void ctx.blocks.getAllWeekTemplates.invalidate()
     },
     onError: () => {
@@ -255,7 +255,6 @@ const FormWeekHeader = ({
                       type='submit'
                       variant='secondary'
                       onClick={() => {
-                        setIsSaveOpen(false)
                         onSaveWeekAsTemplate(weekIdx)
                       }}
                     >
@@ -267,6 +266,7 @@ const FormWeekHeader = ({
                       disabled
                       onClick={() => {
                         setIsSaveOpen(false)
+                          toast.success('Not implemented')
                       }}
                     >
                       Update
