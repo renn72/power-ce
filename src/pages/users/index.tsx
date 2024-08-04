@@ -343,7 +343,7 @@ const TabWrapper = ({ title, isSidebarOpen }: { title: string, isSidebarOpen: bo
         <Tab
           className={({ selected }) =>
             classNames(
-              'py-4 tracking-tighter hover:bg-gray-900',
+              'py-2 md:py-4 tracking-tighter hover:bg-gray-900',
               selected ? 'font-semibold text-white' : 'font-medium text-gray-500',
             )
           }
@@ -355,7 +355,7 @@ const TabWrapper = ({ title, isSidebarOpen }: { title: string, isSidebarOpen: bo
           <Tab
             className={({ selected }) =>
               classNames(
-                'py-4 tracking-tighter hover:bg-gray-900',
+                'py-2 md:py-4 tracking-tighter hover:bg-gray-900',
                 selected ? 'font-semibold text-white' : 'font-medium text-gray-500',
               )
             }
