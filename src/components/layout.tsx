@@ -33,6 +33,7 @@ const LayoutAuth = (props: PropsWithChildren) => {
         router.pathname !== '/templates2' &&
         router.pathname !== '/price-board' &&
         router.pathname !== '/image-roll' &&
+        router.pathname !== '/users' &&
           <Footer />
       }
       <Toaster />

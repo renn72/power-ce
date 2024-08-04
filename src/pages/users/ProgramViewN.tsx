@@ -22,7 +22,7 @@ const ProgramViewN = ({
   const { data, isLoading } = api.blocks.get.useQuery({ id: programId })
   if (isLoading) return null
   return (
-    <div className='mt-10'>
+    <div className=''>
       { programId === '' ? null : (
       <FieldArrayContext.Provider value={[]}>
         <main className='flex h-full min-w-[1600px] max-w-[100vw] flex-col items-center justify-center text-sm font-semibold sm:text-base'>

@@ -536,7 +536,7 @@ const Users = () => {
         isOpen={isOpen}
         setIsOpen={setIsOpen}
       />
-      <main className=' relative flex h-full min-w-[1500px] flex-col items-center justify-center gap-8 px-2 py-3 sm:px-2 md:mt-6 '>
+      <main className=' relative flex h-full min-w-[1500px] flex-col items-center justify-center gap-8 px-2-3 sm:px-2'>
         <Tab.Group
           vertical
           defaultIndex={0}
@@ -544,8 +544,8 @@ const Users = () => {
             setTabIndex(index)
           }}
         >
-          <div className='flex w-full gap-4 lg:gap-16'>
-            <Tab.List className='flex w-44 flex-col divide-y divide-yellow-500'>
+          <div className='flex w-full gap-4 lg:gap-6'>
+            <Tab.List className='flex w-44 flex-col divide-y divide-yellow-500 mt-4'>
               <UserSelect onSelectUser={setUserId} />
               <TabWrapper title='Overview' />
               <TabWrapper title='Program' />
@@ -559,8 +559,10 @@ const Users = () => {
               <TabWrapper title='Settings' />
             </Tab.List>
             <Tab.Panels className='w-full '>
-              <Tab.Panel>
-                <div className='flex flex-col gap-4'>
+              <Tab.Panel
+                className='mt-4'
+              >
+                <div className='flex flex-col gap-4 mt-4'>
                   <h2 className='text-2xl font-medium'>Overview</h2>
                   <div className='flex items-center gap-8'>
                     <CopyIcon
@@ -601,7 +603,9 @@ const Users = () => {
                 </div>
               </Tab.Panel>
 
-              <Tab.Panel>
+              <Tab.Panel
+                className='mt-4'
+              >
                 <TemplateSelect
                   onSetTemplate={onSetTemplate}
                   onClearTemplate={onClearTemplate}

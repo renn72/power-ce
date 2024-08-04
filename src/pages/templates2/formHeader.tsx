@@ -331,32 +331,51 @@ const FormHeader = ({
             </Button>
           )}
           {isEnabled && isProgram && (
-            <div className='flex gap-2'>
-              <Button
-                type='button'
-                variant='secondary'
-                onClick={() => {
-                  handleSubmit(onUpdate)()
-                }}
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
+                <Menu
+                  strokeWidth={3}
+                  className='h-8 w-8 cursor-pointer text-yellow-500 hover:text-yellow-200'
+                />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align='end'
+                sideOffset={5}
+                forceMount={true}
+                className='bg-gray-800'
               >
-                Update
-              </Button>
-              <Button
-                type='button'
-                variant='secondary'
-                onClick={onResetProgram}
-              >
-                Undo
-              </Button>
-              <Button
-                type='button'
-                variant='secondary'
-                className=''
-                onClick={() => setIsEditProgram(false)}
-              >
-                Finish Editing
-              </Button>
-            </div>
+                <DropdownMenuItem>
+                  <Button
+                    type='button'
+                    variant='secondary'
+                    onClick={() => {
+                      handleSubmit(onUpdate)()
+                    }}
+                  >
+                    Update
+                  </Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Button
+                    type='button'
+                    variant='secondary'
+                    onClick={onResetProgram}
+                  >
+                    Undo
+                  </Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Button
+                    type='button'
+                    variant='secondary'
+                    className=''
+                    onClick={() => setIsEditProgram(false)}
+                  >
+                    Finish Editing
+                  </Button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       </div>
