@@ -28,9 +28,16 @@ import {
   DialogHeader,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 import { useAtomValue, useAtom } from 'jotai'
 import { isProgramAtom, isEditProgramAtom } from './form'
+import { Menu, MenuSquare } from 'lucide-react'
 
 const FormHeader = ({
   setBlockId,
@@ -141,144 +148,177 @@ const FormHeader = ({
           <div />
           <div className='text-xl'>{title || 'New Training Template'}</div>
           {isEnabled && !isProgram && (
-            <div className='flex gap-2'>
-              <Dialog
-                open={isSaveOpen}
-                onOpenChange={setIsSaveOpen}
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
+                <Menu
+                  strokeWidth={3}
+                  className='h-8 w-8 cursor-pointer text-yellow-500 hover:text-yellow-200'
+                />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align='end'
+                sideOffset={5}
+                forceMount={true}
+                className='bg-gray-800'
               >
-                <DialogTrigger asChild>
-                  <Button
-                    type='button'
-                    variant='secondary'
-                    className='tracking-tighter'
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault()
+                  }}
+                >
+                  <Dialog
+                    open={isSaveOpen}
+                    onOpenChange={setIsSaveOpen}
                   >
-                    Save
-                  </Button>
-                </DialogTrigger>
-
-                <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
-                  <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
-                    Save Template
-                  </DialogHeader>
-                  <div className='flex flex-col items-start justify-center gap-2'>
-                    <div className='relative rounded-md px-4 shadow-lg'>
-                      <Input
-                        className='w-40 bg-gray-900  md:w-64 '
-                        placeholder='Title'
-                        defaultValue={``}
-                        {...register('name', {
-                          required: 'This is required.',
-                        })}
-                      />
-                    </div>
-                    <ErrorMessage
-                      errors={errors}
-                      name='name'
-                      render={({ message }) => (
-                        <p className='text-red-400'>{message}</p>
-                      )}
-                    />
-                  </div>
-                  <div className='flex gap-4'>
-                    <Button
-                      type='submit'
-                      variant='secondary'
-                      onClick={() => {
-                        handleSubmit(onSubmit)()
-                      }}
-                    >
-                      Save New
-                    </Button>
-                    <Button
-                      type='submit'
-                      variant='secondary'
-                      onClick={() => {
-                        handleSubmit(onUpdate)()
-                      }}
-                    >
-                      Update
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-              <Button
-                type='button'
-                variant='secondary'
-                className='tracking-tighter'
-                onClick={() => onNewTemplate()}
-              >
-                Clear
-              </Button>
-
-              <Dialog
-                open={isLoadOpen}
-                onOpenChange={setIsLoadOpen}
-              >
-                <DialogTrigger asChild>
-                  <Button
-                    type='button'
-                    variant='secondary'
-                    className='tracking-tighter'
-                    onClick={() => setIsLoadOpen(true)}
-                  >
-                    Load
-                  </Button>
-                </DialogTrigger>
-
-                <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
-                  <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
-                    Save Template
-                  </DialogHeader>
-                  {isMe && (
-                    <div className='flex items-center gap-1 text-sm'>
-                      Super
-                      <Switch
-                        checked={isSuperAdmin}
-                        onChange={setIsSuperAdmin}
-                        className={cn(
-                          isSuperAdmin ? 'bg-gray-200' : 'bg-gray-600',
-                          'relative inline-flex h-[14px] w-[44px] shrink-0 cursor-pointer rounded-full border-2 border-transparent',
-                          ' transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75',
-                        )}
+                    <DialogTrigger asChild>
+                      <Button
+                        type='button'
+                        variant='secondary'
+                        className='w-full'
                       >
-                        <span
-                          aria-hidden='true'
-                          className={cn(
-                            isSuperAdmin ? 'translate-x-6' : 'translate-x-0',
-                            'pointer-events-none inline-block h-[10px] w-[14px] transform',
-                            'rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out',
+                        Save
+                      </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
+                      <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
+                        Save Template
+                      </DialogHeader>
+                      <div className='flex flex-col items-start justify-center gap-2'>
+                        <div className='relative rounded-md px-4 shadow-lg'>
+                          <Input
+                            className='w-40 bg-gray-900  md:w-64 '
+                            placeholder='Title'
+                            defaultValue={``}
+                            {...register('name', {
+                              required: 'This is required.',
+                            })}
+                          />
+                        </div>
+                        <ErrorMessage
+                          errors={errors}
+                          name='name'
+                          render={({ message }) => (
+                            <p className='text-red-400'>{message}</p>
                           )}
                         />
-                      </Switch>
-                    </div>
-                  )}
-                  <div className='flex items-center justify-center gap-2 px-8 py-16'>
-                    <TemplateSelect onSelectTemplate={onSelectTemplate} />
-                    <Button
-                      type='button'
-                      className='w-24 bg-gray-900 px-0  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
-                      disabled={templateLoading}
-                      onClick={() => {
-                        setIsLoadOpen(false)
-                        onLoadTemplate()
-                      }}
-                    >
-                      Load
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-              {isProgram && (
-                <Button
-                  type='button'
-                  variant='secondary'
-                  className='absolute right-10 top-1/2 h-6 -translate-y-1/2 transform'
-                  onClick={() => setIsEditProgram(false)}
+                      </div>
+                      <div className='flex gap-4'>
+                        <Button
+                          type='submit'
+                          variant='secondary'
+                          onClick={() => {
+                            handleSubmit(onSubmit)()
+                          }}
+                        >
+                          Save New
+                        </Button>
+                        <Button
+                          type='submit'
+                          variant='secondary'
+                          onClick={() => {
+                            handleSubmit(onUpdate)()
+                          }}
+                        >
+                          Update
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault()
+                  }}
                 >
-                  Finish Editing
-                </Button>
-              )}
-            </div>
+                  <Button
+                    type='button'
+                    variant='secondary'
+                    className='w-full'
+                    onClick={() => onNewTemplate()}
+                  >
+                    Clear
+                  </Button>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault()
+                  }}
+                >
+                  <Dialog
+                    open={isLoadOpen}
+                    onOpenChange={setIsLoadOpen}
+                  >
+                    <DialogTrigger asChild>
+                      <Button
+                        type='button'
+                        variant='secondary'
+                        className='w-full'
+                        onClick={() => setIsLoadOpen(true)}
+                      >
+                        Load
+                      </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className='flex flex-col items-center justify-center gap-4 bg-gray-900'>
+                      <DialogHeader className='flex items-center justify-center gap-2 text-xl font-semibold'>
+                        Save Template
+                      </DialogHeader>
+                      {isMe && (
+                        <div className='flex items-center gap-1 text-sm'>
+                          Super
+                          <Switch
+                            checked={isSuperAdmin}
+                            onChange={setIsSuperAdmin}
+                            className={cn(
+                              isSuperAdmin ? 'bg-gray-200' : 'bg-gray-600',
+                              'relative inline-flex h-[14px] w-[44px] shrink-0 cursor-pointer rounded-full border-2 border-transparent',
+                              ' transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75',
+                            )}
+                          >
+                            <span
+                              aria-hidden='true'
+                              className={cn(
+                                isSuperAdmin
+                                  ? 'translate-x-6'
+                                  : 'translate-x-0',
+                                'pointer-events-none inline-block h-[10px] w-[14px] transform',
+                                'rounded-full bg-gray-900 shadow-lg ring-0 transition duration-200 ease-in-out',
+                              )}
+                            />
+                          </Switch>
+                        </div>
+                      )}
+                      <div className='flex items-center justify-center gap-2 px-8 py-16'>
+                        <TemplateSelect onSelectTemplate={onSelectTemplate} />
+                        <Button
+                          type='button'
+                          className='w-24 bg-gray-900 px-0  text-sm tracking-tighter sm:text-lg sm:tracking-normal md:w-36'
+                          disabled={templateLoading}
+                          onClick={() => {
+                            setIsLoadOpen(false)
+                            onLoadTemplate()
+                          }}
+                        >
+                          Load
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </DropdownMenuItem>
+                {isProgram && (
+                  <Button
+                    type='button'
+                    variant='secondary'
+                    className='absolute right-10 top-1/2 h-6 -translate-y-1/2 transform'
+                    onClick={() => setIsEditProgram(false)}
+                  >
+                    Finish Editing
+                  </Button>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
           {!isEnabled && isProgram && (
             <Button

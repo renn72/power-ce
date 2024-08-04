@@ -21,8 +21,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
@@ -208,6 +206,7 @@ const FormWeekHeader = ({
             align='end'
             sideOffset={5}
             forceMount={true}
+            className='bg-gray-800'
           >
             <DropdownMenuItem
               onSelect={(e) => {
