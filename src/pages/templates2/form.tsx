@@ -540,7 +540,7 @@ const Form = ({
               className='flex w-full flex-col items-center '
             >
               <div className='flex w-full flex-col items-center gap-1 sm:gap-8'>
-                <div className='flex min-h-[60vh] w-full flex-col items-center justify-gap-2 p-1 sm:gap-4'>
+                <div className='flex min-h-[60vh] w-full flex-col items-center justify-gap-2 p-1 py-0 sm:gap-4'>
                   <FormHeader
                     setBlockId={setBlockId}
                     onSubmit={onSubmit}

@@ -62,7 +62,7 @@ const ExerciseDropper = () => {
           value={`0`}
         >
           <AccordionTrigger
-            className={cn('flex flex-col pb-0', isProgram ? 'pt-1' : 'pt-1')}
+            className={cn('flex flex-col py-0')}
           >
             <div
               className={cn(
