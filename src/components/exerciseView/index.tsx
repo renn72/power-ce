@@ -21,13 +21,13 @@ const ExerciseView = ({
 
   return (
     <>
-      <div className='flex cursor-pointer flex-col overflow-hidden px-2 py-2 text-base'>
+      <div className='flex cursor-pointer flex-col overflow-hidden px-2 py-2 text-base flex-shrink'>
         <div>
           <div className='flex justify-between'>
             <div className='flex gap-0 overflow-hidden text-lg tracking-tighter'>
               <h2>{exerciseIdx + 1}.</h2>
               <h3 className='truncate font-bold capitalize text-yellow-500'>
-                {exercise.name ? exercise.name?.slice(0, 27) : 'No Name'}
+                {exercise.name ? exercise.name?.slice(0, 20) : 'No Name'}
               </h3>
             </div>
             {exercise.htmlLink && (
