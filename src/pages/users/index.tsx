@@ -211,7 +211,7 @@ open ? 'rotate-180 transform' : ''
 
 const OpenPowerlifting = ({ userId }: { userId: string }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const ctx = api.useContext()
+  const ctx = api.useUtils()
   const { data: compLifts, isLoading: compLiftsLoading } =
   api.compLift.getCompLifts.useQuery({
     userId: userId,
@@ -598,9 +598,6 @@ const Users = () => {
                 <TabWrapper title='Program'
                 isSidebarOpen={isSidebarOpen}
               />
-                <TabWrapper title='Program-N'
-                isSidebarOpen={isSidebarOpen}
-              />
                 <TabWrapper title='History'
                 isSidebarOpen={isSidebarOpen}
               />
@@ -667,34 +664,6 @@ const Users = () => {
                   />
                     <TrainerSelect userId={userId} />
                   </div>
-                </Tab.Panel>
-
-                <Tab.Panel
-                className='mt-4'
-              >
-                  <TemplateSelect
-                  onSetTemplate={onSetTemplate}
-                  onClearTemplate={onClearTemplate}
-                  userId={userId}
-                  isCurrent={true}
-                />
-                  <TemplateSelect
-                  onSetTemplate={onSetSecondaryTemplate}
-                  onClearTemplate={onClearSecondaryTemplate}
-                  userId={userId}
-                  isCurrent={false}
-                />
-                  <ProgramView
-                  userId={userId}
-                  isAdmin={true}
-                  programId={activeProgram?.id || ''}
-                />
-                  <h2 className='my-6 text-3xl font-semibold'>Next Program2</h2>
-                  <ProgramView
-                  userId={userId}
-                  isAdmin={true}
-                  programId={secondaryProgram?.id || ''}
-                />
                 </Tab.Panel>
 
                 <Tab.Panel>
