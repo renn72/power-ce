@@ -56,6 +56,7 @@ const ExerciseDropper = () => {
         defaultValue={'0'}
         className='mr-1 flex h-full flex-col items-center border-0'
         onValueChange={setIsOpen}
+        value={isOpen}
       >
         <AccordionItem
           className='border-0'
@@ -69,7 +70,7 @@ const ExerciseDropper = () => {
                 'tracking-tigher flex w-full rounded-lg bg-gray-900 p-1 text-lg font-bold leading-snug',
                 isOpen === '0'
                   ? 'h-12 flex-row items-center justify-center gap-4'
-                  : 'flex-col',
+                  : 'flex-col text-sm h-12',
               )}
             >
               <div>Excercise</div>
@@ -77,7 +78,6 @@ const ExerciseDropper = () => {
             </div>
           </AccordionTrigger>
           <AccordionContent
-            forceMount={true}
             className='w-min rounded-md bg-gray-900 px-2 py-2'
           >
             <div className='mb-4 flex items-center gap-2'>
