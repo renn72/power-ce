@@ -102,7 +102,7 @@ export const templateBuilderRouter = createTRPCRouter({
                 orderBy: { createdAt: 'desc' },
                 where: {
                     isTemplate: true,
-                    // trainerId: input?.userId,
+                    trainerId: input?.userId,
                 },
                 include: { ss: true },
             })
