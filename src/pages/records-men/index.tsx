@@ -94,7 +94,7 @@ const Records = () => {
   const setRefresh = () => {
     setTimeout(() => {
       pageRefresh()
-    }, 1000 * 60 * 1) // 10 minutes
+    }, 1000 * 60 * 10) // 10 minutes
   }
 
   useEffect(() => {
