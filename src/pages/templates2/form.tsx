@@ -170,8 +170,8 @@ const Form = ({
       void ctx.template.getAllWeekTemplates.invalidate()
       void ctx.template.get.invalidate()
     },
-    onError: (_e) => {
-      toast.error('Error')
+    onError: (e) => {
+      toast.error(JSON.stringify(e))
       setIsOpen(false)
     },
   })
@@ -201,7 +201,7 @@ const Form = ({
     },
     onError: (e) => {
       console.log('error', e)
-      toast.error('Error')
+      toast.error(JSON.stringify(e))
       setIsOpen(false)
     },
   })
