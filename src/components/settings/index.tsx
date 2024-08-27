@@ -180,6 +180,9 @@ const Settings = ({ userId }: { userId: string }) => {
                 field='isPower'
                 userId={userId}
               />
+              <Delete
+                userId={userId}
+              />
               {isRoot && (
                 <div className='mt-16 flex flex-col gap-1'>
                   <RoleToggle
@@ -224,10 +227,6 @@ const Settings = ({ userId }: { userId: string }) => {
                     title='Super'
                     field='isSuper'
                     userId={userId}
-                  />
-                  <Delete
-                    userId={userId}
-                    defaultValue={userSettings?.gender || ''}
                   />
                 </div>
               )}
