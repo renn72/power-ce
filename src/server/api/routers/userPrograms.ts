@@ -55,6 +55,7 @@ const programSchema = z.object({
   name: z.string().min(0).max(280).optional(),
 })
 
+export const maxDuration = 30
 export const userProgramsRouter = createTRPCRouter({
   getAllUser: privateProcedure.query(async ({ ctx }) => {
     const userId = ctx.userId

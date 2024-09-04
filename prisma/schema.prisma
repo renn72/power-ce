@@ -134,16 +134,6 @@ model CompLiftAddress {
         flield5 String?
 }
 
-/// @@Gen.model(hide: true)
-model Post {
-    id        String   @id @default(cuid())
-        createdAt DateTime @default(now())
-
-        title     String
-        content   String
-        published Boolean @default(false)
-}
-
 model Set {
     id        String   @id @default(cuid())
         createdAt DateTime @default(now())
@@ -388,6 +378,7 @@ model Block {
         flield5 String?
 
         week Week[]
+        @@index([userId])
 }
 
 model UserProgram {
@@ -510,7 +501,6 @@ model Goal {
         flield2 String?
         flield3 String?
 
-        @@index([userId])
 }
 
 /// @@Gen.model(hide: true)
@@ -809,104 +799,3 @@ model VerificationToken {
         @@unique([identifier, token])
 }
 
-/// @@Gen.model(hide: true)
-model BaseIngredient {
-    id        String   @id @default(cuid())
-        createdAt DateTime @default(now())
-
-        name String @unique
-
-        calories Decimal
-        fat      Decimal
-        carbs    Decimal
-        protein  Decimal
-
-        size Decimal
-
-        unit String
-
-        isScalable Boolean @default(true)
-
-        ingredient Ingredient[]
-
-        isGluetenFree Boolean @default(false)
-        isVegan       Boolean @default(false)
-        isVegetarian  Boolean @default(false)
-
-        isDeleted Boolean @default(false)
-
-        flield1 String?
-        flield2 String?
-        flield3 String?
-}
-
-/// @@Gen.model(hide: true)
-model Ingredient {
-    id        String   @id @default(cuid())
-        createdAt DateTime @default(now())
-
-        baseIngredientId String
-        baseIngredient   BaseIngredient @relation(fields: [baseIngredientId], references: [id], onDelete: Cascade)
-
-        recipeId String
-        recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
-
-        size Decimal
-
-        unit String
-
-        isScalable Boolean @default(true)
-
-        isDeleted Boolean @default(false)
-
-        flield1 String?
-        flield2 String?
-        flield3 String?
-
-        @@index([recipeId])
-}
-
-/// @@Gen.model(hide: true)
-model Recipe {
-    id        String   @id @default(cuid())
-        createdAt DateTime @default(now())
-
-        name String @unique
-
-        ingredients Ingredient[]
-
-        notes RecipeNote[]
-
-        calories Decimal
-        fat      Decimal
-        carbs    Decimal
-        protein  Decimal
-
-        isGluetenFree Boolean @default(false)
-        isVegan       Boolean @default(false)
-        isVegetarian  Boolean @default(false)
-
-        isScalable Boolean @default(true)
-
-        size Decimal
-        unit String
-
-        isDeleted Boolean @default(false)
-
-        flield1 String?
-        flield2 String?
-        flield3 String?
-}
-
-/// @@Gen.model(hide: true)
-model RecipeNote {
-    id        String   @id @default(cuid())
-        createdAt DateTime @default(now())
-
-        recipeId String
-        recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
-
-        note String
-
-        @@index([recipeId])
-}

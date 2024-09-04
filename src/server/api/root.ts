@@ -28,6 +28,7 @@ import { templateBuilderRouter } from './routers/templateBuilder'
  *
  * All routers added in /api/routers should be manually added here.
  */
+export const maxDuration = 20
 export const appRouter = createTRPCRouter({
     blocks: blocksRouter,
     users: usersRouter,
