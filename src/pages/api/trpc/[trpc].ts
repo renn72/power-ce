@@ -26,5 +26,5 @@ export const config = {
     responseLimit: false,
     maxDuration: 60,
   },
-  maxDuration: 30,
+  maxDuration: 60,
 }
