@@ -61,7 +61,6 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
     maxAge: 90 * 24 * 60 * 60, // 90 days
   },
-  debug: true,
   cookies: {
     sessionToken: {
       name: `${process.env.NODE_ENV === 'production' ? '__Secure-' : ''}next-auth.session-token`,
