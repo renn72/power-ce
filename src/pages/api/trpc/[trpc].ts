@@ -24,5 +24,6 @@ export const config = {
   api: {
     bodyParser: false,
     responseLimit: false,
+    maxDuration: 60,
   },
 }
