@@ -31,9 +31,11 @@ const ExerciseDropper = () => {
   const isProgram = useAtomValue(isProgramAtom)
 
   const { data: exerciseTemplateaQuery } =
-    api.templateBuilder.getAllYourExerciseTemplates.useQuery({
-      userId: userId,
-    })
+    api.templateBuilder.getAllExerciseTemplates.useQuery()
+  // const { data: exerciseTemplateaQuery } =
+  //   api.templateBuilder.getAllYourExerciseTemplates.useQuery({
+  //     userId: userId,
+  //   })
 
   const exerciseTemplates = exerciseTemplateaQuery?.filter((t) => {
     return t?.name?.toLowerCase().includes(search.toLowerCase())
