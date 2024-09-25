@@ -26,6 +26,28 @@ export const usersRouter = createTRPCRouter({
     })
     return res
   }),
+  getMyClients: privateProcedure.query(async ({ ctx }) => {
+    const tranierId = ctx.userId
+    if (!tranierId) return null
+    const clients = await ctx.prisma.trainerToClient.findMany({
+      where: {
+        trainerId: tranierId,
+      },
+    })
+    console.log('clients', clients)
+    const res = await ctx.prisma.user.findMany({
+      where: {
+        id: {
+          in: clients.map((c) => c.clientId),
+        },
+      },
+      orderBy: {
+        firstName: 'asc',
+      },
+    })
+    console.log('res', res)
+    return res
+  }),
   getAllUsersProfiles: privateProcedure.query(async ({ ctx }) => {
     const res = await ctx.prisma.user.findMany({
       include: {

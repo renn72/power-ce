@@ -17,6 +17,14 @@ const trainers = [
     name: 'Mitch',
     id: 'user_2RB3u3X0pKDxnvmHraPW3RfwrAv',
   },
+  {
+    name: 'Toby',
+    id: 'clxn3s6wa0007xestb4jku2vt',
+  },
+  {
+    name: 'Test',
+    id: 'user_2Pg92dlfZkKBNFSB50z9GJJBJ2a',
+  }
 ]
 
 const TrainerSelect = ({ userId }: { userId: string }) => {
@@ -27,13 +35,14 @@ const TrainerSelect = ({ userId }: { userId: string }) => {
   })
   const [trainer, setTrainer] = useState<string>('')
 
-  const ctx = api.useContext()
+  const ctx = api.useUtils()
 
   const { mutate: setClientTrainer } = api.users.setTrainer.useMutation({
     onSuccess: () => {
       setIsSet(true)
       toast.success('Saved')
       void ctx.users.getTrainer.invalidate({ userId: userId })
+      void ctx.users.getMyClients.invalidate()
     },
   })
 
@@ -43,6 +52,7 @@ const TrainerSelect = ({ userId }: { userId: string }) => {
       setTrainer('')
       toast.success('Removed')
       void ctx.users.getTrainer.invalidate({ userId: userId })
+      void ctx.users.getMyClients.invalidate()
     },
   })
 
