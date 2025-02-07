@@ -64,24 +64,20 @@ const ExerciseDropper = () => {
           className='border-0'
           value={`0`}
         >
-          <AccordionTrigger
-            className={cn('flex flex-col py-0')}
-          >
+          <AccordionTrigger className={cn('flex flex-col py-0')}>
             <div
               className={cn(
                 'tracking-tigher flex w-full rounded-lg bg-gray-900 p-1 text-lg font-bold leading-snug',
                 isOpen === '0'
                   ? 'h-12 flex-row items-center justify-center gap-4'
-                  : 'flex-col text-sm h-12',
+                  : 'h-12 flex-col text-sm',
               )}
             >
               <div>Excercise</div>
               <div>Templates</div>
             </div>
           </AccordionTrigger>
-          <AccordionContent
-            className='w-min rounded-md bg-gray-900 px-2 py-2'
-          >
+          <AccordionContent className='w-min rounded-md bg-gray-900 px-2 py-2'>
             <div className='mb-4 flex items-center gap-2'>
               <Input
                 placeholder='Search'
@@ -114,7 +110,14 @@ const ExerciseDropper = () => {
                     >
                       <ExerciseView
                         // @ts-ignore
-                        exercise={exerciseTemplates?.[rubric.source.index]}
+                        exercise={
+                          exerciseTemplates?.map((t) => {
+                            return {
+                              ...t,
+                              trainerId: userId,
+                            }
+                          })?.[rubric.source.index]
+                        }
                         exerciseIdx={0}
                         isAdmin={true}
                       />
@@ -128,41 +131,47 @@ const ExerciseDropper = () => {
                     ref={provided.innerRef}
                     className='flex flex-col gap-2'
                   >
-                    {exerciseTemplates?.map((t, i) => (
-                      <Draggable
-                        key={t.id}
-                        draggableId={t.id}
-                        index={i}
-                      >
-                        {(provided, snapshot) => (
-                          <div
-                            className={cn(
-                              snapshot.isClone ? 'bg-gray-600' : '',
-                              snapshot.isDragging ? 'bg-gray-700' : '',
-                              'relative rounded-md bg-gray-700 p-2 hover:bg-gray-700',
-                            )}
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                          >
-                            <X
-                              size={20}
-                              className='absolute right-2 top-1 cursor-pointer text-gray-400 hover:text-gray-200'
-                              onClick={() =>
-                                deleteExerciseTemplate({
-                                  id: t.id,
-                                })
-                              }
-                            />
-                            <ExerciseView
-                              exercise={t}
-                              exerciseIdx={i}
-                              isAdmin={true}
-                            />
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
+                    {exerciseTemplates?.map((t) => {
+                        return {
+                          ...t,
+                          trainerId: userId,
+                        }
+                      })
+                      .map((t, i) => (
+                        <Draggable
+                          key={t.id}
+                          draggableId={t.id}
+                          index={i}
+                        >
+                          {(provided, snapshot) => (
+                            <div
+                              className={cn(
+                                snapshot.isClone ? 'bg-gray-600' : '',
+                                snapshot.isDragging ? 'bg-gray-700' : '',
+                                'relative rounded-md bg-gray-700 p-2 hover:bg-gray-700',
+                              )}
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                            >
+                              <X
+                                size={20}
+                                className='absolute right-2 top-1 cursor-pointer text-gray-400 hover:text-gray-200'
+                                onClick={() =>
+                                  deleteExerciseTemplate({
+                                    id: t.id,
+                                  })
+                                }
+                              />
+                              <ExerciseView
+                                exercise={t}
+                                exerciseIdx={i}
+                                isAdmin={true}
+                              />
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
                     {provided.placeholder}
                   </div>
                 )}

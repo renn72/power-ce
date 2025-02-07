@@ -94,9 +94,7 @@ const Form = ({
     api.templateBuilder.getAllTemplateTitles.useQuery()
   const blocksTitle = blocksIdTitle?.map((block) => block.name)
   const { data: exerciseTemplates } =
-    api.templateBuilder.getAllYourExerciseTemplates.useQuery({
-      userId: userId,
-    })
+    api.templateBuilder.getAllExerciseTemplates.useQuery()
 
   // const { data: program, isLoading: programLoading } = api.blocks.get.useQuery({
   //   id: ProgramId || '',
@@ -475,6 +473,7 @@ const Form = ({
   }
 
   const handleDrag = (result: DragResult) => {
+
     const { source, destination } = result
     if (!destination) return
 
@@ -490,6 +489,7 @@ const Form = ({
       source.droppableId === destination.droppableId &&
       source.index === destination.index
     ) {
+      console.log('same day')
       return
     }
 
@@ -500,26 +500,32 @@ const Form = ({
       return
     }
 
-    if (destDayId === 'templates') return
+    if (destDayId === 'templates'){
+      console.log('destDayId templates')
+      return
+    }
     if (sourceDayId === 'templates') {
       const exercise = exerciseTemplates?.find(
         (t) => t.id === result.draggableId,
       )
 
-      if (!exercise) return
+      if (!exercise){
+        console.log('no exercise')
+        return
+      }
 
+      console.log('insert exercise')
       destArray.insert(destIndex, exercise)
 
       return
     }
+    console.log('insert day')
 
     const sourceDay = sourceArray.fields[sourceIndex]
     destArray.insert(destIndex, sourceDay)
     sourceArray.remove(sourceIndex)
   }
 
-  console.log('program', program)
-  console.log('weekflield', weekField.fields)
   console.log('values', getValues())
 
   return (
