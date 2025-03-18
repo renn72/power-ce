@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { PropsWithChildren } from 'react'
 import Navbar from './navbar'
 import Footer from './footer'
@@ -52,6 +53,8 @@ const Layout = (props: PropsWithChildren) => {
     url: router.pathname,
   })
 
+  const [ email, setEmail ] = useState('')
+
   const { mutate: logUser } = api.users.logSignIn.useMutation()
 
   if (status === 'loading' || isUserLoading) return <LoadingPage />
@@ -68,9 +71,28 @@ const Layout = (props: PropsWithChildren) => {
             <LayoutAuth>{props.children}</LayoutAuth>
           </>
         ) : (
-          <div className='flex h-full w-full grow flex-col items-center justify-center'>
+          <div className='flex h-full w-full grow flex-col gap-6 items-center justify-center'>
+            <input
+              className='rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20'
+              placeholder='Email'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
             <button
               className='rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20'
+              onClick={() => {
+                logUser({
+                  userId: userId,
+                  location: 'SignIn',
+                  url: router.pathname,
+                })
+                void signIn('email', { email, redirect: true })
+              }}
+            >
+              Sign in with Email
+            </button>
+            <button
+              className='rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20 mt-20'
               onClick={() => {
                 logUser({
                   userId: userId,
@@ -80,7 +102,7 @@ const Layout = (props: PropsWithChildren) => {
                 void signIn()
               }}
             >
-              Sign in
+                Open sign in form
             </button>
           </div>
         )}
