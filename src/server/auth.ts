@@ -14,6 +14,8 @@ import type { Adapter } from 'next-auth/adapters'
 
 import { db } from '~/server/db'
 
+import { env } from '~/env.mjs'
+
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -63,7 +65,9 @@ export const authOptions: NextAuthOptions = {
   },
   cookies: {
     sessionToken: {
-      name: `${process.env.NODE_ENV === 'production' ? '__Secure-' : ''}next-auth.session-token`,
+      name: `${
+        process.env.NODE_ENV === 'production' ? '__Secure-' : ''
+      }next-auth.session-token`,
       options: {
         httpOnly: false,
         // sameSite: 'none',
@@ -72,7 +76,9 @@ export const authOptions: NextAuthOptions = {
       },
     },
     state: {
-      name: `${process.env.NODE_ENV === 'production' ? '__Secure-' : ''}next-auth.state`,
+      name: `${
+        process.env.NODE_ENV === 'production' ? '__Secure-' : ''
+      }next-auth.state`,
       options: {
         httpOnly: true,
         // sameSite: 'none',
@@ -85,22 +91,22 @@ export const authOptions: NextAuthOptions = {
   providers: [
     EmailProvider({
       server: {
-        host: process.env.EMAIL_SERVER_HOST,
-        port: process.env.EMAIL_SERVER_PORT,
+        host: env.EMAIL_SERVER_HOST,
+        port: env.EMAIL_SERVER_PORT,
         auth: {
-          user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.EMAIL_SERVER_PASSWORD,
+          user: env.EMAIL_SERVER_USER,
+          pass: env.EMAIL_SERVER_PASSWORD,
         },
       },
-      from: process.env.EMAIL_FROM,
+      from: env.EMAIL_FROM,
     }),
     DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET,
+      clientId: env.DISCORD_CLIENT_ID,
+      clientSecret: env.DISCORD_CLIENT_SECRET,
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
   ],
 }
