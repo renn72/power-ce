@@ -76,14 +76,14 @@ const Layout = (props: PropsWithChildren) => {
             <button
               className='rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20 relative'
               disabled={isSignIn}
-              onClick={() => {
+              onClick={async () => {
                 setIsSignIn(true)
                 logUser({
                   userId: userId,
                   location: 'SignIn',
                   url: router.pathname,
                 })
-                void signIn('email', { email, redirect: true })
+                await signIn('email', { email: email?.toLowerCase(), redirect: true })
               }}
             >
               Sign in with Email
