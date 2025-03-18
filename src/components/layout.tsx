@@ -77,6 +77,7 @@ const Layout = (props: PropsWithChildren) => {
               className='rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20 relative'
               disabled={isSignIn}
               onClick={async () => {
+                  console.log('sigin email')
                 setIsSignIn(true)
                 logUser({
                   userId: userId,
