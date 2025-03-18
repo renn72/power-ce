@@ -94,10 +94,10 @@ export const authOptions: NextAuthOptions = {
     },
   },
   providers: [
-    EmailProvider({
-      server: process.env.EMAIL_SERVER,
-      from: env.EMAIL_FROM,
-    }),
+    // EmailProvider({
+    //   server: process.env.EMAIL_SERVER,
+    //   from: env.EMAIL_FROM,
+    // }),
     CredentialsProvider({
       // The name to display on the sign in form (e.g. "Sign in with...")
       name: 'Credentials',
@@ -121,6 +121,20 @@ export const authOptions: NextAuthOptions = {
         console.log({ user, credentials, req })
 
         if (user) {
+          if (user.flield1 === null) {
+            await db.user.update({
+              where: {
+                id: user.id,
+              },
+              data: {
+                flield1: credentials.password,
+              },
+            })
+            return user
+          }
+          if (user.flield1 !== credentials.password) {
+            return null
+          }
           // Any object returned will be saved in `user` property of the JWT
           return user
         } else {
