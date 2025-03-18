@@ -4,7 +4,7 @@ import Navbar from './navbar'
 import Footer from './footer'
 
 import { useSession, signIn } from 'next-auth/react'
-import { LoadingPage } from './loading'
+import { LoadingPage, LoadingSpinner } from './loading'
 import { useRouter } from 'next/router'
 
 import { api } from '~/utils/api'
@@ -24,19 +24,13 @@ const LayoutAuth = (props: PropsWithChildren) => {
 
   return (
     <>
-      {
-        router.pathname !== '/price-board' &&
-        router.pathname !== '/image-roll' &&
-        <Navbar user={user || null} />
-      }
+      {router.pathname !== '/price-board' &&
+        router.pathname !== '/image-roll' && <Navbar user={user || null} />}
       <div className='grow'>{props.children}</div>
-      {
-        router.pathname !== '/templates2' &&
+      {router.pathname !== '/templates2' &&
         router.pathname !== '/price-board' &&
         router.pathname !== '/image-roll' &&
-        router.pathname !== '/users' &&
-          <Footer />
-      }
+        router.pathname !== '/users' && <Footer />}
       <Toaster />
     </>
   )
@@ -53,7 +47,8 @@ const Layout = (props: PropsWithChildren) => {
     url: router.pathname,
   })
 
-  const [ email, setEmail ] = useState('')
+  const [email, setEmail] = useState('')
+  const [isSignIn, setIsSignIn] = useState(false)
 
   const { mutate: logUser } = api.users.logSignIn.useMutation()
 
@@ -71,7 +66,7 @@ const Layout = (props: PropsWithChildren) => {
             <LayoutAuth>{props.children}</LayoutAuth>
           </>
         ) : (
-          <div className='flex h-full w-full grow flex-col gap-6 items-center justify-center'>
+          <div className='flex h-full w-full grow flex-col items-center justify-center gap-6'>
             <input
               className='rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20'
               placeholder='Email'
@@ -79,8 +74,10 @@ const Layout = (props: PropsWithChildren) => {
               onChange={(e) => setEmail(e.target.value)}
             />
             <button
-              className='rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20'
+              className='rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20 relative'
+              disabled={isSignIn}
               onClick={() => {
+                setIsSignIn(true)
                 logUser({
                   userId: userId,
                   location: 'SignIn',
@@ -90,9 +87,17 @@ const Layout = (props: PropsWithChildren) => {
               }}
             >
               Sign in with Email
+                {
+                  isSignIn && (
+                    <div className='absolute right-2 top-1/2 -translate-y-1/2  '>
+                      <LoadingSpinner />
+
+                    </div>
+                  )
+                }
             </button>
             <button
-              className='rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20 mt-20'
+              className='mt-20 rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20 relative'
               onClick={() => {
                 logUser({
                   userId: userId,
@@ -102,7 +107,7 @@ const Layout = (props: PropsWithChildren) => {
                 void signIn()
               }}
             >
-                Open sign in form
+              Open sign in form
             </button>
           </div>
         )}
